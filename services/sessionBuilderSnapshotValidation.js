@@ -35,31 +35,32 @@ function result(isValid, canChange, currentSnapshotChanges, fieldName, currentVa
   }
 }
 
-function isDataValid(snapshot, params, session) {
-  for (let i=0; i<constants.sessionBuilderValidateChanges.session.notChangableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValidateChanges.session.notChangableFields[i];
+function checkSessionData(snapshot, params, session, canChange) {
+  let fields = canChange ? constants.sessionBuilderValidateChanges.session.changableFields : constants.sessionBuilderValidateChanges.session.notChangableFields;
+  for (let i=0; i<fields.length; i++) {
+    let fieldName = fields[i];
     if (params[fieldName]) {
       if (params[fieldName] == session[fieldName]) {
         return result(true);
       } else {
         let oldValueSnapshot = snapshot[fieldName];
         let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return result(currentValueSnapshot == oldValueSnapshot, false, null, fieldName, currentValueSnapshot);
+        return result(currentValueSnapshot == oldValueSnapshot, canChange, null, fieldName, currentValueSnapshot);
       }
     }
   }
+  return null;
+}
 
-  for (let i=0; i<constants.sessionBuilderValidateChanges.session.changableFields.length; i++) {
-    let fieldName = constants.sessionBuilderValidateChanges.session.changableFields[i];
-    if (params[fieldName]) {
-      if (params[fieldName] == session[fieldName]) {
-        return result(true);
-      } else {
-        let oldValueSnapshot = snapshot[fieldName];
-        let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return result(currentValueSnapshot == oldValueSnapshot, true, null, fieldName, currentValueSnapshot);
-      }
-    }
+function isDataValid(snapshot, params, session) {
+  let notChangableFieldsRes = checkSessionData(snapshot, params, session, false);
+  if (notChangableFieldsRes) {
+    return notChangableFieldsRes;
+  }
+
+  let changableFieldsRes = checkSessionData(snapshot, params, session, true);
+  if (changableFieldsRes) {
+    return changableFieldsRes;
   }
 
   return result(true);
@@ -68,7 +69,10 @@ function isDataValid(snapshot, params, session) {
 function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuilderService) {
   return new bluebird(function (resolve, reject) {
     sessionBuilderService.searchSessionMembers(sessionId, 'facilitator').then(function(members) {
-      if(!_.isEmpty(members)) {
+      if(_.isEmpty(members)) {
+        let currentValueSnapshot = stringHelpers.hash(null);
+        resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
+      } else {
         let facilitator = members[0];
         if (facilitatorId == facilitator.id) {
           resolve(result(true));
@@ -76,9 +80,6 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
           let currentValueSnapshot = stringHelpers.hash(facilitator.id);
           resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
         }
-      } else {
-        let currentValueSnapshot = stringHelpers.hash(null);
-        resolve(result(currentValueSnapshot == snapshot.facilitatorId, true, null, "facilitatorId", currentValueSnapshot));
       }
     }, function(error) {
       reject(error);
@@ -112,30 +113,27 @@ function getSessionTopic(topics, id) {
 
 function getMailTemplateSnapshot(mailTemplate) {
   let res = { };
-  for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
-    let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
+  _.each(constants.sessionBuilderValidateChanges.mailTemplate.fields, (fieldName) => {
     res[fieldName] = stringHelpers.hash(mailTemplate[fieldName]);
-  }
+  });
   return res;
 }
 
 function getTopicSnapshot(sessionTopic) {
-  let topicRes = { };
+  let res = { };
   let fields = constants.sessionBuilderValidateChanges.topic.propertyFields.concat(constants.sessionBuilderValidateChanges.topic.listFields);
-  for (let i=0; i<fields.length; i++) {
-    let fieldName = fields[i];
-    topicRes[fieldName] = stringHelpers.hash(sessionTopic[fieldName]);
-  }
-  return topicRes;
+  _.each(fields, (fieldName) => {
+    res[fieldName] = stringHelpers.hash(sessionTopic[fieldName]);
+  });
+  return res;
 }
 
 function getSessionSnapshot(session) {
   let res = { };
   let fields = constants.sessionBuilderValidateChanges.session.changableFields.concat(constants.sessionBuilderValidateChanges.session.notChangableFields);
-  for (let i=0; i<fields.length; i++) {
-    let fieldName = fields[i];
+  _.each(fields, (fieldName) => {
     res[fieldName] = stringHelpers.hash(session[fieldName]);
-  }
+  });
   return res;
 }
 
@@ -192,8 +190,7 @@ function isTopicsDataValid(snapshot, sessionId, accountId, topics) {
       for (let i=0; i<ids.length; i++) {
         let id = ids[i];
         if (!isTopicListDataValid(currentSnapshot, snapshot, topics, id)) {
-          resolve(result(false, true, getTopicsSnapshotWithoutProperties(currentSnapshot), null, null));
-          return;
+          return resolve(result(false, true, getTopicsSnapshotWithoutProperties(currentSnapshot), null, null));
         }
       }
       resolve(result(true));

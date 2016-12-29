@@ -71,8 +71,7 @@
     var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
 
     var currentState = { };
-    var onlineUsers = [];
-    vm.onlineUsers = onlineUsers;
+    vm.onlineUsers = [];
     vm.lastOnlineUsersDumpForMessage = [];
 
     function subscribeCannel() {
@@ -93,7 +92,7 @@
         function onJoin(state) {
           return (id, current, newPres) => {
             if (!current) {
-             onlineUsers.push(newPres.accountUser);
+             vm.onlineUsers.push(newPres.accountUser);
              whenNewUserInSessionBuilder();
             }
           }
@@ -104,9 +103,9 @@
             //if current.metas exists than user has other instances opened
             //https://hexdocs.pm/phoenix/Phoenix.Presence.html
             if (current.metas.length == 0) {
-              for (var i=0; i<onlineUsers.length; i++) {
-                if (onlineUsers[i].id == current.accountUser.id) {
-                  onlineUsers.splice(i, 1);
+              for (var i=0; i<vm.onlineUsers.length; i++) {
+                if (vm.onlineUsers[i].id == current.accountUser.id) {
+                  vm.onlineUsers.splice(i, 1);
                   break;
                 }
               }
@@ -114,11 +113,11 @@
           }
         }
 
-        channel.on("presence_state", (state) =>{
+        channel.on("presence_state", function(state) {
           syncState(state);
         });
 
-        channel.on("presence_diff", (diff) =>{
+        channel.on("presence_diff", function(diff) {
           syncDiff(diff);
         });
 
@@ -132,15 +131,15 @@
     }
 
     function whenNewUserInSessionBuilder() {
-      if (onlineUsers.length > 1) {
+      if (vm.onlineUsers.length > 1) {
         var message = "";
         var onlineUsersDump = [];
-        for (var i=0; i<onlineUsers.length; i++) {
+        for (var i=0; i<vm.onlineUsers.length; i++) {
           if (message != "") {
             message += ", ";
           }
-          message += onlineUsers[i].firstName + " " + onlineUsers[i].lastName;
-          onlineUsersDump.push(onlineUsers[i].id);
+          message += vm.onlineUsers[i].firstName + " " + vm.onlineUsers[i].lastName;
+          onlineUsersDump.push(vm.onlineUsers[i].id);
         }
         onlineUsersDump.sort();
         if (!isSameOnlineUsersDumpForMessage(onlineUsersDump)) {

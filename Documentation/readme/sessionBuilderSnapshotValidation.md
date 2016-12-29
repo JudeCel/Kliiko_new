@@ -1,10 +1,10 @@
-SessionBuilder changes validation is used to resolve conflicts when few users are editing the same value.
+# SessionBuilder changes validation is used to resolve conflicts when few users are editing the same value.
 
-Each object that need changes validation should contain snapshot (f.e. SessionBuilderObject, MailTemplate).
+Each object that need changes validation should contain snapshot (f.e. ```SessionBuilderObject```, ```MailTemplate```).
 Snapshot is the object that contains all the fields hashes.
 
 Client side code should send to server the snapshot together with data to change.
-Server should validate snapshot (using sessionBuilderSnapshotValidation) to check does it include hashes of current database values.
+Server should validate snapshot (using ```sessionBuilderSnapshotValidation```) to check does it include hashes of current database values.
 If no - it should return validation information to client, otherwise it can apply changes.
 
 If client retrieved validation information from server than it should display confirmation dialog. 

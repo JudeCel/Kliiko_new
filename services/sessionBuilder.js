@@ -223,15 +223,16 @@ function update(sessionId, accountId, params) {
   });
 }
 
+function isSessionChangedToActive(params) {
+  return params["status"] && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date());
+}
+
 function doUpdate(originalSession, params) {
   return new bluebird(function (resolve, reject) {
   
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
-      let count = 0;
-      if (params["status"] && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date())) {
-        count = 1;
-      }
+      let count = isSessionChangedToActive(params) ? 1 : 0;
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
@@ -242,7 +243,8 @@ function doUpdate(originalSession, params) {
       updatedSession = result;
       if (params["type"]) {
         addDefaultTopicVideo(result);
-      }      return sessionBuilderObject(updatedSession);
+      }
+      return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
@@ -759,10 +761,10 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
 
 function sessionBuilderObjectSnapshotForStep2(stepData) {
   let res = { };
-  for (let i=0; i<stepData.topics.length; i++) {
-    let topic = stepData.topics[i].SessionTopics[0];
-    res[topic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(topic);
-  }
+  _.each(stepData.topics, (topic) => {
+    let sessionTopic = topic.SessionTopics[0];
+    res[sessionTopic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(sessionTopic);
+  });
   return res;
 }
 
