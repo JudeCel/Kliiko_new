@@ -18,7 +18,11 @@ const cluster = require('cluster');
     switch (process.env.ROLE) {
       case "webServer":
         console.log("start web server");
-        require("../apps/webServer.js");
+        try {
+          require("../apps/webServer.js");
+        } catch (e) {
+          console.log(e);
+        }
         break;
       case "backgroundWorkerServer":
         console.log("background Worker Server");

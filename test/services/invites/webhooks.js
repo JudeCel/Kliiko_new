@@ -48,7 +48,7 @@ describe('SERVICE - Invite Webhook', function() {
   });
 
   describe('#processMailWebhook', () => {
-    describe.only('happy path', () => {
+    describe('happy path', () => {
       it('should succeed and update emailStatus to sent when delivered', (done) => {
         let params = {
           accountUserId: accountUser2.id,

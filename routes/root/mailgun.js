@@ -1,9 +1,6 @@
 'use strict';
-
-const models =  require('./../models');
 var inviteService = require('../../services/invite');
 
-const { Invite } = models;
 module.exports = {
   webhook: webhook
 };
