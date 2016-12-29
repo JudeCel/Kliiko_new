@@ -33,7 +33,7 @@
       totalChatSessions: 0,
       currentPage: 1,
       itemsPerPage: 10,
-      sessions: {}
+      sessions: []
     }
 
     changePage('index');
@@ -57,7 +57,7 @@
         var sliceEnd =  vm.pagination.currentPage * vm.pagination.itemsPerPage;
         vm.pagination.sessions = vm.sessions.slice(sliceStart, sliceEnd);
       } else {
-        vm.pagination.sessions = {};
+        vm.pagination.sessions = [];
       }
     }
 
