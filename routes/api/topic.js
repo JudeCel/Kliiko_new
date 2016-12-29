@@ -4,6 +4,7 @@ let q = require('q');
 let topicsService = require('./../../services/topics');
 var MessagesUtil = require('./../../util/messages');
 var topicConstants = require('./../../util/topicConstants');
+var sessionBuilderServices = require('./../../services/sessionBuilder');
 
 module.exports = {
   get: getAll,
@@ -23,9 +24,19 @@ function getAll(req, res, next) {
 
 function updateSessionTopic(req, res, next) {
   topicsService.updateSessionTopic(req.body).then(function(response) {
-    res.send(response)
+    if (response.sessionTopic) {
+      let accountId = res.locals.currentDomain.id;
+      let sessionId = response.sessionTopic.sessionId;
+      sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
+        res.send({data: response, snapshot: snapshotResult});
+      }, function (error) {
+        res.send({ error: error });
+      });
+    } else {
+      res.send(response);
+    }
   }, function(error) {
-    res.send({ error: error })
+    res.send({ error: error });
   });
 }
 

@@ -257,8 +257,10 @@
     }
 
     function updateParticipantsList(value) {
-      vm.session.sessionData.participantListId = value;
-      vm.session.updateStep({ participantListId: value }).then(function(res) {
+      vm.session.updateStep({ participantListId: value }, vm.session).then(function(res) {
+        if (!res.ignored) { 
+          vm.session.sessionData.participantListId = value;
+        }
       }, function (error) {
         messenger.error(error);
       });

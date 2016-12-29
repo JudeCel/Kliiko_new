@@ -8,6 +8,7 @@ var constants = require('../../util/constants');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var inviteService = require('./../../services/invite');
 var async = require('async');
 var _ = require('lodash');
 
@@ -50,7 +51,8 @@ describe('SERVICE - SessionBuilder', function() {
       name: 'untitled',
       startTime: (new Date()).toISOString(),
       endTime: getNextDate().toISOString(),
-      timeZone: 'Europe/Riga'
+      timeZone: 'Europe/Riga',
+      snapshot: data.sessionBuilder.snapshot
     };
   };
 
@@ -74,20 +76,25 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should initialize builder', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          assert.equal(result.sessionBuilder.currentStep, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.name, '');
-          assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
-          assert.equal(result.sessionBuilder.steps.step2.facilitator, null);
-          assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
-          assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
-          assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
-          assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
-          assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
-          assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
-          assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
-          assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
-          done();
+          try {
+            assert.equal(result.sessionBuilder.currentStep, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.name, '');
+            assert.equal(result.sessionBuilder.steps.step1.facilitator, null);
+            assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
+            assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
+            assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
+            assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
+            assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
+            assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
+            assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
+            assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
+            assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
+            assert.isObject(result.sessionBuilder.snapshot);
+            done();
+          } catch (e) {
+            done(e);
+          }
         }, function(error) {
           done(error);
         });
@@ -126,13 +133,9 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
-                  done();
-                }, function(error) {
-                  done(error);
-                });
-              }, function(error) {
                 done();
+              }, function(error) {
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -147,6 +150,26 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
+      it('should fail update without valid snapshot', function(done) {
+        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            params.snapshot = { test: true }
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              assert.isObject(result.validation);
+              assert.equal(result.validation.isValid, false);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
       it('should fail opening new session when other open session exists', function(done) {
         models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -157,10 +180,10 @@ describe('SERVICE - SessionBuilder', function() {
                 sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
                   done('Should not open second session!');
                 }, function(error) {
-                  done(error);
+                  done();
                 });
               }, function(error) {
-                done();
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -490,10 +513,9 @@ describe('SERVICE - SessionBuilder', function() {
           let params = sessionParams(result);
           let nextStepIndex = 2;
           params.name = 'My first session';
-
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-            mailFixture.createMailTemplate().then(function() {
-              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              inviteService.createFacilitatorInvite({sessionId: member.sessionId, accountUserId: member.accountUserId}).then(function() {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                     assert.equal(session.step, 'facilitatiorAndTopics');
@@ -507,10 +529,14 @@ describe('SERVICE - SessionBuilder', function() {
               }, function(error) {
                 done(error);
               });
-            })
+            }, function(error) {
+              done(error);
+            });
           }, function(error) {
             done(error);
           });
+        }, function(error) {
+          done(error);
         });
       });
     });
