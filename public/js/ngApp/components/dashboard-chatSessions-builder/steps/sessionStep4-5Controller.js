@@ -53,7 +53,8 @@
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
     vm.showSpinner = showSpinner;
-
+    vm.populateSessionMemberQueue = [];
+    vm.populateSessionMembersScheduled = false;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -130,6 +131,58 @@
       }, 10);
     }
 
+    function populateSessionMemberBulk() {
+      vm.populateSessionMembersScheduled = false;
+      if (vm.populateSessionMemberQueue.length > 0) {
+        builderServices.getSessionMembers(vm.session.id, vm.populateSessionMemberQueue).then(function(res) {
+          if (res.error) {
+            messenger.error(res.error);
+          } else {
+            for(var i=0; i<res.length; i++) {
+              var sessionMember = res[i];
+              removeFromPopulateSessionMemberQueue(sessionMember.accountUserId);
+              updateSessionMember(sessionMember);
+            }
+          }
+        });
+      }
+    }
+
+    function removeFromPopulateSessionMemberQueue(accountUserId) {
+      for (var i=0; i<vm.populateSessionMemberQueue.length; i++) {
+        if (vm.populateSessionMemberQueue[i] == accountUserId) {
+          vm.populateSessionMemberQueue.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    function updateSessionMember(sessionMember) {
+      var i = 0;
+      while (i < vm.stepMembers.length) {
+        var item = vm.stepMembers[i];
+        if (item.id == sessionMember.accountUserId) {
+          item.sessionMember = sessionMember;
+          break;
+        }
+        i++;
+      }
+
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      }
+    }
+
+    function populateSessionMember(accountUserId) {
+      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1) {
+        if (!vm.populateSessionMembersScheduled) {
+          vm.populateSessionMembersScheduled = true;
+          setTimeout(populateSessionMemberBulk, 2000);
+        }
+        vm.populateSessionMemberQueue.push(accountUserId);
+      }
+    }
+
     function updateInviteItem(resp) {
       var i = 0;
       while (i < vm.stepMembers.length) {
@@ -138,7 +191,7 @@
           item.invite = resp;
           break;
         }
-        i++
+        i++;
       }
 
       if(!$scope.$$phase) {
@@ -149,6 +202,7 @@
     function bindSocketEvents() {
       vm.SocketChannel.on("inviteUpdate", function(resp) {
         var i = 0;
+        var needUpdateItem  = null;
         while (i < vm.stepMembers.length) {
           var item = vm.stepMembers[i];
           if(item.id == resp.accountUserId) {
@@ -156,6 +210,7 @@
 
             if (item.invite.emailStatus == 'waiting' && resp.emailStatus == "sent") {
               item.invite.emailStatus = "sentDone"
+
               setTimeout(function() {
                 updateInviteItem(resp);
               }, 2000);
@@ -164,9 +219,18 @@
               item.invite = resp;
             }
             item.isSelected = false;
+
+            if (!item.sessionMember) {
+              needUpdateItem = item.id ;
+            }
+
             break;
           }
           i++
+        }
+
+        if (resp.status == "confirmed" && needUpdateItem) {
+          populateSessionMember(needUpdateItem);
         }
 
         if(!$scope.$$phase) {
@@ -433,14 +497,8 @@
       } else {
         var closeEmailSentStatus = "Not Sent";
         var status = returnMemberInviteStatus(member);
-        if (status == "confirmed" && member.SessionMembers) {
-          for (var i=0; i<member.SessionMembers.length; i++) {
-            var sessionMember = member.SessionMembers[i];
-            if (sessionMember.sessionId == vm.session.id && sessionMember.role == "participant") {
-              closeEmailSentStatus = sessionMember.closeEmailSent ? "Sent" : "Not Sent";
-              break;
-            }
-          }
+        if (status == "confirmed" && member.sessionMember) {
+          closeEmailSentStatus = member.sessionMember.closeEmailSent ? "Sent" : "Not Sent";
         }
         member.closeEmailSentStatus = closeEmailSentStatus;
         return closeEmailSentStatus;
