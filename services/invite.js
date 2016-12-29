@@ -773,7 +773,13 @@ function populateMailParamsWithColors(params, session){
   let deferred = q.defer();
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    params[key] = value;
+    if (typeof(value) == "object") {
+      _.each(value, function (objValue, objKey) {
+        params[objKey] = objValue;
+      });
+    } else {
+      params[key] = value;
+    }
   });
 
   if (session) {
