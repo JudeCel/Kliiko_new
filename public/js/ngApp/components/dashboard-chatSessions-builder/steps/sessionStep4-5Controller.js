@@ -133,23 +133,28 @@
 
     function populateSessionMemberBulk() {
       vm.populateSessionMembersScheduled = false;
-      var sessionId = vm.session.id;
-      builderServices.getSessionMembers(sessionId, vm.populateSessionMemberQueue).then(function(res) {
-        if (res.error) {
-          messenger.error(res.error);
-        } else {
-          for(var i=0; i<res.length; i++) {
-            var sessionMember = res[i];
-            updateSessionMember(sessionMember);
-            for (var j=0; j<vm.populateSessionMemberQueue.length; j++) {
-              if (vm.populateSessionMemberQueue[j] == sessionMember.accountUserId) {
-                vm.populateSessionMemberQueue.splice(j, 1);
-                break;
-              }
+      if (vm.populateSessionMemberQueue.length > 0) {
+        builderServices.getSessionMembers(vm.session.id, vm.populateSessionMemberQueue).then(function(res) {
+          if (res.error) {
+            messenger.error(res.error);
+          } else {
+            for(var i=0; i<res.length; i++) {
+              var sessionMember = res[i];
+              removeFromPopulateSessionMemberQueue(sessionMember.accountUserId);
+              updateSessionMember(sessionMember);
             }
           }
+        });
+      }
+    }
+
+    function removeFromPopulateSessionMemberQueue(accountUserId) {
+      for (var i=0; j<vm.populateSessionMemberQueue.length; i++) {
+        if (vm.populateSessionMemberQueue[i] == accountUserId) {
+          vm.populateSessionMemberQueue.splice(i, 1);
+          break;
         }
-      });
+      }
     }
 
     function updateSessionMember(sessionMember) {
@@ -169,11 +174,13 @@
     }
 
     function populateSessionMember(accountUserId) {
-      if (!vm.populateSessionMembersScheduled) {
-        vm.populateSessionMembersScheduled = true;
-        setTimeout(populateSessionMemberBulk, 2000);
+      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1) {
+        if (!vm.populateSessionMembersScheduled) {
+          vm.populateSessionMembersScheduled = true;
+          setTimeout(populateSessionMemberBulk, 2000);
+        }
+        vm.populateSessionMemberQueue.push(accountUserId);
       }
-      vm.populateSessionMemberQueue.push(accountUserId);
     }
 
     function updateInviteItem(resp) {
