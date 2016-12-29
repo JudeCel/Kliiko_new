@@ -112,11 +112,7 @@
 
     function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
       if (isChangedAndNotSaved(isResetingOrSaving)) {
-        $confirm({
-          text: 'If you want to save the changes you have made to your email, you need to Apply it to this Session, or Save As',
-          title: '',
-        });
-
+        domServices.modal('unsavedTemplateMsg');
         return;
       }
 
