@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state', '$confirm'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state, $confirm) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
@@ -229,6 +229,14 @@
       domServices.modal('previewModal', 'close');
     }
 
+    function showError(error) {
+      if (error.dialog) {
+        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
+      } else {
+        messenger.error(error);
+      }
+    }
+
     function changePage(page, scheme, type) {
       vm.formSubmitted = false;
 
@@ -244,7 +252,7 @@
       else {
         brandColourServices.canCreateCustomColors().then(function(res) {
           if(res.error) {
-            messenger.error(res.error);
+            showError(res.error);
           }else{
             if(page == 'edit') {
               vm.originalScheme = {};

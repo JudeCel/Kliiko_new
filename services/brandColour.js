@@ -103,7 +103,7 @@ function canCreateCustomColors(accountId) {
   validators.planAllowsToDoIt(accountId, 'brandLogoAndCustomColors').then(function() {
     deferred.resolve();
   }, function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;

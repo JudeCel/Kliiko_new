@@ -218,7 +218,9 @@ module.exports = {
       error: {
         inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
         noSubscription: "You don't have a subscription. Please purchase a plan.",
-        account: 'Account not found'
+        account: 'Account not found',
+        brandLogoAndCustomColors: 'but XXX does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
+        uploadToGallery: 'but XXX does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.'
       },
       planDoesntAllowToDoThis: 'Please update your subscription plan to one that includes this feature.',
       notFound: 'No subscription found',
@@ -227,9 +229,7 @@ module.exports = {
       countLimit: 'You have reached limit for XXXs (max: YYY)',
       recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter on the ',
       recruiterCountLimitCore: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
-      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiters OR a combination on the Senior Plan.',
-      brandLogoAndColorSchemeLimit: 'but XXX does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
-      uploadToGalleryLimit: 'but XXX does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.'
+      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiters OR a combination on the Senior Plan.'
     }
   },
   models: {

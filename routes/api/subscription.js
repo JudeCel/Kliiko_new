@@ -2,13 +2,16 @@
 
 var _ = require('lodash');
 var subscription = require('./../../services/subscription');
+var subscriptionValidator = require('./../../services/validators/subscription');
 var subdomains = require('../../lib/subdomains');
+var filters = require('./../../models/filters');
 
 module.exports = {
   getPlans: getPlans,
   updatePlan: updatePlan,
   retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
-  postQuote: postQuote
+  postQuote: postQuote,
+  planAllowsToDoIt: planAllowsToDoIt
 };
 
 function postQuote(req, res, next) {
@@ -17,6 +20,15 @@ function postQuote(req, res, next) {
   }, function(error) {
     res.send({ error: error });
   })
+}
+
+function planAllowsToDoIt(req, res, next) {
+  let accountId = res.locals.currentDomain.id;
+  subscriptionValidator.planAllowsToDoIt(accountId, req.query.permissions).then(function(result) {
+    res.send();
+  }, function(err) {
+    res.send({ error: filters.errors(err) });
+  });
 }
 
 function getPlans(req, res, next) {

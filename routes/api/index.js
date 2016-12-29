@@ -105,6 +105,7 @@ router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, s
 
 // Subscription
 router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
+router.get('/subscriptionPlan/checkPermissions', PERMISSIONS.managerAdmin, subscription.planAllowsToDoIt);
 router.put('/subscriptionPlan/updatePlan', PERMISSIONS.managerAdmin, subscription.updatePlan);
 router.put('/subscriptionPlan/UpdateViaCheckout', PERMISSIONS.managerAdmin, subscription.retrievCheckoutAndUpdateSub)
 router.post('/subscriptionPlan/postQuote', PERMISSIONS.managerAdmin, subscription.postQuote)

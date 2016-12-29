@@ -22,21 +22,24 @@ const DEPENDENCIES = {
           id: { $ne: sessionId || null }
         }
       };
-    }
+    },
+    countMessage: countMessage
   },
   contactList: {
     key: 'contactListCount',
     model: models.ContactList,
     params: function(accountId) {
       return { where: { accountId: accountId, editable: true } };
-    }
+    },
+    countMessage: countMessage
   },
   survey: {
     key: 'surveyCount',
     model: models.Survey,
     params: function(accountId) {
       return { where: { accountId: accountId, closed: false, confirmedAt: {$ne: null} } };
-    }
+    },
+    countMessage: countRecruiterMessage
   },
   topic: {
     key: 'topicCount',
@@ -44,7 +47,8 @@ const DEPENDENCIES = {
     params: function(accountId) {
       return { where: { accountId: accountId, default: false } };
     }
-  }
+  },
+  countMessage: countMessage
 };
 
 module.exports = {
@@ -53,27 +57,8 @@ module.exports = {
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers,
   countMessage: countMessage,
-  countRecruiterMessage: countRecruiterMessage,
-  canChangeColorScheme: canChangeColorScheme
+  countRecruiterMessage: countRecruiterMessage
 };
-
-function canChangeColorScheme(subscription) {
-  if (subscription) {
-    if (subscription.dataValues.SubscriptionPreference.brandLogoAndCustomColors) {
-      return { canChange: true };
-    } else {
-      let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
-      let error = new Error();
-      error.name = 'dialog';
-      error.message =  MessagesUtil.validators.subscription.brandLogoAndColorSchemeLimit.replace('XXX', planName);
-
-      return { error: error };
-    }
-  } else {
-    return { canChange: true };
-  }
-}
-
 
 function validate(accountId, type, count, params) {
   let deferred = q.defer();
@@ -91,12 +76,7 @@ function validate(accountId, type, count, params) {
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve(subscription);
           } else {
-            //TODO - ALEX
-            if (type == "survey") {
-              deferred.reject(countRecruiterMessage(subscription, maxCount));
-            } else {
-              deferred.reject(countMessage(type, maxCount));
-            }
+              deferred.reject(dependency.countMessage(type, maxCount, subscription));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -114,16 +94,40 @@ function validate(accountId, type, count, params) {
   return deferred.promise;
 }
 
-function planAllowsToDoIt(accountId, key) {
+function prepareErrorMessage(keyError, subscription) {
+  let error = MessagesUtil.validators.subscription.error[keyError];
+  if (error) {
+    let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
+    let newError = {
+      name: "dialog",
+      message: error.replace('XXX', planName)
+    }
+    return newError;
+  } else {
+    return MessagesUtil.validators.subscription.planDoesntAllowToDoThis;
+  }
+}
+
+function planAllowsToDoIt(accountId, keys) {
   let deferred = q.defer();
+  if (Array.isArray(keys) == false) {
+    keys = [keys];
+  }
 
   validQuery(accountId).then(function(subscription) {
     if(subscription) {
-      if(subscription.SubscriptionPreference.data[key]) {
+      let keyError;
+      _.map(keys, (key)=> {
+        if(!subscription.SubscriptionPreference.data[key]) {
+          keyError = key;
+          return false;
+        }
+      });
+
+      if (keyError) {
+        deferred.reject(prepareErrorMessage(keyError, subscription));
+      } else {
         deferred.resolve();
-      }
-      else {
-        deferred.reject(MessagesUtil.validators.subscription.planDoesntAllowToDoThis);
       }
     }
     else {
@@ -212,7 +216,7 @@ function countMessage(type, maxCount) {
   return message;
 }
 
-function countRecruiterMessage(subscription, maxCount) {
+function countRecruiterMessage(type, maxCount, subscription) {
   let subscriptionType = 'free_trial';
   if (subscription) {
     subscriptionType = subscription.dataValues.planId;

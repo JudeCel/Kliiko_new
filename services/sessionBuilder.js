@@ -198,6 +198,24 @@ function setTimeZone(params) {
   }
 }
 
+function mapUpdateParametersToPermissions(params) {
+  let permissionsToCheck = [];
+  let permissionsMap = {
+    'brandProjectPreferenceId': 'brandLogoAndCustomColors'
+  }
+
+  if (params) {
+    _.map(_.keys(params), (parameter) => {
+      let permission = permissionsMap[parameter];
+      if (permission) {
+        permissionsToCheck.push(permission);
+      }
+    });
+  }
+  return permissionsToCheck;
+}
+
+
 function update(sessionId, accountId, params) {
   let deferred = q.defer();
   let updatedSession;
@@ -205,21 +223,14 @@ function update(sessionId, accountId, params) {
 
   findSession(sessionId, accountId).then(function(originalSession) {
     validators.hasValidSubscription(accountId).then(function() {
+      let permissions = mapUpdateParametersToPermissions(params);
+      return validators.planAllowsToDoIt(accountId, permissions);
+    }).then(function() {
       let count = 0;
       if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
         count = 1;
       }
       return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
-    }).then(function(result) {
-
-
-      if (params["brandProjectPreferenceId"]) {
-        let canChangeResult = subscriptionValidator.canChangeColorScheme(result);
-        if (canChangeResult.error) {
-          throw canChangeResult.error;
-        }
-      }
-      return result;
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
         params["step"] = 'manageSessionParticipants';
