@@ -23,6 +23,7 @@
     vm.setType = setType;
     vm.openModalCreate = openModalCreate;
     vm.createSchemeSelected = createSchemeSelected;
+    vm.resetToDefaultScheme = resetToDefaultScheme;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -185,6 +186,18 @@
         else {
           changePage('index');
           messenger.ok(res.message);
+        }
+      });
+    };
+
+    function resetToDefaultScheme() {
+      brandColourServices.resetScheme(vm.scheme).then(function(res) {
+        dbg.log2('#BrandColourController > resetScheme > res ', res);
+        if(res.error) {
+          messenger.error(res.error);
+        } else {
+          angular.copy(res.data, vm.scheme);
+          vm.previewScheme = vm.scheme;
         }
       });
     };

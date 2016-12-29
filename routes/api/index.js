@@ -139,6 +139,7 @@ router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteByI
 router.get('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.get);
 router.delete('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.remove);
 router.post('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.create);
+router.put('/brandColour/default', PERMISSIONS.facilitatorManagerAdmin, brandColour.reset);
 router.put('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.update);
 router.post('/brandColour/copy', PERMISSIONS.facilitatorManagerAdmin, brandColour.copy);
 router.get('/brandColour/canCreateCustomColors', PERMISSIONS.facilitatorManagerAdmin, brandColour.canCreateCustomColors);

@@ -109,6 +109,11 @@ function canCreateCustomColors(accountId) {
   return deferred.promise;
 }
 
+function resetToDefaultScheme(params, accountId) {
+  params.colours = brandProjectConstants.preferenceColours;
+  return updateScheme(params, accountId);
+}
+
 function updateScheme(params, accountId) {
   let deferred = q.defer();
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
@@ -177,21 +182,11 @@ function manageFields() {
   let object = { chatRoom: [], email: [] };
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    if (key == "email") {
-      _.each(value, function (emailValue, emailKey) {
-        object.email.push({
-          title: _.startCase(emailKey),
-          model: emailKey,
-          colour: emailValue
-        });
-      });
-    } else {
-      object.chatRoom.push({
-        title: _.startCase(key),
-        model: key,
-        colour: value
-      });
-    }
+    object.chatRoom.push({
+      title: _.startCase(key),
+      model: key,
+      colour: value
+    });
   });
 
   return object;
@@ -248,6 +243,7 @@ module.exports = {
   findAllSchemes: findAllSchemes,
   createScheme: createScheme,
   createDefaultForAccount: createDefaultForAccount,
+  resetToDefaultScheme: resetToDefaultScheme,
   updateScheme: updateScheme,
   removeScheme: removeScheme,
   copyScheme: copyScheme,
