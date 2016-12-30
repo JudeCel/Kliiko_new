@@ -220,20 +220,6 @@ function mapUpdateParametersToPermissions(params) {
 
 
 function update(sessionId, accountId, params) {
-<<<<<<< HEAD
-  let deferred = q.defer();
-  let updatedSession;
-  setTimeZone(params);
-
-  findSession(sessionId, accountId).then(function(originalSession) {
-    validators.hasValidSubscription(accountId).then(function() {
-      let permissions = mapUpdateParametersToPermissions(params);
-      return validators.planAllowsToDoIt(accountId, permissions);
-    }).then(function() {
-      let count = 0;
-      if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
-        count = 1;
-=======
   setTimeZone(params);
   let snapshot = params.snapshot;
   delete params.snapshot;
@@ -249,7 +235,6 @@ function update(sessionId, accountId, params) {
         });
       } else {
         resolve({ validation: validationRes });
->>>>>>> master
       }
     }, function(error) {
       reject(filters.errors(error));
@@ -263,9 +248,12 @@ function isSessionChangedToActive(params) {
 
 function doUpdate(originalSession, params) {
   return new bluebird(function (resolve, reject) {
-  
+
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
+      let permissions = mapUpdateParametersToPermissions(params);
+      return validators.planAllowsToDoIt(originalSession.accountId, permissions);
+    }).then(function() {
       let count = isSessionChangedToActive(params) ? 1 : 0;
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
@@ -803,7 +791,7 @@ function sessionBuilderObjectSnapshotForStep2(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
-  return { 
+  return {
     incentive_details: stringHelpers.hash(stepData.incentive_details)
   };
 }

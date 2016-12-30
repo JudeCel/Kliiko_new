@@ -329,7 +329,6 @@
       return (vm.currentStep == step);
     }
 
-<<<<<<< HEAD
     function showError(error) {
       if (error.dialog) {
         $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
