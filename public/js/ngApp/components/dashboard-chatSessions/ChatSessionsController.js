@@ -19,6 +19,7 @@
     vm.hasAccess = hasAccess;
     vm.redirectToChatSession = redirectToChatSession;
     vm.changeOrder = changeOrder;
+    vm.prepareCurrentPageSessions = prepareCurrentPageSessions;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
@@ -27,6 +28,13 @@
     vm.inAction = false;
     vm.reverseSort = false;
     vm.queriedForSessions = false;
+
+    vm.pagination = {
+      totalChatSessions: 0,
+      currentPage: 1,
+      itemsPerPage: 10,
+      sessions: []
+    }
 
     changePage('index');
 
@@ -37,8 +45,20 @@
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
+        vm.pagination.totalChatSessions = res.data.length;
+        prepareCurrentPageSessions();
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
+    }
+
+    function prepareCurrentPageSessions() {
+      if (vm.sessions && vm.sessions.length > 0) {
+        var sliceStart = (vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage;
+        var sliceEnd =  vm.pagination.currentPage * vm.pagination.itemsPerPage;
+        vm.pagination.sessions = vm.sessions.slice(sliceStart, sliceEnd);
+      } else {
+        vm.pagination.sessions = [];
+      }
     }
 
     function changeOrder(type) {

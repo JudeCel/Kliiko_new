@@ -26,7 +26,11 @@ users.sendReactivateOrDeactivate = function(params, callback){
           to: params.email,
           subject: reactivatedorDeactivated,
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -59,7 +63,11 @@ users.sendResetPasswordToken = function(params, callback) {
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Reset password',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -92,7 +100,11 @@ users.sendEmailConfirmationToken = function(params, callback) {
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Verify Email Address',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -121,7 +133,11 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Email Confirmation Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -144,7 +160,11 @@ users.sendPasswordChangedSuccess = function(params, callback) {
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -175,7 +195,11 @@ users.sendResetPasswordSuccess = function(params, callback) {
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db

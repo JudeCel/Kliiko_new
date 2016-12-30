@@ -6,7 +6,7 @@
       </div>
       <div>
         <div class="pull-left">
-          <button id="brand-colour-back-to-default" class='btn btn-standart btn-margin btn-green btn-large margin-left-15'>Back to Default Scheme</button>
+          <button id="brand-colour-back-to-default" class='btn btn-standart btn-margin btn-green btn-large margin-left-15' ng-click='bcc.resetToDefaultScheme()'>Reset to Default Scheme</button>
         </div>
         <div class="pull-right">
           <button id="brand-colour-undo" class='btn btn-standart btn-margin btn-green btn-small' ng-click='bcc.undoCurrentScheme()' ng-if='bcc.originalScheme'>Undo</button>

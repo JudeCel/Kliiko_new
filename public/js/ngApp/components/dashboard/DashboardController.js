@@ -75,7 +75,7 @@
           vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
           vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
           vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
-          setInitialTab();
+          setInitialTabIfAccountHasOneRoleOnly();
         }
       });
     }
@@ -102,17 +102,11 @@
       return isTabActive(tab) ? 'active' : '';
     }
 
-    function setInitialTab() {
-      var array = ['accountManager', 'facilitator', 'participant', 'observer'];
+    function setInitialTabIfAccountHasOneRoleOnly() {
+      var roles = Object.keys(vm.accountUsers);
 
-      if(vm.accountUsers) {
-        for(var i in array) {
-          var role = array[i];
-          if(vm.accountUsers[role]) {
-            vm.currentTab = role;
-            break;
-          }
-        }
+      if (roles.length == 1) {
+        vm.currentTab = roles[0];
       }
     }
   }

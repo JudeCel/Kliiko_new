@@ -9,17 +9,19 @@ var AccountUser = models.AccountUser;
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
 var mailTemplateService = require('./mailTemplate');
-var twilioLib = require('./../lib/twilio');
+var smsService = require('./sms');
 var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
+var stringHelpers = require('./../util/stringHelpers');
 var sessionValidator = require('./validators/session');
 var subscriptionValidator = require('./validators/subscription');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
 var whiteboardService = require('./whiteboard');
+var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 
 var async = require('async');
 var _ = require('lodash');
@@ -48,7 +50,9 @@ module.exports = {
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  sessionMailTemplateExists: sessionMailTemplateExists
+  sessionMailTemplateExists: sessionMailTemplateExists,
+  searchSessionMembers: searchSessionMembers,
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
 };
 
 function addDefaultObservers(session) {
@@ -139,7 +143,7 @@ function initializeBuilder(params) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'session', 1).then(function() {
+    validators.subscription(params.accountId, 'session', 0).then(function() {
 
       params.step = 'setUp';
       params.startTime = params.date;
@@ -175,10 +179,9 @@ function findSession(id, accountId) {
       accountId: accountId
     }
   }).then(function(session) {
-    if(session) {
+    if (session) {
       deferred.resolve(session);
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.sessionBuilder.notFound);
     }
   }).catch(function(error) {
@@ -217,6 +220,7 @@ function mapUpdateParametersToPermissions(params) {
 
 
 function update(sessionId, accountId, params) {
+<<<<<<< HEAD
   let deferred = q.defer();
   let updatedSession;
   setTimeZone(params);
@@ -229,8 +233,41 @@ function update(sessionId, accountId, params) {
       let count = 0;
       if (params["status"] && params["status"] != originalSession.status && params["status"] == "open") {
         count = 1;
+=======
+  setTimeZone(params);
+  let snapshot = params.snapshot;
+  delete params.snapshot;
+
+  return new bluebird(function (resolve, reject) {
+    findSession(sessionId, accountId).then(function(originalSession) {
+      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (validationRes.isValid) {
+        doUpdate(originalSession, params).then(function(res) {
+          resolve(res);
+        }, function(error) {
+          reject(error);
+        });
+      } else {
+        resolve({ validation: validationRes });
+>>>>>>> master
       }
-      return validators.subscription(accountId, 'session', count, { sessionId: sessionId });
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function isSessionChangedToActive(params) {
+  return params["status"] && params["status"] == "open" || params["endTime"] && (new Date(params["endTime"]) > new Date());
+}
+
+function doUpdate(originalSession, params) {
+  return new bluebird(function (resolve, reject) {
+  
+    let updatedSession;
+    validators.hasValidSubscription(originalSession.accountId).then(function() {
+      let count = isSessionChangedToActive(params) ? 1 : 0;
+      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
         params["step"] = 'manageSessionParticipants';
@@ -245,26 +282,23 @@ function update(sessionId, accountId, params) {
     }).then(function(sessionObject) {
       if (sessionObject.status == 'closed') {
         sendCloseEmailToAllObservers(updatedSession).then(function() {
-          deferred.resolve(sessionObject);
+          resolve(sessionObject);
         }, function(error) {
-          deferred.reject(error);
+          reject(error);
         });
       } else {
         validateMultipleSteps(updatedSession, sessionObject.sessionBuilder.steps).then(function(steps) {
           sessionObject.sessionBuilder.steps = steps;
-          deferred.resolve(sessionObject);
+          resolve(sessionObject);
         }, function(error) {
-          deferred.reject(error);
+          reject(error);
         });
       }
     }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+      reject(filters.errors(error));
     });
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
 
-  return deferred.promise;
+  });
 }
 
 function sendCloseEmailToAllObservers(session) {
@@ -491,11 +525,9 @@ function destroy(id, accountId) {
   return deferred.promise;
 }
 
-function sendSms(data, provider) {
+function sendSms(accountId, data, provider) {
   let deferred = q.defer();
-  let numbers = _.map(data.recievers, 'mobile');
-
-  twilioLib.sendSms(numbers, data.message, provider).then(function(result) {
+  smsService.send(accountId, data, provider).then((result) => {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
@@ -740,6 +772,80 @@ function findNewStep(step, previous) {
   }
 }
 
+function sessionBuilderObjectSnapshotForStep1(stepData) {
+  let params = {
+    startTime: stepData.startTime,
+    endTime: stepData.endTime,
+    timeZone: stepData.timeZone
+  }
+  setTimeZone(params);
+  let sessionData = {
+    startTime: new Date(params.startTime),
+    endTime: new Date(params.endTime),
+    timeZone: params.timeZone,
+    name: stepData.name,
+    type: stepData.type,
+    resourceId: stepData.resourceId,
+    anonymous: stepData.anonymous,
+    brandProjectPreferenceId: stepData.brandProjectPreferenceId,
+    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null
+  }
+  return sessionBuilderSnapshotValidation.getSessionSnapshot(sessionData);
+}
+
+function sessionBuilderObjectSnapshotForStep2(stepData) {
+  let res = { };
+  _.each(stepData.topics, (topic) => {
+    let sessionTopic = topic.SessionTopics[0];
+    res[sessionTopic.topicId] = sessionBuilderSnapshotValidation.getTopicSnapshot(sessionTopic);
+  });
+  return res;
+}
+
+function sessionBuilderObjectSnapshotForStep3(stepData) {
+  return { 
+    incentive_details: stringHelpers.hash(stepData.incentive_details)
+  };
+}
+
+function sessionBuilderObjectSnapshotForStep4(stepData) {
+  return {
+    participantListId: stringHelpers.hash(stepData.participantListId)
+  };
+}
+
+function sessionBuilderObjectSnapshot(steps, stepName) {
+  switch (stepName) {
+    case "setUp":
+      return sessionBuilderObjectSnapshotForStep1(steps.step1);
+    case "facilitatiorAndTopics":
+      return sessionBuilderObjectSnapshotForStep2(steps.step2);
+    case "manageSessionEmails":
+      return sessionBuilderObjectSnapshotForStep3(steps.step3);
+    case "manageSessionParticipants":
+      return sessionBuilderObjectSnapshotForStep4(steps.step4);
+    case "inviteSessionObservers":
+      return { };
+    default:
+      throw MessagesUtil.sessionBuilder.errors.invalidStep;
+  }
+}
+
+function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
+  return new bluebird(function (resolve, reject) {
+    findSession(sessionId, accountId).then(function(session) {
+      stepsDefinition(session).then(function(result) {
+        let snapshot = sessionBuilderObjectSnapshot(result, stepName);
+        resolve(snapshot);
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
 function sessionBuilderObject(session, steps) {
   let deferred = q.defer();
   stepsDefinition(session, steps).then(function(result) {
@@ -749,7 +855,8 @@ function sessionBuilderObject(session, steps) {
       status: session.status,
       id: session.id,
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
-      endTime: changeTimzone(session.endTime, session.timeZone, "UTC")
+      endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
+      snapshot: sessionBuilderObjectSnapshot(result, session.step)
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
@@ -776,7 +883,7 @@ function stepsDefinition(session, steps) {
     timeZone: session.timeZone,
     resourceId: session.resourceId,
     anonymous: session.anonymous,
-    brandProjectPreferenceId:  session.brandProjectPreferenceId,
+    brandProjectPreferenceId: session.brandProjectPreferenceId,
     error: getStepError(steps, "step1")
   };
 
@@ -812,6 +919,7 @@ function stepsDefinition(session, steps) {
         else {
           object.step4 = {
             stepName: 'manageSessionParticipants',
+            participantListId: session.participantListId,
             participants: members,
             error: getStepError(steps, "step4")
           };

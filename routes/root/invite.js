@@ -15,11 +15,11 @@ function index(req, res, next) {
   inviteService.findInvite(req.params.token).then((invite) => {
     inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
       if (user) {
-        res.render(views_path('index'), simpleParams('Invite', invite, {}));
+        renderLogin(res, user);
       } else {
         res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
       }
-    })
+    });
   }, (error) => {
     res.redirect('/login');
   });
@@ -52,6 +52,17 @@ function accept(req, res, next) {
   });
 };
 
+function renderLogin(res, user) {
+  res.render('login', {
+    title: 'Login',
+    error: '',
+    message: '',
+    email: user ? user.email : '',
+    googleUrl: '/auth/google',
+    facebookUrl: '/auth/facebook'
+  });
+}
+
 function loginUser(req, res, next, user) {
   if(req.body.social) {
     req.login(user, function(err) {
@@ -69,7 +80,9 @@ function simpleParams(title, invite, errors, message) {
     invite: invite || {},
     errors: processedErrosMessage(errors || {}),
     message: message || '',
-    applicationName: process.env.MAIL_FROM_NAME
+    applicationName: process.env.MAIL_FROM_NAME,
+    googleUrl: '/invite/auth/google/' + invite.token,
+    facebookUrl: '/invite/auth/facebook/' + invite.token,
   };
 };
 function processedErrosMessage(errors) {
@@ -85,7 +98,9 @@ function processedErrosMessage(errors) {
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
     if (invite.AccountUser.UserId) {
-      res.render(views_path('index'), simpleParams('Invite', invite, {}));
+      inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+        renderLogin(res, user);
+      });
     } else {
       res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }

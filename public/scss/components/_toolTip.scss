@@ -1,0 +1,38 @@
+.tooltip-button {
+  padding-top: 2px;
+  padding-left: 1px;
+  background-color: #cc0000;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  font-weight: bold;
+  float: right;
+  margin: 0 15px;
+
+  &.active,
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.tooltip-inner-container {
+  padding: 15px;
+  width: 300px;
+  height: 100px;
+  text-align: justify;
+  background-color: #e7e7e7;
+  border: 2px solid #c80000;
+  color: #292929;
+}
+
+.tooltip-arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #c80000;
+  position: relative;
+  left: 140px;
+}

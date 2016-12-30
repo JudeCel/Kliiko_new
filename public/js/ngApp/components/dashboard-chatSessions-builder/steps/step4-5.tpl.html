@@ -56,13 +56,14 @@
             <td>{{ member.email }}</td>
             <td>{{ member.mobile }}</td>
             <td class="invite-status-{{member.inviteStatus}} col-xs-2" ng-if="!sbc.canSendCloseEmail()">
-              <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
+              <div ng-if='!lastStepsController.mouseOveringMember[$index]' class="pull-left">
                 <div ng-if='lastStepsController.showSpinner(member)' style="display: inline;">
                   <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
                 </div>
 
                 {{ lastStepsController.getMembersStatusTranscription(member) }}
               </div>
+              <klzii-tooltip tooltip-text="{{lastStepsController.emailSentFailedTooltip}}" ng-if="member.inviteStatus == 'failed'"></klzii-tooltip>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
                 <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
                 <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
@@ -71,11 +72,15 @@
             </td>
             <td ng-if="sbc.canCommentAndRate()">
               <img src='/icons/add_new_list_blue.png' alt='' ng-click='lastStepsController.openCommentModalWindow(member)'/>
-              {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
+              <span ng-if="member.sessionMember">
+                {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
+              </span>
             </td>
             <td ng-if="sbc.canCommentAndRate()" class="tableRate">
-              <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
-              </uib-rating>
+              <span ng-if="member.sessionMember">
+                <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
+                </uib-rating>
+              </span>
             </td>
             <td class='col-xs-2' ng-if="sbc.canSendCloseEmail()">
               {{ lastStepsController.getMembersCloseEmailSentTranscription(member) }}

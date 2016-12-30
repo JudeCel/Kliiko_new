@@ -45,7 +45,8 @@ function creditCount(accountId) {
   let deferred = q.defer();
 
   Subscription.find({ where: { accountId: accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
-    deferred.resolve(subscription.SubscriptionPreference.data.paidSmsCount);
+    let smsCount = subscription.SubscriptionPreference.data.planSmsCount + subscription.SubscriptionPreference.data.paidSmsCount
+    deferred.resolve(smsCount);
   }).catch(function(error) {
     deferred.reject(error);
   });;
@@ -123,9 +124,9 @@ function addSmsCreditsToAccountSubscription(params, addonInvoice) {
     where: { subscriptionId: params.id }
   }).then(function(result) {
     result.data.paidSmsCount = smsCount;
-    return result.update({ data:  result.data}, { returning: true });
+    return result.update({ data: result.data}, { returning: true });
   }).then(function(result) {
-    deferred.resolve(smsCount);
+    deferred.resolve((result.data.planSmsCount + result.data.paidSmsCount));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   })

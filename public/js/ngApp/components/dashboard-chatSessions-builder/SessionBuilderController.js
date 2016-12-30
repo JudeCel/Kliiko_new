@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm', 'socket', 'infoMessenger'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm, socket, infoMessenger) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -32,6 +32,8 @@
       initStep().then(function (step) {
         vm.currentStep = step;
       });
+
+      subscribeCannel();
     }, function (error) {
       window.history.back();
       messenger.error(error);
@@ -67,6 +69,86 @@
     vm.showOkMark = showOkMark;
 
     var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
+
+    var currentState = { };
+    vm.onlineUsers = [];
+    vm.lastOnlineUsersDumpForMessage = [];
+
+    function subscribeCannel() {
+      socket.sessionsBuilderChannel(vm.session.id, function(channel) {
+
+        function syncState(state) {
+          if (state) {
+            currentState = Phoenix.Presence.syncState(currentState, state, onJoin(state), onLeave(state));
+          }
+        }
+
+        function syncDiff(diff) {
+          if (diff) {
+            currentState = Phoenix.Presence.syncDiff(currentState, diff, onJoin(diff), onLeave(diff));
+          }
+        }
+
+        function onJoin(state) {
+          return function(id, current, newPres) {
+            if (!current) {
+             vm.onlineUsers.push(newPres.accountUser);
+             whenNewUserInSessionBuilder();
+            }
+          }
+        }
+
+        function onLeave(state) {
+          return function(id, current, leftPres) {
+            //if current.metas exists than user has other instances opened
+            //https://hexdocs.pm/phoenix/Phoenix.Presence.html
+            if (current.metas.length == 0) {
+              for (var i=0; i<vm.onlineUsers.length; i++) {
+                if (vm.onlineUsers[i].id == current.accountUser.id) {
+                  vm.onlineUsers.splice(i, 1);
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        channel.on("presence_state", function(state) {
+          syncState(state);
+        });
+
+        channel.on("presence_diff", function(diff) {
+          syncDiff(diff);
+        });
+
+      });
+    }
+
+    function isSameOnlineUsersDumpForMessage(newDump) {
+      return newDump.length == vm.lastOnlineUsersDumpForMessage.length && newDump.every(function(element, index) {
+        return element == vm.lastOnlineUsersDumpForMessage[index];
+      });
+    }
+
+    function whenNewUserInSessionBuilder() {
+      if (vm.onlineUsers.length > 1) {
+        var message = "";
+        var onlineUsersDump = [];
+        for (var i=0; i<vm.onlineUsers.length; i++) {
+          if (message != "") {
+            message += ", ";
+          }
+          message += vm.onlineUsers[i].firstName + " " + vm.onlineUsers[i].lastName;
+          onlineUsersDump.push(vm.onlineUsers[i].id);
+        }
+        onlineUsersDump.sort();
+        if (!isSameOnlineUsersDumpForMessage(onlineUsersDump)) {
+          vm.lastOnlineUsersDumpForMessage = onlineUsersDump;
+          message += " are currently editing this Session";
+          infoMessenger.message(message);
+        }
+      }
+    }
 
     function closeSession() {
       if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
@@ -247,6 +329,7 @@
       return (vm.currentStep == step);
     }
 
+<<<<<<< HEAD
     function showError(error) {
       if (error.dialog) {
         $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
@@ -256,7 +339,7 @@
     }
 
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj).then(null, function (err) {
+        vm.session.updateStep(dataObj, vm.session).then(null, function (err) {
           showError(err);
         }
       );
@@ -325,6 +408,11 @@
       })
     }
 
+    function addParticipantsFromList(list) {
+      vm.participants = vm.participants.concat(mapToAccountUser(list));
+      vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+    }
+
     function finishSelectingMembers(activeList) {
       if (!activeList) {
         vm.searchingParticipants = false;
@@ -335,26 +423,25 @@
       var list = builderServices.selectMembers(activeList.id, activeList.members);
 
       if (vm.searchingParticipants) {
-        if(list.length > 0) {
-          if(!vm.session.sessionData.participantListId) {
-            vm.session.sessionData.participantListId = activeList.id;
-            vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
+        if (list.length > 0) {
+          if (!vm.session.sessionData.participantListId) {
+            vm.session.updateStep({ participantListId: activeList.id }, vm.session).then(function(res) {
+              if (!res.ignored) {
+                vm.session.sessionData.participantListId = activeList.id;
+                addParticipantsFromList(list);
+              }
             }, function (error) {
               messenger.error(error);
             });
+          } else {
+            if (vm.session.sessionData.participantListId == activeList.id) {
+              addParticipantsFromList(list);
+            } else {
+              messenger.error(messagesUtil.sessionBuilder.cantSelect);
+            }
           }
-
-          if(vm.session.sessionData.participantListId == activeList.id) {
-            vm.participants = vm.participants.concat(mapToAccountUser(list));
-            vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
-          }
-          else {
-            messenger.error(messagesUtil.sessionBuilder.cantSelect);
-          }
-
           vm.searchingParticipants = false;
-        }
-        else {
+        } else {
           messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }

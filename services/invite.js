@@ -22,7 +22,7 @@ var uuid = require('node-uuid');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
-let Bluebird = require('bluebird')
+let Bluebird = require('bluebird');
 
 var mailUrlHelper = require('../mailers/helpers');
 
@@ -107,45 +107,58 @@ function createInvite(params) {
   return new Bluebird((resolve, reject) => {
     let sql = {
       where: {
-        accountUserId: parseInt(params.accountUserId)
+        accountUserId: params.accountUserId
       }
     }
 
     if (params.accountId) {
       sql.where.accountId = parseInt(params.accountId)
     }
+
     if (params.sessionId) {
       sql.where.sessionId = parseInt(params.sessionId)
     }
 
-    Invite.destroy(sql).then((result) => {
-      Invite.create({
-        accountUserId: params.accountUserId,
-        accountId: params.accountId,
-        sessionId: params.sessionId,
-        token: uuid.v1(),
-        sentAt: new Date(),
-        role: params.role
-      }).then(function(result) {
-        enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
-          Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }}).then(function(invite) {
-            resolve(invite);
-          }, function(error) {
-            resolve(result);
+    let buildAttrs = {
+      accountUserId: params.accountUserId,
+      accountId: params.accountId,
+      sessionId: params.sessionId,
+      token: uuid.v1(),
+      sentAt: new Date(),
+      role: params.role
+    }
+
+    models.sequelize.transaction().then((transaction) => {
+      Invite.build(buildAttrs).validate().done(() => {
+        sql.transaction = transaction;
+        Invite.destroy(sql).then((result) => {
+          Invite.create(buildAttrs, {transaction: transaction}).then((result) => {
+            enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
+              Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }, transaction: transaction}).then((invite)=> {
+                transaction.commit().then(() => {
+                  resolve(invite);
+                });
+              }, (error) => {
+                resolve(result);
+              });
+            }, (error) => {
+              reject(error);
+            });
+          }).catch(function(error) {
+            transaction.rollback().then(() => {
+              if(error.name == 'SequelizeUniqueConstraintError') {
+                reject({ email: 'User has already been invited' });
+              }else {
+                reject(filters.errors(error));
+              }
+            });
           });
-        }, (error) => {
-          reject(error);
         });
-      }).catch(function(error) {
-        if(error.name == 'SequelizeUniqueConstraintError') {
-          reject({ email: 'User has already been invited' });
-        }
-        else {
-          reject(filters.errors(error));
-        }
+      }, (error) => {
+        reject(filters.errors(error));
       });
-    })
-  })
+    });
+  });
 };
 
 function simpleParams(invite, message) {
@@ -191,7 +204,7 @@ function sendInvite(inviteId, deferred) {
             deferred.reject(error);
           }
           else {
-            deferred.resolve(simpleParams(invite));
+            deferred.resolve(data);
           }
         });
       }, function (error) {
@@ -240,8 +253,8 @@ function sendInvite(inviteId, deferred) {
               deferred.reject(error);
             }
             else {
-              accountUserService.updateInfo(invite.accountUserId, "Invite", null);
-              deferred.resolve(simpleParams(invite));
+              accountUserService.updateInfo(invite.accountUserId, "Invites", null);
+              deferred.resolve(data);
             }
           });
         }, function (error) {
@@ -359,17 +372,76 @@ function findInvite(token) {
         reject(MessagesUtil.invite.notFound);
       }
     });
-  })
+  });
 };
 
-function updateEmailStatus(id, emailStatus) {
+function processEmailStatus(id, apiResp, emailStatus) {
   return new Bluebird((resolve, reject) => {
-    Invite.update({ emailStatus: emailStatus }, {where: {id: id} }).then(() => {
-      resolve();
-    }).catch((error) => {
-      reject(error);
-    });
+    Invite.find({where: {id: id}, include: [AccountUser]}).then((invite) => {
+      if (!invite) { return reject(MessagesUtil.invite.notFound) }
+
+      let updateParams = { };
+
+      if (emailStatus) {
+        updateParams.emailStatus = emailStatus;
+      }
+
+      if (apiResp) {
+        updateParams.mailMessageId = apiResp.messageId;
+        if (_.includes(apiResp.rejected, invite.AccountUser.email)) {
+          updateParams.emailStatus = "failed";
+        }
+      }
+
+      if (_.isEmpty(Object.keys(updateParams))) {
+        resolve();
+      }else{
+        invite.update(updateParams).then(() => {
+          resolve();
+        }).catch((error) => {
+          reject(error);
+        });
+      }
+    })
   })
+}
+function processMailWebhook(webhookParams) {
+  let updateParams = {}
+
+  if (webhookParams.event == "dropped") {
+    updateParams.webhookMessage = webhookParams.reason
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
+
+  if (webhookParams.event == "bounced") {
+    updateParams.webhookMessage = webhookParams.error
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
+
+  if (webhookParams.event == "delivered") {
+    updateParams.emailStatus = "sent";
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.webhookMessage = "Delivered"
+  }
+
+  return new Bluebird((resolve, reject) => {
+    if (updateParams.emailStatus) {
+      let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
+
+      Invite.update(updateParams, {where: {mailMessageId: mailMessageId}}).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    }else{
+      resolve([0]);
+    }
+  });
 }
 
 function declineInvite(token) {
@@ -447,6 +519,7 @@ function createUser(invite, params, transaction) {
     password: params.password,
     email: invite.AccountUser.email
   }
+
   return User.create(createParams, { transaction: transaction });
 }
 
@@ -476,11 +549,11 @@ function createUserIfNecessary(invite, user, params, transaction) {
         return new Bluebird((resolve, reject) => {
           if (params.social) {
             params.social.user = { id: user.id };
-            return socialProfileService.createPromise(params.social, transaction)
+            resolve(socialProfileService.createPromise(params.social, transaction));
           }else{
             resolve();
           }
-        })
+        });
 
       }
     ]
@@ -490,7 +563,6 @@ function createUserIfNecessary(invite, user, params, transaction) {
     }).then(() => {
       resolve(selectedUser);
     }, (error) => {
-      console.log(error);
       reject(filters.errors(error))
     })
 
@@ -540,7 +612,6 @@ function acceptInvite(token, params={}) {
         return checSession(invite, user, params, transaction)
       },
       (invite, user, params, transaction) => {
-        console.log("Invite step: createUserIfNecessary", invite.id);
         return createUserIfNecessary(invite, user, params, transaction)
       },
       (invite, _user, _params, transaction) => {
@@ -761,13 +832,7 @@ function populateMailParamsWithColors(params, session){
   let deferred = q.defer();
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    if (typeof(value) == "object") {
-      _.each(value, function (objValue, objKey) {
-        params[objKey] = objValue;
-      });
-    } else {
-      params[key] = value;
-    }
+    params[key] = value;
   });
 
   if (session) {
@@ -791,7 +856,8 @@ function populateMailParamsWithColors(params, session){
 module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
-  updateEmailStatus: updateEmailStatus,
+  processEmailStatus: processEmailStatus,
+  processMailWebhook: processMailWebhook,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,

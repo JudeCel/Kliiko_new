@@ -73,11 +73,13 @@
         var leftAndWide = vm.selectedFacilitator ? true : false;
         $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
           vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
-            vm.session.sessionData.facilitator = facilitator;
-            vm.session.steps.step1.facilitator = facilitator;
+            if (!res.ignored) {
+              vm.session.sessionData.facilitator = facilitator;
+              vm.session.steps.step1.facilitator = facilitator;
+              messenger.ok(res.message);
+            }
             vm.selectedFacilitator = vm.session.steps.step1.facilitator;
             vm.selectedFacilitatorEmail = vm.selectedFacilitator.email;
-            messenger.ok(res.message);
           }, function (err) {
             messenger.error(err);
           });
@@ -235,8 +237,12 @@
     }
 
     vm.updateName = function() {
-      updateStep({name: vm.name}).then(function() {
-        vm.session.steps.step1.name = vm.name;
+      updateStep({name: vm.name}).then(function(res) {
+        if (res.ignored) {
+          vm.name = vm.session.steps.step1.name;
+        } else {
+          vm.session.steps.step1.name = vm.name;
+        }
         initCanSelectFacilitator();
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
@@ -254,8 +260,12 @@
     vm.updateType = function () {
       domServices.modal('sessionTypeModal', 'close');
       vm.type = vm.typeToConfirm;
-      updateStep({type: vm.type}).then(function() {
-        vm.session.steps.step1.type = vm.type;
+      updateStep({type: vm.type}).then(function(res) {
+        if (res.ignored) {
+          vm.type = vm.session.steps.step1.type;
+        } else {
+          vm.session.steps.step1.type = vm.type;
+        }
         initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
@@ -299,8 +309,8 @@
 
     function postUpdateStep(dataObj) {
       var deferred = $q.defer();
-      vm.session.updateStep(dataObj).then(function(res) {
-        deferred.resolve();
+      vm.session.updateStep(dataObj, vm.session).then(function(res) {
+        deferred.resolve(res);
       }, function (err) {
         messenger.error(err);
         deferred.reject(err);
@@ -313,7 +323,13 @@
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         initCanSelectFacilitator();
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          return postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
+          postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
+            if (res.ignored) {
+              vm.step1.startTime = vm.session.steps.step1.startTime;
+              vm.step1.endTime = vm.session.steps.step1.endTime;
+              vm.step1.timeZone = vm.session.steps.step1.timeZone;
+            }
+          });
         }
         return;
       }

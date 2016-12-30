@@ -6,7 +6,8 @@ var databaseMonitoringFunction = require('./databaseMonitoringFunction.js');
 const tables = [
   {name: "session_topic_notify" , table: "SessionTopics"},
   {name: "session_notify" , table: "Sessions"},
-  {name: "invite_notify" , table: "Invites"}
+  {name: "invite_notify" , table: "Invites"},
+  {name: "session_members_notify" , table: "SessionMembers"}
 ]
 
 databaseMonitoringFunction.ifFunctionExists("table_update_notify").then(function() {

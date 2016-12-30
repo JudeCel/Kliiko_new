@@ -42,7 +42,6 @@
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
-        rmUnusedControls: true,
         controls: {
           bold: { visible : true },
           italic: { visible : true },
@@ -97,6 +96,7 @@
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
+      vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
     }
 
     function getColors() {
@@ -110,7 +110,11 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
+      if (isChangedAndNotSaved(isResetingOrSaving)) {
+        domServices.modal('unsavedTemplateMsg');
+        return;
+      }
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -134,6 +138,12 @@
         });
       }
 
+      function isChangedAndNotSaved(isResetingOrSaving) {
+        var actualContent = $('#templateContent').wysiwyg('getContent');
+        var initialContent = vm.currentWysiwygProccessedTemplate;
+        return initialContent !== undefined && initialContent != actualContent && !isResetingOrSaving;
+      }
+
       function populateContentWithColors() {
         var head =  vm.currentTemplate.content.match(vm.headPattern);
         vm.headTemplate = head ? head[0] : null;
@@ -148,6 +158,7 @@
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
+        vm.currentTemplate.snapshot = res.snapshot;
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;
@@ -201,22 +212,31 @@
         template.properties = vm.properties;
         template.properties.createdWithCustomName = createdFromModal;
         template.properties.templateName = templateName;
+        template.snapshot = vm.currentTemplate.snapshot;
       }
       mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            var index = getIndexOfMailTemplateWithId(res.templates.id);
-            if (index != -1) {
-              vm.startEditingTemplate(index);
-            }
-          });
-          messenger.ok(res.message);
-          deferred.resolve();
-        } else {
+        if (res.error) {
           template.error = null;
           template.properties = null;
           messenger.error(res.error);
           deferred.reject();
+        } else if (res.ignored) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(template.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index);
+            }
+          });
+          deferred.resolve();
+        } else {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(res.templates.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index, null, null, true);
+            }
+          });
+          messenger.ok(res.message);
+          deferred.resolve();
         }
       });
 
@@ -240,7 +260,7 @@
       mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
         if (!res.error) {
           refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index);
+            vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
             deferred.resolve();
           });
         } else {
