@@ -7,6 +7,7 @@
           <!-- compensate first column for monthly/yearly buttons-->
           <th></th>
           <th ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
+            <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
             <div class="col-sm-1 pull-right">
               <div ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right"></div>
             </div>
@@ -43,7 +44,6 @@
               </div>
             </div>
 
-            <!-- <span ng-show="up.isCurrentPlan(subscriptionPlan)">Current</span> -->
           </th>
         </tr>
         <!-- Table content-->
@@ -68,7 +68,7 @@
         <!-- feature buy buttons -->
         <tr>
           <td/>
-          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}">
+          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}" on-finish-render="up.finishedRenderingPlans()">
             <div ng-include="'upgradePlanButton.html'"></div>
           </td>
         </tr>

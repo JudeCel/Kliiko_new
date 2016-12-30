@@ -86,6 +86,7 @@
     vm.mostPopular = mostPopular;
     vm.upgradePlanText = upgradePlanText;
     vm.displayFeatureValue = displayFeatureValue;
+    vm.finishedRenderingPlans = finishedRenderingPlans;
 
     init();
 
@@ -311,6 +312,28 @@
         }
       }
       return result;
+    }
+
+    function setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable) {
+      highlightElement.width(currentElement.width());
+      highlightElement.height(hostTable.height());
+    }
+
+    function updateCurrentPlanStyle(planStyle) {
+      var style = "."+planStyle;
+      var highlightElement = $(".included-plan-fader");
+      var currentElement = $(style);
+      var hostTable = $('.plans-table table');
+
+      setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable);
+
+      jQuery(window).resize(function() {
+        setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable)
+      });
+    }
+
+    function finishedRenderingPlans() {
+      updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
     }
   }
 })();
