@@ -90,7 +90,7 @@
         }
 
         function onJoin(state) {
-          return (id, current, newPres) => {
+          return function(id, current, newPres) {
             if (!current) {
              vm.onlineUsers.push(newPres.accountUser);
              whenNewUserInSessionBuilder();
@@ -99,7 +99,7 @@
         }
 
         function onLeave(state) {
-          return (id, current, leftPres) => {
+          return function(id, current, leftPres) {
             //if current.metas exists than user has other instances opened
             //https://hexdocs.pm/phoenix/Phoenix.Presence.html
             if (current.metas.length == 0) {
