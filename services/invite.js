@@ -204,7 +204,7 @@ function sendInvite(inviteId, deferred) {
             deferred.reject(error);
           }
           else {
-            deferred.resolve(simpleParams(invite));
+            deferred.resolve(data);
           }
         });
       }, function (error) {
@@ -254,7 +254,7 @@ function sendInvite(inviteId, deferred) {
             }
             else {
               accountUserService.updateInfo(invite.accountUserId, "Invites", null);
-              deferred.resolve(simpleParams(invite));
+              deferred.resolve(data);
             }
           });
         }, function (error) {
@@ -372,17 +372,76 @@ function findInvite(token) {
         reject(MessagesUtil.invite.notFound);
       }
     });
-  })
+  });
 };
 
-function updateEmailStatus(id, emailStatus) {
+function processEmailStatus(id, apiResp, emailStatus) {
   return new Bluebird((resolve, reject) => {
-    Invite.update({ emailStatus: emailStatus }, {where: {id: id} }).then(() => {
-      resolve();
-    }).catch((error) => {
-      reject(error);
-    });
+    Invite.find({where: {id: id}, include: [AccountUser]}).then((invite) => {
+      if (!invite) { return reject(MessagesUtil.invite.notFound) }
+
+      let updateParams = { };
+
+      if (emailStatus) {
+        updateParams.emailStatus = emailStatus;
+      }
+
+      if (apiResp) {
+        updateParams.mailMessageId = apiResp.messageId;
+        if (_.includes(apiResp.rejected, invite.AccountUser.email)) {
+          updateParams.emailStatus = "failed";
+        }
+      }
+
+      if (_.isEmpty(Object.keys(updateParams))) {
+        resolve();
+      }else{
+        invite.update(updateParams).then(() => {
+          resolve();
+        }).catch((error) => {
+          reject(error);
+        });
+      }
+    })
   })
+}
+function processMailWebhook(webhookParams) {
+  let updateParams = {}
+
+  if (webhookParams.event == "dropped") {
+    updateParams.webhookMessage = webhookParams.reason
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
+
+  if (webhookParams.event == "bounced") {
+    updateParams.webhookMessage = webhookParams.error
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
+
+  if (webhookParams.event == "delivered") {
+    updateParams.emailStatus = "sent";
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.webhookMessage = "Delivered"
+  }
+
+  return new Bluebird((resolve, reject) => {
+    if (updateParams.emailStatus) {
+      let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
+
+      Invite.update(updateParams, {where: {mailMessageId: mailMessageId}}).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    }else{
+      resolve([0]);
+    }
+  });
 }
 
 function declineInvite(token) {
@@ -797,7 +856,8 @@ function populateMailParamsWithColors(params, session){
 module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
-  updateEmailStatus: updateEmailStatus,
+  processEmailStatus: processEmailStatus,
+  processMailWebhook: processMailWebhook,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,

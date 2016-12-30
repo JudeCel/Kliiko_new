@@ -11,7 +11,12 @@ module.exports = (Sequelize, DataTypes) => {
 
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
-    emailStatus: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteEmailStatuses, defaultValue: 'waiting' }
+    emailStatus: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteEmailStatuses, defaultValue: 'waiting' },
+    mailProvider: { type: DataTypes.ENUM, allowNull: true, values: ["mailgun"], defaultValue: 'mailgun' },
+    mailMessageId: { type : DataTypes.STRING, allowNull: true},
+    webhookMessage: { type : DataTypes.STRING, allowNull: true},
+    webhookEvent: { type : DataTypes.STRING, allowNull: true},
+    webhookTime: { type : DataTypes.DATE, allowNull: true}
   }, {
     classMethods: {
       associate: function(models) {

@@ -17,15 +17,15 @@ function sendQuote(params) {
         to: process.env.GET_A_QUOTE_EMAIL,
         subject: subject(params.firstName, params.lastName),
         html: html
-      }, function(error, info){
-        if(error){
-          deferred.reject(error);
-        }else{
+      }).then((resp) => {
           deferred.resolve();
-        }
-      });
+        }, (error) => {
+          deferred.reject(error);
+        });
     }
   });
+
+
 
   return deferred.promise;
 }

@@ -60,12 +60,13 @@ describe('Background Jobs - Invites', function() {
 
   describe("#sendInvite", () => {
     it("succsess", (done) => {
-
       inviteService.createInvite(getDefaultParams(accountUser2, "accountManager")).then(function(invite) {
         backgroundJobsInvite.sendInvite(invite.id, () => {
           Invite.find({where: {id: invite.id}}).then((updateInvite) => {
             try {
-              assert.equal(updateInvite.emailStatus, "sent")
+              assert.equal(updateInvite.emailStatus, "waiting")
+              assert.equal(updateInvite.mailProvider, "mailgun")
+              assert.isNotNull(updateInvite.mailMessageId)
               done();
             } catch (e) {
               done(e);
