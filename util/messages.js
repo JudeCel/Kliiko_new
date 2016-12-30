@@ -221,7 +221,8 @@ module.exports = {
         account: 'Account not found',
         brandLogoAndCustomColors: 'but XXX does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
         uploadToGallery: 'but XXX does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.',
-        exportContactListAndParticipantHistory: 'but reporting function is only available on Paid Plans. If you want to view either a PDF, CSV, or TXT Report you can Upgrade your Plan now, to access a Report of this Session.'
+        exportContactListAndParticipantHistory: 'but reporting function is only available on Paid Plans. If you want to view either a PDF, CSV, or TXT Report you can Upgrade your Plan now, to access a Report of this Session.',
+        accountUserCount: 'you have reached the limit of Account Managers available for your current Plan. Please Upgrade your Plan to add more.'
       },
       planDoesntAllowToDoThis: 'Please update your subscription plan to one that includes this feature.',
       notFound: 'No subscription found',

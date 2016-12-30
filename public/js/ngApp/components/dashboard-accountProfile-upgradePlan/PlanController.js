@@ -29,30 +29,6 @@
       annual: 'YEAR'
     }
 
-    vm.planOptions = [
-      'Number of Active Sessions',
-      'Number of Contact Lists',
-      'Recruiter lists \n (build Contact Lists on demand)',
-      'Import and manage your \n existing contacts',
-      'Custom logo and branding',
-      'Contacts per account',
-      'Managers per account',
-      'Export contact and \n participation history',
-      'Export Recruiter survey results',
-      'Access klzii Forum',
-      'Access klzii Focus',
-      'Spectators can watch sessions',
-      'Paid SMS reminders for guests',
-      'Tips for guiding discussions',
-      'Whiteboard functionality',
-      'Upload and store multimedia',
-      'Reporting and analysis',
-      'Mobile and tablet compatible',
-      'Customise email invitations \n and reminders',
-      'Number of topics',
-      'Private and secure sessions (SSL)'
-    ]
-
     vm.stepLayouts = [
       {
         inQueue: 1,

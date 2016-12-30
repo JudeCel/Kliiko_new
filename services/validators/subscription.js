@@ -157,7 +157,7 @@ function canAddAccountUsers(accountId) {
         }]
       }).then(function(count) {
         if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject(countMessage("AccountUser", subscription.SubscriptionPreference.data.accountUserCount));
+          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount});
         }else{
           deferred.resolve();
         }

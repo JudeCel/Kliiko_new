@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', '$confirm'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, $confirm){
     dbg.log2('#AccountManagerController started');
     var vm = this;
     vm.maxLength = { normal: 20, email: 40 };
@@ -58,11 +58,19 @@
       else {
         accountManagerServices.canAddAccountManager().then(function(res) {
           if(res.error) {
-            messenger.error(res.error);
+            showError(res.error);
           }else{
             domServices.modal('accountManagerModal');
           }
         });
+      }
+    }
+
+    function showError(error) {
+      if (error.dialog) {
+        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
+      } else {
+        messenger.error(error);
       }
     }
 
