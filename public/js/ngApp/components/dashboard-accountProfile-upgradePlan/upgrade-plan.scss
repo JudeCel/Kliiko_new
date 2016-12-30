@@ -9,8 +9,8 @@
     height: 60px;
     background-repeat: no-repeat;
     background-size: contain;
-    top: -95px;
-    right: -5px;
+    top: -20px;
+    right: 0;
     background-image: url('/icons/MostPopular.png');
   }
 
@@ -195,6 +195,17 @@
         text-align: center;
         width: 20%;
         border-right: 2px solid #ffffff;
+        margin: 0;
+        .list-group-item-heading {
+          margin-bottom: 0;
+        }
+        .flex-box {
+          padding: 5px 10px;
+        }
+
+        .plan-block {
+          height: 100%;
+        }
       }
 
       th.plan-option-price-block {
@@ -203,10 +214,8 @@
 
       td {
         border: 2px solid #ffffff;
-      }
-
-      td {
         font-size: 15px;
+        padding: 5px 10px;
       }
 
       .plan-option-feature {
@@ -343,27 +352,46 @@
     .free_account_header {background-color: #f5f072;}
 
     .junior_monthly_btn, .junior_yearly_btn {
-      border-color: #6ebc95 !important;
-      background-color: #fff !important;
-      color: #6ebc95 !important;
-      width: 60%;
-      margin: 0 auto;
+      border-color: #6ebc95;
+      background-color: #fff;
+      color: #96d393 !important;
+      width: 95%;
+      margin: 5px auto;
+    }
+
+    .free_account_btn {
+      border-color: #bdb795;
+      background-color: #fff;
+      color: #bdb795;
+      width: 95%;
+      margin: 5px auto;
     }
 
     .core_monthly_btn, .core_yearly_btn{
       border-color: #4CC0E9;
       background-color: #fff;
-      color: #4CC0E9;
-      width: 60%;
-      margin: 0 auto;
+      color: #40b0df;
+      width: 95%;
+      margin: 5px auto;
     }
 
     .senior_monthly_btn, .senior_yearly_btn{
       border-color: #82cc81;
       background-color: #fff;
-      color: #82cc81;
-      width: 60%;
-      margin: 0 auto;
+      color: #96d393;
+      width: 95%;
+      margin: 5px auto;
+    }
+
+    .senior_monthly_btn:hover, .senior_yearly_btn:hover,
+    .core_monthly_btn:hover, .core_yearly_btn:hover, .free_account_btn:hover,
+    .junior_monthly_btn:hover, .junior_yearly_btn:hover {
+      background-color: rgba(10, 10, 10, 0.3);
+      -webkit-transition: all 0.2s ease-in-out;
+      -moz-transition: all 0.2s ease-in-out;
+      -ms-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out;
     }
 
     .yellow-bg {background: $yellow;}
