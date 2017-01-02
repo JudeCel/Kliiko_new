@@ -302,14 +302,22 @@
       return plan.price?"BUY NOW":"GET STARTED"
     }
 
-    function displayFeatureValue(key, planParameters) {
-      var result = checkTheCount(planParameters[key]);
-      if (key == 'planSmsCount') {
-        if (result) {
-          result = 'up to ' + result + "/mth";
-        } else {
-          result = '';
-        }
+    vm.showBoolean = function(feature, plan) {
+      return (feature.type=='Boolean' && vm.getFeatureValue(feature.key, plan.additionalParams));
+    }
+
+    vm.getFeatureValue = function(key, planParameters) {
+      return planParameters[key];
+    }
+
+    vm.showNumber = function(feature) {
+      return (feature.type == 'Number' || feature.type == 'NumberLimit');
+    }
+
+    function displayFeatureValue(feature, plan) {
+      var result = checkTheCount(plan.additionalParams[feature.key]);
+      if (feature.type == 'NumberLimit') {
+        result = 'up to ' + result + "/mth";
       }
       return result;
     }

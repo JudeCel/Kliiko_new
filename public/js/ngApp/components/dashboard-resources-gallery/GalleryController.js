@@ -366,7 +366,7 @@
     }
 
     function handleUploadPermission() {
-      planService.checkPermissions('uploadToGallery').then(function(response) {
+      planService.checkPlanFeatures('uploadToGallery').then(function(response) {
         if(response.error){
           showError(response.error);
         }

@@ -24,7 +24,7 @@ function postQuote(req, res, next) {
 
 function planAllowsToDoIt(req, res, next) {
   let accountId = res.locals.currentDomain.id;
-  subscriptionValidator.planAllowsToDoIt(accountId, req.query.permissions).then(function(result) {
+  subscriptionValidator.planAllowsToDoIt(accountId, req.query.features).then(function(result) {
     res.send();
   }, function(err) {
     res.send({ error: filters.errors(err) });

@@ -9,7 +9,7 @@
       updatePlan: { method: 'PUT', params: { path: 'updatePlan' } },
       UpdateViaCheckout: { method: 'PUT', params: { path: 'UpdateViaCheckout' } },
       postQuote: { method: 'POST', params: { path: 'postQuote' } },
-      checkPermissions: { method: 'GET', params: { path: 'checkPermissions' } }
+      checkPlanFeatures: { method: 'GET', params: { path: 'checkPlanFeatures' } }
     });
 
     var spService = {};
@@ -18,7 +18,7 @@
     spService.updatePlan = updatePlan;
     spService.retrievCheckoutAndUpdateSub = retrievCheckoutAndUpdateSub;
     spService.submitContactusForm = submitContactusForm;
-    spService.checkPermissions = checkPermissions;
+    spService.checkPlanFeatures = checkPlanFeatures;
     return spService;
 
     function submitContactusForm(params) {
@@ -63,11 +63,11 @@
       return deferred.promise;
     }
 
-    function checkPermissions(permissions) {
+    function checkPlanFeatures(features) {
       var deferred = $q.defer();
-      dbg.log2('#SubscriptionPlanService > checkPermissions > make rest call');
-      subscriptionPlanRestApi.checkPermissions({permissions: permissions}, function(res) {
-        dbg.log2('#SubscriptionPlanService > checkPermissions > rest call responds');
+      dbg.log2('#SubscriptionPlanService > checkPlanFeatures > make rest call');
+      subscriptionPlanRestApi.checkPlanFeatures({features: features}, function(res) {
+        dbg.log2('#SubscriptionPlanService > checkPlanFeatures > rest call responds');
         deferred.resolve(res);
       });
       return deferred.promise;

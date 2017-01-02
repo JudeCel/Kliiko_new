@@ -14,7 +14,7 @@ module.exports = {
     {key: "accountUserCount", type: "Number", title: "Number of Managers"},
     {key: "brandLogoAndCustomColors", type: "Boolean", title: "Custom Logo and Colors"},
     {key: "customEmailInvitationAndReminderMessages", type: "Boolean", title: "Custom Emails"},
-    {key: "planSmsCount", type: "Number", title: "SMS Alerts (Focus)"},
+    {key: "planSmsCount", type: "NumberLimit", title: "SMS Alerts (Focus)"},
     {key: "topicCount", type: "Number", title: "Number of Topics"},
     {key: "canInviteObserversToSession", type: "Boolean", title: "Spectators"},
     {key: "whiteboardDisplay", type: "Boolean", title: "Whiteboard-Display"},
