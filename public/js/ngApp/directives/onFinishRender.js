@@ -13,9 +13,7 @@ function onFinishRender() {
         restrict: 'A',
         link: function (scope, element, attr) {
           if (scope.$last === true) {
-            setTimeout(function () {
-               scope.$evalAsync(attr.onFinishRender);
-            }, 10);
+            scope.$evalAsync(attr.onFinishRender);
           }
         }
     };
