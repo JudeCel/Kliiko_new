@@ -6,8 +6,7 @@ module.exports = {
 };
 
 function webhook(req, res, next) {
-  console.log(req.params, "params");
-  console.log(res.body, "body");
+  console.log(req, "req");
   inviteService.processMailWebhook(res.body).then(() => {
     res.sendStatus(200);
   }, (error) => {
