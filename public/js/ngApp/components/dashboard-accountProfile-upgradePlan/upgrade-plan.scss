@@ -251,7 +251,7 @@
         font-size: 22px;
         font-weight: bold;
         font-style: italic;
-        font-family: 'Source Sans Pro', sans-serif
+        font-family: sans-serif
       }
     }
 
@@ -359,28 +359,24 @@
       margin: 5px auto;
     }
 
-    .free_account_btn {
-      border-color: #bdb795;
+    @mixin setupPlanBtn($border, $text-color) {
+      border-color: $border;
       background-color: #fff;
-      color: #bdb795;
+      color: $text-color;
       width: 95%;
       margin: 5px auto;
+    }
+
+    .free_account_btn {
+      @include setupPlanBtn(#bdb795, #bdb795);
     }
 
     .core_monthly_btn, .core_yearly_btn{
-      border-color: #4CC0E9;
-      background-color: #fff;
-      color: #40b0df;
-      width: 95%;
-      margin: 5px auto;
+      @include setupPlanBtn(#4CC0E9, #40b0df);
     }
 
     .senior_monthly_btn, .senior_yearly_btn{
-      border-color: #82cc81;
-      background-color: #fff;
-      color: #96d393;
-      width: 95%;
-      margin: 5px auto;
+      @include setupPlanBtn(#82cc81, #96d393);
     }
 
     .senior_monthly_btn:hover, .senior_yearly_btn:hover,
