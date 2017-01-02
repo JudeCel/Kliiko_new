@@ -15,7 +15,7 @@ function login(req, res, next) {
     if (err || !user) {
       usersService.inviteInProcessExists(req.body.email, function(exists, token) {
         let error = exists ?
-          { dialog: {link: { url: '/invite/' + token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn} } :
+          { dialog: {link: { url: '/invite/' + token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.invitationAccepted} } :
           (err || info.message);
         return res.render('login', {
           title: 'Login',

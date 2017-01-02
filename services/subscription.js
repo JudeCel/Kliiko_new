@@ -13,6 +13,7 @@ var async = require('async');
 let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
+var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
 
@@ -103,23 +104,32 @@ function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
 
-  chargebee.plan.list({limit: 20}).request(function(error, result){
-    if(error){
+  chargebee.plan.list({limit: 20, "status[is]" : "active"}).request(function(error, result){
+    if (error) {
       deferred.reject(error);
-    }else{
-      if(accountId){
-        findAndProcessSubscription(accountId).then(function(currentSub) {
+    } else {
+      //according to API manual "status[is]" : "active" is enought to show only active plans, but this doesn't work
+      var plans = []
+      for (var i=0; i<result.list.length; i++) {
+        var plan = result.list[i];
+        if (plan.plan.status == "active") {
+          plans.push(plan);
+        }
+      }
+
+      if (accountId) {
+        findSubscription(accountId).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
-          addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planConstants.features});
+          addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
+            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features});
           })
         }, function(error) {
           deferred.reject(filters.errors(error));
         })
-      }else{
-        deferred.resolve(result.list)
+      } else {
+        deferred.resolve(plans)
       }
     }
   });
@@ -475,7 +485,7 @@ function updateSubscriptionData(passThruContent){
 
       let params = _.cloneDeep(planConstants[passThruContent.planId]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
-      
+
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {
