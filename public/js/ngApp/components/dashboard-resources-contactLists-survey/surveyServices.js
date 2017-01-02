@@ -13,8 +13,7 @@
       answer: { method: 'POST', params: { path: 'answer' } },
       confirm: { method: 'PUT', params: { path: 'confirm' } },
       constants: { method: 'GET', params: { path: 'constants' } },
-      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } },
-      canCreate: { method: 'GET', params: {path: 'canCreate'} }
+      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } }
     });
 
     var upServices = {};
@@ -32,7 +31,6 @@
     upServices.pickValidClass = pickValidClass;
     upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
-    upServices.canCreate = canCreate;
     return upServices;
 
     function getConstants() {
@@ -142,17 +140,6 @@
 
       return deferred.promise;
     };
-
-    function canCreate(data) {
-      var deferred = $q.defer();
-
-      dbg.log2('#surveyServices > canCreate > make rest call');
-      surveyRestApi.canCreate(data, function(res) {
-        dbg.log2('#surveyServices > canCreate > rest call responds', res);
-        deferred.resolve(res);
-      });
-      return deferred.promise;
-    }
 
     function answerSurvey(data) {
       var deferred = $q.defer();

@@ -722,20 +722,6 @@ function validateParams(params, attributes) {
   return _.pick(params, attributes);
 };
 
-function canCreate(params, account) {
-  let deferred = q.defer();
-  validators.hasValidSubscription(account.id).then(function() {
-    validators.subscription(account.id, 'survey', 1).then(function() {
-        deferred.resolve({canCreateSurvey: true});
-      }, function(error) {
-        deferred.reject(error);
-      });
-    }, function(error) {
-        deferred.reject(error);
-    });
-  return deferred.promise;
-};
-
 module.exports = {
   messages: MessagesUtil.survey,
   findAllSurveys: findAllSurveys,
@@ -749,6 +735,5 @@ module.exports = {
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
-  canExportSurveyData: canExportSurveyData,
-  canCreate: canCreate
+  canExportSurveyData: canExportSurveyData
 };

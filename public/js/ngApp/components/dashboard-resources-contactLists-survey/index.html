@@ -38,12 +38,12 @@
           </td>
           <td>
             <div ng-if="!survey.confirmedAt">Unpublished</div>
-            <div ng-if="survey.confirmedAt" class="surveyStatus {{ survey.closed ? 'surveyStatusOpen' : 'surveyStatusClose' }}">
+            <div ng-if="survey.confirmedAt" class="surveyStatus {{ survey.closed ? 'surveyStatusClose' : 'surveyStatusOpen' }}">
               <toggle-switch
                 ng-model="survey.closed"
                 ng-change="sc.changeStatus(survey)"
-                on-label="OPEN"
-                off-label="CLOSE"
+                on-label="CLOSE"
+                off-label="OPEN"
                 >
               </toggle-switch>
             </div>
