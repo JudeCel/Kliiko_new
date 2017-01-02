@@ -3,12 +3,11 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', '$confirm'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, $confirm){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger){
     dbg.log2('#AccountManagerController started');
     var vm = this;
     vm.maxLength = { normal: 20, email: 40 };
-
     init();
     vm.openModal = openModal;
     vm.removeAccountUser = removeAccountUser;
@@ -35,7 +34,7 @@
     function init() {
       accountManagerServices.getAllManagersList().then(function(res) {
         if(res.error){
-          messenger.error(res.error)
+          errorMessenger.showError(res.error);
         }else{
           vm.accountUsers = res.accountUsers;
         }
@@ -58,19 +57,11 @@
       else {
         accountManagerServices.canAddAccountManager().then(function(res) {
           if(res.error) {
-            showError(res.error);
+            errorMessenger.showError(res.error);
           }else{
             domServices.modal('accountManagerModal');
           }
         });
-      }
-    }
-
-    function showError(error) {
-      if (error.dialog) {
-        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
-      } else {
-        messenger.error(error);
       }
     }
 

@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', '$confirm'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, $confirm) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -128,7 +128,7 @@
 
         if(res.error) {
           survey.closed = !survey.closed;
-          showError(res.error);
+          errorMessenger.showError(res.error);
         } else {
           survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
@@ -206,7 +206,7 @@
 
         if (res.error) {
           if (!autoSave) {
-            showError(res.error);
+            errorMessenger.showError(res.error);
           }
         } else {
           survey.id = res.data.id;
@@ -240,20 +240,12 @@
       });
     };
 
-    function showError(error) {
-      if (error.dialog) {
-        $confirm({ title: "Sorry", text: error.dialog, closeOnly: true });
-      } else {
-        messenger.error(error);
-      }
-    }
-
     function copySurvey(survey) {
       surveyServices.copySurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > copySurvey > res ', res);
 
         if(res.error) {
-          showError(res.error);
+          errorMessenger.showError(res.error);
         }
         else {
           vm.surveys.push(res.data);
@@ -268,7 +260,7 @@
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
         if (res.error) {
-          showError(res.error);
+          errorMessenger.showError(res.error);
         } else {
           survey.confirmedAt = res.data.confirmedAt;
           messenger.ok(res.message);
