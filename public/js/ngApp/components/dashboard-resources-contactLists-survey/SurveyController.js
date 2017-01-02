@@ -255,7 +255,6 @@
     };
 
     function confirmSurvey(survey) {
-      var date = new Date();
       surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
