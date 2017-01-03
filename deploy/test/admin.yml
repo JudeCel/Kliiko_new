@@ -71,13 +71,13 @@ spec:
         - name: MAIL_TRANSPORT_SERVICE
           value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "noreply@klzii.com"
+          value: "noreply@test.klzii.com"
         - name: MAIL_FROM_NAME
           value: "klzii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "noreply@klzii.com"
+          value: "noreply@test.klzii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "27fb503f87359a78e747d5c120e7c2cb"
+          value: "5y68b5t4tv743ynt7n38y75nyht75t5y"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
