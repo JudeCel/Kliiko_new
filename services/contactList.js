@@ -11,6 +11,7 @@ var async = require('async');
 var constants = require('../util/constants');
 var validators = require('./../services/validators');
 var contactListImport = require('./contactListImport');
+var MessagesUtil = require('./../util/messages');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
@@ -26,7 +27,9 @@ module.exports = {
   destroy: destroy,
   createDefaultLists: createDefaultLists,
   parseFile: contactListImport.parseFile,
-  validateContactList: contactListImport.validateContactList
+  validateContactList: contactListImport.validateContactList,
+  exportContactList: exportContactList, 
+  canExportContactListData: canExportContactListData
 };
 
 function destroy(contacListId, accoutId) {
@@ -245,3 +248,102 @@ function createDefaultLists(accountId, t) {
   });
   return deferred.promise;
 }
+
+function exportContactList(params, account) {
+  let deferred = q.defer();
+  console.log(0);
+
+  canExportContactListData(account).then(function() {
+    console.log(1, params);
+    ContactList.find({
+      where: { id: params.id/*, accountId: account.id*/ },
+      /*include: [{
+        model: ContactListUser
+      }]*/
+    }).then(function(contactList) {
+      console.log(3);
+      if(contactList) {
+        console.log(4);
+        let header = createCsvHeader(contactList);
+        let data = createCsvData(header, contactList);
+        console.log(6);
+        deferred.resolve({ header: header, data: data });
+      } else {
+        console.log(5);
+        deferred.reject(MessagesUtil.ContactList.notFound);
+      }
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
+  }, function(error) {
+    console.log(2);
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+};
+
+function canExportContactListData(account) {
+  let deferred = q.defer();
+  validators.planAllowsToDoIt(account.id, 'exportContactListAndParticipantHistory').then(function() {
+    deferred.resolve({});
+  }, function(error) {
+    deferred.reject(error);
+  });
+
+  return deferred.promise;
+}
+
+function createCsvHeader(contactList) {
+  let array = [];
+  /*questions.forEach(function(question) {
+    if(question.answers[0].contactDetails) {
+      _.map(question.answers[0].contactDetails, function(contact) {
+        array.push(contact.name);
+      });
+    } else {
+      array.push(question.name);
+    }
+  });*/
+
+  return array;
+};
+
+function createCsvData(header, contactList) {
+  let array = [];
+
+  /*survey.SurveyAnswers.forEach(function(surveyAnswer) {
+    let object = {};
+    let indexDiff = 0;
+
+    survey.SurveyQuestions.forEach(function(question, index) {
+      let answer = surveyAnswer.answers[question.id];
+
+      switch(answer.type) {
+        case 'number':
+          assignNumber(index + indexDiff, header, object, question, answer);
+          break;
+        case 'string':
+          object[header[index + indexDiff]] = answer.value;
+          break;
+        case 'boolean':
+          assignBoolean(index + indexDiff, header, object, question, answer);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            for(var property in answer.contactDetails) {
+              while (property.toLowerCase() != header[index + indexDiff].replace(' ', '').toLowerCase()) {
+                indexDiff++;
+              }
+              object[header[index + indexDiff]] = answer.contactDetails[property];
+            }
+          }
+          break;
+      }
+    });
+
+    array.push(object);
+  });*/
+
+  return array;
+};

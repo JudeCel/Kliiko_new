@@ -1,15 +1,14 @@
 // STANDART BUTTONS //
 
 .btn-standart {
-  display: initial;
-  padding: 8px;
+  display: inline-block !important;
+  padding: 3px 8px;
   border: 2px solid lightgrey;
   border-radius: 0px;
   cursor: pointer;
   background: white;
   height: 36px;
   line-height: 26px;
-  padding-top: 3px;
 
   @mixin buttonColor($color) {
     color: $color;

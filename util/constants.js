@@ -91,7 +91,7 @@ module.exports = {
   sessionMemberNoGender: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: -1 },
   sessionMemberMan: { base: 0, face: 5, body: 5, hair: -1, desk: -1, head: -1 },
   sessionMemberWoman: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: 2 },
-  validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy'],
+  validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy', 'contactlist'],
   maxSessionsAmount: 1000,
   maxAccountsAmount: 100,
   membersAllowedCount: {

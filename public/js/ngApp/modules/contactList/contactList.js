@@ -11,7 +11,8 @@
       contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
-      contactComments: $resource(globalSettings.restUrl +  '/contactListsUser/comments', {}, {post: {method: 'POST'}})
+      contactComments: $resource(globalSettings.restUrl +  '/contactListsUser/comments', {}, {post: {method: 'POST'}}),
+      canExportContactListData: $resource(globalSettings.restUrl + '/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
     };
 
 
@@ -30,10 +31,22 @@
     publicServices.parseImportFile = parseImportFile;
     publicServices.addImportedContacts = addImportedContacts;
     publicServices.validateContactImportData = validateContactImportData;
+    publicServices.canExportContactListData = canExportContactListData;
 
 
     return publicServices;
 
+    function canExportContactListData() {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > canExportContactListData > make rest call');
+      contactListsApi.canExportContactListData.get({}, function(res) {
+        dbg.log2('#contactListServices > canExportContactListData > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     /**
      * Fetch all contact lists for this account
