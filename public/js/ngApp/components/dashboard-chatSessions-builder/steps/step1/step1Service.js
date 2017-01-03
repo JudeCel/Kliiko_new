@@ -1,16 +1,16 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('step1Service', step1Service);
-  step1Service.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  step1Service.$inject = ['$q', 'authResource', 'dbg'];
 
-  function step1Service(globalSettings, $q, $resource, dbg) {
+  function step1Service($q, authResource, dbg) {
 
-    var contactListApi = $resource(globalSettings.restUrl + '/contactLists/:path', null, {
+    var contactListApi = authResource('/contactLists/:path', null, {
     });
 
     var contactListsUserApi = {
-      remove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      createOrUpdate: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      remove: authResource('/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      createOrUpdate: authResource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
     };
 
     var contactService = {};

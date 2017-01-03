@@ -2,10 +2,10 @@
   'use strict';
 
   angular.module('KliikoApp.Root').factory('dashboardServices', dashboardServices);
-  dashboardServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  dashboardServices.$inject = ['globalSettings', '$q', 'authResource', 'dbg'];
 
-  function dashboardServices(globalSettings, $q, $resource, dbg) {
-    var myDashboardApi = $resource(globalSettings.restUrl + '/myDashboard/:path', null, {
+  function dashboardServices(globalSettings, $q, authResource, dbg) {
+    var myDashboardApi = authResource('/myDashboard/:path', null, {
       data: { method: 'GET', params: { path: 'data' } }
     });
 

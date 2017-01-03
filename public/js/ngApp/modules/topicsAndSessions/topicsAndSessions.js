@@ -4,13 +4,13 @@
   angular.module('topicsAndSessions', [])
     .factory('topicsAndSessions', topicsAndSessionsFactory);
 
-  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource', 'changesValidation'];
-  function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource, changesValidation) {
+  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', 'authResource', 'changesValidation'];
+  function topicsAndSessionsFactory(dbg, globalSettings, $q, authResource, changesValidation) {
     var restApi = {
-      topics: $resource(globalSettings.restUrl +'/topics'),
-      topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      sessionTopic: $resource(globalSettings.restUrl +'/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
-      sessionByInvite: $resource(globalSettings.restUrl +'/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+      topics: authResource('/topics'),
+      topic: authResource('/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      sessionTopic: authResource('/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
+      sessionByInvite: authResource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
     };
 
     var topicsAndSessionsFactory = {};
