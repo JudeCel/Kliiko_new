@@ -103,7 +103,7 @@ function prepareErrorMessage(keyError, subscription) {
     let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
     let newError = {
       name: "dialog",
-      message: error.replace('XXX', planName)
+      message: error.replace('_planName_', planName)
     }
     return newError;
   } else {
@@ -182,8 +182,8 @@ function canAddAccountUsers(accountId) {
 
 function countMessage(type, maxCount) {
   let message = MessagesUtil.validators.subscription.countLimit;
-  message = message.replace('XXX', _.startCase(type));
-  message = message.replace('YYY', maxCount);
+  message = message.replace('_name_', _.startCase(type));
+  message = message.replace('_max_number_', maxCount);
   return message;
 }
 
@@ -208,6 +208,6 @@ function countRecruiterMessage(type, maxCount, subscription) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
   }
 
-  message = message.replace('YYY', maxCount);
+  message = message.replace('_max_number_', maxCount);
   return { dialog: message };
 }

@@ -221,8 +221,8 @@ module.exports = {
         inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
         noSubscription: "You don't have a subscription. Please purchase a plan.",
         account: 'Account not found',
-        brandLogoAndCustomColors: 'but XXX does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
-        uploadToGallery: 'but XXX does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.',
+        brandLogoAndCustomColors: 'but _planName_ does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
+        uploadToGallery: 'but _planName_ does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.',
         exportContactListAndParticipantHistory: 'but reporting function is only available on Paid Plans. If you want to view either a PDF, CSV, or TXT Report you can Upgrade your Plan now, to access a Report of this Session.',
         accountUserCount: 'you have reached the limit of Account Managers available for your current Plan. Please Upgrade your Plan to add more.'
       },
@@ -230,10 +230,10 @@ module.exports = {
       notFound: 'No subscription found',
       notValidDependency: 'Not valid dependency',
       inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-      countLimit: 'You have reached limit for XXXs (max: YYY)',
-      recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter on the ',
-      recruiterCountLimitCore: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
-      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have YYY Open Social OR Survey Recruiters OR a combination on the Senior Plan.'
+      countLimit: 'You have reached limit for _name_s (max: _max_number_)',
+      recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter on the ',
+      recruiterCountLimitCore: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
+      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.'
     }
   },
   models: {
