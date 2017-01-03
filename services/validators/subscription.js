@@ -7,6 +7,7 @@ let subscriptionValidator = require('./hasValidSubscription');
 
 var Subscription = models.Subscription;
 var SubscriptionPreference = models.SubscriptionPreference;
+var bluebird = require('bluebird');
 
 var q = require('q');
 var _ = require('lodash');
@@ -112,36 +113,37 @@ function prepareErrorMessage(keyError, subscription) {
 }
 
 function planAllowsToDoIt(accountId, keys) {
-  let deferred = q.defer();
-  if (Array.isArray(keys) == false) {
-    keys = [keys];
-  }
+  return new bluebird(function (resolve, reject) {
+    if (Array.isArray(keys) == false) {
+      keys = [keys];
+    }
 
-  subscriptionValidator.validate(accountId).then(function(account) {
-    let subscription = account.Subscription;
-    if(subscription) {
-      let keyError;
-      _.map(keys, (key)=> {
-        if(!subscription.SubscriptionPreference.data[key]) {
-          keyError = key;
-          return false;
+    subscriptionValidator.validate(accountId).then(function(account) {
+      let subscription = account.Subscription;
+      if(subscription) {
+        let keyError;
+        //finds only first feature that doesn't match
+        _.find(keys, (key)=> {
+          if(!subscription.SubscriptionPreference.data[key]) {
+            keyError = key;
+            return false;
+          }
+          return true;
+        });
+
+        if (keyError) {
+          reject(prepareErrorMessage(keyError, subscription));
+        } else {
+          resolve();
         }
-      });
-
-      if (keyError) {
-        deferred.reject(prepareErrorMessage(keyError, subscription));
-      } else {
-        deferred.resolve();
       }
-    }
-    else {
-      deferred.resolve();
-    }
-  }, function(error) {
-    deferred.reject(error);
+      else {
+        resolve();
+      }
+    }, function(error) {
+      reject(error);
+    });
   });
-
-  return deferred.promise;
 }
 
 function canAddAccountUsers(accountId) {
