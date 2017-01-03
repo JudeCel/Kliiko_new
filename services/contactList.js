@@ -259,8 +259,16 @@ function exportContactList(params, account) {
       include: [{
         model: models.ContactListUser,
         include: [{
-          model: models.AccountUser
-        }],
+          model: models.AccountUser,
+          include: [{
+            model: models.SessionMember,
+            attributes: ["comment"],
+            include: [{
+              model: models.Session,
+              attributes: ["name"],
+            }]
+          }]
+        }]
       }]
     }).then(function(contactList) {
       if(contactList) {
@@ -335,7 +343,16 @@ function createCsvData(header, contactList) {
       }
     });
 
-    //todo: Comments
+    _.each(contactListUser.AccountUser.SessionMembers, (sessionMember) => {
+      let comment = sessionMember.comment;
+      if (comment && comment.length > 0) {
+        let columnName = "Comment Session: " + sessionMember.Session.name;
+        if (header.indexOf(columnName) == -1) {
+          header.push(columnName);
+        }
+        object[columnName] = comment;
+      }
+    });
 
     res.push(object);
   });
