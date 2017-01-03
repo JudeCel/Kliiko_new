@@ -5,8 +5,8 @@
   dashboardServices.$inject = ['globalSettings', '$q', 'authResource', 'dbg'];
 
   function dashboardServices(globalSettings, $q, authResource, dbg) {
-    var myDashboardApi = authResource('/myDashboard/:path', null, {
-      data: { method: 'GET', params: { path: 'data' } }
+    var myDashboardApi = authResource('/myDashboard/data', null, {
+      get: { method: 'GET'}
     });
 
     var services = {};
@@ -17,7 +17,7 @@
       var deferred = $q.defer();
 
       dbg.log2('#dashboardServices > getAllData > make rest call');
-      myDashboardApi.data({}, function(res) {
+      myDashboardApi.get({}, function(res) {
         dbg.log2('#dashboardServices > getAllData > rest call responds');
         deferred.resolve(res);
       });

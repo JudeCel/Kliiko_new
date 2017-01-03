@@ -10,6 +10,7 @@ var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 var userRoutes = require('./user');
 var account = require('./account');
 var jwtAuth = require('../../lib/jwt');
+var jwtRoutes = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var accountDatabase = require('./accountDatabase');
@@ -70,8 +71,8 @@ router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.post('/account', account.createNewAccount);
-// router.get('/jwtToken', jwt.getToken);
-// router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
+router.get('/jwtToken', jwtRoutes.getToken);
+router.get('/jwtTokenForMember', jwtRoutes.jwtTokenForMember);
 
 router.get('/accountManager', PERMISSIONS.managerAdmin, accountManager.get);
 router.post('/accountManager', PERMISSIONS.managerAdmin, accountManager.post);

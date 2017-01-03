@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
+var jwtToken = require('../../lib/jwt.js');
 var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
 var models = require('../../models');
@@ -26,7 +27,8 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , function(req, res, next) {
-  res.render(views_path('index'), { title: 'My Account Hub', user: req.user, message: req.flash('message')[0] });
+  let token  = jwtToken.token(req.user.accountUserId, "AccountUser:", "/" )
+  res.render(views_path('index'), { title: 'My Account Hub', user: req.user, jwt_token: token, message: req.flash('message')[0] });
 });
 
 router.get('/landing', function(req, res) {
