@@ -13,9 +13,7 @@ module.exports = (Sequelize, DataTypes) => {
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles, defaultValue: 'participant' },
     defaultFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: constants.contactListDefaultFields },
     visibleFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: constants.contactListDefaultFields },
-    participantsFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false,
-      defaultValue: [ 'Invites', 'Accept', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future', 'LastSession', 'Comments']
-    },
+    participantsFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: constants.contactListParticipantsFields },
     customFields: { type: DataTypes.ARRAY(DataTypes.TEXT), allowNull: false, defaultValue: [] }
   }, {
     classMethods: {

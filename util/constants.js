@@ -39,6 +39,7 @@ module.exports = {
     "city", "state", "country", "postCode", "companyName",
     "landlineNumber", "mobile"
   ],
+  contactListParticipantsFields: ['Invites', 'Accept', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future', 'LastSession', 'Comments'],
   contactListReqiredFields: [
     "firstName", "lastName", "email"
   ],

@@ -4,7 +4,8 @@ var crc32 = require('crc-32');
 
 module.exports = {
   lowerCaseFirstLetter: lowerCaseFirstLetter,
-  hash: hash
+  hash: hash,
+  camel2Human: camel2Human
 };
 
 function lowerCaseFirstLetter(string) {
@@ -14,4 +15,8 @@ function lowerCaseFirstLetter(string) {
 function hash(val) {
   let valToHash = val == null || val == undefined ? "" : val.toString();
   return crc32.str(valToHash);
+}
+
+function camel2Human(val) {
+  return val.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); });
 }

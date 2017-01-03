@@ -9,6 +9,7 @@ var ContactList = models.ContactList;
 var _ = require('lodash');
 var async = require('async');
 var constants = require('../util/constants');
+var stringHelpers = require('../util/stringHelpers');
 var validators = require('./../services/validators');
 var contactListImport = require('./contactListImport');
 var MessagesUtil = require('./../util/messages');
@@ -251,32 +252,28 @@ function createDefaultLists(accountId, t) {
 
 function exportContactList(params, account) {
   let deferred = q.defer();
-  console.log(0);
 
   canExportContactListData(account).then(function() {
-    console.log(1, params);
     ContactList.find({
-      where: { id: params.id/*, accountId: account.id*/ },
-      /*include: [{
-        model: ContactListUser
-      }]*/
+      where: { id: params.id, accountId: account.id },
+      include: [{
+        model: models.ContactListUser,
+        include: [{
+          model: models.AccountUser
+        }],
+      }]
     }).then(function(contactList) {
-      console.log(3);
       if(contactList) {
-        console.log(4);
         let header = createCsvHeader(contactList);
         let data = createCsvData(header, contactList);
-        console.log(6);
         deferred.resolve({ header: header, data: data });
       } else {
-        console.log(5);
         deferred.reject(MessagesUtil.ContactList.notFound);
       }
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
     });
   }, function(error) {
-    console.log(2);
     deferred.reject(error);
   });
 
@@ -295,55 +292,53 @@ function canExportContactListData(account) {
 }
 
 function createCsvHeader(contactList) {
-  let array = [];
-  /*questions.forEach(function(question) {
-    if(question.answers[0].contactDetails) {
-      _.map(question.answers[0].contactDetails, function(contact) {
-        array.push(contact.name);
-      });
-    } else {
-      array.push(question.name);
-    }
-  });*/
+  let fields = [];
 
-  return array;
+  _.each(constants.contactListDefaultFields, (field) => {
+    fields.push(stringHelpers.camel2Human(field));
+  });
+
+  _.each(contactList.customFields, (field) => {
+    fields.push(stringHelpers.camel2Human(field));
+  });
+
+  _.each(constants.contactListParticipantsFields, (field) => {
+    if (field != 'Comments') {
+      fields.push(stringHelpers.camel2Human(field));
+    }
+  });
+  
+  return fields;
 };
 
 function createCsvData(header, contactList) {
-  let array = [];
+  let res = [];
 
-  /*survey.SurveyAnswers.forEach(function(surveyAnswer) {
-    let object = {};
-    let indexDiff = 0;
+  contactList.ContactListUsers.forEach(function(contactListUser) {
+    let object = { };
+    let index = 0;
 
-    survey.SurveyQuestions.forEach(function(question, index) {
-      let answer = surveyAnswer.answers[question.id];
+    _.each(constants.contactListDefaultFields, (field) => {
+      object[header[index]] = contactListUser.AccountUser[field];
+      index++;
+    });
 
-      switch(answer.type) {
-        case 'number':
-          assignNumber(index + indexDiff, header, object, question, answer);
-          break;
-        case 'string':
-          object[header[index + indexDiff]] = answer.value;
-          break;
-        case 'boolean':
-          assignBoolean(index + indexDiff, header, object, question, answer);
-          break;
-        case 'object':
-          if (answer.contactDetails) {
-            for(var property in answer.contactDetails) {
-              while (property.toLowerCase() != header[index + indexDiff].replace(' ', '').toLowerCase()) {
-                indexDiff++;
-              }
-              object[header[index + indexDiff]] = answer.contactDetails[property];
-            }
-          }
-          break;
+    _.each(contactList.customFields, (field) => {
+      object[header[index]] = contactListUser.customFields[field];
+      index++;
+    });
+
+    _.each(constants.contactListParticipantsFields, (field) => {
+      if (field != 'Comments') {
+        object[header[index]] = contactListUser.AccountUser.invitesInfo[field];
+        index++;
       }
     });
 
-    array.push(object);
-  });*/
+    //todo: Comments
 
-  return array;
+    res.push(object);
+  });
+
+  return res;
 };
