@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp.accountUser', []).factory('accountUser', accountUserFactory);
 
-  accountUserFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
-  function accountUserFactory($q, globalSettings, $resource, dbg) {
-    var accountUserRestApi = $resource(globalSettings.restUrl + '/accountUser');
+  accountUserFactory.$inject = ['$q', 'globalSettings', 'authResource', 'dbg'];
+  function accountUserFactory($q, globalSettings, authResource, dbg) {
+    var accountUserRestApi = authResource('/accountUser');
 
     var vm = {};
     vm.getAccountUserData = getAccountUserData;
