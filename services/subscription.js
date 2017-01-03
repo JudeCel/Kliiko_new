@@ -16,6 +16,7 @@ var planConstants = require('./../util/planConstants');
 var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
+var moment = require('moment-timezone');
 
 const getAQuoteFieldsNeeded = [
   'firstName',
@@ -118,7 +119,7 @@ function getAllPlans(accountId) {
       }
 
       if (accountId) {
-        findSubscription(accountId).then(function(currentSub) {
+        findAndProcessSubscription(accountId, plans).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
@@ -206,36 +207,43 @@ function getEstimateCharge(plan, accountSubscription) {
   return deferred.promise;
 }
 
-function processFreeTrialPlanInformation(accountId, subscription, deferred) {
-  let currentPlan = subscription.SubscriptionPlan;
-  if (currentPlan.chargebeePlanId == 'free_trial') {
-    var timeDiff = Math.abs(new Date().getTime() - new Date(currentPlan.createdAt).getTime());
-    var diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
-    currentPlan.dataValues.daysLeft = constants.trialAccountDays - diffDays;
-  }
-
-  //trial version detected and need to update to update to 'free_account'
-  if (subscription.SubscriptionPlan.dataValues.daysLeft < 1) {
-    updateSubscription({accountId: accountId, newPlanId: "free_account", skipCardCheck: true}).then(function(response) {
-      findSubscription(accountId).then(function(subscription) {
-          deferred.resolve(subscription);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }, function(erros) {
-      deferred.resolve(subscription);
-    });
+function extractPlanData(plans, planId) {
+  let result = _.filter(plans, function(planData){
+    return planData.plan.id == planId;
+  });
+  if (result.length) {
+    return result[0].plan;
   } else {
-    //return original subscription
-    deferred.resolve(subscription);
+    return null;
   }
 }
 
-function findAndProcessSubscription(accountId) {
+function calculateChargebeeDays(plan) {
+  //rough estimates for month and year. This calculations are for weeks only for now!
+  let durationUnits = {"week": 7, "month": 30, "year": 365};
+  return durationUnits[plan.period_unit] * plan.period;
+}
+
+function processFreeTrialPlanInformation(accountId, subscription, plans, deferred) {
+  let currentPlan = subscription.SubscriptionPlan;
+  if (currentPlan.chargebeePlanId == 'free_trial') {
+    let freePlan = extractPlanData(plans, 'free_trial');
+
+    if (freePlan) {
+      let planDays = calculateChargebeeDays(freePlan);
+      let ends = moment(currentPlan.createdAt).add(planDays, "days");
+      currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
+    }
+  }
+
+  deferred.resolve(subscription);
+}
+
+function findAndProcessSubscription(accountId, plans) {
   let deferred = q.defer();
   findSubscription(accountId).then(function(subscription) {
     if (subscription) {
-      processFreeTrialPlanInformation(accountId, subscription, deferred);
+      processFreeTrialPlanInformation(accountId, subscription, plans, deferred);
     } else {
       //return empty - subscription not found
       deferred.resolve(subscription);

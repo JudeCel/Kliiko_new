@@ -79,7 +79,6 @@ module.exports = {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
   },
-  trialAccountDays: 9,
   accountNameRegExp: ["^[a-zA-Z0-9 ]+$",'i'],
   mobileRegExp: ["^[0-9]+$",'i'],
   dateFormat: 'MM-dd-yyyy',
