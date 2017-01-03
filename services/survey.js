@@ -466,30 +466,26 @@ function findContactListAnswers(contactList, answers) {
 function confirmSurvey(params, account) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(account.id).then(function() {
-    validators.subscription(account.id, 'survey', 1).then(function() {
-        Survey.update({ confirmedAt: new Date() }, {
-          where: { id: params.id, accountId: account.id },
-          returning: true
-        }).then(function(result) {
-          if(result[0] == 0) {
-            deferred.reject(MessagesUtil.survey.notFound);
-          }
-          else {
-            let survey = result[1][0];
-            deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
-          }
-        }).catch(Survey.sequelize.ValidationError, function(error) {
-          deferred.reject(filters.errors(error));
-        }).catch(function(error) {
-          deferred.reject(error);
-        });
-      }, function(error) {
-        deferred.reject(error);
-      });
+  validators.subscription(account.id, 'survey', 1).then(function() {
+    Survey.update({ confirmedAt: new Date() }, {
+      where: { id: params.id, accountId: account.id },
+      returning: true
+    }).then(function(result) {
+      if(result[0] == 0) {
+        deferred.reject(MessagesUtil.survey.notFound);
+      }
+      else {
+        let survey = result[1][0];
+        deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
+      }
+    }).catch(Survey.sequelize.ValidationError, function(error) {
+      deferred.reject(filters.errors(error));
+    }).catch(function(error) {
+      deferred.reject(error);
+    });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 };

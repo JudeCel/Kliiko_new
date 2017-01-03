@@ -141,31 +141,26 @@ function createNewSessionDefaultItems(session) {
 
 function initializeBuilder(params) {
   let deferred = q.defer();
+  validators.subscription(params.accountId, 'session', 0).then(function() {
 
-  validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'session', 0).then(function() {
+    params.step = 'setUp';
+    params.startTime = params.date;
+    params.endTime = params.date;
 
-      params.step = 'setUp';
-      params.startTime = params.date;
-      params.endTime = params.date;
-
-      Session.create(params).then(function(session) {
-        createNewSessionDefaultItems(session).then(function() {
-          sessionBuilderObject(session).then(function(result) {
-            deferred.resolve(result);
-          }, function(error) {
-            deferred.reject(error);
-          });
+    Session.create(params).then(function(session) {
+      createNewSessionDefaultItems(session).then(function() {
+        sessionBuilderObject(session).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
         });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
       });
-    }, function(error) {
-      deferred.reject(error);
-    })
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }

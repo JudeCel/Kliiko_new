@@ -3,6 +3,8 @@
 var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
+let subscriptionValidator = require('./hasValidSubscription');
+
 var Subscription = models.Subscription;
 var SubscriptionPreference = models.SubscriptionPreference;
 
@@ -66,7 +68,8 @@ function validate(accountId, type, count, params) {
     params = {};
   }
 
-  validQuery(accountId).then(function(subscription) {
+  subscriptionValidator.validate(accountId).then(function(account) {
+    let subscription = account.Subscription;
     if (subscription) {
       let dependency = DEPENDENCIES[type];
       if (dependency) {
@@ -114,7 +117,8 @@ function planAllowsToDoIt(accountId, keys) {
     keys = [keys];
   }
 
-  validQuery(accountId).then(function(subscription) {
+  subscriptionValidator.validate(accountId).then(function(account) {
+    let subscription = account.Subscription;
     if(subscription) {
       let keyError;
       _.map(keys, (key)=> {
@@ -143,7 +147,8 @@ function planAllowsToDoIt(accountId, keys) {
 function canAddAccountUsers(accountId) {
   let deferred = q.defer();
 
-  validQuery(accountId).then(function(subscription) {
+  subscriptionValidator.validate(accountId).then(function(account) {
+    let subscription = account.Subscription;
     if(subscription) {
       models.AccountUser.count({
         where: {
@@ -170,40 +175,6 @@ function canAddAccountUsers(accountId) {
     }
   }, function(error) {
     deferred.reject(error);
-  });
-
-  return deferred.promise;
-}
-
-function validQuery(accountId) {
-  let deferred = q.defer();
-
-  models.Account.find({
-    where: { id: accountId },
-    include: [{
-      model: Subscription,
-      include: [SubscriptionPreference]
-    }]
-  }).then(function(account) {
-    if(account) {
-      if(account.admin) {
-        deferred.resolve();
-      }
-      else if(account.Subscription) {
-        if(account.Subscription.active) {
-          deferred.resolve(account.Subscription);
-        }
-        else {
-          deferred.reject(MessagesUtil.validators.subscription.inactiveSubscription);
-        }
-      }
-      else {
-        deferred.reject(MessagesUtil.validators.subscription.notFound);
-      }
-    }
-    else {
-      deferred.reject(MessagesUtil.validators.subscription.notFound);
-    }
   });
 
   return deferred.promise;
