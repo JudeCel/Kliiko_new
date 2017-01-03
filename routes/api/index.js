@@ -1,5 +1,6 @@
 'use strict';
 var express = require('express');
+const expressJwt = require('express-jwt');
 var _ = require('lodash');
 var router = express.Router();
 var contactListImport = require('../../middleware/contactListImport.js');
@@ -8,7 +9,7 @@ var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 
 var userRoutes = require('./user');
 var account = require('./account');
-var jwt = require('./jwt');
+var jwtAuth = require('../../lib/jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var accountDatabase = require('./accountDatabase');
@@ -26,13 +27,20 @@ let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
 let sessionMember = require('./sessionMember');
-
 module.exports = router;
 
-// Common Rules
-router.use(function (req, res, next) {
-  let exceptionPaths = ["/survey/constants", "/survey/find"];
+const loadResources = (req, res, next) => {
+  jwtAuth.loadResources(req.auth).then((currentResources) => {
+    req.user = currentResources
+    next();
+  }, (error) => {
+    next();
+  });
+}
 
+// Common Rules
+router.use(expressJwt({secret: process.env.JWT_SECRET_KEY, requestProperty: 'auth'}), loadResources, (req, res, next)  => {
+  let exceptionPaths = ["/survey/constants", "/survey/find"];
   if (req.user || _.includes(exceptionPaths, req.path)) {
     next();
   } else {
@@ -62,8 +70,8 @@ router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.post('/account', account.createNewAccount);
-router.get('/jwtToken', jwt.getToken);
-router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
+// router.get('/jwtToken', jwt.getToken);
+// router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
 
 router.get('/accountManager', PERMISSIONS.managerAdmin, accountManager.get);
 router.post('/accountManager', PERMISSIONS.managerAdmin, accountManager.post);

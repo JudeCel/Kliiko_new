@@ -2,8 +2,8 @@
   'use strict';
   angular.module('KliikoApp.user', []).factory('user', usersFactory);
 
-  usersFactory.$inject = ['$q', 'globalSettings', 'authResource', 'dbg'];
-  function usersFactory($q, globalSettings, authResource, dbg) {
+  usersFactory.$inject = ['$q', 'authResource', 'dbg'];
+  function usersFactory($q, authResource, dbg) {
     var usersRestApi = authResource('/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}});
 
     var UserService = {};

@@ -47,9 +47,6 @@ app.use(session({
 
 app.use(setUpQueue);
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(subdomain);
 app.use(flash());
 app.use(logger('dev'));
 
@@ -58,11 +55,15 @@ var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
 var api = require('./routes/api');
 
-app.use('/', routes);
-app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
-app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
 app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
 
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(subdomain);
+app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
+app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
+
+app.use('/', routes);
 // Added socket.io routes
 // catch 404 and forward to error handler
 
