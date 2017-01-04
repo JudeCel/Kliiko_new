@@ -438,11 +438,9 @@
 
     function sendEmail() {
       mailTemplate.sendMail(vm.currentTemplate, vm.properties.sessionId, vm.mailTo).then(function (res) {
-        if (res.error) {
-          messenger.error(error);
-        } else {
           messenger.ok(res.message);
-        }
+        }, function (error) {
+          messenger.error(error);
       });
     }
   }

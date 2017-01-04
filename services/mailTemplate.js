@@ -6,6 +6,7 @@ var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var Session  = require('./../models').Session;
 var SessionMember  = require('./../models').SessionMember;
 var AccountUser  = require('./../models').AccountUser;
+var accountUserService  = require('./account');
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
 var emailDate = require('./formats/emailDate');
@@ -691,14 +692,25 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
 }
 
 function sendTestEmail(mailTemplate, sessionId, mailTo, callback) {
-  composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
-    var params = {
-      orginalStartTime: new Date(),
-      orginalEndTime:  new Date(),
-      email: mailTo
-    };
+  AccountUser.find({
+    where: { email: { ilike: mailTo } },
+  }).then(function(result) {
+    if (result) {
+      composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
+        var params = {
+          orginalStartTime: new Date(),
+          orginalEndTime:  new Date(),
+          email: mailTo
+        };
 
-    templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
+        templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
+      });
+    } else {
+      callback({ error: MessagesUtil.mailTemplate.error.noUser });
+    }
+  }, function(error) {
+    console.log(error);
+    callback(error);
   });
 }
 
