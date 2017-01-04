@@ -18,5 +18,5 @@ function hash(val) {
 }
 
 function camel2Human(val) {
-  return val.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); });
+  return val.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); }).trim();
 }

@@ -279,7 +279,7 @@ function exportContactList(params, account) {
           });
           resolve({ header: headerValues, data: data });
         } else {
-          reject(MessagesUtil.ContactList.notFound);
+          reject(MessagesUtil.contactList.notFound);
         }
       }).catch(function(error) {
         reject(filters.errors(error));
