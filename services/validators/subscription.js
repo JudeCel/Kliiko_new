@@ -104,7 +104,8 @@ function prepareErrorMessage(keyError, subscription) {
     let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
     let newError = {
       name: "dialog",
-      message: error.replace('_planName_', planName)
+      message: error.replace('_planName_', planName),
+      title: 'Sorry'
     }
     return newError;
   } else {
@@ -164,7 +165,7 @@ function canAddAccountUsers(accountId) {
         }]
       }).then(function(count) {
         if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount});
+          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount, title: 'Sorry'});
         }else{
           deferred.resolve();
         }
@@ -211,5 +212,5 @@ function countRecruiterMessage(type, maxCount, subscription) {
   }
 
   message = message.replace('_max_number_', maxCount);
-  return { dialog: message };
+  return { dialog: message, title: 'Sorry' };
 }
