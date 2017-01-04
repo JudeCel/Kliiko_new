@@ -5,6 +5,7 @@ var subdomains = require('../../lib/subdomains.js');
 var policy = require('../../middleware/policy.js');
 var appData = require('../../services/webAppData');
 var surveyRoutes = require('./survey.js');
+var contactListRoutes = require('./contactList.js');
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
@@ -16,5 +17,6 @@ router.use(function (req, res, next) {
 });
 
 router.get('/survey/export/:id', policy.authorized(['admin', 'accountManager']), surveyRoutes.exportSurvey);
+router.get('/contactlist/export/:id', policy.authorized(['admin', 'accountManager']), contactListRoutes.exportContactList);
 
 module.exports = router;

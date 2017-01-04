@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -35,6 +35,7 @@
         items: {}
       }
     };
+    vm.canExport = false;
 
     vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
@@ -65,6 +66,7 @@
     vm.reUpload = reUpload;
     vm.reMap = reMap;
     vm.addImportedContacts = addImportedContacts;
+    vm.initCanExportContactListData = initCanExportContactListData;
 
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
@@ -826,6 +828,14 @@
         }
       );
     }
+
+    function initCanExportContactListData() {
+      if (!vm.sessionId) {
+        contactListServices.canExportContactListData().then(function(res) {
+          vm.canExport = res.error ? false : true;
+        });
+      }
+    };
 
   }
 })();

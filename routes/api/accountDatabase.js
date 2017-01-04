@@ -1,6 +1,5 @@
 'use strict';
 
-var json2csv = require('json2csv');
 var constants = require('../../util/constants');
 var accountDatabaseService = require('../../services/admin/accountDatabase');
 var MessagesUtil = require('./../../util/messages');

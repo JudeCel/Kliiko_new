@@ -166,6 +166,9 @@ module.exports = {
     notAllowed: 'You must have plan that allows you to buy additional sms credits',
     missingQuantity: 'Quantity not selected'
   },
+  contactList: {
+    notFound: 'Contact List not found!',
+  },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
     notFound: 'Survey not found!',
