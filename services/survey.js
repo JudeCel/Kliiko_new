@@ -13,6 +13,7 @@ var MessagesUtil = require('./../util/messages');
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
+var bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
 
 const VALID_ATTRIBUTES = {
@@ -233,7 +234,6 @@ function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(account.id).then(function() {
-    validators.subscription(account.id, 'survey', 1).then(function() {
       let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
       validParams.accountId = account.id;
 
@@ -257,9 +257,6 @@ function createSurveyWithQuestions(params, account) {
       }).catch(function(error) {
         deferred.reject(error);
       });
-    }, function(error) {
-      deferred.reject(error);
-    });
   }, function(error) {
     deferred.reject(error);
   })
@@ -312,28 +309,41 @@ function updateSurvey(params, account) {
   return deferred.promise;
 };
 
+
+function updateSurveyStatus(params, account, deferred) {
+  Survey.update({ closed: params.closed, closedAt: params.closed? null: new Date()}, {
+    where: { id: params.id, accountId: account.id },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject(MessagesUtil.survey.notFound);
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(simpleParams(survey, survey.closed ? MessagesUtil.survey.closed : MessagesUtil.survey.opened));
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(filters.errors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
 function changeStatus(params, account) {
   let deferred = q.defer();
   validators.hasValidSubscription(account.id).then(function() {
-    Survey.update({ closed: params.closed, closedAt: params.closedAt }, {
-      where: { id: params.id, accountId: account.id },
-      returning: true
-    }).then(function(result) {
-      if(result[0] == 0) {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-      else {
-        let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, survey.closed ? MessagesUtil.survey.closed : MessagesUtil.survey.opened));
-      }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
+    if (params.closed) {
+      updateSurveyStatus(params, account, deferred);
+    } else {
+      validators.subscription(account.id, 'survey', 1).then(function() {
+        updateSurveyStatus(params, account, deferred);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 };
@@ -456,8 +466,8 @@ function findContactListAnswers(contactList, answers) {
 function confirmSurvey(params, account) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(account.id).then(function() {
-    Survey.update({ confirmedAt: params.confirmedAt }, {
+  validators.subscription(account.id, 'survey', 1).then(function() {
+    Survey.update({ confirmedAt: new Date() }, {
       where: { id: params.id, accountId: account.id },
       returning: true
     }).then(function(result) {
@@ -475,7 +485,7 @@ function confirmSurvey(params, account) {
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 };

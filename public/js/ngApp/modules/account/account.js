@@ -8,11 +8,10 @@
 
     var accountRestApi = $resource(globalSettings.restUrl + '/account', {}, {post: {method: 'POST'}});
 
-    var account = {};
-
     var UserService = {};
     UserService.getAccountData = getAccountData;
     UserService.createNewAccount = createNewAccount;
+    UserService.account = {};
     return UserService;
 
     function getAccountData() {
@@ -25,9 +24,9 @@
           deferred.reject(res.error);
         }
         else {
-          account = res;
-          fetchSubscription(account);
-          deferred.resolve(account);
+          UserService.account = res;
+          fetchSubscription(UserService.account);
+          deferred.resolve(UserService.account);
         }
       });
 
@@ -49,7 +48,7 @@
     }
 
     function fetchSubscription(account) {
-      account["isActiveSubscription"] = account.Subscription ? account.Subscription.active : false;
+      UserService.account["isActiveSubscription"] = UserService.account.Subscription ? UserService.account.Subscription.active : false;
     }
   }
 })();

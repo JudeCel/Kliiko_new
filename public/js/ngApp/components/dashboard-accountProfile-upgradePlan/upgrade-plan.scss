@@ -1,17 +1,16 @@
 #upgrade-plan-content {
-
   .plan-option-dark-grey{background-color: #dedede;}
   .plan-option-light-grey{background-color: #cdcdcd;}
 
   .most-popular{
     position: absolute;
     display: block;
-    width: 75px;
-    height: 73px;
+    width: 60px;
+    height: 60px;
     background-repeat: no-repeat;
     background-size: contain;
-    top: -14px;
-    left: -40px;
+    top: -20px;
+    right: 0;
     background-image: url('/icons/MostPopular.png');
   }
 
@@ -65,22 +64,21 @@
     display: table;
     width: 100%;
     height: 60px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
 
   .align-vertical-child {
-    font-size: 14px;
-    display: table-cell;
+    font-size: 15px;
     vertical-align: middle;
-    padding: 10px 0px 10px 20px;
+    padding: 0 0 0 5px;
     text-align: center;
   }
 
   .plan-option-list{
+    padding-right: 2px;
     .option-btn-red{
       margin-top: 110px;
       display: inline-block;
-      width: 48%;
       font-size: 14px;
       color: #e51d39;
       border:solid 2px #e51d39;
@@ -184,18 +182,77 @@
         margin-left: -70px;
         margin-top: 5px;
         position: absolute;
-       // background: url('./../icons/ic_tick.png') no-repeat;
       }
     }
   }
 
-
-
   .plans-table {
+    table {
+      width: 90%;
+      padding: 0;
+      margin: 0 auto;
+      th {
+        text-align: center;
+        width: 20%;
+        border-right: 2px solid #ffffff;
+        margin: 0;
+        .list-group-item-heading {
+          margin-bottom: 0;
+        }
+        .flex-box {
+          padding: 5px 10px;
+        }
+
+        .plan-block {
+          height: 100%;
+        }
+      }
+
+      th.plan-option-price-block {
+        min-height: 100px;
+      }
+
+      td {
+        border: 2px solid #ffffff;
+        font-size: 15px;
+        padding: 5px 10px;
+      }
+
+      .plan-option-feature {
+        text-align: left;
+      }
+
+      //dark
+      tr:nth-child(even) {
+        .plan-option-feature{background-color: #ededed;}
+        .junior_monthly, .junior_yearly{background-color: #cae8c8;}
+        .core_monthly, .core_yearly{background-color: #afe3f6;}
+        .senior_monthly, .senior_yearly{background-color: #cae8c8;}
+        .free_account {background-color: #faf8c3;}
+      }
+      //light
+      tr:nth-child(odd) {
+        .plan-option-feature{background-color: #dedede;}
+        .junior_monthly, .junior_yearly{background-color: #dbf1dc;}
+        .core_monthly, .core_yearly{background-color: #caecf9;}
+        .senior_monthly, .senior_yearly{background-color: #dbf1dc;}
+        .free_account {background-color: #fdfad7;}
+      }
+
+    }
+
     .plan-block {
-      display: block;
       padding-left: 0px;
-      padding-right: 15px;
+
+      h4 {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 10px;
+        font-size: 22px;
+        font-weight: bold;
+        font-style: italic;
+        font-family: sans-serif
+      }
     }
 
     .included-plan-fader {
@@ -209,9 +266,9 @@
       > .label {
         position: absolute;
         top:320px;
-        left: 10px;
+        left: 0;
         color: #E51D39;
-        font-size: calc(100vw/36);
+        font-size: calc(100vw/45);
         font-weight: bold;
 
         -webkit-transform: rotate(-15deg);
@@ -236,15 +293,7 @@
       z-index: 100;
     }
 
-    h4 {
-      max-width: 70%;
-      margin: 0 auto;
-      margin-bottom: 5px;
-      padding: 6px;
-      font-size: 2.3rem;
-      font-weight: bold;
-      font-style: italic;
-    }
+
 
     .price-label {
       display: block;
@@ -252,10 +301,14 @@
       padding: 10px 0px;
 
       h5 {
-        font-size: 3rem;
+        font-size: 35px;
         font-weight: 900;
         color: white;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+        padding: 10px;
+        sub {
+          font-size: 14px;
+        }
       }
       .outline {
         color: white;
@@ -280,7 +333,7 @@
       }
 
       p {
-        font-size: 1.5rem;
+        font-size: 12px;
         color: #fff;
         margin-bottom: 0px;
       }
@@ -293,37 +346,48 @@
       margin-bottom: 3px;
     }
 
-    .junior_monthly_dark, .junior_yearly_dark{background-color: #6ebc95;}
-    .junior_monthly_light, .junior_yearly_light{background-color: #d6ece0;}
+    .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
+    .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
+    .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
+    .free_account_header {background-color: #f5f072;}
 
-    .core_monthly_dark, .core_yearly_dark{background-color: #4CC0E9;}
-    .core_monthly_light, .core_yearly_light{background-color: #A5DFF3;}
+    .junior_monthly_btn, .junior_yearly_btn {
+      border-color: #6ebc95;
+      background-color: #fff;
+      color: #96d393 !important;
+      width: 95%;
+      margin: 5px auto;
+    }
 
-    .senior_monthly_dark, .senior_yearly_dark{background-color: #82cc81;}
-    .senior_monthly_light, .senior_yearly_light{background-color: #dbf1dc;}
+    @mixin setupPlanBtn($border, $text-color) {
+      border-color: $border;
+      background-color: #fff;
+      color: $text-color;
+      width: 95%;
+      margin: 5px auto;
+    }
 
-    .junior_monthly_btn, .junior_yearly_btn{
-      border-color: #6ebc95 !important;
-      background-color: #fff !important;
-      color: #6ebc95 !important;
-      width: 60%;
-      margin: 0 auto;
+    .free_account_btn {
+      @include setupPlanBtn(#bdb795, #bdb795);
     }
 
     .core_monthly_btn, .core_yearly_btn{
-      border-color: #4CC0E9;
-      background-color: #fff;
-      color: #4CC0E9;
-      width: 60%;
-      margin: 0 auto;
+      @include setupPlanBtn(#4CC0E9, #40b0df);
     }
 
     .senior_monthly_btn, .senior_yearly_btn{
-      border-color: #82cc81;
-      background-color: #fff;
-      color: #82cc81;
-      width: 60%;
-      margin: 0 auto;
+      @include setupPlanBtn(#82cc81, #96d393);
+    }
+
+    .senior_monthly_btn:hover, .senior_yearly_btn:hover,
+    .core_monthly_btn:hover, .core_yearly_btn:hover, .free_account_btn:hover,
+    .junior_monthly_btn:hover, .junior_yearly_btn:hover {
+      background-color: rgba(10, 10, 10, 0.3);
+      -webkit-transition: all 0.2s ease-in-out;
+      -moz-transition: all 0.2s ease-in-out;
+      -ms-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out;
     }
 
     .yellow-bg {background: $yellow;}

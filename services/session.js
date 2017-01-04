@@ -293,42 +293,38 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
 function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(accountId).then(function() {
-    validators.subscription(accountId, 'session', 1).then(function() {
-      findSession(sessionId, accountId, provider).then(function(result) {
-        let facilitator = result.data.dataValues.facilitator;
-        delete result.data.dataValues.id;
-        delete result.data.dataValues.facilitator;
-        result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
-        result.data.dataValues.step = "setUp";
-        Session.create(result.data.dataValues).then(function(session) {
-          async.waterfall([
-              function (callback) {
-                copySessionTopics(accountId, sessionId, session.id).then(function(successResponse) {
-                  callback();
-                }, function(errorResponse) {
-                  //we ignore error because data is copied step by step, and one error shouldn't stop following copying
-                  callback();
-                });
-              },
-              function(callback) {
-                MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
-                  callback();
-                });
-              }
-          ], function (error) {
-            //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
-            prepareModifiedSessions(session, accountId, provider, deferred);
-          });
-        }).catch(function(error) {
-          deferred.reject(filters.errors(error));
+  validators.subscription(accountId, 'session', 1).then(function() {
+    findSession(sessionId, accountId, provider).then(function(result) {
+      let facilitator = result.data.dataValues.facilitator;
+      delete result.data.dataValues.id;
+      delete result.data.dataValues.facilitator;
+      result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
+      result.data.dataValues.step = "setUp";
+      Session.create(result.data.dataValues).then(function(session) {
+        async.waterfall([
+            function (callback) {
+              copySessionTopics(accountId, sessionId, session.id).then(function(successResponse) {
+                callback();
+              }, function(errorResponse) {
+                //we ignore error because data is copied step by step, and one error shouldn't stop following copying
+                callback();
+              });
+            },
+            function(callback) {
+              MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+                callback();
+              });
+            }
+        ], function (error) {
+          //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
+          prepareModifiedSessions(session, accountId, provider, deferred);
         });
-      }, function(error) {
-        deferred.reject(error);
+      }).catch(function(error) {
+        deferred.reject(filters.errors(error));
       });
     }, function(error) {
       deferred.reject(error);
-    })
+    });
   }, function(error) {
     deferred.reject(error);
   })

@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -123,15 +123,14 @@
     }
 
     function changeStatus(survey) {
-      var closedAt = survey.closed ? null : new Date();
-      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed, closedAt: closedAt }).then(function(res) {
+      surveyServices.changeStatus({ id: survey.id, closed: survey.closed }).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
-        } else {
-          survey.closedAt = closedAt;
           survey.closed = !survey.closed;
+          errorMessenger.showError(res.error);
+        } else {
+          survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
         }
       });
@@ -207,7 +206,7 @@
 
         if (res.error) {
           if (!autoSave) {
-            messenger.error(res.error);
+            errorMessenger.showError(res.error);
           }
         } else {
           survey.id = res.data.id;
@@ -246,7 +245,7 @@
         dbg.log2('#SurveyController > copySurvey > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
+          errorMessenger.showError(res.error);
         }
         else {
           vm.surveys.push(res.data);
@@ -256,14 +255,13 @@
     };
 
     function confirmSurvey(survey) {
-      var date = new Date();
-      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
+      surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
         if (res.error) {
-          messenger.error(res.error);
+          errorMessenger.showError(res.error);
         } else {
-          survey.confirmedAt = date;
+          survey.confirmedAt = res.data.confirmedAt;
           messenger.ok(res.message);
           changePage('index');
         }
@@ -433,16 +431,25 @@
           vm.currentSurveyMode = 'Edit';
         }
         else {
-          vm.currentSurveyMode = 'Create';
+          return showCreatePage(page);
         }
 
-        vm.submitError = null;
-        vm.currentContacts = null;
-        vm.survey = survey || defaultSurveyData();
-        vm.currentPage = { page: 'manage', type: page };
-        moveBrowserTo('');
+        submitPageData(page, survey);
       }
     };
+
+    function showCreatePage(page) {
+      vm.currentSurveyMode = 'Create';
+      submitPageData(page);
+    }
+
+    function submitPageData(page, survey) {
+      vm.submitError = null;
+      vm.currentContacts = null;
+      vm.survey = survey || defaultSurveyData();
+      vm.currentPage = { page: 'manage', type: page };
+      moveBrowserTo('');
+    }
 
     function defaultQuestionParams(question) {
       return {

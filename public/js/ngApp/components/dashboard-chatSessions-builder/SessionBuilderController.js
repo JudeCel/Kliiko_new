@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm', 'socket', 'infoMessenger'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm, socket, infoMessenger) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm', 'socket', 'infoMessenger', 'errorMessenger'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm, socket, infoMessenger, errorMessenger) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -126,7 +126,7 @@
 
     function isSameOnlineUsersDumpForMessage(newDump) {
       return newDump.length == vm.lastOnlineUsersDumpForMessage.length && newDump.every(function(element, index) {
-        return element == vm.lastOnlineUsersDumpForMessage[index]; 
+        return element == vm.lastOnlineUsersDumpForMessage[index];
       });
     }
 
@@ -331,7 +331,7 @@
 
     function updateStep(dataObj) {
         vm.session.updateStep(dataObj, vm.session).then(null, function (err) {
-          messenger.error(err);
+          errorMessenger.showError(err);
         }
       );
     }

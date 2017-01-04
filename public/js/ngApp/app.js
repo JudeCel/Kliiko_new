@@ -13,6 +13,7 @@
     'debModule',
     'domServices',
     'messenger',
+    'errorMessenger',
     'infoMessenger',
     'ngMessages',
     'ngCookies',

@@ -13,8 +13,10 @@ var async = require('async');
 let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 var planConstants = require('./../util/planConstants');
+var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
+var moment = require('moment-timezone');
 
 const getAQuoteFieldsNeeded = [
   'firstName',
@@ -117,12 +119,12 @@ function getAllPlans(accountId) {
       }
 
       if (accountId) {
-        findSubscription(accountId).then(function(currentSub) {
+        findAndProcessSubscription(accountId).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
           addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates});
+            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features});
           })
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -203,6 +205,42 @@ function getEstimateCharge(plan, accountSubscription) {
   });
 
   return deferred.promise;
+}
+
+function processFreeTrialPlanInformation(accountId, subscription) {
+  return new Bluebird(function (resolve, reject) {
+    let currentPlan = subscription.SubscriptionPlan;
+    if (currentPlan.chargebeePlanId == 'free_trial') {
+      getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
+          let ends = moment.unix(chargebeeSub.current_term_end);
+          currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
+        resolve(subscription);
+      }, function(error) {
+        reject(error);
+      })
+    } else {
+      resolve(subscription);
+    }
+  });
+}
+
+function findAndProcessSubscription(accountId) {
+  return new Bluebird(function (resolve, reject) {
+    findSubscription(accountId).then(function(subscription) {
+      if (subscription) {
+        processFreeTrialPlanInformation(accountId, subscription).then(function(updatedSubscription) {
+          resolve(updatedSubscription);
+        }, function(err) {
+          resolve(subscription);
+        });
+      } else {
+        //return empty - subscription not found
+        resolve(subscription);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }
 
 function findSubscription(accountId) {
@@ -443,7 +481,7 @@ function updateSubscriptionData(passThruContent){
 
       let params = _.cloneDeep(planConstants[passThruContent.planId]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
-      
+
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         deferred.resolve({subscription: updatedSub, redirect: false});
       }, function(error) {

@@ -3,8 +3,11 @@
 var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
+let subscriptionValidator = require('./hasValidSubscription');
+
 var Subscription = models.Subscription;
 var SubscriptionPreference = models.SubscriptionPreference;
+var bluebird = require('bluebird');
 
 var q = require('q');
 var _ = require('lodash');
@@ -22,21 +25,24 @@ const DEPENDENCIES = {
           id: { $ne: sessionId || null }
         }
       };
-    }
+    },
+    countMessage: countMessage
   },
   contactList: {
     key: 'contactListCount',
     model: models.ContactList,
     params: function(accountId) {
       return { where: { accountId: accountId, editable: true } };
-    }
+    },
+    countMessage: countMessage
   },
   survey: {
     key: 'surveyCount',
     model: models.Survey,
     params: function(accountId) {
-      return { where: { accountId: accountId } };
-    }
+      return { where: { accountId: accountId, closed: false, confirmedAt: {$ne: null} } };
+    },
+    countMessage: countRecruiterMessage
   },
   topic: {
     key: 'topicCount',
@@ -44,7 +50,8 @@ const DEPENDENCIES = {
     params: function(accountId) {
       return { where: { accountId: accountId, default: false } };
     }
-  }
+  },
+  countMessage: countMessage
 };
 
 module.exports = {
@@ -52,7 +59,8 @@ module.exports = {
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers,
-  countMessage: countMessage
+  countMessage: countMessage,
+  countRecruiterMessage: countRecruiterMessage
 };
 
 function validate(accountId, type, count, params) {
@@ -61,7 +69,8 @@ function validate(accountId, type, count, params) {
     params = {};
   }
 
-  validQuery(accountId).then(function(subscription) {
+  subscriptionValidator.validate(accountId).then(function(account) {
+    let subscription = account.Subscription;
     if (subscription) {
       let dependency = DEPENDENCIES[type];
       if (dependency) {
@@ -69,9 +78,9 @@ function validate(accountId, type, count, params) {
           let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
           if(c + count <= maxCount || maxCount == -1) {
-            deferred.resolve();
+            deferred.resolve(subscription);
           } else {
-            deferred.reject(countMessage(type, maxCount));
+              deferred.reject(dependency.countMessage(type, maxCount, subscription));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -80,7 +89,7 @@ function validate(accountId, type, count, params) {
         deferred.reject(MessagesUtil.validators.subscription.notValidDependency);
       }
     } else {
-      deferred.resolve();
+      deferred.resolve(subscription);
     }
   }, function(error) {
     deferred.reject(error);
@@ -89,32 +98,60 @@ function validate(accountId, type, count, params) {
   return deferred.promise;
 }
 
-function planAllowsToDoIt(accountId, key) {
-  let deferred = q.defer();
+function prepareErrorMessage(keyError, subscription) {
+  let error = MessagesUtil.validators.subscription.error[keyError];
+  if (error) {
+    let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
+    let newError = {
+      name: "dialog",
+      message: error.replace('_planName_', planName),
+      title: 'Sorry'
+    }
+    return newError;
+  } else {
+    return MessagesUtil.validators.subscription.planDoesntAllowToDoThis;
+  }
+}
 
-  validQuery(accountId).then(function(subscription) {
-    if(subscription) {
-      if(subscription.SubscriptionPreference.data[key]) {
-        deferred.resolve();
+function planAllowsToDoIt(accountId, keys) {
+  return new bluebird(function (resolve, reject) {
+    if (Array.isArray(keys) == false) {
+      keys = [keys];
+    }
+
+    subscriptionValidator.validate(accountId).then(function(account) {
+      let subscription = account.Subscription;
+      if(subscription) {
+        let keyError;
+        //finds only first feature that doesn't match
+        _.find(keys, (key)=> {
+          if(!subscription.SubscriptionPreference.data[key]) {
+            keyError = key;
+            return false;
+          }
+          return true;
+        });
+
+        if (keyError) {
+          reject(prepareErrorMessage(keyError, subscription));
+        } else {
+          resolve();
+        }
       }
       else {
-        deferred.reject(MessagesUtil.validators.subscription.planDoesntAllowToDoThis);
+        resolve();
       }
-    }
-    else {
-      deferred.resolve();
-    }
-  }, function(error) {
-    deferred.reject(error);
+    }, function(error) {
+      reject(error);
+    });
   });
-
-  return deferred.promise;
 }
 
 function canAddAccountUsers(accountId) {
   let deferred = q.defer();
 
-  validQuery(accountId).then(function(subscription) {
+  subscriptionValidator.validate(accountId).then(function(account) {
+    let subscription = account.Subscription;
     if(subscription) {
       models.AccountUser.count({
         where: {
@@ -128,7 +165,7 @@ function canAddAccountUsers(accountId) {
         }]
       }).then(function(count) {
         if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject(countMessage("AccountUser", subscription.SubscriptionPreference.data.accountUserCount));
+          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount, title: 'Sorry'});
         }else{
           deferred.resolve();
         }
@@ -146,43 +183,34 @@ function canAddAccountUsers(accountId) {
   return deferred.promise;
 }
 
-function validQuery(accountId) {
-  let deferred = q.defer();
-
-  models.Account.find({
-    where: { id: accountId },
-    include: [{
-      model: Subscription,
-      include: [SubscriptionPreference]
-    }]
-  }).then(function(account) {
-    if(account) {
-      if(account.admin) {
-        deferred.resolve();
-      }
-      else if(account.Subscription) {
-        if(account.Subscription.active) {
-          deferred.resolve(account.Subscription);
-        }
-        else {
-          deferred.reject(MessagesUtil.validators.subscription.inactiveSubscription);
-        }
-      }
-      else {
-        deferred.reject(MessagesUtil.validators.subscription.notFound);
-      }
-    }
-    else {
-      deferred.reject(MessagesUtil.validators.subscription.notFound);
-    }
-  });
-
-  return deferred.promise;
-}
-
 function countMessage(type, maxCount) {
   let message = MessagesUtil.validators.subscription.countLimit;
-  message = message.replace('XXX', _.startCase(type));
-  message = message.replace('YYY', maxCount);
+  message = message.replace('_name_', _.startCase(type));
+  message = message.replace('_max_number_', maxCount);
   return message;
+}
+
+function countRecruiterMessage(type, maxCount, subscription) {
+  let subscriptionType = 'free_trial';
+  if (subscription) {
+    subscriptionType = subscription.dataValues.planId;
+  }
+
+  let message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial;
+  if (_.includes(subscriptionType, 'free_')) {
+    if (_.includes(subscriptionType, 'trial')) {
+      message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Free Trial Plan";
+    } else {
+      message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Free Account Plan";
+    }
+  } else if (_.includes(subscriptionType, 'junior_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitJunior_Trial + "Junior Plan";
+  } else if (_.includes(subscriptionType, 'core_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitCore;
+  } else if (_.includes(subscriptionType, 'senior_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
+  }
+
+  message = message.replace('_max_number_', maxCount);
+  return { dialog: message, title: 'Sorry' };
 }

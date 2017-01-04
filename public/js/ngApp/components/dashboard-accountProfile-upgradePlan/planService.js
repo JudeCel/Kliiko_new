@@ -8,7 +8,8 @@
     var subscriptionPlanRestApi = $resource(globalSettings.restUrl + '/subscriptionPlan/:path', null, {
       updatePlan: { method: 'PUT', params: { path: 'updatePlan' } },
       UpdateViaCheckout: { method: 'PUT', params: { path: 'UpdateViaCheckout' } },
-      postQuote: { method: 'POST', params: { path: 'postQuote' } }
+      postQuote: { method: 'POST', params: { path: 'postQuote' } },
+      checkPlanFeatures: { method: 'GET', params: { path: 'checkPlanFeatures' } }
     });
 
     var spService = {};
@@ -17,6 +18,7 @@
     spService.updatePlan = updatePlan;
     spService.retrievCheckoutAndUpdateSub = retrievCheckoutAndUpdateSub;
     spService.submitContactusForm = submitContactusForm;
+    spService.checkPlanFeatures = checkPlanFeatures;
     return spService;
 
     function submitContactusForm(params) {
@@ -60,6 +62,16 @@
       });
       return deferred.promise;
     }
+
+    function checkPlanFeatures(features) {
+      var deferred = $q.defer();
+      dbg.log2('#SubscriptionPlanService > checkPlanFeatures > make rest call');
+      subscriptionPlanRestApi.checkPlanFeatures({features: features}, function(res) {
+        dbg.log2('#SubscriptionPlanService > checkPlanFeatures > rest call responds');
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    };
 
   }
 })();
