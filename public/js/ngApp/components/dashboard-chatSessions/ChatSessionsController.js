@@ -19,7 +19,7 @@
     vm.hasAccess = hasAccess;
     vm.redirectToChatSession = redirectToChatSession;
     vm.changeOrder = changeOrder;
-    vm.prepareCurrentPageSessions = prepareCurrentPageSessions;
+    vm.prepareSessionsPagination = prepareSessionsPagination;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
@@ -45,19 +45,51 @@
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
-        vm.pagination.totalChatSessions = res.data.length;
-        prepareCurrentPageSessions();
+        prepareSessionsPagination();
         dbg.log2('#ChatSessionsController > getChatSessions > res ', res.data);
       });
     }
 
-    function prepareCurrentPageSessions() {
+    function prepareSessionsPagination() {
       if (vm.sessions && vm.sessions.length > 0) {
-        var sliceStart = (vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage;
-        var sliceEnd =  vm.pagination.currentPage * vm.pagination.itemsPerPage;
-        vm.pagination.sessions = vm.sessions.slice(sliceStart, sliceEnd);
+        vm.pagination.currentPage = getCurrentPage();
+        vm.pagination.sessions = getSessions();
+        vm.pagination.totalChatSessions = vm.sessions.length;
+
       } else {
         vm.pagination.sessions = [];
+      }
+
+      function getSessions() {
+        var sliceStart = (vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage;
+        var sliceEnd =  vm.pagination.currentPage * vm.pagination.itemsPerPage;
+        return vm.sessions.slice(sliceStart, sliceEnd);
+      }
+
+      function getCurrentPage() {
+        if (!isOnFirstPage() && isRemovedLastSessionOnCurrentPage()) {
+          return --vm.pagination.currentPage;
+        } else if (isAddingItemToNewPage()) {
+          return ++vm.pagination.currentPage;
+        } else {
+          return vm.pagination.currentPage;
+        }
+      }
+
+      function isAddingItemToNewPage() {
+        var isAddingItem = vm.sessions.length > vm.pagination.totalChatSessions;
+        var isCurrentPageFull = vm.pagination.sessions.length == vm.pagination.itemsPerPage;
+        return isAddingItem && isCurrentPageFull;
+      }
+
+      function isRemovedLastSessionOnCurrentPage() {
+        var isRemoved = vm.sessions.length < vm.pagination.totalChatSessions;
+        var isLastOnPage = vm.pagination.sessions.length == 1;
+        return isRemoved && isLastOnPage;
+      }
+
+      function isOnFirstPage() {
+         return vm.pagination.currentPage == 1;
       }
     }
 
@@ -85,6 +117,7 @@
             messenger.ok(res.message);
             var index = vm.sessions.indexOf(session);
             vm.sessions.splice(index, 1);
+            prepareSessionsPagination();
           }
         });
       });
@@ -102,6 +135,7 @@
           else {
             messenger.ok(res.message);
             vm.sessions.push(res.data);
+            prepareSessionsPagination();
           }
         });
       }

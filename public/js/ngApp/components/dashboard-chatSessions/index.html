@@ -79,7 +79,7 @@
     </div>
     <div ng-if="csc.pagination.totalChatSessions > csc.pagination.itemsPerPage" class="paginator">
       <uib-pagination total-items="csc.pagination.totalChatSessions" ng-model="csc.pagination.currentPage" class="pagination-sm"
-      items-per-page="csc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="csc.prepareCurrentPageSessions()"></pagination>
+      items-per-page="csc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="csc.prepareSessionsPagination()"></pagination>
     </div>
 
     <div class='col-xs-12 build-session-text' ng-if='csc.queriedForSessions && !csc.sessions.length'>
