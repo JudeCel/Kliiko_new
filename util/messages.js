@@ -212,7 +212,8 @@ module.exports = {
     alreadyChanged: 'Password already changed.',
     dialog: {
       emailExists: "You already have a Role in the system. Please Login.",
-      emailExistsCanCreateAccount: "That's great you want your own Account! Because you already have a Role in klzii, you can login as normal. Then click on My Details, to create a Free Account."
+      emailExistsCanCreateAccount: "That's great you want your own Account! Because you already have a Role in klzii, you can login as normal. Then click on My Details, to create a Free Account.",
+      invitationAccepted: "Hey, we see you have Accepted an invitation to a Session. Create your password, then you can create your Account from My Dashboard later."
     }
   },
   validators: {

@@ -103,23 +103,32 @@ function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
 
-  chargebee.plan.list({limit: 20}).request(function(error, result){
-    if(error){
+  chargebee.plan.list({limit: 20, "status[is]" : "active"}).request(function(error, result){
+    if (error) {
       deferred.reject(error);
-    }else{
-      if(accountId){
+    } else {
+      //according to API manual "status[is]" : "active" is enought to show only active plans, but this doesn't work
+      var plans = []
+      for (var i=0; i<result.list.length; i++) {
+        var plan = result.list[i];
+        if (plan.plan.status == "active") {
+          plans.push(plan);
+        }
+      }
+
+      if (accountId) {
         findSubscription(accountId).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
-          addPlanEstimateChargeAndConstants(result.list, accountId).then(function(planWithConstsAndEstimates) {
+          addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
             deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates});
           })
         }, function(error) {
           deferred.reject(filters.errors(error));
         })
-      }else{
-        deferred.resolve(result.list)
+      } else {
+        deferred.resolve(plans)
       }
     }
   });
