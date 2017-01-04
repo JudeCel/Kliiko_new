@@ -1,15 +1,12 @@
 'use strict';
 var express = require('express');
-const expressJwt = require('express-jwt');
 var _ = require('lodash');
 var router = express.Router();
 var contactListImport = require('../../middleware/contactListImport.js');
 var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
-
 var userRoutes = require('./user');
 var account = require('./account');
-var jwtAuth = require('../../lib/jwt');
 var jwtRoutes = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
@@ -30,17 +27,8 @@ let contactListUser = require('./contactListUser');
 let sessionMember = require('./sessionMember');
 module.exports = router;
 
-const loadResources = (req, res, next) => {
-  jwtAuth.loadResources(req.auth).then((currentResources) => {
-    req.user = currentResources
-    next();
-  }, (error) => {
-    next();
-  });
-}
-
 // Common Rules
-router.use(expressJwt({secret: process.env.JWT_SECRET_KEY, requestProperty: 'auth'}), loadResources, (req, res, next)  => {
+router.use((req, res, next)  => {
   let exceptionPaths = ["/survey/constants", "/survey/find"];
   if (req.user || _.includes(exceptionPaths, req.path)) {
     next();

@@ -8,6 +8,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
+var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
 var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
@@ -55,7 +56,7 @@ var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
 var api = require('./routes/api');
 
-app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
+app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, sessionMiddleware.extendUserSession, api);
 
 app.use(passport.initialize());
 app.use(passport.session());
