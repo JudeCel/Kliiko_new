@@ -299,11 +299,11 @@
     }
 
     function upgradePlanText(plan) {
-      return plan.price?"BUY NOW":"GET STARTED"
+      return plan.price ? "BUY NOW" : "GET STARTED"
     }
 
     vm.showBoolean = function(feature, plan) {
-      return (feature.type=='Boolean' && vm.getFeatureValue(feature.key, plan.additionalParams));
+      return (feature.type == 'Boolean' && vm.getFeatureValue(feature.key, plan.additionalParams));
     }
 
     vm.getFeatureValue = function(key, planParameters) {
@@ -312,6 +312,10 @@
 
     vm.showNumber = function(feature) {
       return (feature.type == 'Number' || feature.type == 'NumberLimit');
+    }
+
+    vm.multipleDays = function () {
+      return (vm.currentPlan.daysLeft > 1);
     }
 
     function displayFeatureValue(feature, plan) {
