@@ -25,33 +25,9 @@
     vm.annualPlans = [];
 
     vm.pricePerEnding = {
-      monthly: 'mth',
-      annual: 'year'
+      monthly: 'MONTH',
+      annual: 'YEAR'
     }
-
-    vm.planOptions = [
-      'Number of Active Sessions',
-      'Number of Contact Lists',
-      'Recruiter lists \n (build Contact Lists on demand)',
-      'Import and manage your \n existing contacts',
-      'Custom logo and branding',
-      'Contacts per account',
-      'Managers per account',
-      'Export contact and \n participation history',
-      'Export Recruiter survey results',
-      'Access klzii Forum',
-      'Access klzii Focus',
-      'Spectators can watch sessions',
-      'Paid SMS reminders for guests',
-      'Tips for guiding discussions',
-      'Whiteboard functionality',
-      'Upload and store multimedia',
-      'Reporting and analysis',
-      'Mobile and tablet compatible',
-      'Customise email invitations \n and reminders',
-      'Number of topics',
-      'Private and secure sessions (SSL)'
-    ]
 
     vm.stepLayouts = [
       {
@@ -102,14 +78,15 @@
     vm.switchPlan = switchPlan;
     vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
-    vm.optionBackground = optionBackground;
     vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
     vm.buttonClassName = buttonClassName;
     vm.switchPlanView = switchPlanView;
-    vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
     vm.mostPopular = mostPopular;
+    vm.upgradePlanText = upgradePlanText;
+    vm.displayFeatureValue = displayFeatureValue;
+    vm.finishedRenderingPlans = finishedRenderingPlans;
 
     init();
 
@@ -158,7 +135,9 @@
 
           vm.annualOrMonthly = 'monthly';
           vm.subPlans = vm.monthlyPlans;
+
           vm.currentPlan = result.currentPlan;
+          vm.features = result.features;
         }
       })
     }
@@ -227,10 +206,8 @@
     }
 
     function checkTheCount(count) {
-      if(count == -1){
+      if(count < 0){
         return "Unlimited";
-      } else if(count == 0) {
-        return "false";
       }else{
         return count;
       }
@@ -276,14 +253,6 @@
       return price / 100;
     }
 
-    function optionBackground(index) {
-      if(index%2 > 0) {
-        return "plan-option-dark-grey"
-      }else{
-        return "plan-option-light-grey"
-      }
-    }
-
     function openGetQuoteModal(user) {
       vm.contactUsUser = {
         firstName: user.firstName,
@@ -321,21 +290,62 @@
       });
     }
 
-    function planOptionColor(plan, number) {
-      if (number == 'odd') {
-        return plan + "_light";
-      }
-      if (number == "even") {
-        return plan + "_dark";
-      }
-    }
-
     function selectPlanBtnColor(plan) {
       return plan + "_btn"
     }
 
     function mostPopular(planId) {
       return 'core_monthly' == planId;
+    }
+
+    function upgradePlanText(plan) {
+      return plan.price ? "BUY NOW" : "GET STARTED"
+    }
+
+    vm.showBoolean = function(feature, plan) {
+      return (feature.type == 'Boolean' && vm.getFeatureValue(feature.key, plan.additionalParams));
+    }
+
+    vm.getFeatureValue = function(key, planParameters) {
+      return planParameters[key];
+    }
+
+    vm.showNumber = function(feature) {
+      return (feature.type == 'Number' || feature.type == 'NumberLimit');
+    }
+
+    vm.multipleDays = function () {
+      return (vm.currentPlan.daysLeft > 1);
+    }
+
+    function displayFeatureValue(feature, plan) {
+      var result = checkTheCount(plan.additionalParams[feature.key]);
+      if (feature.type == 'NumberLimit') {
+        result = 'up to ' + result + "/mth";
+      }
+      return result;
+    }
+
+    function setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable) {
+      highlightElement.width(currentElement.width());
+      highlightElement.height(hostTable.height());
+    }
+
+    function updateCurrentPlanStyle(planStyle) {
+      var style = "."+planStyle;
+      var highlightElement = $(".included-plan-fader");
+      var currentElement = $(style);
+      var hostTable = $('.plans-table table');
+
+      setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable);
+
+      jQuery(window).resize(function() {
+        setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable)
+      });
+    }
+
+    function finishedRenderingPlans() {
+      updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
     }
   }
 })();

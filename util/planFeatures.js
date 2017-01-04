@@ -1,0 +1,31 @@
+'use strict';
+module.exports = {
+  features: [
+    {key: "accessKlzziForum", type: "Boolean", title: "Access klzii Forum"},
+    {key: "accessKlzziFocus", type: "Boolean", title: "Access klzii Focus"},
+    {key: "sessionCount", type: "Number", title: "Number of Chat Sessions"},
+    {key: "contactListCount", type: "Number", title: "Number of Contact Lists"},
+    {key: "recruiterContactListCount", type: "Number", title: "# of Recruiter/Social Surveys"},
+    {key: "exportRecruiterStats", type: "Boolean", title: "Export Recruiter Stats"},
+    {key: "exportRecruiterSurveyData", type: "Boolean", title: "Export Recruiter Data"},
+    {key: "importDatabase", type: "Boolean", title: "Import & Map Contacts"},
+    {key: "exportContactListAndParticipantHistory", type: "Boolean", title: "Export Contacts"},
+    {key: "numberOfContacts", type: "Number", title: "Number of Contacts"},
+    {key: "accountUserCount", type: "Number", title: "Number of Managers"},
+    {key: "brandLogoAndCustomColors", type: "Boolean", title: "Custom Logo and Colors"},
+    {key: "customEmailInvitationAndReminderMessages", type: "Boolean", title: "Custom Emails"},
+    {key: "planSmsCount", type: "NumberLimit", title: "SMS Alerts (Focus)"},
+    {key: "topicCount", type: "Number", title: "Number of Topics"},
+    {key: "canInviteObserversToSession", type: "Boolean", title: "Spectators"},
+    {key: "whiteboardDisplay", type: "Boolean", title: "Whiteboard-Display"},
+    {key: "whiteboardFunctionality", type: "Boolean", title: "Whiteboard-Interactive"},
+    {key: "pinboardDisplay", type: "Boolean", title: "Pinboard"},
+    {key: "uploadToGallery", type: "Boolean", title: "Multimedia"},
+    {key: "voting", type: "Boolean", title: "Voting"},
+    {key: "privateMessaging", type: "Boolean", title: "Private Messaging"},
+    {key: "discussionGuideTips", type: "Boolean", title: "Host Tips"},
+    {key: "reportingFunctions", type: "Boolean", title: "Export Reporting"},
+    {key: "availableOnTabletAndMobilePlatforms", type: "Boolean", title: "Mobile & Tablet"},
+    {key: "secureSsl", type: "Boolean", title: "Private & Secure (SSL)"},
+  ]
+}

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state', '$confirm', 'errorMessenger'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state, $confirm, errorMessenger) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
@@ -256,7 +256,7 @@
       else {
         brandColourServices.canCreateCustomColors().then(function(res) {
           if(res.error) {
-            messenger.error(res.error);
+            errorMessenger.showError(res.error);
           }else{
             if(page == 'edit') {
               vm.originalScheme = {};

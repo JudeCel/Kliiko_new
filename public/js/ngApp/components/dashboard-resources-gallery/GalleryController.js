@@ -4,11 +4,10 @@
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm', 'account', 'planService', 'errorMessenger'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm, accountData, planService, errorMessenger) {
     dbg.log2('#GalleryController started');
     var vm = this;
-
     vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
     vm.newResource = {};
     vm.resourceList = [];
@@ -61,6 +60,7 @@
     vm.setModalTab = setModalTab;
     vm.preloadResources = preloadResources;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
+    vm.handleUploadPermission = handleUploadPermission;
 
     function resetSelectionList(params) {
       vm.selectionList = {};
@@ -355,6 +355,14 @@
         vm.pagination.items = {};
         vm.pagination.totalItems = 0;
       }
+    }
+
+    function handleUploadPermission() {
+      planService.checkPlanFeatures('uploadToGallery').then(function(response) {
+        if(response.error) {
+          errorMessenger.showError(response.error);
+        }
+      });
     }
 
     function openUploadModal(current, parent, replaceResource, modalTitle) {

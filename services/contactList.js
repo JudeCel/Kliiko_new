@@ -9,8 +9,11 @@ var ContactList = models.ContactList;
 var _ = require('lodash');
 var async = require('async');
 var constants = require('../util/constants');
+var stringHelpers = require('../util/stringHelpers');
 var validators = require('./../services/validators');
 var contactListImport = require('./contactListImport');
+var MessagesUtil = require('./../util/messages');
+let Bluebird = require('bluebird');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
@@ -26,7 +29,9 @@ module.exports = {
   destroy: destroy,
   createDefaultLists: createDefaultLists,
   parseFile: contactListImport.parseFile,
-  validateContactList: contactListImport.validateContactList
+  validateContactList: contactListImport.validateContactList,
+  exportContactList: exportContactList, 
+  canExportContactListData: canExportContactListData
 };
 
 function destroy(contacListId, accoutId) {
@@ -200,20 +205,16 @@ function reqiredFieldsForList(list) {
 function create(params) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'contactList', 1).then(function() {
-      ContactList.create(params).then(function(result) {
-        result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
-        deferred.resolve(result);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
+  validators.subscription(params.accountId, 'contactList', 1).then(function() {
+    ContactList.create(params).then(function(result) {
+      result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
+      deferred.resolve(result);
     }, function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -245,3 +246,109 @@ function createDefaultLists(accountId, t) {
   });
   return deferred.promise;
 }
+
+function exportContactList(params, account) {
+  return new Bluebird((resolve, reject) => {
+    canExportContactListData(account).then(function() {
+      ContactList.find({
+        where: { id: params.id, accountId: account.id },
+        include: [{
+          model: models.ContactListUser,
+          include: [{
+            model: models.AccountUser,
+            include: [{
+              model: models.SessionMember,
+              attributes: ["comment"],
+              include: [{
+                model: models.Session,
+                attributes: ["name"],
+              }]
+            }]
+          }]
+        }]
+      }).then(function(contactList) {
+        if(contactList) {
+          let header = createCsvHeader(contactList);
+          let data = createCsvData(header, contactList);
+          let headerValues = Object.keys(header).map(function(key) {
+            return header[key];
+          });
+          resolve({ header: headerValues, data: data });
+        } else {
+          reject(MessagesUtil.contactList.notFound);
+        }
+      }).catch(function(error) {
+        reject(filters.errors(error));
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+};
+
+function canExportContactListData(account) {
+  return new Bluebird((resolve, reject) => {
+    validators.planAllowsToDoIt(account.id, 'exportContactListAndParticipantHistory').then(function() {
+      resolve({});
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function createCsvHeader(contactList) {
+  let fields = { };
+
+  _.each(constants.contactListDefaultFields, (field) => {
+    fields[field] = stringHelpers.camel2Human(field);
+  });
+
+  _.each(contactList.customFields, (field) => {
+    fields[field] = field;
+  });
+
+  _.each(constants.contactListParticipantsFields, (field) => {
+    if (field != 'Comments') {
+      fields[field] = stringHelpers.camel2Human(field);
+    }
+  });
+  
+  return fields;
+};
+
+function createCsvData(header, contactList) {
+  let res = [];
+
+  contactList.ContactListUsers.forEach((contactListUser) => {
+    let object = { };
+
+    _.each(constants.contactListDefaultFields, (field) => {
+      object[header[field]] = contactListUser.AccountUser[field];
+    });
+
+    _.each(contactList.customFields, (field) => {
+      object[header[field]] = contactListUser.customFields[field];
+    });
+
+    _.each(constants.contactListParticipantsFields, (field) => {
+      if (field != 'Comments') {
+        object[header[field]] = contactListUser.AccountUser.invitesInfo[field];
+      }
+    });
+
+    _.each(contactListUser.AccountUser.SessionMembers, (sessionMember) => {
+      let comment = sessionMember.comment;
+      if (comment && comment.length > 0) {
+        let columnName = "Comment Session: " + sessionMember.Session.name;
+        if (!header[columnName]) {
+          header[columnName] = columnName;
+        }
+        object[columnName] = comment;
+      }
+    });
+
+    res.push(object);
+  });
+
+  return res;
+};

@@ -104,6 +104,7 @@ router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, s
 
 // Subscription
 router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
+router.get('/subscriptionPlan/checkPlanFeatures', PERMISSIONS.managerAdmin, subscription.planAllowsToDoIt);
 router.put('/subscriptionPlan/updatePlan', PERMISSIONS.managerAdmin, subscription.updatePlan);
 router.put('/subscriptionPlan/UpdateViaCheckout', PERMISSIONS.managerAdmin, subscription.retrievCheckoutAndUpdateSub)
 router.post('/subscriptionPlan/postQuote', PERMISSIONS.managerAdmin, subscription.postQuote)
@@ -116,7 +117,7 @@ router.get('/subscriptionSmsCredits/creditCount', PERMISSIONS.managerAdmin, smsC
 // contact List
 router.get('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.index);
 router.post('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.create);
-
+router.get('/contactLists/canExportContactListData', PERMISSIONS.facilitatorManagerAdmin, contactList.canExportContactListData);
 router.post('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactList.importContacts);
 router.post('/contactLists/:id/validate', PERMISSIONS.facilitatorManagerAdmin, contactList.validateContacts);
