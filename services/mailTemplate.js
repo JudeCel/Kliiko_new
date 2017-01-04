@@ -39,11 +39,8 @@ module.exports = {
   copyTemplatesFromSession: copyTemplatesFromSession
 };
 
-var templateHeaderListFields = [
-    'id', 'name', 'category'
-];
-
-var resourceIdPattern = /data-resource-id="(\d*)/g;
+let templateHeaderListFields = ['id', 'name', 'category'];
+let resourceIdPattern = /data-resource-id="(\d*)/g;
 
 function getMailTemplateTypeList(categories, callback) {
   let query = {category:{ $in: categories }};
@@ -105,12 +102,14 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent) {
     }
   });
 
+  //remove old MailTemplateResources
   if (ids.length > 0) {
     models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId, resourceId: { $notIn: ids } }});
   } else {
     models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId }});
   }
   
+  //add new MailTemplateResources
   models.Resource.findAll({
     attributes: ["id"],
     where: {
