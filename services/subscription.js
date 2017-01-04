@@ -119,7 +119,7 @@ function getAllPlans(accountId) {
       }
 
       if (accountId) {
-        findAndProcessSubscription(accountId, plans).then(function(currentSub) {
+        findAndProcessSubscription(accountId).then(function(currentSub) {
           if(currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
@@ -207,42 +207,32 @@ function getEstimateCharge(plan, accountSubscription) {
   return deferred.promise;
 }
 
-function extractPlanData(plans, planId) {
-  let result = _.filter(plans, function(planData){
-    return planData.plan.id == planId;
-  });
-  if (result.length) {
-    return result[0].plan;
-  } else {
-    return null;
-  }
-}
-
-function calculateChargebeeDays(plan) {
-  //rough estimates for month and year. This calculations are for weeks only for now!
-  let durationUnits = {"week": 7, "month": 30, "year": 365};
-  return durationUnits[plan.period_unit] * plan.period;
-}
-
-function processFreeTrialPlanInformation(accountId, subscription, plans) {
-  let currentPlan = subscription.SubscriptionPlan;
-  if (currentPlan.chargebeePlanId == 'free_trial') {
-    let freePlan = extractPlanData(plans, 'free_trial');
-
-    if (freePlan) {
-      let planDays = calculateChargebeeDays(freePlan);
-      let ends = moment(currentPlan.createdAt).add(planDays, "days");
-      currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
+function processFreeTrialPlanInformation(accountId, subscription) {
+  return new Bluebird(function (resolve, reject) {
+    let currentPlan = subscription.SubscriptionPlan;
+    if (currentPlan.chargebeePlanId == 'free_trial') {
+      getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
+          let ends = moment.unix(chargebeeSub.current_term_end);
+          currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
+        resolve(subscription);
+      }, function(error) {
+        reject(error);
+      })
+    } else {
+      resolve(subscription);
     }
-  }
+  });
 }
 
-function findAndProcessSubscription(accountId, plans) {
+function findAndProcessSubscription(accountId) {
   return new Bluebird(function (resolve, reject) {
     findSubscription(accountId).then(function(subscription) {
       if (subscription) {
-        processFreeTrialPlanInformation(accountId, subscription, plans);
-        resolve(subscription);
+        processFreeTrialPlanInformation(accountId, subscription).then(function(updatedSubscription) {
+          resolve(updatedSubscription);
+        }, function(err) {
+          resolve(subscription);
+        });
       } else {
         //return empty - subscription not found
         resolve(subscription);
