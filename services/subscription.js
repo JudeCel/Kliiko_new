@@ -224,7 +224,7 @@ function calculateChargebeeDays(plan) {
   return durationUnits[plan.period_unit] * plan.period;
 }
 
-function processFreeTrialPlanInformation(accountId, subscription, plans, deferred) {
+function processFreeTrialPlanInformation(accountId, subscription, plans) {
   let currentPlan = subscription.SubscriptionPlan;
   if (currentPlan.chargebeePlanId == 'free_trial') {
     let freePlan = extractPlanData(plans, 'free_trial');
@@ -235,24 +235,22 @@ function processFreeTrialPlanInformation(accountId, subscription, plans, deferre
       currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
     }
   }
-
-  deferred.resolve(subscription);
 }
 
 function findAndProcessSubscription(accountId, plans) {
-  let deferred = q.defer();
-  findSubscription(accountId).then(function(subscription) {
-    if (subscription) {
-      processFreeTrialPlanInformation(accountId, subscription, plans, deferred);
-    } else {
-      //return empty - subscription not found
-      deferred.resolve(subscription);
-    }
-  }, function(error) {
-    deferred.reject(filters.errors(error));
+  return new Bluebird(function (resolve, reject) {
+    findSubscription(accountId).then(function(subscription) {
+      if (subscription) {
+        processFreeTrialPlanInformation(accountId, subscription, plans);
+        resolve(subscription);
+      } else {
+        //return empty - subscription not found
+        resolve(subscription);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
   });
-
-  return deferred.promise;
 }
 
 function findSubscription(accountId) {
