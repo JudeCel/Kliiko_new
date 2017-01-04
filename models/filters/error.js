@@ -9,7 +9,6 @@ module.exports = {
 
 function filterErrors(errorsObject) {
   let object = {};
-
   if(typeof errorsObject === 'string') {
     object = errorsObject;
   }
@@ -30,7 +29,7 @@ function filterErrors(errorsObject) {
 function parseErrorMessage(error, object) {
   let message = error.message;
   if (!message) return;
-  let path = error.path || (error.parent && error.parent.column) || 'unhandled';
+  let path = error.path || (error.parent && error.parent.column) || error.name || 'unhandled';
   let field = modifyFieldName(path);
 
   switch(true) {
@@ -49,6 +48,10 @@ function parseErrorMessage(error, object) {
     case message.includes(' must be unique'):
       message = field + MessagesUtil.models.filters.unique;
       break;
+  }
+
+  if (error.title) {
+    object['title'] = error.title;
   }
 
   object[path] = message;

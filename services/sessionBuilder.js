@@ -17,6 +17,7 @@ var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var stringHelpers = require('./../util/stringHelpers');
 var sessionValidator = require('./validators/session');
+var subscriptionValidator = require('./validators/subscription');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
 var whiteboardService = require('./whiteboard');
@@ -140,31 +141,26 @@ function createNewSessionDefaultItems(session) {
 
 function initializeBuilder(params) {
   let deferred = q.defer();
+  validators.subscription(params.accountId, 'session', 0).then(function() {
 
-  validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'session', 0).then(function() {
+    params.step = 'setUp';
+    params.startTime = params.date;
+    params.endTime = params.date;
 
-      params.step = 'setUp';
-      params.startTime = params.date;
-      params.endTime = params.date;
-
-      Session.create(params).then(function(session) {
-        createNewSessionDefaultItems(session).then(function() {
-          sessionBuilderObject(session).then(function(result) {
-            deferred.resolve(result);
-          }, function(error) {
-            deferred.reject(error);
-          });
+    Session.create(params).then(function(session) {
+      createNewSessionDefaultItems(session).then(function() {
+        sessionBuilderObject(session).then(function(result) {
+          deferred.resolve(result);
+        }, function(error) {
+          deferred.reject(error);
         });
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
       });
-    }, function(error) {
-      deferred.reject(error);
-    })
+    }).catch(function(error) {
+      deferred.reject(filters.errors(error));
+    });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }
@@ -200,6 +196,24 @@ function setTimeZone(params) {
   }
 }
 
+function mapUpdateParametersToPermissions(params) {
+  let permissionsToCheck = [];
+  let permissionsMap = {
+    'brandProjectPreferenceId': 'brandLogoAndCustomColors'
+  }
+
+  if (params) {
+    _.map(_.keys(params), (parameter) => {
+      let permission = permissionsMap[parameter];
+      if (permission) {
+        permissionsToCheck.push(permission);
+      }
+    });
+  }
+  return permissionsToCheck;
+}
+
+
 function update(sessionId, accountId, params) {
   setTimeZone(params);
   let snapshot = params.snapshot;
@@ -229,9 +243,12 @@ function isSessionChangedToActive(params) {
 
 function doUpdate(originalSession, params) {
   return new bluebird(function (resolve, reject) {
-  
+
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
+      let permissions = mapUpdateParametersToPermissions(params);
+      return validators.planAllowsToDoIt(originalSession.accountId, permissions);
+    }).then(function() {
       let count = isSessionChangedToActive(params) ? 1 : 0;
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
@@ -769,7 +786,7 @@ function sessionBuilderObjectSnapshotForStep2(stepData) {
 }
 
 function sessionBuilderObjectSnapshotForStep3(stepData) {
-  return { 
+  return {
     incentive_details: stringHelpers.hash(stepData.incentive_details)
   };
 }

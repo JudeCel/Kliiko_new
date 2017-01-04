@@ -1,197 +1,86 @@
 <section id="step-1">
   <h2>Choose a plan:</h2>
-  <section class="plans-table">
-    <div class="col-sm-12">
-      <div class="col-sm-3 plan-option-list">
-        <div class='flex-box'>
-          <div class="flex-el {{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
-          <div class="flex-el {{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
-        </div>
-      </div>
-
-      <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
-        <div class="col-sm-3 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
-          <h4 class="{{ subscriptionPlan.plan.id + '_light' }} list-group-item-heading ">
-            {{subscriptionPlan.plan.name}}
-          </h4>
-          <div class="{{ subscriptionPlan.plan.id + '_dark' }} price-label">
+  <section class="plans-table" ng-if="up.subPlans.length">
+      <table>
+        <!-- Table headers-->
+        <tr>
+          <!-- compensate first column for monthly/yearly buttons-->
+          <th></th>
+          <th ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
+            <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
             <div class="col-sm-1 pull-right">
               <div ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right"></div>
             </div>
-            <h5 class="outline">
-              <sup>$US</sup>
-              {{subscriptionPlan.plan.price | price:'':0 }}
-              <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
-            </h5>
-            <p>Get 2 Moths FREE</p>
-            <p>on all annual plans</p>
-          </div>
-        </div>
-      </div>
-    </div>
-      <div class="col-sm-12">
-        <div class="col-sm-3 plan-option-list">
-          <div class="align-vertical-parent" ng-repeat="option in up.planOptions">
-            <span class="{{ up.optionBackground(index) }} align-vertical-child white-space-pre-line">{{ option }}</span>
-          </div>
-        </div>
-
-        <div ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
-          <div class="col-sm-3 plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
-            <div class="included-plan-fader" ng-show="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
-            <div class="list-group">
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.sessionCount) }}
-                </span>
+            <div class="plan-block {{ subscriptionPlan.plan.id }}" ng-if="up.showPlanInList(subscriptionPlan)">
+              <div class="list-group-item-heading" ng-if= "subscriptionPlan.plan.price">
+                <h4>{{subscriptionPlan.plan.name}}</h4>
+                <div ng-include="'upgradePlanButton.html'"></div>
               </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListCount) }}
-                </span>
+            <div>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <div class="plan-option-list plan-option-feature">
+              <div class='flex-box'>
+                <div class="flex-el {{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
+                <div class="flex-el {{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
               </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.recruiterContactListCount) }}
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.importDatabase" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.importDatabase">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.brandLogoAndCustomColors" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.brandLogoAndCustomColors">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.contactListMemberCount) }}
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.accountUserCount) }}
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.exportContactListAndParticipantHistory" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.exportContactListAndParticipantHistory">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.exportRecruiterSurveyData" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.exportRecruiterSurveyData">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.accessKlzziForum" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.accessKlzziForum">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.accessKlzziForum" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.accessKlzziForum">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.canInviteObserversToSession" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.canInviteObserversToSession">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  up to {{ up.checkTheCount(subscriptionPlan.additionalParams.planSmsCount) }}/mth
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.discussionGuideTips" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.discussionGuideTips">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.whiteboardFunctionality" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.whiteboardFunctionality">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.uploadToGallery" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.uploadToGallery">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.reportingFunctions" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.reportingFunctions">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.availableOnTabletAndMobilePlatforms">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.customEmailInvitationAndReminderMessages">-</span>
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'even') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  {{ up.checkTheCount(subscriptionPlan.additionalParams.topicCount) }}
-                </span>
-              </div>
-
-              <div class="{{ up.planOptionColor(subscriptionPlan.plan.id, 'odd') }} align-vertical-parent">
-                <span class="align-vertical-child">
-                  <span ng-if="subscriptionPlan.additionalParams.secureSsl" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                  <span ng-if="!subscriptionPlan.additionalParams.secureSsl">-</span>
-                </span>
-              </div>
-
-              <div class="list-group-item-text buttons-area">
-                <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
-                  Upgrade Plan
-                </div>
-              </div>
-
             </div>
-          </div>
+          </th>
+          <th class="plan-option-price-block {{ subscriptionPlan.plan.id + '_header' }}" ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
+            <div class="plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
+              <div class="price-label" ng-if= "subscriptionPlan.plan.price">
+                <h5 class="outline">
+                  ${{subscriptionPlan.plan.price | price:'':0 }}
+                  <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
+                </h5>
+                <p>Get 2 Moths FREE on all annual plans</p>
+              </div>
+
+              <div class="{{ subscriptionPlan.plan.id + '_header' }} list-group-item-heading" ng-if= "!subscriptionPlan.plan.price">
+                <h4>{{subscriptionPlan.plan.name}}</h4>
+                <div ng-include="'upgradePlanButton.html'"></div>
+              </div>
+            </div>
+
+          </th>
+        </tr>
+        <!-- Table content-->
+        <tr ng-repeat="feature in up.features">
+          <!-- row title -->
+          <td class="plan-option-feature align-vertical-child white-space-pre-line">
+            {{feature.title}}
+          </td>
+          <!-- row content -->
+          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}">
+            <span class="align-vertical-child">
+              <span ng-if="up.showNumber(feature)">
+                {{up.displayFeatureValue(feature, subscriptionPlan)}}
+              </span>
+              <span ng-if="up.showBoolean(feature, subscriptionPlan)" class="glyphicon glyphicon-ok">
+              </span>
+            </span>
+          </td>
+        </tr>
+
+        <!-- feature buy buttons -->
+        <tr>
+          <td/>
+          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}" on-finish-render="up.finishedRenderingPlans()">
+            <div ng-include="'upgradePlanButton.html'"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <script type="text/ng-template" id="upgradePlanButton.html">
+      <div class="list-group-item-text buttons-area" >
+        <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
+          {{up.upgradePlanText(subscriptionPlan.plan)}}
         </div>
       </div>
-    </div>
+    </script>
 
     <div class="col-sm-'odd''even'">
       <div class="col-sm-10 col-sm-offset-1">
