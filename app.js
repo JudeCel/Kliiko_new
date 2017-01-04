@@ -50,13 +50,12 @@ app.use(setUpQueue);
 
 app.use(flash());
 app.use(logger('dev'));
+var api = require('./routes/api');
+app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
-var api = require('./routes/api');
-
-app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, sessionMiddleware.extendUserSession, api);
 
 app.use(passport.initialize());
 app.use(passport.session());

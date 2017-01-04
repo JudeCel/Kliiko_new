@@ -182,7 +182,10 @@
         setSessionStorage(res);
         vm.user = res;
       });
-      accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
+      accountUser.getAccountUserData().then(function(res) {
+        console.log(res);
+        vm.accountUser = res
+      });
       account.getAccountData().then(function(res) { vm.account = res });
       fileUploader.getToken().then(function(res) { vm.fileUploader = res });
       sessionExpire.init();
