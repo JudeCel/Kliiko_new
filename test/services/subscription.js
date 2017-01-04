@@ -416,19 +416,8 @@ describe('SERVICE - Subscription', function() {
                   done("should not get here");
                 }, function(error) {
                   //check if any necessary error appears at all
-                  let possibleErrors = { 'survey': 'You have to many surveys',
-                                         'contactList': 'You have to many contact lists',
-                                         'session': 'You have to many sessions'};
-
-                  try {
-                    let key = expect(error).to.have.any.keys(Object.keys(possibleErrors));
-                    _.forEach(key.__flags.object, function(errorValue, errorKey) {
-                      assert.equal(error[errorKey], possibleErrors[errorKey]);
-                    });
-                  } catch (e) {
-                    return done(e);
-                  }
-
+                  let possibleErrors = ['survey', 'contactList', 'session'];
+                  expect(error).to.have.any.keys(possibleErrors);
                   done();
                 });
               }
