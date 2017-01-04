@@ -16,6 +16,7 @@
       deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
       resetMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/reset', {}, {post: {method: 'POST'}}),
       previewMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/preview', {}, {post: {method: 'POST'}}),
+      sendMail: $resource(globalSettings.restUrl + '/mailTemplate/send', {}, {post: {method: 'POST'}}),
     };
 
     var MailTemplateService = {};
@@ -29,6 +30,7 @@
     MailTemplateService.deleteMailTemplate = deleteMailTemplate;
     MailTemplateService.resetMailTemplate = resetMailTemplate;
     MailTemplateService.previewMailTemplate = previewMailTemplate;
+    MailTemplateService.sendMail = sendMail;
     return MailTemplateService;
 
     function getAllSessionMailTemplates(getSystemMail, params) {
@@ -138,6 +140,20 @@
         dbg.log2('#KliikoApp.mailTemplate > preview mail template> server respond >');
         deferred.resolve(res);
       });
+      return deferred.promise;
+    }
+
+    function sendMail(mailTemplate, sessionId, mailTo) {
+      var deferred = $q.defer();
+
+      mailRestApi.sendMail.post({mailTemplate: mailTemplate, sessionId: sessionId, mailTo: mailTo}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
       return deferred.promise;
     }
 

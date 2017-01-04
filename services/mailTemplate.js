@@ -7,7 +7,7 @@ var Session  = require('./../models').Session;
 var SessionMember  = require('./../models').SessionMember;
 var AccountUser  = require('./../models').AccountUser;
 var filters = require('./../models/filters');
-var templateMailer = require('../mailers/mailTemplate');
+var templateMailer = require('../mailers/mailTemplateY');
 var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
@@ -35,7 +35,8 @@ module.exports = {
   composePreviewMailTemplate: composePreviewMailTemplate,
   getActiveMailTemplate: getActiveMailTemplate,
   getMailTemplateTypeList: getMailTemplateTypeList,
-  copyTemplatesFromSession: copyTemplatesFromSession
+  copyTemplatesFromSession: copyTemplatesFromSession,
+  sendTestEmail: sendTestEmail 
 };
 
 var templateHeaderListFields = [
@@ -686,6 +687,18 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
         return callback(mailContent.error);
     }
     templateMailer.sendMailWithTemplateAndCalendarEvent(mailContent, params, callback);
+  });
+}
+
+function sendTestEmail(mailTemplate, sessionId, mailTo, callback) {
+  composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
+    var params = {
+      orginalStartTime: new Date(),
+      orginalEndTime:  new Date(),
+      email: mailTo
+    };
+
+    templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
   });
 }
 

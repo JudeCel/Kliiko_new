@@ -17,6 +17,7 @@ module.exports = {
   previewMailTemplatePost: previewMailTemplatePost,
   allSessionMailTemplatesGet: allSessionMailTemplatesGet,
   allSessionMailTemplatesWithColorsGet: allSessionMailTemplatesWithColorsGet,
+  sendMail: sendMail
 };
 
 function allSessionMailTemplatesGet(req, res, next) {
@@ -124,6 +125,16 @@ function previewMailTemplatePost(req, res, next) {
       res.send({error: null, template: result});
     } else {
       res.send({error: result.error, template: null});
+    }
+  });
+}
+
+function sendMail(req, res, next) {
+  MailTemplateService.sendTestEmail(req.body.mailTemplate, req.body.sessionId, req.body.mailTo, function(error, data) {
+    if (error) {
+      res.send({ error: error });
+    } else {
+      res.send({ data: data, message: MessagesUtil.mailTemplate.testMailSent });
     }
   });
 }

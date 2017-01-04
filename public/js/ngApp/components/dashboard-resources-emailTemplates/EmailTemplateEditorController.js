@@ -93,6 +93,7 @@
     vm.galleryDropdownData = galleryDropdownData;
     vm.openModal = openModal;
     vm.findIndexFromId = findIndexFromId;
+    vm.sendEmail = sendEmail;
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
@@ -433,6 +434,16 @@
     function openModal() {
       vm.templateNameAdd = null;
       domServices.modal('templateNameModal');
+    }
+
+    function sendEmail() {
+      mailTemplate.sendMail(vm.currentTemplate, vm.properties.sessionId, vm.mailTo).then(function (res) {
+        if (res.error) {
+          messenger.error(error);
+        } else {
+          messenger.ok(res.message);
+        }
+      });
     }
   }
 })();
