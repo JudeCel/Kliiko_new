@@ -7,7 +7,7 @@ var Session  = require('./../models').Session;
 var SessionMember  = require('./../models').SessionMember;
 var AccountUser  = require('./../models').AccountUser;
 var filters = require('./../models/filters');
-var templateMailer = require('../mailers/mailTemplateY');
+var templateMailer = require('../mailers/mailTemplate');
 var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
@@ -36,7 +36,7 @@ module.exports = {
   getActiveMailTemplate: getActiveMailTemplate,
   getMailTemplateTypeList: getMailTemplateTypeList,
   copyTemplatesFromSession: copyTemplatesFromSession,
-  sendTestEmail: sendTestEmail 
+  sendTestEmail: sendTestEmail
 };
 
 var templateHeaderListFields = [
