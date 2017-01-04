@@ -98,17 +98,37 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent) {
   let matches = mailTemplateContent.match(resourceIdPattern);
   let ids = [];
   _.each(matches, (match) => {
+    //18 is length of this: data-resource-id="
     let id = parseInt(match.substr(18));
     if (id) {
       ids.push(id);
     }
   });
 
+  if (ids.length > 0) {
+    models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId, resourceId: { $notIn: ids } }});
+  } else {
+    models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId }});
+  }
   
-  //todo:
-  // remove from db where mailTemplateId == mailTemplateId and resourceId not in ids
-  // select from db Resources where id in ids and no relations with mailTemplateId
-  // insert ids into db according to select
+  models.Resource.findAll({
+    attributes: ["id"],
+    where: {
+      id: { $in: ids },
+    },
+    include: [{
+      model: models.MailTemplate,
+      where: { id: mailTemplateId },
+      attributes: ["id"],
+      required: false
+    }]
+  }).then(function(resources) {
+    _.each(resources, (resource) => {
+      if (resource.MailTemplates.length == 0) {
+        models.MailTemplateResource.create({ mailTemplateId: mailTemplateId, resourceId: resource.id });
+      }
+    });
+  });
 }
 
 function getLatestMailTemplate(req, callback) {
