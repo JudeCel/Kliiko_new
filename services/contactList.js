@@ -200,20 +200,16 @@ function reqiredFieldsForList(list) {
 function create(params) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(params.accountId).then(function() {
-    validators.subscription(params.accountId, 'contactList', 1).then(function() {
-      ContactList.create(params).then(function(result) {
-        result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
-        deferred.resolve(result);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      });
+  validators.subscription(params.accountId, 'contactList', 1).then(function() {
+    ContactList.create(params).then(function(result) {
+      result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
+      deferred.resolve(result);
     }, function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 }

@@ -10,6 +10,7 @@ var surveyFixture = require('./../fixtures/survey');
 
 var async = require('async');
 var assert = require('chai').assert;
+var expect = require('chai').expect;
 var _ = require('lodash');
 
 describe('SERVICE - Subscription', function() {
@@ -402,20 +403,21 @@ describe('SERVICE - Subscription', function() {
             ]
 
             async.waterfall(functionList, function (error, result) {
-              if( error ){
+              if( error ) {
                 done(error);
               } else {
                 let providers = {
                   creditCard: validCreditCardProvider(),
-                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId }),
+                  viaCheckout: null
                  }
 
                 subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId}, providers).then(function(subscription) {
                   done("should not get here");
                 }, function(error) {
-                  assert.equal(error.survey, 'You have to many surveys');
-                  assert.equal(error.contactList, 'You have to many contact lists');
-                  assert.equal(error.session, 'You have to many sessions');
+                  //check if any necessary error appears at all
+                  let possibleErrors = ['survey', 'contactList', 'session'];
+                  expect(error).to.have.any.keys(possibleErrors);
                   done();
                 });
               }

@@ -4,6 +4,7 @@ var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
 var Subscription = models.Subscription;
+var SubscriptionPreference = models.SubscriptionPreference;
 
 var q = require('q');
 var _ = require('lodash');
@@ -18,15 +19,18 @@ function validate(accountId) {
 
   models.Account.find({
     where: { id: accountId },
-    include: [Subscription]
+    include: [{
+      model: Subscription,
+      include: [SubscriptionPreference]
+    }]
   }).then(function(account) {
     if(account) {
       if(account.admin) {
-        deferred.resolve();
+        deferred.resolve(account);
       }
       else if(account.Subscription) {
         if(account.Subscription.active) {
-          deferred.resolve();
+          deferred.resolve(account);
         }
         else {
           deferred.reject(MessagesUtil.validators.subscription.error.inactiveSubscription);
