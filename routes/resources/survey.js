@@ -1,3 +1,5 @@
+'use strict';
+
 var json2csv = require('json2csv');
 var surveyService = require('../../services/survey');
 var accountUserService = require('../../services/accountUser');

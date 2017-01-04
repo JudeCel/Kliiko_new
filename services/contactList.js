@@ -13,6 +13,7 @@ var stringHelpers = require('../util/stringHelpers');
 var validators = require('./../services/validators');
 var contactListImport = require('./contactListImport');
 var MessagesUtil = require('./../util/messages');
+let Bluebird = require('bluebird');
 
 var csv = require('fast-csv');
 var xlsx = require('xlsx');
@@ -251,68 +252,68 @@ function createDefaultLists(accountId, t) {
 }
 
 function exportContactList(params, account) {
-  let deferred = q.defer();
-
-  canExportContactListData(account).then(function() {
-    ContactList.find({
-      where: { id: params.id, accountId: account.id },
-      include: [{
-        model: models.ContactListUser,
+  return new Bluebird((resolve, reject) => {
+    canExportContactListData(account).then(function() {
+      ContactList.find({
+        where: { id: params.id, accountId: account.id },
         include: [{
-          model: models.AccountUser,
+          model: models.ContactListUser,
           include: [{
-            model: models.SessionMember,
-            attributes: ["comment"],
+            model: models.AccountUser,
             include: [{
-              model: models.Session,
-              attributes: ["name"],
+              model: models.SessionMember,
+              attributes: ["comment"],
+              include: [{
+                model: models.Session,
+                attributes: ["name"],
+              }]
             }]
           }]
         }]
-      }]
-    }).then(function(contactList) {
-      if(contactList) {
-        let header = createCsvHeader(contactList);
-        let data = createCsvData(header, contactList);
-        deferred.resolve({ header: header, data: data });
-      } else {
-        deferred.reject(MessagesUtil.ContactList.notFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+      }).then(function(contactList) {
+        if(contactList) {
+          let header = createCsvHeader(contactList);
+          let data = createCsvData(header, contactList);
+          let headerValues = Object.keys(header).map(function(key) {
+            return header[key];
+          });
+          resolve({ header: headerValues, data: data });
+        } else {
+          reject(MessagesUtil.ContactList.notFound);
+        }
+      }).catch(function(error) {
+        reject(filters.errors(error));
+      });
+    }, function(error) {
+      reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
   });
-
-  return deferred.promise;
 };
 
 function canExportContactListData(account) {
-  let deferred = q.defer();
-  validators.planAllowsToDoIt(account.id, 'exportContactListAndParticipantHistory').then(function() {
-    deferred.resolve({});
-  }, function(error) {
-    deferred.reject(error);
+  return new Bluebird((resolve, reject) => {
+    validators.planAllowsToDoIt(account.id, 'exportContactListAndParticipantHistory').then(function() {
+      resolve({});
+    }, function(error) {
+      reject(error);
+    });
   });
-
-  return deferred.promise;
 }
 
 function createCsvHeader(contactList) {
-  let fields = [];
+  let fields = { };
 
   _.each(constants.contactListDefaultFields, (field) => {
-    fields.push(stringHelpers.camel2Human(field));
+    fields[field] = stringHelpers.camel2Human(field);
   });
 
   _.each(contactList.customFields, (field) => {
-    fields.push(stringHelpers.camel2Human(field));
+    fields[field] = field;
   });
 
   _.each(constants.contactListParticipantsFields, (field) => {
     if (field != 'Comments') {
-      fields.push(stringHelpers.camel2Human(field));
+      fields[field] = stringHelpers.camel2Human(field);
     }
   });
   
@@ -322,24 +323,20 @@ function createCsvHeader(contactList) {
 function createCsvData(header, contactList) {
   let res = [];
 
-  contactList.ContactListUsers.forEach(function(contactListUser) {
+  contactList.ContactListUsers.forEach((contactListUser) => {
     let object = { };
-    let index = 0;
 
     _.each(constants.contactListDefaultFields, (field) => {
-      object[header[index]] = contactListUser.AccountUser[field];
-      index++;
+      object[header[field]] = contactListUser.AccountUser[field];
     });
 
     _.each(contactList.customFields, (field) => {
-      object[header[index]] = contactListUser.customFields[field];
-      index++;
+      object[header[field]] = contactListUser.customFields[field];
     });
 
     _.each(constants.contactListParticipantsFields, (field) => {
       if (field != 'Comments') {
-        object[header[index]] = contactListUser.AccountUser.invitesInfo[field];
-        index++;
+        object[header[field]] = contactListUser.AccountUser.invitesInfo[field];
       }
     });
 
@@ -347,8 +344,8 @@ function createCsvData(header, contactList) {
       let comment = sessionMember.comment;
       if (comment && comment.length > 0) {
         let columnName = "Comment Session: " + sessionMember.Session.name;
-        if (header.indexOf(columnName) == -1) {
-          header.push(columnName);
+        if (!header[columnName]) {
+          header[columnName] = columnName;
         }
         object[columnName] = comment;
       }

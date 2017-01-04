@@ -1,3 +1,5 @@
+'use strict';
+
 var json2csv = require('json2csv');
 var accountDatabaseService = require('../../services/admin/accountDatabase');
 
