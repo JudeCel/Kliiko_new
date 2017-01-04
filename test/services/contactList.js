@@ -6,6 +6,7 @@ var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var constants = require('./../../util/constants');
 var subscriptionFixture = require('./../fixtures/subscription');
+var MessagesUtil = require('./../../util/messages');
 var _ = require('lodash');
 
 describe('Services -> ContactList', () => {
@@ -20,6 +21,30 @@ describe('Services -> ContactList', () => {
       });
     });
   });
+
+  function contactListParams(name) {
+    return {
+      accountId: testData.account.id,
+      name: name || "test list",
+      customFields: ["one", "two", "three"]
+    };
+  }
+
+  function contactListUserParams(contactListId) {
+    return {
+      userId: testData.user.id,
+      accountId: testData.account.id,
+      contactListId: contactListId,
+      defaultFields: {
+        firstName: "DainisNew",
+        lastName: "LapinsNew",
+        password: "cool_password",
+        email: "bligzna.lauris@gmail.com",
+        gender: "male"
+      },
+      customFields: { one: "1", two:" 2", three:" 3" }
+    };
+  }
 
   describe('create',  () => {
     describe("succsess", function() {
@@ -38,11 +63,7 @@ describe('Services -> ContactList', () => {
       });
 
       it("create", (done) => {
-        let attrs = {
-          accountId: testData.account.id,
-          name: "cool list",
-          customFields: ["one", "two", "three"]
-         }
+        let attrs = contactListParams();
 
         ContactListService.create(attrs).then(function(contactList) {
           assert.equal(contactList.name, attrs.name);
@@ -56,11 +77,7 @@ describe('Services -> ContactList', () => {
       });
 
       it("destroy", (done) => {
-        let attrs = {
-          accountId: testData.account.id,
-          name: "customList",
-          customFields: ["one", "two", "three"]
-         }
+      let attrs = contactListParams();
 
         ContactListService.create(attrs).then(function(contactList) {
           ContactListService.destroy(contactList.id, testData.account.id).then(function(result) {
@@ -81,11 +98,7 @@ describe('Services -> ContactList', () => {
 
     describe("failed", function() {
       it("create", (done) => {
-        let attrs = {
-          accountId: testData.account.id,
-          name: "Hosts",
-          customFields: ["one", "two", "three"]
-        }
+        let attrs = contactListParams("Hosts");
 
         ContactListService.create(attrs).then(function(_contactList) {
           done("should not get there!!");
@@ -101,18 +114,10 @@ describe('Services -> ContactList', () => {
     var testFileValid = { xls: 'test/fixtures/contactList/list_valid.xls', csv: 'test/fixtures/contactList/list_valid.csv' };
     var testFileInvalid = { xls: 'test/fixtures/contactList/list_invalid.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
 
-    function defaultParams() {
-      return {
-        accountId: testData.account.id,
-        name: 'cool list',
-        customFields: ['one', 'two', 'three']
-      };
-    }
-
     describe('happy path', function() {
       describe('should succeed', function() {
         function successFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.lengthOf(result.valid, 3);
@@ -164,7 +169,7 @@ describe('Services -> ContactList', () => {
     describe('sad path', function() {
       describe('should fail partially', function() {
         function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.equal(result.valid.length, 3);
@@ -194,7 +199,7 @@ describe('Services -> ContactList', () => {
 
       describe('should fail because field - lastName is not found', function() {
         function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.equal(result.invalid[2].validationErrors.lastName, 'Required');
@@ -224,7 +229,7 @@ describe('Services -> ContactList', () => {
     describe('should fail because duplicate email in file', function() {
       var testFileValid = { xls: 'test/fixtures/contactList/list_invalid.xls', csv: 'test/fixtures/contactList/list_invalid.csv' };
         function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.include(result.duplicateEntries[0].rows, 5);
@@ -257,7 +262,7 @@ describe('Services -> ContactList', () => {
 
       describe('should fail because missing fields: firstName, lastName, email', function() {
         function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
             ContactListService.parseFile(contactList.id, filePath).then(function(result) {
               try {
                 assert.equal(result.invalid[2].validationErrors.firstName, 'Required');
@@ -288,22 +293,8 @@ describe('Services -> ContactList', () => {
 
       describe('should fail because of email already in use', function() {
         function failureFunction(filePath, callback) {
-          ContactListService.create(defaultParams()).then(function(contactList) {
-            let attrs = {
-              userId: testData.user.id,
-              accountId: testData.account.id,
-              contactListId: contactList.id,
-              defaultFields: {
-                firstName: "DainisNew",
-                lastName: "LapinsNew",
-                password: "cool_password",
-                email: "bligzna.lauris@gmail.com",
-                gender: "male"
-              },
-              customFields: { one: "1", two:" 2", three:" 3" }
-            }
-
-            ContactListUserService.create(attrs).then(function(contactListUser) {
+          ContactListService.create(contactListParams()).then(function(contactList) {
+            ContactListUserService.create(contactListUserParams(contactList.id)).then(function(contactListUser) {
               ContactListService.parseFile(contactList.id, filePath).then(function(result) {
                 assert.equal(result.invalid[2].validationErrors.email, 'Email already taken');
                 callback(null, true);
@@ -329,4 +320,73 @@ describe('Services -> ContactList', () => {
 
     });
   });
+
+  describe('#exportContactList', function() {
+
+    describe('happy path', function() {
+      it('should succeed on exporting contact list', function (done) {
+        ContactListService.create(contactListParams()).then(function(contactList) {
+          let userParams = contactListUserParams(contactList.id);
+          ContactListUserService.create(userParams).then(function(contactListUser) {
+            models.SubscriptionPreference.update({'data.exportContactListAndParticipantHistory': true}, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+              ContactListService.exportContactList({ id: contactList.id }, testData.account).then(function(result) {
+                let validResult = {
+                  header: [ 'First Name', 'Last Name', 'Gender', 'Email', 'Postal Address', 'City', 'State', 'Country', 'Post Code', 'Company Name', 'Landline Number',
+                    'Mobile', 'one', 'two', 'three', 'Invites', 'Accept', 'Not This Time', 'Not At All', 'No Reply', 'Future', 'Last Session' ],
+                  data: [ { 'First Name': 'Lauris', 'Last Name': 'Bligzna', Gender: 'male', Email: 'bligzna.lauris@gmail.com', 'Postal Address': null,
+                    City: null, State: null, Country: null, 'Post Code': null, 'Company Name': null, 'Landline Number': '', Mobile: '',
+                    one: '1', two: ' 2', three: ' 3', Invites: 0, Accept: 0, 'Not This Time': 0, 'Not At All': 0, 'No Reply': 0, Future: '-', 'Last Session': '-' } ]
+                };
+                assert.deepEqual(result, validResult);
+                done();
+              }, function(err) {
+                done(err);
+              });
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
+        });
+      });
+    });
+
+    describe('sad path', function() {
+      
+      it('should fail on subscription validation', function (done) {
+        ContactListService.create(contactListParams()).then(function(contactList) {
+          ContactListService.exportContactList({ id: contactList.id + 100 }, testData.account).then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, MessagesUtil.validators.subscription.planDoesntAllowToDoThis);
+            done();
+          });
+        }, function(err) {
+          done(err);
+        });
+      });
+
+      it('should fail on finding contact list', function (done) {
+        ContactListService.create(contactListParams()).then(function(contactList) {
+          models.SubscriptionPreference.update({'data.exportContactListAndParticipantHistory': true}, { where: { subscriptionId: testData.subscription.id } }).then(function() {
+            ContactListService.exportContactList({ id: contactList.id + 100 }, testData.account).then(function(result) {
+              done('Should not get here!');
+            }, function(error) {
+              assert.equal(error, MessagesUtil.contactList.notFound);
+              done();
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
+        });
+      });
+    });
+
+  });
+
 });

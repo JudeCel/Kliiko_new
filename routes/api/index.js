@@ -114,7 +114,7 @@ router.get('/subscriptionSmsCredits/creditCount', PERMISSIONS.managerAdmin, smsC
 // contact List
 router.get('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.index);
 router.post('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.create);
-
+router.get('/contactLists/canExportContactListData', PERMISSIONS.facilitatorManagerAdmin, contactList.canExportContactListData);
 router.post('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactList.importContacts);
 router.post('/contactLists/:id/validate', PERMISSIONS.facilitatorManagerAdmin, contactList.validateContacts);

@@ -18,7 +18,7 @@
 <div class="col-md-12">
   <div class="row">
     <div class='col-md-12 fixed-bottom-margin'>
-      <div class='dashboard-container'>
+      <div class='dashboard-container' ng-init='clc.initCanExportContactListData()'>
         <div id="contact-lists-left-column" class="col-md-3 text-left">
           <div id="list-of-contacts">
             <div class="header">
@@ -69,6 +69,10 @@
             </div>
 
             <span class='text-center pull-right'>
+              <span ng-if="clc.canExport">
+                <a class='btn btn-standart btn-green btn-medium' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
+              </span>
+
               <span ng-if="clc.lists.activeList.editable">
                 <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
                 <span ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()">&nbsp; or &nbsp;</span>
@@ -86,6 +90,10 @@
           <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
               <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+            </span>
+
+            <span ng-if="clc.canExport">
+              <a class='btn btn-standart btn-green btn-medium' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
             </span>
 
             <span ng-if="clc.lists.activeList.editable">
