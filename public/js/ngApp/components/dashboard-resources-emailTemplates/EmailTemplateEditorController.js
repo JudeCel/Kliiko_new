@@ -398,19 +398,24 @@
       return item.AccountId;
     }
 
+    function getVideoHTML(url, resourceId) {
+      return '<a href="' + url + '" target="_blank" style="display:block;text-decoration:none;color:#000;" data-resource-id="' + resourceId + '"><img src="/icons/header button icons/videoLink.png"></img></a>';
+    }
+
     function postUpload(resource) {
+      var html = null;
       if (resource.type == 'image') {
-        var linkHTML = '<img src="' + resource.url.full + '" style="max-width:600px;"></img>';
-        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+        html = '<img src="' + resource.url.full + '" style="max-width:600px;" data-resource-id="' + resource.id + '"></img>';
       } else if (resource.type == 'video') {
-        var linkHTML = '<a href="' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
-        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+        html = getVideoHTML(resource.url.full, resource.id);
       } else {
         var url = GalleryServices.prepareVideoServiceUrl(resource.url.full, resource.source);
         if (url != null) {
-          var linkHTML = '<a href="' + url + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
-          $('#templateContent').wysiwyg("insertHtml", linkHTML);
+          html = getVideoHTML(url, resource.id);
         }
+      }
+      if (html) {
+        $('#templateContent').wysiwyg("insertHtml", html);
       }
     }
 

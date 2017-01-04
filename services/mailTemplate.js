@@ -1,6 +1,7 @@
 "use strict";
 
 var MessagesUtil = require('./../util/messages');
+var models = require('./../models');
 var MailTemplate  = require('./../models').MailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var Session  = require('./../models').Session;
@@ -42,6 +43,8 @@ var templateHeaderListFields = [
     'id', 'name', 'category'
 ];
 
+var resourceIdPattern = /data-resource-id="(\d*)/g;
+
 function getMailTemplateTypeList(categories, callback) {
   let query = {category:{ $in: categories }};
   MailTemplateOriginal.findAll({
@@ -73,6 +76,7 @@ function createBaseMailTemplate(params, callback) {
 
 function create(params, callback) {
   MailTemplate.create(params).then(function(result) {
+    setMailTemplateRelatedResources(result.id, result.content);
     callback(null, result);
   }).catch(function(error) {
     callback(filters.errors(error));
@@ -83,10 +87,28 @@ function update(id, parameters, callback){
   MailTemplate.update(parameters, {
       where: {id: id}
   }).then(function(result) {
+    setMailTemplateRelatedResources(id, parameters.content);
     callback(null, result);
   }).catch(function(error) {
     callback(filters.errors(error));
   });
+}
+
+function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent) {
+  let matches = mailTemplateContent.match(resourceIdPattern);
+  let ids = [];
+  _.each(matches, (match) => {
+    let id = parseInt(match.substr(18));
+    if (id) {
+      ids.push(id);
+    }
+  });
+
+  
+  //todo:
+  // remove from db where mailTemplateId == mailTemplateId and resourceId not in ids
+  // select from db Resources where id in ids and no relations with mailTemplateId
+  // insert ids into db according to select
 }
 
 function getLatestMailTemplate(req, callback) {

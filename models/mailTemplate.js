@@ -22,6 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
         MailTemplate.belongsTo(models.MailTemplateBase);
         MailTemplate.belongsTo(models.Account);
         MailTemplate.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        MailTemplate.belongsToMany(models.Resource, { through: {model: models.MailTemplateResource}, foreignKey: 'mailTemplateId' });
       }
     }
   });
