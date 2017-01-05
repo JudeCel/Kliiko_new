@@ -4,7 +4,7 @@ const expressJwt = require('express-jwt');
 
 const loadResources = (req, res, next) => {
   jwtAuth.loadResources(req.auth).then((currentResources) => {
-    req.user = currentResources
+    res.currentResources = currentResources
     next();
   }, (error) => {
     next();

@@ -3,11 +3,11 @@
 var accountServices = require('./../../services/account');
 
 function get(req, res, next) {
-  if(!res.locals.currentDomain) {
+  if(!res.currentResources.account) {
     return res.send({ error: 'Not in account' });
   }
 
-  accountServices.findWithSubscription(res.locals.currentDomain.id).then(function(result) {
+  accountServices.findWithSubscription(res.currentResources.account.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });
@@ -15,7 +15,7 @@ function get(req, res, next) {
 };
 
 function createNewAccount(req, res, next) {
-  accountServices.createNewAccountIfNotExists(req.body, req.user.id).then(function(result) {
+  accountServices.createNewAccountIfNotExists(req.body, res.currentResources.user.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });

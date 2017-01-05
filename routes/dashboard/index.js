@@ -26,7 +26,7 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , function(req, res, next) {
-  let token  = jwtToken.token(req.user.accountUserId, "AccountUser:", "/" )
+  let token  = jwtToken.token(res.locals.currentDomain.accountUserId, "AccountUser:", "/" )
   res.render(views_path('index'), { title: 'My Account Hub', appData: appData, jwt_token: token, message: req.flash('message')[0] });
 });
 
