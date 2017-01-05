@@ -19,7 +19,7 @@ module.exports = {
 };
 
 function index(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   let sessionId = req.query.sessionId;
 
   contactListService.allByAccount(accountId, sessionId).then(function(lists) {
@@ -43,7 +43,7 @@ function create(req, res, next) {
   req.body.customFields = _.uniq(req.body.customFields);
 
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   contactListService.create(params).then(function(result) {
     res.send({ list: result, message: MessagesUtil.routes.contactList.created });
@@ -63,7 +63,7 @@ function update(req, res, next) {
 
   let params = req.body;
   params.id = req.params.id;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = rreq.currentResources.account.id;
 
   contactListService.update(params).then(function(result) {
     res.send({success: true, itemsUpdatedAmount:result, message: MessagesUtil.routes.contactList.updated });
@@ -81,7 +81,7 @@ function update(req, res, next) {
 function destroy(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
 
-  let accountId = res.locals.currentDomain.id;
+  let accountId = rreq.currentResources.account.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
     res.send({success: true, lists: lists, message: MessagesUtil.routes.contactList.removed});
   },function(err) {
@@ -119,7 +119,7 @@ function importContacts(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
   validations.body(res, req.body.contactsArray, 'contactsArray is missed');
 
-  let accountId = res.locals.currentDomain.id;
+  let accountId = rreq.currentResources.account.id;
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
@@ -136,7 +136,7 @@ function importContacts(req, res, next) {
 }
 
 function canExportContactListData(req, res, next) {
-  contactListService.canExportContactListData(res.locals.currentDomain).then(function(result) {
+  contactListService.canExportContactListData(req.currentResources.account).then(function(result) {
     res.send({success: true, result: result});
   }, function(err) {
     res.send({error:err});

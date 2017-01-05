@@ -15,7 +15,7 @@ module.exports = {
 };
 
 function getAll(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   topicsService.getAll(accountId).then(
     function(result) { res.send({ topics: result, validations: topicConstants.validations })},
     function(error) { res.send({error:error})}
@@ -25,7 +25,7 @@ function getAll(req, res, next) {
 function updateSessionTopic(req, res, next) {
   topicsService.updateSessionTopic(req.body).then(function(response) {
     if (response.sessionTopic) {
-      let accountId = res.locals.currentDomain.id;
+      let accountId = req.currentResources.account.id;
       let sessionId = response.sessionTopic.sessionId;
       sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
         res.send({data: response, snapshot: snapshotResult});
@@ -45,7 +45,7 @@ function post(req, res, next) {
   if (!req.body.topic) { res.send({error: '@topic body param is missed'}); return }
 
   let params = req.body.topic;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   topicsService.create(params).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.created })},

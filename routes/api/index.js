@@ -30,7 +30,7 @@ module.exports = router;
 // Common Rules
 router.use((req, res, next)  => {
   let exceptionPaths = ["/survey/constants", "/survey/find"];
-  if (res.currentResources || _.includes(exceptionPaths, req.path)) {
+  if (req.currentResources || _.includes(exceptionPaths, req.path)) {
     next();
   } else {
     notAuthExit(res);

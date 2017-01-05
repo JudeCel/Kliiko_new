@@ -2,14 +2,14 @@ var constants = require('../../util/constants');
 var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
-  surveyService.findAllSurveys(res.locals.currentDomain).then(
+  surveyService.findAllSurveys(req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function canExportSurveyData(req, res, next) {
-  surveyService.canExportSurveyData(res.locals.currentDomain).then(
+  surveyService.canExportSurveyData(req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -23,35 +23,35 @@ function find(req, res, next) {
 };
 
 function remove(req, res, next) {
-  surveyService.removeSurvey(req.query, res.locals.currentDomain).then(
+  surveyService.removeSurvey(req.query, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function create(req, res, next) {
-  surveyService.createSurveyWithQuestions(req.body, res.locals.currentDomain).then(
+  surveyService.createSurveyWithQuestions(req.body, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function update(req, res, next) {
-  surveyService.updateSurvey(req.body, res.locals.currentDomain).then(
+  surveyService.updateSurvey(req.body, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function status(req, res, next) {
-  surveyService.changeStatus(req.body, res.locals.currentDomain).then(
+  surveyService.changeStatus(req.body, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function copy(req, res, next) {
-  surveyService.copySurvey(req.body, res.locals.currentDomain).then(
+  surveyService.copySurvey(req.body, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -65,7 +65,7 @@ function answer(req, res, next) {
 };
 
 function confirm(req, res, next) {
-  surveyService.confirmSurvey(req.body, res.locals.currentDomain).then(
+  surveyService.confirmSurvey(req.body, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

@@ -25,7 +25,7 @@ function allSessionMailTemplatesGet(req, res, next) {
     sessionId = JSON.parse(req.query.params).sessionId;
   }
 
-  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
+  MailTemplateService.getAllSessionMailTemplates(req.currentResources.account.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
     res.send({error: error, templates: result});
   });
 }
@@ -36,9 +36,9 @@ function allSessionMailTemplatesWithColorsGet(req, res, next) {
     sessionId = JSON.parse(req.query.params).sessionId;
   }
 
-  MailTemplateService.getAllSessionMailTemplates(res.locals.currentDomain.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
+  MailTemplateService.getAllSessionMailTemplates(req.currentResources.account.id, true, sessionId, req.query.getSystemMail, false,function(error, result) {
     if (req.query.brandProjectPreferenceId && req.query.brandProjectPreferenceId > 0) {
-      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, req.currentResources.account.id).then(function (colorsResult) {
         res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
       }, function(error) {
         res.send({error: error});
@@ -51,8 +51,8 @@ function allSessionMailTemplatesWithColorsGet(req, res, next) {
 
 function allMailTemplatesGet(req, res, next) {
   let accountId;
-  if (!policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
-    accountId = res.locals.currentDomain.id;
+  if (!policy.hasAccess([req.currentResources.accountUser.role], ['admin'])) {
+    accountId = req.currentResources.account.id;
   }
 
   MailTemplateService.getAllMailTemplates(accountId, true, req.query.getSystemMail, false, function(error, result) {
@@ -62,13 +62,13 @@ function allMailTemplatesGet(req, res, next) {
 
 function allMailTemplatesWithColorsGet(req, res, next) {
   let accountId;
-  if (!policy.hasAccess(res.locals.currentDomain.roles, ['admin'])) {
-    accountId = res.locals.currentDomain.id;
+  if (!policy.hasAccess([req.currentResources.accountUser.role], ['admin'])) {
+    accountId = req.currentResources.account.id;
   }
 
   MailTemplateService.getAllMailTemplates(accountId, true, req.query.getSystemMail, false, function (error, result) {
     if (req.query.brandProjectPreferenceId && req.query.brandProjectPreferenceId > 0) {
-      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, res.locals.currentDomain.id).then(function (colorsResult) {
+      BrandColourService.findScheme({ id: req.query.brandProjectPreferenceId }, req.currentResources.account.id).then(function (colorsResult) {
         res.send({error: error, templates: result, colors: colorsResult.data.colours, manageFields: BrandColourService.manageFields()});
       }, function(error) {
         res.send({error: error});
@@ -92,10 +92,10 @@ function mailTemplatePost(req, res, next) {
 }
 
 function saveMailTemplatePost(req, res, next) {
-  let canOverwrite = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  let canOverwrite = policy.hasAccess([req.currentResources.accountUser.role], ['admin']);
   let sessionId = req.body.mailTemplate.properties && req.body.mailTemplate.properties.sessionId;
   let makeCopy = canOverwrite && !sessionId ? false : req.body.copy;
-  var accountId = canOverwrite && !sessionId ? null : res.locals.currentDomain.id;
+  var accountId = canOverwrite && !sessionId ? null : req.currentResources.account.id;
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, function(error, result) {
     if (result.validation && !result.validation.isValid) {
       res.send(result);

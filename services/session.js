@@ -169,17 +169,18 @@ function findSession(sessionId, accountId, provider) {
   return deferred.promise;
 };
 
-function findAllSessions(userId, domain, provider) {
+function findAllSessions(userId, accountUser, account, provider) {
   let deferred = q.defer();
-  if(policy.hasAccess(domain.roles, ['accountManager', 'admin'])) {
-    findAllSessionsAsManager(domain.id, provider).then(function(data) {
+  console.log(accountUser);
+  if(policy.hasAccess([accountUser.role], ['accountManager', 'admin'])) {
+    findAllSessionsAsManager(account.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
   }
   else {
-    findAllSessionsAsMember(userId, domain.id, provider).then(function(data) {
+    findAllSessionsAsMember(userId, account.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);

@@ -20,7 +20,7 @@ module.exports = {
 };
 
 function userPost(req, res, next) {
-  AccountUserService.updateWithUserId(req.body, res.currentResources.user.id, function(err) {
+  AccountUserService.updateWithUserId(req.body, req.currentResources.user.id, function(err) {
     if (err) {
       res.send({error:err});
     } else {
@@ -33,11 +33,11 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  if(res.currentResources.accountUser) {
-    res.send(res.currentResources.user);
+  if(req.currentResources.accountUser) {
+    res.send(req.currentResources.user);
   }
   else {
-    AccountUserService.findWithUser(res.currentResources.user).then(function(result) {
+    AccountUserService.findWithUser(req.currentResources.user).then(function(result) {
       res.send(result)
     }, function(error) {
       res.status(404).send(error);

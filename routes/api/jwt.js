@@ -28,7 +28,7 @@ function getChatRedirectUrl(req, res, result) {
 }
 
 function jwtTokenForMember(req, res, next) {
-  jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId, req.query.callback_url).then(function(result) {
+  jwt.tokenForMember(req.currentResources.user.id, req.query.sessionId, req.query.callback_url).then(function(result) {
     getChatRedirectUrl(req, res, result);
   }, function(error) {
     res.send({ error: error });
