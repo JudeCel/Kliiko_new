@@ -77,7 +77,8 @@ module.exports = {
     error: {
       categoryNotFound: 'Mail Template category not found',
       notProvided: 'Mail Template not provided'
-    }
+    },
+    testMailSent: 'A Test Email has been successfully sent'
   },
   resetPassword: {
     error: {
