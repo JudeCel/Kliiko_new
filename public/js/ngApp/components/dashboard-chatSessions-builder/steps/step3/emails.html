@@ -17,24 +17,15 @@
       <div class='panel-heading mail-template-list-heading'>Email Templates</div>
       <div id='mail-template-list' class='mail-template-list'>
         <span ng-repeat='(key, t) in ec.emailTemplates track by $index'>
-          <a class='list-group-item border-radius-none' ng-click='ec.startEditingTemplate(key, t.id, t); sbc.showEmailsTemplateEditeor = true;'
-            ng-class="{'active': ec.isCurrentId(t.id), 'list-group-item-white': t.AccountId}" ng-if="(!t.AccountId && !t.isCopy) || (t.AccountId && t.sessionId)">
 
-            <div ng-if='!t.AccountId && !t.isCopy'>
+          <a class='list-group-item border-radius-none' ng-click='ec.startEditingTemplate(key, t.id, t); sbc.showEmailsTemplateEditeor = true;'
+            ng-class="{'active': ec.isCurrentId(t.id), 'list-group-item-white': t.AccountId}" ng-if="(!t.AccountId && !t.isCopy)">
+            
+            <div>
               <span class='{{ step3Controller.isCreated(t) }}' aria-hidden='true'></span>
               {{ t.name }}
               <span>{{ step3Controller.isTemplateRequired(t) }}</span>
               <span class='pull-right glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
-            </div>
-
-            <div class='input-group input-group-sm display-flex' ng-if='t.AccountId && t.sessionId' title='{{ step3Controller.templateName(t.name) }}'>
-              <span class='glyphicon glyphicon-ok' aria-hidden='true' ng-if='t.sessionId'></span>
-
-              <input type='text' class='form-control dis' value="{{step3Controller.templateName(t.name)}}" ng-class="{'inactive':!ec.isCurrentId(t.id)}" readonly />
-
-              <span class='input-group-btn border-radius-none' ng-if='ec.isCurrentId(t.id)'>
-                <button class='btn glyphicon glyphicon-remove' ng-click='step3Controller.deleteTemplate(t, key, $event)'></button>
-              </span>
             </div>
           </a>
 
@@ -44,14 +35,13 @@
 
             <div class='input-group input-group-sm display-flex' ng-if='copyT.isCopy' title='{{ step3Controller.templateName(copyT.name) }}'>
               <span class='glyphicon glyphicon-ok' aria-hidden='true' ng-if='copyT.sessionId'></span>
-
               <input type='text' class='form-control dis' value="{{step3Controller.templateName(copyT.name)}}" ng-class="{'inactive':!ec.isCurrentId(copyT.id)}" readonly />
-
               <span class='input-group-btn border-radius-none' ng-if='ec.isCurrentId(copyT.id)'>
                 <button class='btn glyphicon glyphicon-remove' ng-click='step3Controller.deleteTemplate(copyT, id, $event)'></button>
               </span>
             </div>
           </a>
+
         </span>
       </div>
     </div>
