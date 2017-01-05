@@ -157,7 +157,8 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, tr
         where: { id: mailTemplateId },
         attributes: ["id"],
         required: false
-      }]
+      }],
+      transaction: transaction
     }).then(function(resources) {
       Bluebird.each(resources, (resource) => {
         return new Bluebird(function (resolve, reject) {
