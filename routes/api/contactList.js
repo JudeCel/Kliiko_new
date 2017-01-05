@@ -14,7 +14,8 @@ module.exports = {
   update: update,
   parseImportFile: parseImportFile,
   importContacts: importContacts,
-  validateContacts: validateContacts
+  validateContacts: validateContacts,
+  canExportContactListData: canExportContactListData
 };
 
 function index(req, res, next) {
@@ -132,7 +133,12 @@ function importContacts(req, res, next) {
       res.send({error: err});
     }
   );
+}
 
-
-
+function canExportContactListData(req, res, next) {
+  contactListService.canExportContactListData(res.locals.currentDomain).then(function(result) {
+    res.send({success: true, result: result});
+  }, function(err) {
+    res.send({error:err});
+  });
 }
