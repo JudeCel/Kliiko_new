@@ -1,7 +1,6 @@
 'use strict';
 
 var helpers = require('./helpers');
-var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
 var moment = require('moment-timezone');
 var sanitizeHtml = require('sanitize-html');

@@ -88,6 +88,7 @@ router.delete('/mailTemplate', PERMISSIONS.facilitatorManagerAdmin, mailTemplate
 router.post('/mailTemplate/save', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.saveMailTemplatePost);
 router.post('/mailTemplate/reset', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.resetMailTemplatePost);
 router.post('/mailTemplate/preview', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.previewMailTemplatePost);
+router.post('/mailTemplate/send', PERMISSIONS.facilitatorManagerAdmin, mailTemplates.sendMail);
 
 
 router.get('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.get);
