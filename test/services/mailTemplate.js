@@ -3,6 +3,7 @@ var assert = require('assert');
 var models = require('./../../models');
 var mailTemplateService = require('./../../services/mailTemplate.js');
 var mailTemplateSender = require('./../../mailers/mailTemplate.js');
+var usersServices = require('./../../services/users');
 
 describe('Mail Template Service', () => {
   var validAttrs = {
@@ -54,12 +55,64 @@ describe('Mail Template Service', () => {
       });
     });
 
-    it("should create mail template resource relation", (done) => {
-      //todo: create resource and mail template, check created relations
-      done();
-      //mailTemplateService.create(validAttrs, function (error, result) {
-      //  done();
-      //});
+    describe("MailTemplateResource", function () {
+      var testAccount = null;
+      var testAccountUser = null;
+
+      var userAttrs = {
+        accountName: "AlexS",
+        firstName: "Alex",
+        lastName: "Sem",
+        password: "cool_password",
+        email: "alex@gmail.com",
+        gender: "male",
+        mobile: "+1 123456789"
+      }
+      
+      function resourceParams() {
+        return {
+          accountId: testAccount.id,
+          name: "test",
+          accountUserId: testAccountUser.id,
+          type: "image",
+          scope: "collage"
+        }
+      }
+
+      beforeEach(function(done) {
+        models.sequelize.sync({ force: true }).then(() => {
+          usersServices.create(userAttrs, function(errors, user) {
+            user.getOwnerAccount().then(function(accounts) {
+              user.getAccountUsers().then(function(results) {
+                testAccountUser = results[0];
+                testAccount = accounts[0];
+                done();
+              })
+            });
+          });
+        });
+      });
+      
+      it("should create mail template resource relation", (done) => {
+        models.Resource.create(resourceParams()).then(function (resource) {
+          validAttrs.content = '<img src="http://test.com/img.jpg" style="max-width:600px;" data-resource-id="' + resource.id + '">';
+          mailTemplateService.create(validAttrs, function (error, result) {
+            assert.equal(error, null);
+            //need to wait because MailTemplateResource created asynchronously
+            setTimeout(() => {
+              models.MailTemplateResource.findAll({ where: { mailTemplateId: result.id } }).then(function (results) {
+                assert.equal(results.length, 1);
+                assert.equal(results[0].resourceId, resource.id);
+                done();
+              }, function(error) {
+                done(error);          
+              });
+            }, 1000);
+          });
+        }, function(error) {
+          done(error);          
+        });
+      });
     });
   });
 
@@ -71,7 +124,7 @@ describe('Mail Template Service', () => {
         });
       });
       mailTemplateService.create(invalidAttrsEmptyField, function (error, user) {
-        assert.notEqual(error, null)
+        assert.notEqual(error, null);
         done();
       });
     });
