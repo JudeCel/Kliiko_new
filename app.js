@@ -60,8 +60,8 @@ var resources = require('./routes/resources');
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(subdomain);
-app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
-app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
+app.use('/account-hub', sessionMiddleware.extendUserSession, dashboard);
+app.use('/resources', sessionMiddleware.extendUserSession, resources);
 
 app.use('/', routes);
 // Added socket.io routes

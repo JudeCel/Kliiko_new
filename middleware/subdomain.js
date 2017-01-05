@@ -9,21 +9,14 @@ var constants = require('../util/constants');
 var libSubdomains = require('./../lib/subdomains');
 var MessagesUtil = require('./../util/messages');
 
-// function assignCurrentDomain(result, res) {
-//   res.locals.currentDomain = {name: result.subdomain, realName: result.realName};
-// }
-
-// function assignCurrentUserInfo(result, req) {
-//   _.merge(req.user, _.pick(result.accountUser.dataValues, prepareValidAccountUserParams()));
-//   req.user.accountUserId = result.accountUser.id;
-// }
-
-// function prepareValidAccountUserParams() {
-//   let safeAccountUserParams = _.cloneDeep(constants.safeAccountUserParams);
-//   let index = safeAccountUserParams.indexOf('id');
-//   safeAccountUserParams.splice(index, 1);
-//   return safeAccountUserParams;
-// }
+function assignCurrentDomain(result, res) {
+  res.locals.currentDomain = {
+    accountUserId: result.id,
+    id: result.Account.id,
+    name: result.Account.name,
+    roles: [result.role]
+  };
+}
 
 function getSubdomain(req) {
   let subdomains = req.subdomains
@@ -43,23 +36,24 @@ function comparedWithBaseDomainName(subdomain) {
 }
 
 function getAccauntWithRoles(user, subdomain, callback) {
-  models.User.find({
-    attributes: ['id'], where: { id: user.id },
-    includes: [
-      { model: models.AccountUse,
-        active: true,
-        requireed: true,
-        includes: [
-          { model: models.Account,
-            where: {$and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)]},
-            requireed: true
-          }
-        ]
+  models.AccountUser.find({
+    attributes: ['id', 'role'],
+    active: true,
+    include: [
+      { model: models.User,
+        where: { id: user.id },
+        attributes: ['id'],
+        required: true
+      },
+      { model: models.Account,
+        attributes: ['id', 'name'],
+        where: {$and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)]},
+        required: true
       }
     ]
-  }).then(function(user){
-    if (user) {
-      callback()
+  }).then(function(accountUser){
+    if (accountUser) {
+      callback(null, accountUser)
     }else{
       callback(MessagesUtil.middleware.subdomain.deactivated);
     }
@@ -86,6 +80,7 @@ module.exports = function(req, res, next) {
   if (comparedWithBaseDomainName(subdomain)) {
     isDomainAvailableForThisUser(req, res, subdomain, function(error, result){
       if(result){
+        assignCurrentDomain(result, res)
         next();
       }else{
         res.status(404).send(MessagesUtil.middleware.subdomain.noAccessOrNotFound);
