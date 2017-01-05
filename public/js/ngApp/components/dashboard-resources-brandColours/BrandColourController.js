@@ -191,14 +191,26 @@
     };
 
     function resetToDefaultScheme() {
-      brandColourServices.resetScheme(vm.scheme).then(function(res) {
-        dbg.log2('#BrandColourController > resetScheme > res ', res);
-        if(res.error) {
-          messenger.error(res.error);
-        } else {
-          angular.copy(res.data, vm.scheme, vm.previewScheme);
+      if (vm.scheme.id) {
+        brandColourServices.resetScheme(vm.scheme).then(function(res) {
+          dbg.log2('#BrandColourController > resetScheme > res ', res);
+          if(res.error) {
+            messenger.error(res.error);
+          } else {
+            angular.copy(res.data, vm.scheme, vm.previewScheme);
+          }
+        });
+      } else {
+        resetFieldsLocally(vm.manageFields.chatRoom);
+        resetFieldsLocally(vm.manageFields.email);
+      }
+
+      function resetFieldsLocally(fields) {
+        for (var i = 0; i < fields.length; i++) {
+          var fieldName = fields[i].model;
+          vm.scheme.colours[fieldName] = fields[i].colour;
         }
-      });
+      }
     };
 
     function finishEdit() {
