@@ -691,25 +691,22 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
   });
 }
 
-function sendTestEmail(mailTemplate, sessionId, mailTo, callback) {
+function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
   AccountUser.find({
-    where: { email: { ilike: mailTo } },
-  }).then(function(result) {
-    if (result) {
+    where: { id: accountUserId },
+  }).then(function(accountUser) {
+    if (accountUser) {
       composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
         var params = {
           orginalStartTime: new Date(),
           orginalEndTime:  new Date(),
-          email: mailTo
+          email: accountUser.email
         };
 
         templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
       });
-    } else {
-      callback({ error: MessagesUtil.mailTemplate.error.noUser });
     }
   }, function(error) {
-    console.log(error);
     callback(error);
   });
 }

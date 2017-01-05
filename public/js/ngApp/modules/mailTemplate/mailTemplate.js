@@ -143,10 +143,10 @@
       return deferred.promise;
     }
 
-    function sendMail(mailTemplate, sessionId, mailTo) {
+    function sendMail(mailTemplate, sessionId) {
       var deferred = $q.defer();
 
-      mailRestApi.sendMail.post({mailTemplate: mailTemplate, sessionId: sessionId, mailTo: mailTo}, function(res) {
+      mailRestApi.sendMail.post({mailTemplate: mailTemplate, sessionId: sessionId}, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {

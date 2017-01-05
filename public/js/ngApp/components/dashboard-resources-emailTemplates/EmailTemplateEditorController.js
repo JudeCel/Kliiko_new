@@ -437,7 +437,7 @@
     }
 
     function sendEmail() {
-      mailTemplate.sendMail(vm.currentTemplate, vm.properties.sessionId, vm.mailTo).then(function (res) {
+      mailTemplate.sendMail(vm.currentTemplate, vm.properties.sessionId).then(function (res) {
           messenger.ok(res.message);
         }, function (error) {
           messenger.error(error);

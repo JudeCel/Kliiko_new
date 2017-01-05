@@ -70,7 +70,7 @@
       <button id='mailModifySaveCopy' type="submit" class="btn btn-standart btn-green pull-right btn-small margin-left-10" ng-click="ec.modifyAndSave()">Save</button>
       <button id='mailPreviewButton' type="submit" class="btn btn-standart btn-blue pull-right btn-small margin-left-10" ng-click="ec.previewMailTemplate()">Preview</button>
       <button class='btn btn-standart btn-green pull-right btn-medium margin-right-10' ng-click="ec.sendEmail()">Test Email</button>
-      <input type='text' class="test-email-input pull-right margin-right-10" ng-disabled="true" ng-init="ec.mailTo = app.user.email" ng-model="ec.mailTo"/>
+      <input type='text' class="test-email-input pull-right margin-right-10" ng-disabled="true" value="{{ app.user.email }}"/>
     </div>
 
     <div ng-init='ec.initGallery(gc)'>
