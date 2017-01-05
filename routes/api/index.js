@@ -29,7 +29,7 @@ module.exports = router;
 
 // Common Rules
 router.use((req, res, next)  => {
-  let exceptionPaths = ["/survey/constants", "/survey/find"];
+  let exceptionPaths = ["/survey/constants", "/survey/find", "/ping"];
   if (req.currentResources || _.includes(exceptionPaths, req.path)) {
     next();
   } else {
@@ -48,7 +48,7 @@ var PERMISSIONS = {
   facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
 
-router.post('/ping', (req, res, next) => { res.send({}); });
+router.post('/ping', (req, res, next) => { res.send({})});
 
 // Main Routes
 router.get('/myDashboard/data', myDashboard.getAllData);

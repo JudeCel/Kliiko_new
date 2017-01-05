@@ -17,17 +17,17 @@ module.exports = {
 }
 
 function planSelectPage(req, res, next) {
-  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub/landing');
+  let redirectUrl = subdomains.url(req, req.currentResources.account.name, '/account-hub/landing');
   if(req.originalUrl == '/account-hub/selectPlan' || req.originalUrl == '/account-hub/landing') {
     next();
   }
-  else if(_.includes(res.locals.currentDomain.roles, 'accountManager')) {
-    Subscription.find({ where: { accountId: res.locals.currentDomain.id } }).then(function(subscription) {
+  else if(req.currentResources.accountUser.role ==  'accountManager') {
+    Subscription.find({ where: { accountId: req.currentResources.account.id } }).then(function(subscription) {
       if(subscription) {
         next();
       }
       else {
-        subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, req.user.id, redirectUrl).then(function(response) {
+        subscriptionService.createSubscriptionOnFirstLogin(req.currentResources.account.id, req.user.id, redirectUrl).then(function(response) {
           if(response && 'hosted_page' in response) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();

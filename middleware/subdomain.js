@@ -9,12 +9,11 @@ var constants = require('../util/constants');
 var libSubdomains = require('./../lib/subdomains');
 var MessagesUtil = require('./../util/messages');
 
-function assignCurrentDomain(result, res) {
-  res.locals.currentDomain = {
-    accountUserId: result.id,
-    id: result.Account.id,
-    name: result.Account.name,
-    roles: [result.role]
+function assignCurrentDomain(result, req) {
+  req.currentResources = {
+    accountUser: { id: result.id, role: result.role},
+    account: { id: result.Account.id, name: result.Account.name},
+    user: {id: result.User.id, email: result.User.email}
   };
 }
 
@@ -42,7 +41,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
     include: [
       { model: models.User,
         where: { id: user.id },
-        attributes: ['id'],
+        attributes: ['id', 'email'],
         required: true
       },
       { model: models.Account,
@@ -80,7 +79,7 @@ module.exports = function(req, res, next) {
   if (comparedWithBaseDomainName(subdomain)) {
     isDomainAvailableForThisUser(req, res, subdomain, function(error, result){
       if(result){
-        assignCurrentDomain(result, res)
+        assignCurrentDomain(result, req)
         next();
       }else{
         res.status(404).send(MessagesUtil.middleware.subdomain.noAccessOrNotFound);

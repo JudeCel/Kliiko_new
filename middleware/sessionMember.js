@@ -11,17 +11,16 @@ module.exports = {
   accessDeniedMessage: MessagesUtil.middleware.policy.noAccess
 }
 
-function checkRoles(roles, allowedRoles) {
-  let result = _.intersection(allowedRoles, roles);
-  return result.length;
+function checkRoles(role, allowedRoles) {
+  return _.includes(allowedRoles, role);
 }
 
 // Checks access for accountuser roles, if doesn't have, checks for session member
 function hasAccess(memberRoles, accountRoles) {
   return function(req, res, next) {
-    if (!res.locals.currentDomain) { throw new Error('currentDomain is not defined in the response locals') }
+    if (!req.currentResources) { throw new Error('currentResources is not defined in the req') }
 
-    if(checkRoles(res.locals.currentDomain.roles, accountRoles || [])) {
+    if(checkRoles(req.currentResources.accountUser.role, accountRoles || [])) {
       next();
     }
     else {
@@ -37,7 +36,7 @@ function checkMemberRoles(memberRoles, req, res, next) {
     where: { role: { $in: memberRoles }, sessionId: sessionId },
     include: [{
       model: AccountUser,
-      where: { UserId: req.user.id, AccountId: res.locals.currentDomain.id }
+      where: { UserId: req.currentResources.user.id, AccountId: req.currentResources.account.id }
     }],
     attributes: ['id']
   }).then(function(result) {

@@ -60,6 +60,7 @@ var resources = require('./routes/resources');
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(subdomain);
+
 app.use('/account-hub', sessionMiddleware.extendUserSession, dashboard);
 app.use('/resources', sessionMiddleware.extendUserSession, resources);
 

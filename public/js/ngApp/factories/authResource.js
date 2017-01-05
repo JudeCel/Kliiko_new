@@ -1,23 +1,15 @@
 angular.module('KliikoApp').factory('authResource', authResource);
-authResource.$inject = ['$resource', 'globalSettings', '$window'];
+authResource.$inject = ['$resource', 'globalSettings', '$window', '$http'];
 angular.module('KliikoApp.Root').factory('authResource', authResource);
 
-function authResource($resource, globalSettings, $window) {
+function authResource($resource, globalSettings, $window, $http) {
   return function(path, params, actions, options) {
-
-    params = params || {}
-    actions = actions || {}
+    
     var token = 'Bearer ' + $window.localStorage.getItem("jwtToken");
+    var headers = Object.keys($http.defaults.headers)
 
-    var actionsKeys = ['get', 'save', 'query', 'remove', 'delete'];
-
-    for (var i = 0; i < actionsKeys.length; i++) {
-      if (actions[actionsKeys[i]] && actions[actionsKeys[i]].headers) {
-        actions[actionsKeys[i]].headers.Authorization = token;
-      }else{
-        actions[actionsKeys[i]] = {}
-        actions[actionsKeys[i]].headers = { Authorization: token}
-      }
+    for (var i = 0; i < headers.length; i++) {
+      $http.defaults.headers[headers[i]].Authorization = token
     }
 
     return $resource(globalSettings.restUrl + path, params, actions, options);
