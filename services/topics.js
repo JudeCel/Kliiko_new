@@ -31,7 +31,11 @@ function getAll(accountId) {
   Topic.findAll({
     order: '"id" ASC',
     where: {
-      accountId: accountId
+      $or: [{ 
+        accountId: accountId
+      }, {
+        stock: true
+      }]
     },
     include: [{
       model: models.SessionTopics,
@@ -209,6 +213,8 @@ function destroy(id) {
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (topic.default) {
       deferred.reject(MessagesUtil.topics.error.default);
+    } else if (topic.stock) {
+      deferred.reject(MessagesUtil.topics.error.stock);
     } else if (_.isEmpty(topic.Sessions)) {
       Topic.destroy({where: { id: id } }).then(function(result) {
         deferred.resolve(result)
@@ -224,6 +230,7 @@ function destroy(id) {
 
 function create(params) {
   let deferred = q.defer();
+  //todo: stock can be created only by admin
 
   validators.subscription(params.accountId, 'topic', 1).then(function() {
     Topic.create(params).then(function(topic) {
@@ -241,11 +248,12 @@ function create(params) {
 function update(params) {
   let deferred = q.defer();
 
+  //todo: save copy if this is stock topic
+
   Topic.find({ where: { id: params.id } }).then(function(topic) {
-    if(topic) {
+    if (topic) {
       return topic.update(params, { returning: true });
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.topics.notFound);
     }
   }).then(function(topic) {

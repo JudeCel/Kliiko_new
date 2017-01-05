@@ -22,12 +22,28 @@
     vm.topicData = {};
     vm.editTopicIndex = null;
     vm.session = null;
+    vm.type = null;
+
+    vm.typeCount = {
+      all: 0,
+      stock: 0,
+      notStock: 0
+    }
+
+    vm.pagination = {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 2, //todo: 24
+      items: { }
+    }
 
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
     vm.charactersLeft = charactersLeft;
     vm.togglePanel = togglePanel;
+    vm.setType = setType;
+    vm.prepareCurrentPageItems = prepareCurrentPageItems;
 
     init();
 
@@ -37,12 +53,25 @@
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
           vm.list = res.topics;
           vm.validations = res.validations;
+          vm.prepareCurrentPageItems();
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);
           messenger.error(err);
         }
       )
+    }
+
+    function setType(type) {
+      vm.type = type;
+      vm.pagination.currentPage = 1;
+      vm.prepareCurrentPageItems();
+    }
+
+    function prepareCurrentPageItems() {
+      //todo:
+      vm.pagination.totalItems = vm.list.length;
+      vm.pagination.items = vm.list;
     }
 
     function openModal(action, topic) {
@@ -121,6 +150,7 @@
     function createTopic() {
       topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
+        vm.prepareCurrentPageItems();
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
@@ -152,8 +182,8 @@
           }
         }
         vm.list.splice(index, 1);
-
         vm.editBlockHelper = null;
+        vm.prepareCurrentPageItems();
 
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
         messenger.ok(res.message);

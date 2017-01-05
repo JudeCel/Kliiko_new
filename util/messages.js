@@ -207,7 +207,8 @@ module.exports = {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
       relatedSession: "Can't delete topic is related session",
-      default: "Can't delete default topic"
+      default: "Can't delete default topic",
+      stock: "Can't delete stock topic"
     }
   },
   users: {
