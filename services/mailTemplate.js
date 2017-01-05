@@ -705,6 +705,8 @@ function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
 
         templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
       });
+    } else {
+      callback({ error: MessagesUtil.accountUser.notFound });
     }
   }, function(error) {
     callback(error);
