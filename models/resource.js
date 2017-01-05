@@ -46,6 +46,7 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.hasMany(models.Survey, { foreignKey: 'resourceId' });
         Resource.hasMany(models.SurveyQuestion, { foreignKey: 'resourceId' });
         Resource.belongsToMany(models.Session, {through: {model: models.SessionResource, onDelete: 'cascade'}, foreignKey: 'resourceId'});
+        Resource.belongsToMany(models.MailTemplate, {through: {model: models.MailTemplateResource, onDelete: 'cascade'}, foreignKey: 'resourceId'});
       }
     }
   });

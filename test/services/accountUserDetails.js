@@ -25,7 +25,7 @@ describe('Account User Service', () => {
         testUser = user;
         user.getOwnerAccount().then(function(accounts) {
           user.getAccountUsers().then(function(results) {
-            testAccountUser = results[0]
+            testAccountUser = results[0];
             testAccount = accounts[0];
             done();
           })
