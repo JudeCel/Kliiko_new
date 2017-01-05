@@ -98,16 +98,13 @@ describe('Mail Template Service', () => {
           validAttrs.content = '<img src="http://test.com/img.jpg" style="max-width:600px;" data-resource-id="' + resource.id + '">';
           mailTemplateService.create(validAttrs, function (error, result) {
             assert.equal(error, null);
-            //need to wait because MailTemplateResource created asynchronously
-            setTimeout(() => {
-              models.MailTemplateResource.findAll({ where: { mailTemplateId: result.id } }).then(function (results) {
-                assert.equal(results.length, 1);
-                assert.equal(results[0].resourceId, resource.id);
-                done();
-              }, function(error) {
-                done(error);          
-              });
-            }, 1000);
+            models.MailTemplateResource.findAll({ where: { mailTemplateId: result.id } }).then(function (results) {
+              assert.equal(results.length, 1);
+              assert.equal(results[0].resourceId, resource.id);
+              done();
+            }, function(error) {
+              done(error);          
+            });
           });
         }, function(error) {
           done(error);          

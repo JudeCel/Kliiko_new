@@ -18,6 +18,7 @@ var q = require('q');
 var constants = require('../util/constants');
 var momentTimeZone = require('moment-timezone');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
+let Bluebird = require('bluebird');
 
 module.exports = {
   validate: validate,
@@ -74,60 +75,107 @@ function createBaseMailTemplate(params, callback) {
 }
 
 function create(params, callback) {
-  MailTemplate.create(params).then(function(result) {
-    setMailTemplateRelatedResources(result.id, result.content);
-    callback(null, result);
-  }).catch(function(error) {
-    callback(filters.errors(error));
+  models.sequelize.transaction().then(function(transaction) {
+    MailTemplate.create(params, { transaction: transaction }).then(function(result) {
+      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function(result) {
+        transaction.commit().then(function() {
+          callback(null, result);
+        });
+      }, function(error) {
+        transaction.rollback().then(function() {
+          callback(filters.errors(error));
+        });
+      });
+    }).catch(function(error) {
+      transaction.rollback().then(function() {
+        callback(filters.errors(error));
+      });
+    });
   });
 }
 
 function update(id, parameters, callback){
-  MailTemplate.update(parameters, {
-      where: {id: id}
-  }).then(function(result) {
-    setMailTemplateRelatedResources(id, parameters.content);
-    callback(null, result);
-  }).catch(function(error) {
-    callback(filters.errors(error));
+  models.sequelize.transaction().then(function(transaction) {
+    MailTemplate.update(parameters, {
+        where: {id: id},
+        transaction: transaction
+    }).then(function(result) {
+      setMailTemplateRelatedResources(id, parameters.content, transaction).then(function(result) {
+        transaction.commit().then(function() {
+          callback(null, result);
+        });
+      }, function(error) {
+        transaction.rollback().then(function() {
+          callback(filters.errors(error));
+        });
+      });
+    }).catch(function(error) {
+      transaction.rollback().then(function() {
+        callback(filters.errors(error));
+      });
+    });
   });
 }
 
-function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent) {
-  let matches = mailTemplateContent.match(resourceIdPattern);
-  let ids = [];
-  _.each(matches, (match) => {
-    //18 is length of this: data-resource-id="
-    let id = parseInt(match.substr(18));
-    if (id) {
-      ids.push(id);
-    }
-  });
-
-  //remove old MailTemplateResources
-  if (ids.length > 0) {
-    models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId, resourceId: { $notIn: ids } }});
-  } else {
-    models.MailTemplateResource.destroy({ where: { mailTemplateId: mailTemplateId }});
-  }
-  
-  //add new MailTemplateResources
-  models.Resource.findAll({
-    attributes: ["id"],
-    where: {
-      id: { $in: ids },
-    },
-    include: [{
-      model: models.MailTemplate,
-      where: { id: mailTemplateId },
-      attributes: ["id"],
-      required: false
-    }]
-  }).then(function(resources) {
-    _.each(resources, (resource) => {
-      if (resource.MailTemplates.length == 0) {
-        models.MailTemplateResource.create({ mailTemplateId: mailTemplateId, resourceId: resource.id });
+function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, transaction) {
+  return new Bluebird((resolve, reject) => {
+    let matches = mailTemplateContent.match(resourceIdPattern);
+    let ids = [];
+    _.each(matches, (match) => {
+      let id = parseInt(match.split('"')[1]);
+      if (id) {
+        ids.push(id);
       }
+    });
+
+    //remove old MailTemplateResources
+    if (ids.length > 0) {
+      models.MailTemplateResource.destroy({ 
+        where: { 
+          mailTemplateId: mailTemplateId, 
+          resourceId: { $notIn: ids } 
+        },
+        transaction: transaction
+      });
+    } else {
+      models.MailTemplateResource.destroy({ 
+        where: { 
+          mailTemplateId: mailTemplateId 
+        },
+        transaction: transaction
+      });
+    }
+    
+    //add new MailTemplateResources
+    models.Resource.findAll({
+      attributes: ["id"],
+      where: {
+        id: { $in: ids },
+      },
+      include: [{
+        model: models.MailTemplate,
+        where: { id: mailTemplateId },
+        attributes: ["id"],
+        required: false
+      }]
+    }).then(function(resources) {
+      Bluebird.each(resources, (resource) => {
+        return new Bluebird(function (resolve, reject) {
+          if (resource.MailTemplates.length == 0) {
+            models.MailTemplateResource.create({ mailTemplateId: mailTemplateId, resourceId: resource.id }, { transaction: transaction }).then(function(result) {
+              resolve();
+            }, function(error) {
+              reject(error);
+            });
+          } else {
+            resolve();
+          }
+        });
+      }).then(function(result) {
+        resolve();
+      }, function(error) {
+        reject(error);
+      });
     });
   });
 }
