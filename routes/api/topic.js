@@ -5,6 +5,7 @@ let topicsService = require('./../../services/topics');
 var MessagesUtil = require('./../../util/messages');
 var topicConstants = require('./../../util/topicConstants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var policy = require('./../../middleware/policy.js')
 
 module.exports = {
   get: getAll,
@@ -46,8 +47,9 @@ function post(req, res, next) {
 
   let params = req.body.topic;
   params.accountId = res.locals.currentDomain.id;
+  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
 
-  topicsService.create(params).then(
+  topicsService.create(params, isAdmin).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.created })},
     function(error) { res.send({error:error})}
   );

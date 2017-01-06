@@ -104,7 +104,7 @@ describe.only('Topic Service', function() {
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
         let params = getTopicParams();
         params.stock = true;
-        topicService.create(params).then(function(topic) {
+        topicService.create(params, true).then(function(topic) {
           topicService.joinToSession([topic.id], testSession.id).then(function(result) {
             assert.isTrue(result.skipedStock);
             topic.getSessions().then(function(results) {
@@ -216,7 +216,7 @@ describe.only('Topic Service', function() {
         subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
           let params = getTopicParams();
           params.stock = true;
-          topicService.create(params).then(function(topic){
+          topicService.create(params, true).then(function(topic){
             topicService.destroy(topic.id).then(function(result) {
               done("Should not get here");
             }, function(err) {

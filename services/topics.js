@@ -236,9 +236,12 @@ function destroy(id) {
   return deferred.promise;
 }
 
-function create(params) {
+function create(params, isAdmin) {
   let deferred = q.defer();
-  //todo: stock can be created only by admin
+
+  if (!isAdmin && params.stock) {
+    params.stock = false;
+  }
 
   validators.subscription(params.accountId, 'topic', 1).then(function() {
     Topic.create(params).then(function(topic) {
@@ -274,7 +277,7 @@ function update(params) {
 }
 
 function sessionTopicUpdateParams(params) {
-  return _.pick(params, ['name', 'boardMessage', 'sign', 'lastSign']);
+  return _.pick(params, ['boardMessage', 'sign', 'lastSign']);
 }
 
 function createDefaultForAccount(params, transaction) {
