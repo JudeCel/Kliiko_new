@@ -77,7 +77,7 @@ function createBaseMailTemplate(params, callback) {
 function create(params, callback) {
   models.sequelize.transaction().then(function(transaction) {
     MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function(result) {
+      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
         transaction.commit().then(function() {
           callback(null, result);
         });
@@ -100,7 +100,7 @@ function update(id, parameters, callback){
         where: {id: id},
         transaction: transaction
     }).then(function(result) {
-      setMailTemplateRelatedResources(id, parameters.content, transaction).then(function(result) {
+      setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
         transaction.commit().then(function() {
           callback(null, result);
         });
@@ -665,6 +665,7 @@ function saveMailTemplate(template, createCopy, accountId, callback) {
               if (error) {
                 callback(error);
               } else {
+                
                 setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
               }
             });
