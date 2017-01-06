@@ -33,8 +33,8 @@
     vm.pagination = {
       totalItems: 0,
       currentPage: 1,
-      itemsPerPage: 2, //todo: 24
-      items: { }
+      itemsPerPage: 24,
+      items: []
     }
 
     vm.deleteTopic = deleteTopic;
@@ -69,9 +69,36 @@
     }
 
     function prepareCurrentPageItems() {
-      //todo:
-      vm.pagination.totalItems = vm.list.length;
-      vm.pagination.items = vm.list;
+      if (vm.list && vm.list.length > 0) {
+        //prepare count of items by type and array of items of current type to display
+        vm.typeCount.all = vm.list.length;
+        vm.typeCount.stock = 0;
+        vm.typeCount.notStock = 0;
+        var currentTypeItems = [];
+        for (var i = 0, len = vm.list.length; i < len; i++) {
+          if (vm.list[i].stock == (vm.type == 'stock') || !vm.type) {
+            currentTypeItems.push(vm.list[i]);
+          }
+          if (vm.list[i].stock) {
+            vm.typeCount.stock++;
+          } else {
+            vm.typeCount.notStock++;
+          }
+        }
+        vm.pagination.totalItems = currentTypeItems.length;
+
+        //decrease page number (f.e. if item removed don't to show empty page)
+        while ((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage >= currentTypeItems.length) {
+          vm.pagination.currentPage--;
+        }
+
+        //prepare current page items to display
+        vm.pagination.items = currentTypeItems.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
+      }
+      else {
+        vm.pagination.items = [];
+        vm.pagination.totalItems = 0;
+      }
     }
 
     function openModal(action, topic) {
