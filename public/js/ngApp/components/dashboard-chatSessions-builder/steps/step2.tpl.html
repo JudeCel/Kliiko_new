@@ -28,7 +28,7 @@
           </div>
 
           <div id="topics-list" multiple-dragging-zone="step2Controller.isDragInProgress" drag-all="step2Controller.allTopicsSelected">
-            <div class="topic-list-item" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
+            <div class="topic-list-item topic-{{topic.stock ? 'stock' : 'not-stock'}}" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
               <div class="check">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
@@ -50,7 +50,7 @@
           </div>
 
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
-            <div class="topic-list-item" ng-repeat="topic in step2Controller.sessionTopicsArray">
+            <div class="topic-list-item topic-{{topic.stock ? 'stock' : 'not-stock'}}" ng-repeat="topic in step2Controller.sessionTopicsArray">
               <span>
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
                 {{ topic.sessionTopic.name }}

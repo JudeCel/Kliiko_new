@@ -89,8 +89,8 @@ function isFacilitatorDataValid(snapshot, facilitatorId, sessionId, sessionBuild
 
 function getSessionTopic(topics, id) {
   var res = _.find(topics, function(topic){ 
-    if (topics[i].id == id) {
-      return topics[i].sessionTopic;
+    if (topic.id == id) {
+      return topic.sessionTopic;
     }
   });
   
