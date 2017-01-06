@@ -168,7 +168,7 @@ function addTopics(req, res, next) {
     if (validationRes.isValid) {
       topicsService.removeAllAndAddNew(sessionId, topics).then(function(result) {
         sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
-          res.send({succuss:true, data:result, snapshot:snapshotResult});
+          res.send({succuss: true, data: result.data, message: result.message, snapshot: snapshotResult});
         }, function (error) {
           res.send({ error: error });
         });

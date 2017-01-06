@@ -121,7 +121,8 @@ module.exports = {
         facilitator: 'No host provided'
       },
       secondStep: {
-        topics: 'No topics selected'
+        topics: 'No topics selected',
+        stock: "You can't drag a Stock Topic. Edit to suit your needs and Save which creates either e New Topic or Copy Of."
       },
       thirdStep: {
         emailTemplates: "You need to copy each of the required e-mail template."

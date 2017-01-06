@@ -29,7 +29,7 @@ module.exports = {
 function getAll(accountId) {
   let deferred = q.defer();
   Topic.findAll({
-    order: '"id" ASC',
+    order: '"name" ASC',
     where: {
       $or: [{ 
         accountId: accountId
@@ -85,8 +85,8 @@ function updateSessionTopics(sessionId, topicsArray) {
   return new Bluebird(function (resolve, reject) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
-    joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-      Bluebird.each(sessionTopics, (sessionTopic) => {
+    joinToSession(ids, sessionId, topicsArray).then(function(result) {
+      Bluebird.each(result.sessionTopics, (sessionTopic) => {
 
         return new Bluebird(function (resolveInternal, rejectInternal) {
           Bluebird.each(topicsArray, (topic) => {
@@ -116,7 +116,7 @@ function updateSessionTopics(sessionId, topicsArray) {
         });
 
       }).then(function() {
-        resolve(returning);
+        resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
       }, function(error) {
         reject(filters.errors(error));
       });
@@ -129,7 +129,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({where: {id: ids}}).then(function(results) {
+    Topic.findAll({where: {id: ids, stock: false}}).then(function(results) {
       session.addTopics(results).then(function(result) {
         models.SessionTopics.findAll({
           where: {
@@ -138,7 +138,15 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          deferred.resolve(sessionTopics);
+          if (results.length < ids.length) {
+            Topic.find({where: {id: ids, stock: true}}).then(function(stockResult) {
+              deferred.resolve({sessionTopics: sessionTopics, skipedStock: stockResult ? true : false});
+            }, function(error) {
+              deferred.reject(filters.errors(error));
+            });
+          } else {
+            deferred.resolve({sessionTopics: sessionTopics, skipedStock: false});
+          }
         });
 
       }, function(error) {
@@ -147,7 +155,7 @@ function joinToSession(ids, sessionId) {
 
     }, function(error) {
       deferred.reject(filters.errors(error));
-    })
+    });
   }, function(error) {
     deferred.reject(filters.errors(error));
   });

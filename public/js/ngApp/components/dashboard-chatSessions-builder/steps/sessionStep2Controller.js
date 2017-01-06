@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -134,12 +134,11 @@
         selected.map(function(topic) {
           addTopics(topic, list);
         });
-      }
-      else {
+      } else {
         addTopics(dragTopic, list);
       }
 
-      if(list.length) {
+      if (list.length) {
         if(!findLandingTopic()) {
           setLanding(list[0]);
         }
@@ -167,9 +166,13 @@
         if (result.ignored) {
           init(vm.topicController);
         } else {
-          orderByFilter(result, "id").map(function(topic) {
+          orderByFilter(result.data, "id").map(function(topic) {
             addSessionTopic(topic);
           });
+          if (result.message) {
+            $confirm({ text: result.message, closeOnly: true, title: null });
+          }
+
         }
       }, function(error) {
         messenger.error(error);

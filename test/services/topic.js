@@ -81,10 +81,34 @@ describe.only('Topic Service', function() {
 
     it("joinToSession", function(done) {
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
-        topicService.create(getTopicParams()).then(function(topic){
+        topicService.create(getTopicParams()).then(function(topic) {
           topicService.joinToSession([topic.id], testSession.id).then(function(result) {
-            topic.getSessions().then(function(resuts) {
-              assert.lengthOf(resuts, 1);
+            topic.getSessions().then(function(results) {
+              assert.lengthOf(results, 1);
+              done();
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it("joinToSession skip stock", function(done) {
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        let params = getTopicParams();
+        params.stock = true;
+        topicService.create(params).then(function(topic) {
+          topicService.joinToSession([topic.id], testSession.id).then(function(result) {
+            assert.isTrue(result.skipedStock);
+            topic.getSessions().then(function(results) {
+              assert.lengthOf(results, 0);
               done();
             }, function(err) {
               done(err);
