@@ -165,7 +165,12 @@
 
     function editTopic() {
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
-        vm.list[vm.editTopicIndex] = vm.topicData;
+        if (res.data.id == vm.topicData.id) {
+          vm.list[vm.editTopicIndex] = vm.topicData;
+        } else {
+          vm.list.push(res.data);
+          vm.prepareCurrentPageItems();
+        }
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};

@@ -259,11 +259,18 @@ function create(params, isAdmin) {
 function update(params) {
   let deferred = q.defer();
 
-  //todo: save copy if this is stock topic
-
   Topic.find({ where: { id: params.id } }).then(function(topic) {
     if (topic) {
-      return topic.update(params, { returning: true });
+      if (topic.stock) {
+        if (params.name == topic.name) {
+          params.name = "Copy of " + topic.name;
+        }
+        delete params.id;
+        params.accountId = topic.accountId;
+        return create(params);
+      } else {
+        return topic.update(params, { returning: true });
+      }
     } else {
       deferred.reject(MessagesUtil.topics.notFound);
     }

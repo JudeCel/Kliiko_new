@@ -68,6 +68,49 @@ describe.only('Topic Service', function() {
     });
   });
 
+  describe("update", function() {
+    it('update', function (done) {
+      let attrs = getTopicParams();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          let params = {id: topic.id, name: "update test"};
+          topicService.update(params).then(function(updatedTopic){
+            assert.equal(updatedTopic.name, params.name);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('update stock', function (done) {
+      let attrs = getTopicParams();
+      attrs.stock = true;
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs, true).then(function(topic){
+          let params = {id: topic.id, name: "update test"};
+          topicService.update(params).then(function(updatedTopic){
+            assert.notEqual(updatedTopic.id, params.id);
+            assert.equal(updatedTopic.name, params.name);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+  });
+
   describe("with Session", function() {
     var testSession = null;
     beforeEach(function(done) {
