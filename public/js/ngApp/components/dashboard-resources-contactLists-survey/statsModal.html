@@ -1,0 +1,20 @@
+<div class='modal fade' id='statsModal' role='dialog'>
+  <div class='modal-dialog surveyStatsModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <h3 class="pull-left">{{sc.stats.name}}</h3>
+        <div custom-select-directive data-title="Export" data-id="survey-stats-button" class="custom-select-directive btn-large pull-right">
+          <li id='surveyStatsExportPDF' ng-click=""><a href=""><i class="icon-remove"></i>Export to PDF</a></li>
+          <li id='surveyStatsExportXLS' ng-click=""><a href=""><i class="icon-remove"></i>Import to XLS</a></li>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class='modal-body form-horizontal'>
+        Content
+      </div>
+      <div class='modal-footer'>
+        <div type='button' class='pull-left btn-standart btn-red btn-small text-center' data-dismiss='modal'>Close</div>
+      </div>
+    </div>
+  </div>
+</div>

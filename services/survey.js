@@ -13,7 +13,7 @@ var MessagesUtil = require('./../util/messages');
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
-var bluebird = require('bluebird');
+var Bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
 
 const VALID_ATTRIBUTES = {
@@ -523,6 +523,27 @@ function exportSurvey(params, account) {
   return deferred.promise;
 };
 
+function getSurveyStats(id, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyStats(account).then(function() {
+      resolve({});
+      //todo:
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function canExportSurveyStats(account) {
+  return new Bluebird(function (resolve, reject) {
+    validators.planAllowsToDoIt(account.id, 'exportRecruiterStats').then(function() {
+      resolve({});
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
 function canExportSurveyData(account) {
   let deferred = q.defer();
   validators.planAllowsToDoIt(account.id, 'exportRecruiterSurveyData').then(function() {
@@ -731,5 +752,6 @@ module.exports = {
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  getSurveyStats: getSurveyStats
 };
