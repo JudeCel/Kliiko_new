@@ -120,6 +120,12 @@
     //$rootScopeProvider.digestTtl(20);
     dbgProvider.enable(1);
     dbgProvider.debugLevel('trace');
+    var token = 'Bearer ' + window.localStorage.getItem("jwtToken");
+    var headers = Object.keys($httpProvider.defaults.headers);
+    
+    for (var i = 0; i < headers.length; i++) {
+      $httpProvider.defaults.headers[headers[i]].Authorization = token
+    }
 
     $httpProvider.interceptors.push('myInterceptor');
     if (!$httpProvider.defaults.headers.get) {
