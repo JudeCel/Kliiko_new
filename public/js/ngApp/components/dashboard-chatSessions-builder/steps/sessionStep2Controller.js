@@ -33,6 +33,7 @@
     vm.onDragEnd = onDragEnd;
     vm.onDragStart = onDragStart;
     vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
+    vm.getTopicStockClass = getTopicStockClass;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -241,6 +242,10 @@
         $location.hash('drop-section');
         $anchorScroll();
       }
+    }
+
+    function getTopicStockClass(topic) {
+      return 'topic-list-item topic-' + (topic.stock ? 'stock' : 'not-stock');
     }
   }
 

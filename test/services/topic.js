@@ -9,7 +9,7 @@ var userFixture = require('./../fixtures/user');
 let q = require('q');
 var MessagesUtil = require('./../../util/messages');
 
-describe.only('Topic Service', function() {
+describe('Topic Service', function() {
   function createSession() {
     let deferred = q.defer();
 
