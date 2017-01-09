@@ -75,7 +75,10 @@
 
     var requestInterceptor = {
       request: function(config) {
-        config.url = (globalSettings.restUrl + config.url)
+        if(config.url.indexOf(".html") < 0){
+          config.url = (globalSettings.restUrl + config.url);
+        }
+        
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
           $rootScope.showSpinner = true;
