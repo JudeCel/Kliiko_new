@@ -75,7 +75,7 @@
 
     var requestInterceptor = {
       request: function(config) {
-        if(config.url.indexOf(".html") < 0){
+        if(config.url.indexOf(".html") == -1 && config.url.indexOf("http") == -1 && config.url.indexOf(".template") == -1 ){
           config.url = (globalSettings.restUrl + config.url);
         }
         
