@@ -21,6 +21,7 @@ function index(req, res, next) {
       }
     });
   }, (error) => {
+    console.log(error, "invite.js:24");
     res.redirect('/login');
   });
 }
@@ -48,6 +49,7 @@ function accept(req, res, next) {
       })
     });
   }, (error) => {
+    console.log(error, "invite.js:24");
     res.redirect('/login');
   });
 };
