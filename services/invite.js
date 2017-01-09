@@ -406,8 +406,15 @@ function processEmailStatus(id, apiResp, emailStatus) {
   })
 }
 function processMailWebhook(webhookParams) {
+  console.log(webhookParams, 'invite.js:409')
   let updateParams = {}
 
+  if (webhookParams.event == "failed") {
+    updateParams.webhookMessage = webhookParams.reason
+    updateParams.webhookEvent = webhookParams.event
+    updateParams.webhookTime = new Date()
+    updateParams.emailStatus = "failed";
+  }
   if (webhookParams.event == "dropped") {
     updateParams.webhookMessage = webhookParams.reason
     updateParams.webhookEvent = webhookParams.event
