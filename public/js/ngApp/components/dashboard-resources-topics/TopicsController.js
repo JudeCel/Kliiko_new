@@ -37,6 +37,7 @@
       items: []
     }
 
+    vm.canSetStock = canSetStock;
     vm.canDelete = canDelete;
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
@@ -190,6 +191,10 @@
       }, function(error) {
         messenger.error(error)
       });
+    }
+
+    function canSetStock(topic, isAdmin) {
+      return isAdmin && !topic.id;
     }
 
     function canDelete(topic, isAdmin) {
