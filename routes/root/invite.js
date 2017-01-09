@@ -40,6 +40,7 @@ function accept(req, res, next) {
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
       loginUser(req, res, next, user);
     }, (error) => {
+      console.log(error);
       inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
         if (user) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
@@ -107,6 +108,7 @@ function sessionAccept(req, res, next) {
       res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }
   }, function(error) {
+    console.log(error);
     req.flash('message', { inviteError: true});
     res.redirect('/login');
   });
