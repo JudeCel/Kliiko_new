@@ -407,6 +407,7 @@ function processEmailStatus(id, apiResp, emailStatus) {
 }
 function processMailWebhook(webhookParams) {
   console.log(webhookParams, 'invite.js:409')
+
   let updateParams = {}
 
   if (webhookParams.event == "failed") {
@@ -437,6 +438,9 @@ function processMailWebhook(webhookParams) {
   }
 
   return new Bluebird((resolve, reject) => {
+    if(_.isEmpty(webhookParams)){
+      return reject("empty body");
+    }
     if (updateParams.emailStatus) {
       let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
 
