@@ -2,10 +2,10 @@
   'use strict';
   angular.module('KliikoApp').factory('planService', planService);
 
-  planService.$inject = ['$q', 'authResource', 'dbg',  '$injector'];
-  function planService($q, authResource, dbg, $injector) {
+  planService.$inject = ['$q', '$resource', 'dbg',  '$injector'];
+  function planService($q, $resource, dbg, $injector) {
 
-    var subscriptionPlanRestApi = authResource('/subscriptionPlan/:path', null, {
+    var subscriptionPlanRestApi = $resource('/subscriptionPlan/:path', null, {
       updatePlan: { method: 'PUT', params: { path: 'updatePlan' } },
       UpdateViaCheckout: { method: 'PUT', params: { path: 'UpdateViaCheckout' } },
       postQuote: { method: 'POST', params: { path: 'postQuote' } },

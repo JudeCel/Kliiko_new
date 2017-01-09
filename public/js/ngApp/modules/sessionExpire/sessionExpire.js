@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp.sessionExpire', []).factory('sessionExpire', sessionExpireFactory);
 
-  sessionExpireFactory.$inject = ['$q', 'globalSettings', 'authResource', 'dbg', 'domServices'];
-  function sessionExpireFactory($q, globalSettings, authResource, dbg, domServices) {
-    var pingApi = authResource('/ping', null, {
+  sessionExpireFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', 'domServices'];
+  function sessionExpireFactory($q, globalSettings, $resource, dbg, domServices) {
+    var pingApi = $resource('/ping', null, {
       post: { method: 'post' }
     });
 

@@ -3,16 +3,16 @@
 
   angular.module('contactList', []).factory('contactListServices', contactListFactory);
 
-  contactListFactory.$inject = ['$q','globalSettings', 'authResource', 'dbg', 'Upload'];
-  function contactListFactory($q, globalSettings, authResource, dbg, Upload)  {
+  contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'Upload'];
+  function contactListFactory($q, globalSettings, $resource, dbg, Upload)  {
     var contactListsApi = {
-      contactLists: authResource('/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUsersToRemove: authResource('/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUser: authResource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsImport: authResource('/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsValidate: authResource('/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
-      contactComments: authResource('/contactListsUser/comments', {}, {post: {method: 'POST'}}),
-      canExportContactListData: authResource('/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
+      contactLists: $resource('/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUsersToRemove: $resource('/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUser: $resource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsImport: $resource('/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsValidate: $resource('/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
+      contactComments: $resource('/contactListsUser/comments', {}, {post: {method: 'POST'}}),
+      canExportContactListData: $resource('/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
     };
 
 

@@ -1,10 +1,10 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('SmsCreditService', SmsCreditService);
-  SmsCreditService.$inject = ['$q', 'authResource', 'dbg'];
+  SmsCreditService.$inject = ['$q', '$resource', 'dbg'];
 
-  function SmsCreditService($q, authResource, dbg) {
-    var smsCreditServiceRestApi = authResource('/subscriptionSmsCredits/:path', null, {
+  function SmsCreditService($q, $resource, dbg) {
+    var smsCreditServiceRestApi = $resource('/subscriptionSmsCredits/:path', null, {
       puchaseCredits: { method: 'POST', params: { path: 'puchaseCredits' } },
       creditCount: { method: 'GET', params: { path: 'creditCount' } }
     });

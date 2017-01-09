@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp.fileUploader', []).factory('fileUploader', fileUploaderFactory);
 
-  fileUploaderFactory.$inject = ['$q', 'globalSettings', 'authResource', 'dbg', 'Upload', '$resource'];
-  function fileUploaderFactory($q, globalSettings, authResource, dbg, Upload, $resource) {
-    var fileUploaderApiLocal = authResource('/jwtToken');
+  fileUploaderFactory.$inject = ['$q', 'globalSettings', 'dbg', 'Upload', '$resource'];
+  function fileUploaderFactory($q, globalSettings, dbg, Upload, $resource) {
+    var fileUploaderApiLocal = $resource('/jwtToken');
 
     var requestError = 'Request failed';
     var fileUploaderService = {};

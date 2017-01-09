@@ -6,9 +6,9 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'authResource', 'fileUploader', 'changesValidation'];
-  function SessionModel($q, authResource, fileUploader, changesValidation)  {
-    var sessionBuilderRestApi = authResource('/sessionBuilder/:id/:path/:arg', { id : '@id', arg: '@arg' }, {
+  SessionModel.$inject = ['$q', '$resource', 'fileUploader', 'changesValidation'];
+  function SessionModel($q, $resource, fileUploader, changesValidation)  {
+    var sessionBuilderRestApi = $resource('/sessionBuilder/:id/:path/:arg', { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
       put: { method: 'PUT' },
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
@@ -24,15 +24,15 @@
     });
 
     var mailRestApi = {
-      mailTemplates: authResource('/sessionMailTemplates', {}, {get: {method: 'GET'}})
+      mailTemplates: $resource('/sessionMailTemplates', {}, {get: {method: 'GET'}})
     };
-    var chatSessionApi = authResource('/session/:id', null, {
+    var chatSessionApi = $resource('/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
-    var sessionMemberApi = authResource('/sessionMember/:path', {}, {
+    var sessionMemberApi = $resource('/sessionMember/:path', {}, {
       post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
 

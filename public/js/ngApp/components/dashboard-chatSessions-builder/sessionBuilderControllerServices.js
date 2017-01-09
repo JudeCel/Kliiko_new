@@ -1,15 +1,15 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('sessionBuilderControllerServices', sessionBuilderControllerServices);
-  sessionBuilderControllerServices.$inject = ['$q', 'authResource', 'dbg', 'topicsAndSessions'];
+  sessionBuilderControllerServices.$inject = ['$q', '$resource', 'dbg', 'topicsAndSessions'];
 
-  function sessionBuilderControllerServices($q, authResource, dbg, topicsAndSessions) {
+  function sessionBuilderControllerServices($q, $resource, dbg, topicsAndSessions) {
 
-    var sessionBuilderApi = authResource('/sessionBuilder/:path', null, {
+    var sessionBuilderApi = $resource('/sessionBuilder/:path', null, {
       canAddObservers: { method: 'GET', params: { path: 'canAddObservers' } },
     });
 
-    var sessionMemberApi = authResource('/sessionMember/:path/:id', null, {
+    var sessionMemberApi = $resource('/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } },
       getMembers: { method: 'post', params: { path: 'members' } },

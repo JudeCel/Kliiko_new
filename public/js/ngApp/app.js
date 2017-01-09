@@ -69,12 +69,13 @@
     });
   }
 
-  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger'];
-  function myInterceptor($log, $q, $rootScope, messenger) {
+  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
+  function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
 
     var requestInterceptor = {
       request: function(config) {
+        config.url = (globalSettings.restUrl + config.url)
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
           $rootScope.showSpinner = true;
@@ -122,7 +123,7 @@
     dbgProvider.debugLevel('trace');
     var token = 'Bearer ' + window.localStorage.getItem("jwtToken");
     var headers = Object.keys($httpProvider.defaults.headers);
-    
+
     for (var i = 0; i < headers.length; i++) {
       $httpProvider.defaults.headers[headers[i]].Authorization = token
     }
@@ -193,7 +194,6 @@
         vm.accountUser = res
       });
       account.getAccountData().then(function(res) { vm.account = res });
-      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
       sessionExpire.init();
     }
 

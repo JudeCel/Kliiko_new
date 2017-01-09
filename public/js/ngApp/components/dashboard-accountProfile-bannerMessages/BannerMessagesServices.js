@@ -1,10 +1,10 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('BannerMessagesServices', BannerMessagesServices);
-  BannerMessagesServices.$inject = ['$q', 'authResource', 'dbg'];
+  BannerMessagesServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function BannerMessagesServices($q, authResource, dbg) {
-    var bannerRestApi = authResource('/banners', null, {
+  function BannerMessagesServices($q, $resource, dbg) {
+    var bannerRestApi = $resource('/banners', null, {
       update: { method: 'PUT' }
     });
 

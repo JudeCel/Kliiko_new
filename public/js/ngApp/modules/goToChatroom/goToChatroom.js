@@ -3,9 +3,9 @@
 
   angular.module('KliikoApp.goToChatroom', []).factory('goToChatroom', goToChatroomFactory);
 
-  goToChatroomFactory.$inject = ['$q', 'authResource', '$http', 'globalSettings', 'messenger'];
-  function goToChatroomFactory($q, authResource, $http, globalSettings, messenger) {
-    var jwtTokenForMemberApi = authResource('/jwtTokenForMember');
+  goToChatroomFactory.$inject = ['$q', '$resource', '$http', 'globalSettings', 'messenger'];
+  function goToChatroomFactory($q, $resource, $http, globalSettings, messenger) {
+    var jwtTokenForMemberApi = $resource('/jwtTokenForMember');
 
     var blankWindow;
     var goToChatroomService = {};

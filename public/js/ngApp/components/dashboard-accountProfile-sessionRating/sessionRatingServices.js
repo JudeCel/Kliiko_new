@@ -1,10 +1,10 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('SessionRatingServices', SessionRatingServices);
-  SessionRatingServices.$inject = ['$q', 'authResource', 'dbg'];
+  SessionRatingServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function SessionRatingServices($q, authResource, dbg) {
-    var sessionListApi = authResource('/session/ratings', null);
+  function SessionRatingServices($q, $resource, dbg) {
+    var sessionListApi = $resource('/session/ratings', null);
 
     var csServices = {};
     csServices.findAllSessions = findAllSessions;

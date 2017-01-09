@@ -1,16 +1,16 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('chatSessionsServices', chatSessionsServices);
-  chatSessionsServices.$inject = ['$q', 'authResource', 'dbg'];
+  chatSessionsServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function chatSessionsServices($q, authResource, dbg) {
-    var chatSessionApi = authResource('/session/:id', null, {
+  function chatSessionsServices($q, $resource, dbg) {
+    var chatSessionApi = $resource('/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
-    var sessionMemberApi = authResource('/sessionMember/:path/:id', null, {
+    var sessionMemberApi = $resource('/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } }
     });

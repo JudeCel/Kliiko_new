@@ -8,8 +8,8 @@
 
   angular.module('CreditCard', []).factory('CreditCard', CreditCardFactory);
 
-  CreditCardFactory.$inject = ['$q','authResource', 'dbg'];
-  function CreditCardFactory($q, authResource, dbg)  {
+  CreditCardFactory.$inject = ['$q','$resource', 'dbg'];
+  function CreditCardFactory($q, $resource, dbg)  {
 
 
     var _number, _holderName, _expMonth, _expYear, _cvv;

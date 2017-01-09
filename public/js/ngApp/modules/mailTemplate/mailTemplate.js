@@ -3,20 +3,20 @@
 
   angular.module('KliikoApp.mailTemplate', []).factory('mailTemplate', mailTemplateFactory);
 
-  mailTemplateFactory.$inject = ['$q', 'globalSettings', 'authResource', 'dbg', '$rootScope', 'changesValidation'];
-  function mailTemplateFactory($q, globalSettings, authResource, dbg, $rootScope, changesValidation) {
+  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope', 'changesValidation'];
+  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope, changesValidation) {
 
     var mailRestApi = {
-      mailTemplates: authResource('/mailTemplates', {}, {get: {method: 'GET'}}),
-      mailTemplatesWithColors: authResource('/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      sessionMailTemplates: authResource('/sessionMailTemplates', {}, { get: { method: 'GET' } }),
-      sessionMailTemplatesWithColors: authResource('/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      mailTemplate: authResource('/mailTemplate', {}, {post: {method: 'POST'}}),
-      saveMailTemplate: authResource('/mailTemplate/save', {}, {post: {method: 'POST'}}),
-      deleteMailTemplate: authResource('/mailTemplate', {}, {post: {method: 'POST'}}),
-      resetMailTemplate: authResource('/mailTemplate/reset', {}, {post: {method: 'POST'}}),
-      previewMailTemplate: authResource('/mailTemplate/preview', {}, {post: {method: 'POST'}}),
-      sendMail: authResource('/mailTemplate/send', {}, {post: {method: 'POST'}})
+      mailTemplates: $resource('/mailTemplates', {}, {get: {method: 'GET'}}),
+      mailTemplatesWithColors: $resource('/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      sessionMailTemplates: $resource('/sessionMailTemplates', {}, { get: { method: 'GET' } }),
+      sessionMailTemplatesWithColors: $resource('/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      mailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      saveMailTemplate: $resource('/mailTemplate/save', {}, {post: {method: 'POST'}}),
+      deleteMailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      resetMailTemplate: $resource('/mailTemplate/reset', {}, {post: {method: 'POST'}}),
+      previewMailTemplate: $resource('/mailTemplate/preview', {}, {post: {method: 'POST'}}),
+      sendMail: $resource('/mailTemplate/send', {}, {post: {method: 'POST'}})
     };
 
     var MailTemplateService = {};
