@@ -134,16 +134,11 @@ describe('ROUTE - Invite',() => {
       }
 
       inviteService.createInvite(params).then(function(invite) {
-        let next = () => { done("Should not call next function") }
-        let req = {params: {token: invite.token }}
+        let next = () => { done() }
+        let req = {body: {}, params: {token: invite.token }}
         let res = {
           render: (pathToView, _viewParams) => {
-            try {
-              assert.equal(pathToView, 'invite/index');
-              done();
-            } catch (e) {
-              done(e);
-            }
+            done("Should not call res.render function");
           }
         }
 
