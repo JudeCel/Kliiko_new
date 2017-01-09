@@ -612,30 +612,34 @@ function acceptInvite(token, params={}) {
     let inviteAcceptFlow = [
       (invite, user, params, transaction) => {
         console.log("Invite step: checkUser", invite.id);
-        return checkUser(invite, user, params, transaction)
+        return checkUser(invite, user, params, transaction);
       },
       (invite, user, params, transaction) => {
         console.log("Invite step: checSession", invite.id);
-        return checSession(invite, user, params, transaction)
+        return checSession(invite, user, params, transaction);
       },
       (invite, user, params, transaction) => {
-        return createUserIfNecessary(invite, user, params, transaction)
+        return createUserIfNecessary(invite, user, params, transaction);
       },
       (invite, _user, _params, transaction) => {
         console.log("Invite step: invite.update", invite.id);
-        return invite.update({ status: 'confirmed' }, {transaction: transaction})
+        return invite.update({ status: 'confirmed' }, {transaction: transaction});
       },
       (invite, _user, _params, transaction) => {
         console.log("Invite step: setAccountUserActive", invite.id);
-        return setAccountUserActive(invite, transaction)
+        return setAccountUserActive(invite, transaction);
       },
       (invite, _user, _params, transaction) => {
         console.log("Invite step: createSessionMemberIfNecessary", invite.id);
-        return createSessionMemberIfNecessary(invite, transaction)
+        return createSessionMemberIfNecessary(invite, transaction);
+      },
+      (invite, _user, _params, transaction) => {
+        console.log("Invite step: updateAditionalInfo", invite.id);
+        return updateAditionalInfo(invite, transaction);
       },
       (invite, _user, _params, transaction) => {
         console.log("Invite step: shouldUpdateRole", invite.id);
-        return shouldUpdateRole(invite.AccountUser, invite.role, transaction)
+        return shouldUpdateRole(invite.AccountUser, invite.role, transaction);
       }
     ]
 
@@ -693,17 +697,26 @@ function setAccountUserActive(invite, transaction) {
   })
 }
 
+function updateAditionalInfo (invite, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (invite.sessionId) {
+      models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
+        if(session){
+          resolve(accountUserService.updateInfo(invite.accountUserId, "Accept", session.name, transaction));
+        }else{
+          reject(MessagesUtil.session.notFound);
+        };
+      });
+    }else{
+      resolve();
+    }
+  })
+}
+
 function acceptSessionInvite(token) {
   return new Bluebird((resolve, reject) => {
     findInvite(token).then((invite) => {
       invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then((invite) => {
-        if (invite.sessionId) {
-          models.Session.find({ where: { id: invite.sessionId } }).then(function(session) {
-            accountUserService.updateInfo(invite.accountUserId, "Accept", session.name);
-          });
-        } else {
-          accountUserService.updateInfo(invite.accountUserId, "Accept", "-");
-        }
         resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
       }, (error) => {
         reject(filters.errors(error));

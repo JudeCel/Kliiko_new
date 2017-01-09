@@ -330,13 +330,13 @@ function prepareValidAccountUserParams() {
 }
 
 //sessionName should be passed only if valueToIncrease == 'Accept'
-function updateInfo(id, valueToIncrease, sessionName) {
+function updateInfo(id, valueToIncrease, sessionName, transaction) {
   return new Bluebird(function (resolve, reject) {
     AccountUser.find({
       where: { id: id }
     }).then(function(accountUser) {
       let info = prepareInfo(accountUser.invitesInfo, valueToIncrease, sessionName);
-      AccountUser.update({invitesInfo: info}, { where: { id: id } }).then(function (result) {
+      AccountUser.update({invitesInfo: info}, { where: { id: id }, transaction: transaction }).then(function (result) {
         resolve();
       }).catch(function (error) {
         reject(error);
