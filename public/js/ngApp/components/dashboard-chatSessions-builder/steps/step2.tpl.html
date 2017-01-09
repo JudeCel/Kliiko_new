@@ -29,14 +29,14 @@
 
           <div id="topics-list" multiple-dragging-zone="step2Controller.isDragInProgress" drag-all="step2Controller.allTopicsSelected">
             <div class="topic-list-item topic-{{topic.stock ? 'stock' : 'not-stock'}}" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
-              <div class="check">
+              <div class="check" ng-if="!topic.stock">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
               </div>
-
-              &nbsp;{{ topic.name }}
+              <div class="check-empty" ng-if="topic.stock">&nbsp;</div>
+              {{ topic.name }}
               <span ng-if="topic.stock">(Stock)</span>
-              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" ng-if="!topic.default && !topic.stock" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" ng-if="tc.canDelete(topic)" src="/icons/dashboardElement_remove.png" title="Delete">
               <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
             </div>
           </div>

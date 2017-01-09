@@ -37,6 +37,7 @@
       items: []
     }
 
+    vm.canDelete = canDelete;
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
@@ -191,6 +192,9 @@
       });
     }
 
+    function canDelete(topic, isAdmin) {
+      return !topic.default && (!topic.stock || isAdmin);
+    }
 
     function deleteTopic(id) {
       if (!id) {

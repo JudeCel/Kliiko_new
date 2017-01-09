@@ -84,9 +84,8 @@
 
     function selectAllTopics(list) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
-
       list.map(function(topic) {
-        topic._selected = vm.allTopicsSelected;
+        topic._selected = vm.allTopicsSelected && !topic.stock;
       });
     }
 

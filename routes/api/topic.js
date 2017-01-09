@@ -61,8 +61,9 @@ function deleteById(req, res, next) {
     res.send({error: '@id param is missed'});
     return
   }
+  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
 
-  topicsService.destroy(req.params.id).then(
+  topicsService.destroy(req.params.id, isAdmin).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.removed })},
     function(error) { res.send({error:error})}
   );

@@ -216,12 +216,12 @@ function removeAllAndAddNew(sessionId, topics) {
   return deferred.promise;
 }
 
-function destroy(id) {
+function destroy(id, isAdmin) {
   let deferred = q.defer();
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (topic.default) {
       deferred.reject(MessagesUtil.topics.error.default);
-    } else if (topic.stock) {
+    } else if (topic.stock && !isAdmin) {
       deferred.reject(MessagesUtil.topics.error.stock);
     } else if (_.isEmpty(topic.Sessions)) {
       Topic.destroy({where: { id: id } }).then(function(result) {
