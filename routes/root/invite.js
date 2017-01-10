@@ -15,12 +15,13 @@ function index(req, res, next) {
   inviteService.findInvite(req.params.token).then((invite) => {
     inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
       if (user) {
-        renderLogin(res, user);
+        accept(req, res, next);
       } else {
         res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
       }
     });
   }, (error) => {
+    console.log(error, "invite.js:24");
     res.redirect('/login');
   });
 }
@@ -39,6 +40,7 @@ function accept(req, res, next) {
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
       loginUser(req, res, next, user);
     }, (error) => {
+      console.log(error);
       inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
         if (user) {
           res.render(views_path('index'), simpleParams('Invite', invite, error));
@@ -48,20 +50,10 @@ function accept(req, res, next) {
       })
     });
   }, (error) => {
+    console.log(error, "invite.js:24");
     res.redirect('/login');
   });
 };
-
-function renderLogin(res, user) {
-  res.render('login', {
-    title: 'Login',
-    error: '',
-    message: '',
-    email: user ? user.email : '',
-    googleUrl: '/auth/google',
-    facebookUrl: '/auth/facebook'
-  });
-}
 
 function loginUser(req, res, next, user) {
   if(req.body.social) {
@@ -98,13 +90,13 @@ function processedErrosMessage(errors) {
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
     if (invite.AccountUser.UserId) {
-      inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
-        renderLogin(res, user);
-      });
+      req.params.token = invite.token;
+      accept(req, res, next);
     } else {
       res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }
   }, function(error) {
+    console.log(error);
     req.flash('message', { inviteError: true});
     res.redirect('/login');
   });
