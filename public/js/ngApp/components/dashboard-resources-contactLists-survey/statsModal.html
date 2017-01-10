@@ -2,15 +2,51 @@
   <div class='modal-dialog surveyStatsModal'>
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
-        <h3 class="pull-left">{{sc.stats.data.survey.name}}</h3>
+        <h3 class="pull-left">{{sc.stats.survey.name}}</h3>
         <div custom-select-directive data-title="Export" data-id="survey-stats-button" class="custom-select-directive btn-large pull-right">
-          <li id='surveyStatsExportPDF' ng-click=""><a href=""><i class="icon-remove"></i>Export to PDF</a></li>
-          <li id='surveyStatsExportXLS' ng-click=""><a href=""><i class="icon-remove"></i>Import to XLS</a></li>
+          <li id='surveyStatsExportPDF' ng-click="sc.exportStats(sc.stats.survey.id, 'pdf')"><a href=""><i class="icon-remove"></i>Export to PDF</a></li>
+          <li id='surveyStatsExportXLS' ng-click="sc.exportStats(sc.stats.survey.id, 'xls')"><a href=""><i class="icon-remove"></i>Export to XLS</a></li>
         </div>
         <div class="clearfix"></div>
       </div>
       <div class='modal-body form-horizontal'>
-        Content
+
+        <div class="scroll-vertical">
+          <table class="data-table">
+
+            <tr class="data-row-header">
+              <td colspan="2">&nbsp;</td>
+              <td class="data-column-center data-column-small">Count</td>
+              <td class="data-column-center data-column-small">%</td>
+            </tr>
+
+            <tr class="data-row-subheader">
+              <td colspan="2">Total Surveys Completed</td>
+              <td class="data-column-center">{{sc.stats.survey.answers}}</td>
+              <td class="data-column-center">100</td>
+            </tr>
+
+            <tr class="data-row data-row-bottom-whitespace" ng-repeat="question in sc.stats.questions">
+              <td class="data-column-big">{{question.name}}</td>
+              <td colspan="3">
+                
+                <table class="data-table-internal">
+                  <tr ng-repeat="answer in question.answers" ng-if="question.answers">
+                    <td>{{answer.name}}</td>
+                    <td class="data-column-center data-column-small">{{answer.count}}</td>
+                    <td class="data-column-center data-column-small">{{answer.percent}}</td>
+                  <tr>
+                  <tr ng-repeat="value in question.values" ng-if="question.values">
+                    <td colspan="3">{{value}}</td>
+                  <tr>
+                </table>
+
+              </td>
+            </tr>
+
+          </table>
+        </div>
+
       </div>
       <div class='modal-footer'>
         <div type='button' class='pull-left btn-standart btn-red btn-small text-center' data-dismiss='modal'>Close</div>

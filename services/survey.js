@@ -9,6 +9,7 @@ var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
 var MessagesUtil = require('./../util/messages');
+var StringHelpers = require('./../util/stringHelpers');
 
 var async = require('async');
 var q = require('q');
@@ -706,7 +707,8 @@ function createStats(survey) {
   let res = {
     survey: {
       name: survey.name,
-      ansvers: survey.SurveyAnswers.length
+      id: survey.id,
+      answers: survey.SurveyAnswers.length
     },
     questions: { }
   };
@@ -740,7 +742,7 @@ function createStats(survey) {
     });
   });
   
-  calculateStatsPercents(res.questions, res.survey.ansvers);
+  calculateStatsPercents(res.questions, res.survey.answers);
   return res;
 }
 
@@ -753,7 +755,8 @@ function setObjectKeyValueIfNotExists(object, key, value) {
 function populateStatsWithQuestionIfNotExists(questions, question, contactDetails) {
   if (contactDetails) {
     CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
-      setObjectKeyValueIfNotExists(questions, question.id + field, { name: field, answers: { } });
+      let questionName = StringHelpers.upperCaseFirstLetter(field);
+      setObjectKeyValueIfNotExists(questions, question.id + field, { name: questionName, answers: { } });
     });
   } else {
     if (question.type == "textarea") {

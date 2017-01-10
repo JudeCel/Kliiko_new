@@ -124,11 +124,14 @@
         if (res.error) {
           messenger.error(res.error);
         } else {
-          console.log(res.data);
-          vm.stats.data = res.data;
+          vm.stats = res.data;
           domServices.modal('statsModal');
         }
       });
+    };
+
+    function exportStats(surveyId, type) {
+      //todo: export  stats
     };
 
     function changeStatus(survey, val) {
