@@ -30,6 +30,7 @@
     vm.currentUpload = 'image';
     vm.headTemplate = null;
     vm.headPattern = /<head>[\S\s]*?<\/head>/gi;
+    vm.isAccordionToggled = false;
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -38,6 +39,10 @@
       }
       vm.init();
     }
+
+    $scope.$watch('sbc.accordions.emailTemplates', function() {
+      vm.isAccordionToggled = true;
+    });
 
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
@@ -112,10 +117,12 @@
     }
 
     function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
-      if (isChangedAndNotSaved(isResetingOrSaving)) {
+      if (isChangedAndNotSaved(isResetingOrSaving) && !vm.isAccordionToggled) {
         domServices.modal('unsavedTemplateMsg');
         return;
       }
+
+      vm.isAccordionToggled = false;
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;

@@ -29,6 +29,7 @@
     'angular-confirm',
     'ngSanitize',
     'vkEmojiPicker',
+    'KliikoApp',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
