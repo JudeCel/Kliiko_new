@@ -490,13 +490,11 @@ function confirmSurvey(params, account) {
   return deferred.promise;
 };
 
-function exportSurvey(params, account) {
-  let deferred = q.defer();
-
-  canExportSurveyData(account).then(function() {
+function getSurveyData(id, accountId) {
+  return new Bluebird(function (resolve, reject) {
     Survey.find({
-      where: { id: params.id, accountId: account.id },
-      attributes: ['id'],
+      where: { id: id, accountId: accountId },
+      attributes: ['id', 'name'],
       include: [{
         model: SurveyQuestion,
         attributes: VALID_ATTRIBUTES.question
@@ -506,28 +504,41 @@ function exportSurvey(params, account) {
       ]
     }).then(function(survey) {
       if(survey) {
+        resolve(survey);
+      } else {
+        reject(MessagesUtil.survey.notFound);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function exportSurvey(params, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyData(account).then(function() {
+      getSurveyData(params.id, account.id).then(function(survey) {
         let header = createCsvHeader(survey.SurveyQuestions);
         let data = createCsvData(header, survey);
-        deferred.resolve(simpleParams({ header: header, data: data }));
-      }
-      else {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+        resolve(simpleParams({ header: header, data: data }));
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
   });
-
-  return deferred.promise;
 };
 
 function getSurveyStats(id, account) {
   return new Bluebird(function (resolve, reject) {
     canExportSurveyStats(account).then(function() {
-      resolve({});
-      //todo:
+      getSurveyData(id, account.id).then(function(survey) {
+        let stats = createStats(survey); 
+        resolve(simpleParams(stats));
+      }, function(error) {
+        reject(error);
+      });
     }, function(error) {
       reject(error);
     });
@@ -601,9 +612,6 @@ function createCsvData(header, survey) {
         case 'string':
           object[header[index + indexDiff]] = answer.value;
           break;
-        case 'boolean':
-          assignBoolean(index + indexDiff, header, object, question, answer);
-          break;
         case 'object':
           if (answer.contactDetails) {
             for(var property in answer.contactDetails) {
@@ -629,15 +637,6 @@ function assignNumber(index, header, object, question, answer) {
       object[header[index]] = questionAnswer.name;
     }
   });
-};
-
-function assignBoolean(index, header, object, question, answer) {
-  object[header[index]] = answer.value ? 'Yes' : 'No';
-  if(answer.contactDetails) {
-    _.map(answer.contactDetails, function(value, key) {
-      object[_.startCase(key)] = value;
-    });
-  }
 };
 
 function validAnswerParams(params) {
@@ -699,6 +698,70 @@ function bulkUpdateQuestions(surveyId, questions, t) {
   });
 
   return deferred.promise;
+}
+
+function createStats(survey) {
+  let res = {
+    survey: {
+      name: survey.name,
+      ansvers: survey.SurveyAnswers.length
+    },
+    questions: { }
+  };
+  
+  survey.SurveyQuestions.forEach(function(surveyQuestion) {
+    populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion);
+
+    surveyQuestion.answers.forEach(function(answer) {
+      populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
+    });
+
+    survey.SurveyAnswers.forEach(function(surveyAnswer) {
+      let answer = surveyAnswer.answers[surveyQuestion.id];
+
+      switch(answer.type) {
+        case 'number':
+          res.questions[surveyQuestion.id].answers[answer.value].count++;
+          break;
+        case 'string':
+          res.questions[surveyQuestion.id].values.push(answer.value);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            //todo: gender and age
+          }
+          break;
+      }
+
+    });
+  });
+  
+  calculateStatsPercents(res.questions);
+  return res;
+}
+
+function populateStatsWithQuestionIfNotExists(questions, question) {
+  if (!questions[question.id]) {
+    questions[question.id] = {
+      name: question.name,
+      answers: { },
+      values: []
+    }
+  }
+}
+
+function populateStatsWithAnswerIfNotExists(questions, question, answer) {
+  if (!questions[question.id].answers[answer.order]) {
+    questions[question.id].answers[answer.order] = {
+      name: answer.name,
+      count: 0,
+      percent: 0
+    }
+  }
+}
+
+function calculateStatsPercents(questions) {
+  //todo:
 }
 
 function getIds(questions) {

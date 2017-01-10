@@ -124,9 +124,8 @@
         if (res.error) {
           messenger.error(res.error);
         } else {
-          vm.stats.name = survey.name;
-          //todo:
-          vm.stats.data = {};
+          console.log(res.data);
+          vm.stats.data = res.data;
           domServices.modal('statsModal');
         }
       });
