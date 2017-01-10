@@ -171,7 +171,7 @@ function findSession(sessionId, accountId, provider) {
 
 function findAllSessions(userId, accountUser, account, provider) {
   let deferred = q.defer();
-  if(policy.hasAccess([accountUser.role], ['accountManager', 'admin'])) {
+  if(policy.hasAccess(accountUser.role, ['accountManager', 'admin'])) {
     findAllSessionsAsManager(account.id, provider).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
