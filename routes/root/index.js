@@ -510,4 +510,19 @@ router.get('/terms_of_use_participant', function(req, res, next) {
   res.render('terms_of_use_participant', { title: 'Terms of Use' });
 });
 
+router.get('/close_session/participate', function(req, res, next) {
+  renderCloseSessionView(res, constants.closeSession.confirmedParticipationMessage);
+});
+
+router.get('/close_session/dont_participate', function(req, res, next) {
+  renderCloseSessionView(res, constants.closeSession.declinedParticipationMessage);
+});
+
+function renderCloseSessionView(res, closeSessionText) {
+  res.render('closeSession', {
+     message: closeSessionText,
+     title: ''
+   });
+}
+
 module.exports = router;

@@ -22,6 +22,7 @@ var topicsService = require('./topics');
 var resourcesService = require('./resources');
 var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
+var helpers = require('./../mailers/helpers');
 
 var async = require('async');
 var _ = require('lodash');
@@ -392,8 +393,8 @@ function prepareCloseSessionEmailParams(session, facilitator, receiver) {
     facilitatorFirstName: facilitator.firstName,
     facilitatorLastName: facilitator.lastName,
     facilitatorMail: facilitator.email,
-    participateInFutureUrl: "",
-    dontParticipateInFutureUrl: "",
+    participateInFutureUrl: helpers.getUrl('', null, '/close_session/participate'),
+    dontParticipateInFutureUrl: helpers.getUrl('', null, '/close_session/dont_participate'),
     unsubscribeMailUrl: ""
   }
 }
