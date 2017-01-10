@@ -4,7 +4,7 @@ var models  = require('./../../models');
 
 var usersMailer = require('./../../mailers/users.js');
 
-describe.only('Mailer Users', () => {
+describe('Mailer Users', () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       done();

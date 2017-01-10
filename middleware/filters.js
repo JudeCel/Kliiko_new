@@ -146,7 +146,8 @@ function buildUrlForChatToken() {
 }
 
 function shouldRedirectFacilitatorToLandingPage(req, res) {
-  return req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed;
+ console.log(req.currentResources.accountUser) 
+  return req.user.signInCount == 1 && (req.currentResources.accountUser.role == 'facilitator') && !req.session.landed;
 }
 
 function isLandingRequired(req, forceLanding) {
