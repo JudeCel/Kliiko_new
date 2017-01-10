@@ -4,7 +4,7 @@ var models  = require('./../../models');
 
 var usersMailer = require('./../../mailers/users.js');
 
-describe('Mailer Users', () => {
+describe.only('Mailer Users', () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       done();
@@ -17,8 +17,8 @@ describe('Mailer Users', () => {
       let params = { 'email': email };
       it('content', (done) =>  {
         usersMailer.sendEmailConfirmationSuccess(params, function(err, result) {
-          assert.include(result.data.html, "Your email confirmed successfully");
-          assert.include(result.data.to, email);
+          assert.include(result.html, "Your email confirmed successfully");
+          assert.include(result.accepted[0], email);
           done();
         });
       });
@@ -31,8 +31,8 @@ describe('Mailer Users', () => {
       let params = { 'email': email };
       it('content', (done) =>  {
         usersMailer.sendPasswordChangedSuccess(params, function(err, result) {
-          assert.include(result.data.html, "Your password changed successfully");
-          assert.include(result.data.to, email);
+          assert.include(result.html, "Your password changed successfully");
+          assert.include(result.accepted[0], email);
           done();
         });
       });
@@ -46,9 +46,9 @@ describe('Mailer Users', () => {
       let params = { 'email': email, "token": token };
       it('content', (done) =>  {
         usersMailer.sendEmailConfirmationToken(params, function(err, result) {
-          assert.include(result.data.html, "Please verify your email address");
-          assert.include(result.data.to, email);
-          assert.include(result.data.html, token);
+          assert.include(result.html, "Please verify your email address");
+          assert.include(result.accepted[0], email);
+          assert.include(result.html, token);
           done();
         });
       });
@@ -62,9 +62,9 @@ describe('Mailer Users', () => {
       let params = { 'email': email, "token": token };
       it('content', (done) =>  {
         usersMailer.sendResetPasswordToken(params, function(err, result) {
-          assert.include(result.data.html, "A request was made to change your password");
-          assert.include(result.data.to, email);
-          assert.include(result.data.html, token);
+          assert.include(result.html, "A request was made to change your password");
+          assert.include(result.accepted[0], email);
+          assert.include(result.html, token);
           done();
         });
       });

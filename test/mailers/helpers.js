@@ -5,7 +5,7 @@ var helpers = require('./../../mailers/helpers.js');
 
 var mailUrlPattern = "http://"+process.env.SERVER_DOMAIN+":"+process.env.SERVER_PORT;
 
-describe('Mailer helpers', () => {
+describe.only('Mailer helpers', () => {
   describe('getUrl ', () => {
     describe('success ', () => {
       it('call next Callback', () =>  {

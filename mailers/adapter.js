@@ -30,7 +30,7 @@ const testTransporter = {
            from: data.data.from,
            to: [ data.data.to ]
           },
-          messageId: '7fd443ff-d8a0-6fa0-ee5f-726935200fce@noreply.klzii.com',
+          messageId: (data.messageId || '7fd443ff-d8a0-6fa0-ee5f-726935200fce@noreply.klzii.com'),
           html: data.data.html // NOTE: this not part of original response, only for tests.
         }
 
