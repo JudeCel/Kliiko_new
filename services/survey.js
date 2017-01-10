@@ -55,6 +55,8 @@ const VALID_ATTRIBUTES = {
 
 const SMALL_AGE = 'Under 18';
 
+const CONTACT_DETAILS_STATS_FIELDS = ['gender', 'age'];
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -710,7 +712,7 @@ function createStats(survey) {
   };
   
   survey.SurveyQuestions.forEach(function(surveyQuestion) {
-    populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion);
+    populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
 
     surveyQuestion.answers.forEach(function(answer) {
       populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
@@ -728,7 +730,9 @@ function createStats(survey) {
           break;
         case 'object':
           if (answer.contactDetails) {
-            //todo: gender and age
+            CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+              res.questions[surveyQuestion.id + field].answers[answer.contactDetails[field]].count++;
+            });
           }
           break;
       }
@@ -736,32 +740,51 @@ function createStats(survey) {
     });
   });
   
-  calculateStatsPercents(res.questions);
+  calculateStatsPercents(res.questions, res.survey.ansvers);
   return res;
 }
 
-function populateStatsWithQuestionIfNotExists(questions, question) {
-  if (!questions[question.id]) {
-    questions[question.id] = {
-      name: question.name,
-      answers: { },
-      values: []
+function setObjectKeyValueIfNotExists(object, key, value) {
+  if (!object[key]) {
+    object[key] = value;
+  }
+}
+
+function populateStatsWithQuestionIfNotExists(questions, question, contactDetails) {
+  if (contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      setObjectKeyValueIfNotExists(questions, question.id + field, { name: field, answers: { } });
+    });
+  } else {
+    if (question.type == "textarea") {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, values: [] });
+    } else {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, answers: { } });
     }
   }
 }
 
 function populateStatsWithAnswerIfNotExists(questions, question, answer) {
-  if (!questions[question.id].answers[answer.order]) {
-    questions[question.id].answers[answer.order] = {
-      name: answer.name,
-      count: 0,
-      percent: 0
-    }
+  if (answer.contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      let questionKey = question.id + field;
+      answer.contactDetails[field].options.forEach(function(option) {
+        setObjectKeyValueIfNotExists(questions[questionKey].answers, option, { name: option, count: 0, percent: 0 });
+      });
+    });
+  } else if (question.type != "textarea") {
+    setObjectKeyValueIfNotExists(questions[question.id].answers, answer.order, { name: answer.name, count: 0, percent: 0 });
   }
 }
 
-function calculateStatsPercents(questions) {
-  //todo:
+function calculateStatsPercents(questions, total) {
+  _.forIn(questions, function(question, questionKey) {
+    if (question.answers) {
+       _.forIn(question.answers, function(value, key) {
+        value.percent = Math.round(100 * value.count / total);
+      });
+    }
+  });
 }
 
 function getIds(questions) {
