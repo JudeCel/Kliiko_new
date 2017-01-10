@@ -29,9 +29,13 @@ module.exports = {
 function getAll(accountId) {
   let deferred = q.defer();
   Topic.findAll({
-    order: '"id" ASC',
+    order: '"name" ASC',
     where: {
-      accountId: accountId
+      $or: [{ 
+        accountId: accountId
+      }, {
+        stock: true
+      }]
     },
     include: [{
       model: models.SessionTopics,
@@ -81,8 +85,8 @@ function updateSessionTopics(sessionId, topicsArray) {
   return new Bluebird(function (resolve, reject) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
-    joinToSession(ids, sessionId, topicsArray).then(function(sessionTopics) {
-      Bluebird.each(sessionTopics, (sessionTopic) => {
+    joinToSession(ids, sessionId, topicsArray).then(function(result) {
+      Bluebird.each(result.sessionTopics, (sessionTopic) => {
 
         return new Bluebird(function (resolveInternal, rejectInternal) {
           Bluebird.each(topicsArray, (topic) => {
@@ -112,7 +116,7 @@ function updateSessionTopics(sessionId, topicsArray) {
         });
 
       }).then(function() {
-        resolve(returning);
+        resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
       }, function(error) {
         reject(filters.errors(error));
       });
@@ -125,7 +129,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({where: {id: ids}}).then(function(results) {
+    Topic.findAll({where: {id: ids, stock: false}}).then(function(results) {
       session.addTopics(results).then(function(result) {
         models.SessionTopics.findAll({
           where: {
@@ -134,16 +138,14 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          deferred.resolve(sessionTopics);
+          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length});
         });
-
       }, function(error) {
         deferred.reject(filters.errors(error));
-      })
-
+      });
     }, function(error) {
       deferred.reject(filters.errors(error));
-    })
+    });
   }, function(error) {
     deferred.reject(filters.errors(error));
   });
@@ -204,11 +206,13 @@ function removeAllAndAddNew(sessionId, topics) {
   return deferred.promise;
 }
 
-function destroy(id) {
+function destroy(id, isAdmin) {
   let deferred = q.defer();
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (topic.default) {
       deferred.reject(MessagesUtil.topics.error.default);
+    } else if (topic.stock && !isAdmin) {
+      deferred.reject(MessagesUtil.topics.error.stock);
     } else if (_.isEmpty(topic.Sessions)) {
       Topic.destroy({where: { id: id } }).then(function(result) {
         deferred.resolve(result)
@@ -222,8 +226,12 @@ function destroy(id) {
   return deferred.promise;
 }
 
-function create(params) {
+function create(params, isAdmin) {
   let deferred = q.defer();
+
+  if (!isAdmin && params.stock) {
+    params.stock = false;
+  }
 
   validators.subscription(params.accountId, 'topic', 1).then(function() {
     Topic.create(params).then(function(topic) {
@@ -242,10 +250,18 @@ function update(params) {
   let deferred = q.defer();
 
   Topic.find({ where: { id: params.id } }).then(function(topic) {
-    if(topic) {
-      return topic.update(params, { returning: true });
-    }
-    else {
+    if (topic) {
+      if (topic.stock) {
+        if (params.name == topic.name) {
+          params.name = "Copy of " + topic.name;
+        }
+        delete params.id;
+        params.accountId = topic.accountId;
+        return create(params);
+      } else {
+        return topic.update(params, { returning: true });
+      }
+    } else {
       deferred.reject(MessagesUtil.topics.notFound);
     }
   }).then(function(topic) {
@@ -258,7 +274,7 @@ function update(params) {
 }
 
 function sessionTopicUpdateParams(params) {
-  return _.pick(params, ['name', 'boardMessage', 'sign', 'lastSign']);
+  return _.pick(params, ['boardMessage', 'sign', 'lastSign']);
 }
 
 function createDefaultForAccount(params, transaction) {

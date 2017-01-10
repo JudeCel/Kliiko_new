@@ -14,7 +14,8 @@ module.exports = (Sequelize, DataTypes) => {
     } },
     sign: { type: DataTypes.STRING, allowNull: true, validate: { isLength: validations.length('sign', { max: topicConstants.validations.sign })
     } },
-    default: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    default: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    stock: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     timestamps: true,
     classMethods: {

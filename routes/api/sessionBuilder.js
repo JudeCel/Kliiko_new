@@ -168,7 +168,7 @@ function addTopics(req, res, next) {
     if (validationRes.isValid) {
       topicsService.removeAllAndAddNew(sessionId, topics).then(function(result) {
         sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
-          res.send({succuss:true, data:result, snapshot:snapshotResult});
+          res.send({success: true, data: result.data, message: result.message, snapshot: snapshotResult});
         }, function (error) {
           res.send({ error: error });
         });
@@ -188,7 +188,7 @@ function removeTopic(req, res, next) {
   let topicId = req.body.topicId;
   var ids = [topicId];
   topicsService.removeFromSession(ids, req.params.id).then(function(result) {
-    res.send({succuss:true, data:result});
+    res.send({success:true, data:result});
   }, function(error) {
     res.send({ error: error });
   });
