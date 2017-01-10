@@ -337,7 +337,7 @@
 
         } else {
           self.snapshot = res.snapshot;
-          deferred.resolve(res.data);
+          deferred.resolve({ data: res.data, message: res.message });
         }
       });
 

@@ -7,6 +7,7 @@ var UserService  = require('./../../services/users');
 var subscriptionFixture = require('./../fixtures/subscription');
 var userFixture = require('./../fixtures/user');
 let q = require('q');
+var MessagesUtil = require('./../../util/messages');
 
 describe('Topic Service', function() {
   function createSession() {
@@ -31,6 +32,14 @@ describe('Topic Service', function() {
     return deferred.promise;
   }
 
+  function getTopicParams() {
+    return {
+      accountId: testAccount.id,
+      name: "cool topic name",
+      boardMessage: "je"
+    };
+  }
+
   var testUser, testAccount;
 
   beforeEach(function(done) {
@@ -41,26 +50,63 @@ describe('Topic Service', function() {
         done();
       }).catch(function(error) {
         done(error);
-        });
+      });
     });
   });
 
   it('create', function (done) {
-    let attrs = {
-      accountId: testAccount.id,
-      name: "cool topic name",
-      boardMessage: "je"
-    }
-
+    let attrs = getTopicParams();
     subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
       topicService.create(attrs).then(function(topic){
-        assert.equal(topic.name, attrs.name)
+        assert.equal(topic.name, attrs.name);
         done();
       }, function(error) {
         done(error);
       });
     }, function(error) {
       done(error);
+    });
+  });
+
+  describe("update", function() {
+    it('update', function (done) {
+      let attrs = getTopicParams();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs).then(function(topic){
+          let params = {id: topic.id, name: "update test"};
+          topicService.update(params).then(function(updatedTopic){
+            assert.equal(updatedTopic.name, params.name);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('update stock', function (done) {
+      let attrs = getTopicParams();
+      attrs.stock = true;
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs, true).then(function(topic){
+          let params = {id: topic.id, name: "update test"};
+          topicService.update(params).then(function(updatedTopic){
+            assert.notEqual(updatedTopic.id, params.id);
+            assert.equal(updatedTopic.name, params.name);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
+      });
     });
 
   });
@@ -73,30 +119,48 @@ describe('Topic Service', function() {
         done();
       }, function(err) {
         done(err);
-      })
+      });
     })
 
     it("joinToSession", function(done) {
-      let attrs = {
-        accountId: testAccount.id,
-        name: "without session",
-        boardMessage: "je"
-      }
-
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
-        topicService.create(attrs).then(function(topic){
+        topicService.create(getTopicParams()).then(function(topic) {
           topicService.joinToSession([topic.id], testSession.id).then(function(result) {
-            topic.getSessions().then(function(resuts) {
-              assert.lengthOf(resuts, 1)
+            topic.getSessions().then(function(results) {
+              assert.lengthOf(results, 1);
               done();
             }, function(err) {
-              done(err)
-            })
+              done(err);
+            });
           }, function(err) {
-            done(err)
-          })
+            done(err);
+          });
         }, function(err) {
-          done(err)
+          done(err);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it("joinToSession skip stock", function(done) {
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        let params = getTopicParams();
+        params.stock = true;
+        topicService.create(params, true).then(function(topic) {
+          topicService.joinToSession([topic.id], testSession.id).then(function(result) {
+            assert.isTrue(result.skipedStock);
+            topic.getSessions().then(function(results) {
+              assert.lengthOf(results, 0);
+              done();
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
         });
       }, function(error) {
         done(error);
@@ -104,26 +168,20 @@ describe('Topic Service', function() {
     });
 
     it("removeFromSession", function(done) {
-      let attrs = {
-        accountId: testAccount.id,
-        name: "without session",
-        boardMessage: "je"
-      }
-
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
-        topicService.create(attrs).then(function(topic){
+        topicService.create(getTopicParams()).then(function(topic){
           topicService.joinToSession([topic.id], testSession.id).then(function(_) {
             topicService.removeFromSession([topic.id], testSession.id).then(function(result) {
-              assert.equal(result, 1)
-              done()
+              assert.equal(result, 1);
+              done();
             }, function(err) {
-              done(err)
-            })
+              done(err);
+            });
           }, function(err) {
-            done(err)
-          })
+            done(err);
+          });
         }, function(err) {
-          done(err)
+          done(err);
         });
       }, function(error) {
         done(error);
@@ -131,59 +189,93 @@ describe('Topic Service', function() {
     })
 
     it("destroy", function(done) {
-      let attrs = {
-        accountId: testAccount.id,
-        name: "without session",
-        boardMessage: "je"
-      }
-
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
-        topicService.create(attrs).then(function(topic){
+        topicService.create(getTopicParams()).then(function(topic){
           topicService.joinToSession([topic.id], testSession.id).then(function(_) {
             topicService.destroy(topic.id).then(function(result) {
               done("can't get here");
             }, function(err) {
               assert.equal(err, topicService.messages.error.relatedSession)
               done();
-            })
+            });
           }, function(err) {
-            done(err)
-          })
+            done(err);
+          });
         }, function(err) {
-          done(err)
+          done(err);
         });
       }, function(error) {
         done(error);
       });
-    })
-  })
+    });
+  });
 
 
   describe("destroy", function () {
-    it("no relaited with session", function(done) {
-      let attrs = {
-        accountId: testAccount.id,
-        name: "without session",
-        boardMessage: "je"
-      }
-
-      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
-        topicService.create(attrs).then(function(topic){
-          topicService.destroy(topic.id).then(function(result) {
-            assert.equal(result, 1)
-            done();
+    describe("happy path", function () {
+      it("no relaited with session", function(done) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          topicService.create(getTopicParams()).then(function(topic){
+            topicService.destroy(topic.id).then(function(result) {
+              assert.equal(result, 1)
+              done();
+            }, function(err) {
+              done(err);
+            }, function(err) {
+              done(err);
+            });
           }, function(err) {
-            done(err)
-          }, function(err) {
-            done(err)
-          })
-        }, function(err) {
-          done(err)
+            done(err);
+          });
+        }, function(error) {
+          done(error);
         });
-      }, function(error) {
-        done(error);
+      });
+    });
+
+    describe("sad path", function () {
+      it("default", function(done) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          let params = getTopicParams();
+          params.default = true;
+          topicService.create(params).then(function(topic){
+            topicService.destroy(topic.id).then(function(result) {
+              done("Should not get here");
+            }, function(err) {
+              assert.equal(err, MessagesUtil.topics.error.default);
+              done();
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(error) {
+          done(error);
+        });
       });
 
-    })
+      it("stock", function(done) {
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+          let params = getTopicParams();
+          params.stock = true;
+          topicService.create(params, true).then(function(topic){
+            topicService.destroy(topic.id).then(function(result) {
+              done("Should not get here");
+            }, function(err) {
+              assert.equal(err, MessagesUtil.topics.error.stock);
+              done();
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
+    });
   });
 });

@@ -22,12 +22,30 @@
     vm.topicData = {};
     vm.editTopicIndex = null;
     vm.session = null;
+    vm.type = null;
 
+    vm.typeCount = {
+      all: 0,
+      stock: 0,
+      notStock: 0
+    }
+
+    vm.pagination = {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 24,
+      items: []
+    }
+
+    vm.canSetStock = canSetStock;
+    vm.canDelete = canDelete;
     vm.deleteTopic = deleteTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
     vm.charactersLeft = charactersLeft;
     vm.togglePanel = togglePanel;
+    vm.setType = setType;
+    vm.prepareCurrentPageItems = prepareCurrentPageItems;
 
     init();
 
@@ -37,12 +55,52 @@
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
           vm.list = res.topics;
           vm.validations = res.validations;
+          vm.prepareCurrentPageItems();
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);
           messenger.error(err);
         }
       )
+    }
+
+    function setType(type) {
+      vm.type = type;
+      vm.pagination.currentPage = 1;
+      vm.prepareCurrentPageItems();
+    }
+
+    function prepareCurrentPageItems() {
+      if (vm.list && vm.list.length > 0) {
+        //prepare count of items by type and array of items of current type to display
+        vm.typeCount.all = vm.list.length;
+        vm.typeCount.stock = 0;
+        vm.typeCount.notStock = 0;
+        var currentTypeItems = [];
+        for (var i = 0, len = vm.list.length; i < len; i++) {
+          if (vm.list[i].stock == (vm.type == 'stock') || !vm.type) {
+            currentTypeItems.push(vm.list[i]);
+          }
+          if (vm.list[i].stock) {
+            vm.typeCount.stock++;
+          } else {
+            vm.typeCount.notStock++;
+          }
+        }
+        vm.pagination.totalItems = currentTypeItems.length;
+
+        //decrease page number (f.e. if item removed don't to show empty page)
+        while ((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage >= currentTypeItems.length) {
+          vm.pagination.currentPage--;
+        }
+
+        //prepare current page items to display
+        vm.pagination.items = currentTypeItems.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
+      }
+      else {
+        vm.pagination.items = [];
+        vm.pagination.totalItems = 0;
+      }
     }
 
     function openModal(action, topic) {
@@ -109,7 +167,12 @@
 
     function editTopic() {
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
-        vm.list[vm.editTopicIndex] = vm.topicData;
+        if (res.data.id == vm.topicData.id) {
+          vm.list[vm.editTopicIndex] = vm.topicData;
+        } else {
+          vm.list.push(res.data);
+          vm.prepareCurrentPageItems();
+        }
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
@@ -121,6 +184,7 @@
     function createTopic() {
       topicsAndSessions.createNewTopic(vm.topicData).then(function(res) {
         vm.list.push(res.data);
+        vm.prepareCurrentPageItems();
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
@@ -129,6 +193,13 @@
       });
     }
 
+    function canSetStock(topic, isAdmin) {
+      return isAdmin && !topic.id;
+    }
+
+    function canDelete(topic, isAdmin) {
+      return !topic.default && (!topic.stock || isAdmin);
+    }
 
     function deleteTopic(id) {
       if (!id) {
@@ -152,8 +223,8 @@
           }
         }
         vm.list.splice(index, 1);
-
         vm.editBlockHelper = null;
+        vm.prepareCurrentPageItems();
 
         dbg.log('#TopicsController > deleteTopic > topic has been removed');
         messenger.ok(res.message);
