@@ -138,21 +138,11 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          if (results.length < ids.length) {
-            Topic.find({where: {id: ids, stock: true}}).then(function(stockResult) {
-              deferred.resolve({sessionTopics: sessionTopics, skipedStock: stockResult ? true : false});
-            }, function(error) {
-              deferred.reject(filters.errors(error));
-            });
-          } else {
-            deferred.resolve({sessionTopics: sessionTopics, skipedStock: false});
-          }
+          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length});
         });
-
       }, function(error) {
         deferred.reject(filters.errors(error));
-      })
-
+      });
     }, function(error) {
       deferred.reject(filters.errors(error));
     });
