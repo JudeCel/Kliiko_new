@@ -134,8 +134,8 @@
       //todo: export  stats
     };
 
-    function changeStatus(survey, val) {
-      surveyServices.changeStatus({ id: survey.id, closed: !val}).then(function(res) {
+    function changeStatus(survey) {
+      surveyServices.changeStatus({ id: survey.id, closed: !survey.switchValue}).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
@@ -145,7 +145,7 @@
           survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
         }
-        val = !survey.closed;
+        survey.switchValue = !survey.closed;
       });
     };
 

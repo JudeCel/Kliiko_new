@@ -66,6 +66,9 @@
       surveyRestApi.getSurveyStats({ id: id }, function(res) {
         dbg.log2('#surveyServices > getSurveyStats > rest call responds');
         deferred.resolve(res);
+      }, function(err) {
+        dbg.error('#surveyServices > getSurveyStats > error:', err);
+        messenger.error(err);
       });
 
       return deferred.promise;
