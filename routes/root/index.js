@@ -24,6 +24,7 @@ var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
 var uuid = require('node-uuid');
+var accountUserService = require('../../services/accountUser');
 
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
@@ -510,13 +511,26 @@ router.get('/terms_of_use_participant', function(req, res, next) {
   res.render('terms_of_use_participant', { title: 'Terms of Use' });
 });
 
-router.get('/close_session/participate', function(req, res, next) {
-  renderCloseSessionView(res, constants.closeSession.confirmedParticipationMessage);
+router.get('/close_session/participate/:id', function(req, res, next) {
+  hadleCloseSessionParticipationResponse(req, res, constants.closeSession.confirmedParticipationMessage);
 });
 
-router.get('/close_session/dont_participate', function(req, res, next) {
-  renderCloseSessionView(res, constants.closeSession.declinedParticipationMessage);
+router.get('/close_session/dont_participate/:id', function(req, res, next) {
+  hadleCloseSessionParticipationResponse(req, res, constants.closeSession.declinedParticipationMessage);
 });
+
+function hadleCloseSessionParticipationResponse(req, res, closeSessionText) {
+  var accountUserId = new Buffer(req.params.id, 'base64').toString('ascii');
+  if (closeSessionText == constants.closeSession.declinedParticipationMessage) {
+    accountUserService.updateNotInFutureInfo(accountUserId).then(function() {
+      renderCloseSessionView(res, closeSessionText);
+    }, function(error) {
+      renderCloseSessionView(res, error);
+    })
+  } else {
+    renderCloseSessionView(res, closeSessionText);
+  }
+}
 
 function renderCloseSessionView(res, closeSessionText) {
   res.render('closeSession', {

@@ -393,8 +393,8 @@ function prepareCloseSessionEmailParams(session, facilitator, receiver) {
     facilitatorFirstName: facilitator.firstName,
     facilitatorLastName: facilitator.lastName,
     facilitatorMail: facilitator.email,
-    participateInFutureUrl: helpers.getUrl('', null, '/close_session/participate'),
-    dontParticipateInFutureUrl: helpers.getUrl('', null, '/close_session/dont_participate'),
+    participateInFutureUrl: helpers.getUrl('', receiver.id, '/close_session/participate'),
+    dontParticipateInFutureUrl: helpers.getUrl('', receiver.id, '/close_session/dont_participate'),
     unsubscribeMailUrl: ""
   }
 }
