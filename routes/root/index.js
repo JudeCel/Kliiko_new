@@ -40,13 +40,13 @@ router.use(function (req, res, next) {
       next();
     }else{
       let user = req.user;
-      let account = res.locals.currentDomain;
+      let account = req.currentResources.account;
 
       if(user && account){
         if(req.path.includes("/account-hub")){
           next();
         }else{
-          res.redirect(subdomains.url(req, res.locals.currentDomain.name, '/account-hub'));
+          res.redirect(subdomains.url(req, req.currentResources.account.name, '/account-hub'));
         }
       }else if(user && !account) {
         res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/my-dashboard'));

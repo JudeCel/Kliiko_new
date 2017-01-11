@@ -107,7 +107,7 @@ function sendSms(req, res, next) {
 
 function inviteMembers(req, res, next) {
   let accountId = req.currentResources.account.id;
-  let accountName = res.locals.currentDomain.name;
+  let accountName = req.currentResources.account.name;
   sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId, accountName).then(function(result) {
     res.send({ data: result, message: MessagesUtil.routes.sessionBuilder.invite });
   }, function(error) {

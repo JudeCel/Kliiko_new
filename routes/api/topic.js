@@ -47,7 +47,7 @@ function post(req, res, next) {
 
   let params = req.body.topic;
   params.accountId = req.currentResources.account.id;
-  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
 
   topicsService.create(params, isAdmin).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.created })},
@@ -61,7 +61,7 @@ function deleteById(req, res, next) {
     res.send({error: '@id param is missed'});
     return
   }
-  let isAdmin = policy.hasAccess(res.locals.currentDomain.roles, ['admin']);
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
 
   topicsService.destroy(req.params.id).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.removed })},
