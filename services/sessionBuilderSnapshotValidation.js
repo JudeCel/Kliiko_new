@@ -40,12 +40,12 @@ function checkSessionData(snapshot, params, session, canChange) {
   for (let i=0; i<fields.length; i++) {
     let fieldName = fields[i];
     if (params[fieldName]) {
-      if (params[fieldName] == session[fieldName]) {
-        return result(true);
-      } else {
+      if (params[fieldName] != session[fieldName]) {
         let oldValueSnapshot = snapshot[fieldName];
         let currentValueSnapshot = stringHelpers.hash(session[fieldName]);
-        return result(currentValueSnapshot == oldValueSnapshot, canChange, null, fieldName, currentValueSnapshot);
+        if (currentValueSnapshot != oldValueSnapshot) {
+          return result(false, canChange, null, fieldName, currentValueSnapshot);
+        }
       }
     }
   }
