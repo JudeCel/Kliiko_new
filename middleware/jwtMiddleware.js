@@ -4,7 +4,9 @@ const expressJwt = require('express-jwt');
 
 const loadResources = (req, res, next) => {
   jwtAuth.loadResources(req.auth).then((currentResources) => {
+    res.header('refresh-token', jwtAuth.refresToken(req.auth, currentResources));
     req.currentResources = currentResources
+
     next();
   }, (error) => {
     next();

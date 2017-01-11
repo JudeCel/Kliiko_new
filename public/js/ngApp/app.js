@@ -78,13 +78,14 @@
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
   function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
-
     var requestInterceptor = {
       request: function(config) {
         if(useAPI_URL(config)){
           config.url = (globalSettings.restUrl + config.url);
         }
-        
+
+        config.headers.Authorization = getToken();
+
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
           $rootScope.showSpinner = true;
@@ -94,10 +95,13 @@
       },
 
       'response': function(response) {
+        
         if (response.status == 404) {
           alert('that is all folks');
         }
+        
         if(response.config.transformResponse.length > 0) {
+          saveToken(response.headers()['refresh-token']);
           $rootScope.showSpinner = false;
           $rootScope.progressbarComplete();
           deactivateHelperNote();
@@ -110,6 +114,7 @@
         if(rejection.status == 404) {
           messenger.error(rejection.data);
         }
+
         $rootScope.showSpinner = false;
         $rootScope.progressbarComplete();
         return $q.reject(rejection);
@@ -125,17 +130,21 @@
     return requestInterceptor;
   }
 
+  function saveToken(token){
+    if(token){
+      window.localStorage.setItem('jwtToken', token);
+    }
+  }
+  
+  function getToken(){
+    return('Bearer ' + window.localStorage.getItem("jwtToken"));
+  }
+
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
   function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
     //$rootScopeProvider.digestTtl(20);
     dbgProvider.enable(1);
     dbgProvider.debugLevel('trace');
-    var token = 'Bearer ' + window.localStorage.getItem("jwtToken");
-    var headers = Object.keys($httpProvider.defaults.headers);
-
-    for (var i = 0; i < headers.length; i++) {
-      $httpProvider.defaults.headers[headers[i]].Authorization = token
-    }
 
     $httpProvider.interceptors.push('myInterceptor');
     if (!$httpProvider.defaults.headers.get) {
