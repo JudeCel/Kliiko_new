@@ -50,4 +50,23 @@
     }
   }
 
+  .green-text.filter-section {
+    a, a:hover {
+      color: #2D8C5E;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+  }
+
+  .type-selected-all #typeAll, .type-selected-stock #typeStock, .type-selected-notStock #typeNotStock {
+    font-weight: bold;
+  }
+}
+
+.panel-title.topic-stock, .topic-list-item.topic-stock  {
+  color: #919191;
+}
+
+.panel-title.topic-not-stock, .topic-list-item.topic-not-stock {
+  color: #428BCA;
 }

@@ -121,7 +121,8 @@ module.exports = {
         facilitator: 'No host provided'
       },
       secondStep: {
-        topics: 'No topics selected'
+        topics: 'No topics selected',
+        stock: "You can't drag a Stock Topic. Edit to suit your needs and Save which creates either e New Topic or Copy Of."
       },
       thirdStep: {
         emailTemplates: "You need to copy each of the required e-mail template."
@@ -207,7 +208,8 @@ module.exports = {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
       relatedSession: "Can't delete topic is related session",
-      default: "Can't delete default topic"
+      default: "Can't delete default topic",
+      stock: "Can't delete stock topic"
     }
   },
   users: {

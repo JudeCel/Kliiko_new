@@ -8,7 +8,7 @@
         <form>
           <div class='form-group'>
             <label for='topicName'>Name Your Topic</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
+            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name' ng-disabled="topics.topicData.sessionId">
             <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
           </div>
 
@@ -20,9 +20,16 @@
           </div>
 
           <div class='form-group'>
-            <label for='topicName'>Message Sign</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing'>
+            <label for='topicSign'>Message Sign</label>
+            <input type='text' class='form-control' id='topicSign' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing'>
             <span class='help-block'>Characters left: {{ topics.charactersLeft("sign") }}</span>
+          </div>
+
+          <div class='form-group' ng-if='topics.canSetStock(topics.topicData, app.accountUser.isAdmin)'>
+            <div class='checkbox checkbox-sm checkbox-success survey-input'>
+              <input class='styled' id='checkbox' type='checkbox' name='checkbox' ng-model='topics.topicData.stock'>
+              <label for='checkbox'>Stock?</label>
+            </div>
           </div>
         </form>
       </div>
