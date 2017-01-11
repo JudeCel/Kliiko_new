@@ -40,7 +40,7 @@ router.use(function (req, res, next) {
       next();
     }else{
       let user = req.user;
-      let account = req.currentResources.account;
+      let account = req.currentResources && req.currentResources.account;
 
       if(user && account){
         if(req.path.includes("/account-hub")){

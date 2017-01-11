@@ -71,12 +71,10 @@
   }
 
   function useAPI_URL(config) {
-    return(
-      config.url.indexOf(".html") == -1 && 
-      config.url.indexOf("/api/") == -1 && 
-      config.url.indexOf("http") == -1 &&
-      config.url.indexOf(".template") == -1) 
+    var regex = /(\.html|\/api\/|http|\.template)/
+    return(!config.url.match(regex)) 
   }
+  
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
   function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
