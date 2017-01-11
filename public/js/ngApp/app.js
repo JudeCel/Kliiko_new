@@ -71,11 +71,10 @@
   }
 
   function useAPI_URL(config) {
-    console.log(config.url)
     return(
       config.url.indexOf(".html") == -1 && 
-       config.url.indexOf("/api/") == -1 && 
-      config.url.indexOf("http") == -1 && 
+      config.url.indexOf("/api/") == -1 && 
+      config.url.indexOf("http") == -1 &&
       config.url.indexOf(".template") == -1) 
   }
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];

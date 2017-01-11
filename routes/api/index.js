@@ -145,7 +145,7 @@ router.get('/brandColour/canCreateCustomColors', PERMISSIONS.facilitatorManagerA
 
 router.post('/session/getByInvite',  PERMISSIONS.managerAdmin, session.getSessionByInvite);
 router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings);
-router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
+router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 

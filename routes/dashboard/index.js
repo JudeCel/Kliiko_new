@@ -18,10 +18,9 @@ function views_path(action) {
 }
 
 router.use(function (req, res, next) {
-  res.locals.appData = appData;
   if (req.user) {
-      res.locals.jwt_token = jwtToken.token(req.currentResources.accountUser.id, "User:", "/" )
-      res.locals.currentResources = req.currentResources
+    res.locals.appData = appData;
+    res.locals.currentResources = req.currentResources
     middlewareFilters.planSelectPage(req, res, next);
   } else {
     res.redirect(subdomains.url(req, subdomains.base, '/'));
@@ -29,10 +28,12 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , function(req, res, next) {
+  res.locals.jwt_token = jwtToken.token(req.currentResources.accountUser.id, "AccountUser:", "/" )
   res.render(views_path('index'), { title: 'My Account Hub', message: req.flash('message')[0] });
 });
 
 router.get('/landing', function(req, res) {
+  res.locals.jwt_token = jwtToken.token(req.currentResources.accountUser.id, "User:", "/" )
   if(req.query.id && req.query.state == 'succeeded' ){
     subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
   }

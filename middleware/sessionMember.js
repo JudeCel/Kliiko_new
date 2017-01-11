@@ -19,11 +19,9 @@ function checkRoles(role, allowedRoles) {
 function hasAccess(memberRoles, accountRoles) {
   return function(req, res, next) {
     if (!req.currentResources) { throw new Error('currentResources is not defined in the req') }
-
     if(checkRoles(req.currentResources.accountUser.role, accountRoles || [])) {
       next();
-    }
-    else {
+    }else {
       checkMemberRoles(memberRoles, req, res, next);
     }
   }
