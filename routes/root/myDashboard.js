@@ -13,7 +13,7 @@ function views_path(action) {
 };
 
 function index(req, res, next) {
-  if(req.user && !res.locals.currentDomain) {
+  if(req.user && !req.currentResources) {
     let token  = jwtToken.token(req.user.id, "User:", "/" )
     res.render(views_path('index'), { title: 'My Dashboard', jwt_token: token});
   } else {

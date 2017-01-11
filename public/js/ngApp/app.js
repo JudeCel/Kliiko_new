@@ -70,13 +70,21 @@
     });
   }
 
+  function useAPI_URL(config) {
+    console.log(config.url)
+    return(
+      config.url.indexOf(".html") == -1 && 
+       config.url.indexOf("/api/") == -1 && 
+      config.url.indexOf("http") == -1 && 
+      config.url.indexOf(".template") == -1) 
+  }
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
   function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
 
     var requestInterceptor = {
       request: function(config) {
-        if(config.url.indexOf(".html") == -1 && config.url.indexOf("http") == -1 && config.url.indexOf(".template") == -1 ){
+        if(useAPI_URL(config)){
           config.url = (globalSettings.restUrl + config.url);
         }
         
@@ -194,7 +202,6 @@
         vm.user = res;
       });
       accountUser.getAccountUserData().then(function(res) {
-        console.log(res);
         vm.accountUser = res
       });
       account.getAccountData().then(function(res) { vm.account = res });

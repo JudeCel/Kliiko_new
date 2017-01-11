@@ -33,7 +33,7 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  if(req.currentResources.accountUser) {
+  if(req.currentResources.user) {
     res.send(req.currentResources.user);
   }
   else {
