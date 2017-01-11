@@ -102,6 +102,7 @@ router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
 router.get('/survey/constants', survey.getConstants);
 router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
+router.get('/survey/stats', PERMISSIONS.facilitatorManagerAdmin, survey.getSurveyStats);
 
 // Subscription
 router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
