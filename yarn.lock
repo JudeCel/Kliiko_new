@@ -876,8 +876,8 @@ camelcase@^3.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
 
 caniuse-db@^1.0.30000525, caniuse-db@^1.0.30000604, caniuse-db@~1.0.30000492:
-  version "1.0.30000604"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000604.tgz#bc139270a777564d19c0aadcd832b491d093bda5"
+  version "1.0.30000605"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000605.tgz#c616e335a6df02f865af5e02add72c897cb6579d"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -3221,8 +3221,8 @@ gulp-sourcemaps@1.6.0:
     vinyl "^1.0.0"
 
 gulp-sourcemaps@^2.0.0-alpha:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/gulp-sourcemaps/-/gulp-sourcemaps-2.3.0.tgz#b29cb08c302aa7244e4bd4a47544a2e3fa08f2da"
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/gulp-sourcemaps/-/gulp-sourcemaps-2.3.1.tgz#e1f1e733b78f378d0238f17990054b6392fbd20b"
   dependencies:
     acorn "4.X"
     convert-source-map "1.X"
