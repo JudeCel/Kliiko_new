@@ -161,6 +161,56 @@
         }
       }
 
+      function adjustSessionTimeSentenceIfFirstInvitation() {
+        var startAndEndDateSameSentence = "Open from {Start Time} to {End Time} on {Start Date}";
+        var startAndEndDateDiffersSentence = "Open from {Start Time} on {Start Date} to {End Time} on {End Date}";
+        var sessionTimeDefaultSentence = startAndEndDateSameSentence + "<br>" + startAndEndDateDiffersSentence;
+
+        if(isFirstInvitationTemplate()) {
+          if (isSessionBuilder()) {
+            setSessionTimeForSessionBuilderTemplate();
+          } else {
+            setSessionTimeSentence(sessionTimeDefaultSentence);
+          }
+        }
+
+        function isFirstInvitationTemplate() {
+          return vm.currentTemplate['MailTemplateBase.category'] == "firstInvitation";
+        }
+
+        function isSessionBuilder() {
+          return $scope.step3Controller && $scope.step3Controller.session;
+        }
+
+        function setSessionTimeForSessionBuilderTemplate() {
+          if (vm.currentTemplate.isCopy) {
+            if (isEndDateAfterStartDate() && isNotTemplateContainingEndDate()) {
+              setSessionTimeSentence(startAndEndDateDiffersSentence);  
+            }
+          } else {
+            var sessionTimeSentence = isEndDateAfterStartDate() ? startAndEndDateDiffersSentence : startAndEndDateSameSentence;
+            setSessionTimeSentence(sessionTimeSentence);
+          }
+        }
+
+        function setSessionTimeSentence(sessionTimeSentence) {
+          var currentContent = vm.currentTemplate.content;
+          var sessionTime = "<span id=session-time>" + sessionTimeSentence + "</span>";
+          vm.currentTemplate.content = currentContent.replace(/<span id=(\")*session-time(\")*>.*?<\/span>/gm, sessionTime);
+        }
+
+        function isEndDateAfterStartDate() {
+          var session = $scope.step3Controller.session;
+          var startDate = new Date(session.startTime).setHours(0, 0, 0, 0);
+          var endDate = new Date(session.endTime).setHours(0, 0, 0, 0);
+          return endDate > startDate;
+        }
+
+        function isNotTemplateContainingEndDate() {
+          return vm.currentTemplate.content.indexOf("{End Date}") == -1;
+        }
+      }
+
       function populateTemplate(res) {
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
@@ -184,6 +234,7 @@
         }
 
         populateContentWithColors();
+        adjustSessionTimeSentenceIfFirstInvitation();
       }
 
     }
