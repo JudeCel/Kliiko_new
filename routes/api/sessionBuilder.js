@@ -27,7 +27,7 @@ module.exports = {
 };
 
 function initializeBuilder(req, res, next) {
-  let params = { accountId: res.locals.currentDomain.id, date: req.body.date, timeZone: req.body.timeZone };
+  let params = { accountId: req.currentResources.account.id, date: req.body.date, timeZone: req.body.timeZone };
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
     res.send(result);
   }, function(error) {
@@ -36,7 +36,7 @@ function initializeBuilder(req, res, next) {
 }
 
 function canAddObservers(req, res, next) {
-  sessionBuilderServices.canAddObservers(res.locals.currentDomain.id).then(function(result) {
+  sessionBuilderServices.canAddObservers(req.currentResources.account.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -44,7 +44,7 @@ function canAddObservers(req, res, next) {
 }
 
 function openBuild(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   sessionBuilderServices.openBuild(req.params.id, accountId).then(function(result) {
     res.send(result);
   }, function(error) {
@@ -54,7 +54,7 @@ function openBuild(req, res, next) {
 
 function setAnonymous(req, res, next) {
   let sessionId = req.params.id;
-  sessionServices.setAnonymous(sessionId, res.locals.currentDomain.id).then(function(result) {
+  sessionServices.setAnonymous(sessionId, req.currentResources.account.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -63,7 +63,7 @@ function setAnonymous(req, res, next) {
 function update(req, res, next) {
   let sessionId = req.params.id;
   let sessionDataObj = req.body;
-  sessionBuilderServices.update(sessionId, res.locals.currentDomain.id, sessionDataObj).then(function(result) {
+  sessionBuilderServices.update(sessionId, req.currentResources.account.id, sessionDataObj).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -72,7 +72,7 @@ function update(req, res, next) {
 
 function sessionMailTemplateStatus(req, res, next) {
   let sessionId = req.params.id;
-  sessionBuilderServices.sessionMailTemplateStatus(sessionId, res.locals.currentDomain.id).then(function(result) {
+  sessionBuilderServices.sessionMailTemplateStatus(sessionId, req.currentResources.account.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({error: error});
@@ -80,7 +80,7 @@ function sessionMailTemplateStatus(req, res, next) {
 }
 
 function goToStep(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
 
   sessionBuilderServices.goToStep(req.params.id, accountId, req.params.arg).then(function(result) {
     res.send({ data: result });
@@ -98,7 +98,7 @@ function cancel(req, res, next) {
 }
 
 function sendSms(req, res, next) {
-  sessionBuilderServices.sendSms(res.locals.currentDomain.id, req.body).then(function(result) {
+  sessionBuilderServices.sendSms(req.currentResources.account.id, req.body).then(function(result) {
     res.send({ message: result });
   }, function(error) {
     res.send({ error: error });
@@ -106,8 +106,8 @@ function sendSms(req, res, next) {
 }
 
 function inviteMembers(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
-  let accountName = res.locals.currentDomain.name;
+  let accountId = req.currentResources.account.id;
+  let accountName = req.currentResources.account.name;
   sessionBuilderServices.inviteMembers(req.params.id, req.body, accountId, accountName).then(function(result) {
     res.send({ data: result, message: MessagesUtil.routes.sessionBuilder.invite });
   }, function(error) {
@@ -116,7 +116,7 @@ function inviteMembers(req, res, next) {
 }
 
 function removeInvite(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   sessionBuilderServices.removeInvite(req.params, accountId).then(function(message) {
     res.send({ message: message });
   }, function(error) {
@@ -125,7 +125,7 @@ function removeInvite(req, res, next) {
 }
 
 function sendGenericEmail(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   let sessionId = req.params.id;
 
   sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Generic").then(function(result) {
@@ -141,7 +141,7 @@ function sendGenericEmail(req, res, next) {
 }
 
 function sendCloseEmail(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   let sessionId = req.params.id;
 
   sessionBuilderServices.sessionMailTemplateExists(sessionId, accountId, "Close Session").then(function() {
@@ -157,7 +157,7 @@ function sendCloseEmail(req, res, next) {
 }
 
 function addTopics(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   let sessionId = req.params.id;
   let topics = req.body.topicsArray;
   let snapshot = req.body.snapshot;

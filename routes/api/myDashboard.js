@@ -9,7 +9,7 @@ module.exports = {
 };
 
 function getAllData(req, res, next) {
-  myDashboardServices.getAllData(req.user.id, req.protocol).then(
+  myDashboardServices.getAllData(req.currentResources.user.id, req.protocol).then(
     getResponses(req, res).onSuccess,
     getResponses(req, res).onError
   );

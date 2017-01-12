@@ -2,15 +2,16 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
     vm.surveys = {};
     vm.uploadTypes = {};
     vm.autoSave = null;
+    vm.stats = {};
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
@@ -29,7 +30,7 @@
     vm.copySurvey = copySurvey;
     vm.saveSurvey = saveSurvey;
     vm.exportSurvey = exportSurvey;
-    vm.reportSurvey = reportSurvey;
+    vm.showStats = showStats;
 
     // Inits
     vm.initQuestion = initQuestion;
@@ -118,21 +119,33 @@
       });
     };
 
-    function reportSurvey(surveyId) {
-      //todo: should be implemented in other task
-    }
+    function showStats(survey) {
+      surveyServices.getSurveyStats(survey.id).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          vm.stats = res.data;
+          domServices.modal('statsModal');
+        }
+      });
+    };
+
+    function exportStats(surveyId, type) {
+      //todo: export  stats
+    };
 
     function changeStatus(survey) {
-      surveyServices.changeStatus({ id: survey.id, closed: survey.closed }).then(function(res) {
+      surveyServices.changeStatus({ id: survey.id, closed: !survey.switchValue}).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
-          survey.closed = !survey.closed;
           errorMessenger.showError(res.error);
         } else {
+          survey.closed = res.data.closed;
           survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
         }
+        survey.switchValue = !survey.closed;
       });
     };
 

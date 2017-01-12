@@ -5,10 +5,9 @@ var router = express.Router();
 var contactListImport = require('../../middleware/contactListImport.js');
 var policy = require('../../middleware/policy.js');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
-
 var userRoutes = require('./user');
 var account = require('./account');
-var jwt = require('./jwt');
+var jwtRoutes = require('./jwt');
 var accountUser = require('./accountUser');
 var accountManager = require('./accountManager');
 var accountDatabase = require('./accountDatabase');
@@ -26,14 +25,12 @@ let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 
 let sessionMember = require('./sessionMember');
-
 module.exports = router;
 
 // Common Rules
-router.use(function (req, res, next) {
-  let exceptionPaths = ["/survey/constants", "/survey/find"];
-
-  if (req.user || _.includes(exceptionPaths, req.path)) {
+router.use((req, res, next)  => {
+  let exceptionPaths = ["/survey/constants", "/survey/find", "/ping"];
+  if (req.currentResources || _.includes(exceptionPaths, req.path)) {
     next();
   } else {
     notAuthExit(res);
@@ -51,7 +48,7 @@ var PERMISSIONS = {
   facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
 
-router.post('/ping', (req, res, next) => { res.send({}); });
+router.post('/ping', (req, res, next) => { res.send({})});
 
 // Main Routes
 router.get('/myDashboard/data', myDashboard.getAllData);
@@ -62,8 +59,7 @@ router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.post('/account', account.createNewAccount);
-router.get('/jwtToken', jwt.getToken);
-router.get('/jwtTokenForMember', jwt.jwtTokenForMember);
+router.get('/jwtTokenForMember', jwtRoutes.jwtTokenForMember);
 
 router.get('/accountManager', PERMISSIONS.managerAdmin, accountManager.get);
 router.post('/accountManager', PERMISSIONS.managerAdmin, accountManager.post);
@@ -102,6 +98,7 @@ router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
 router.get('/survey/constants', survey.getConstants);
 router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
+router.get('/survey/stats', PERMISSIONS.facilitatorManagerAdmin, survey.getSurveyStats);
 
 // Subscription
 router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
@@ -148,7 +145,7 @@ router.get('/brandColour/canCreateCustomColors', PERMISSIONS.facilitatorManagerA
 
 router.post('/session/getByInvite',  PERMISSIONS.managerAdmin, session.getSessionByInvite);
 router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings);
-router.get('/session/list', sessionMemberMiddleware.hasAccess(['facilitator', 'observer', 'participant'], ['accountManager', 'admin']), session.get);
+router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 

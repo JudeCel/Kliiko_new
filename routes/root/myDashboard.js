@@ -1,6 +1,7 @@
 'use strict';
 
 var subdomains = require('../../lib/subdomains.js');
+var jwtToken = require('../../lib/jwt.js');
 
 module.exports = {
   index: index,
@@ -12,8 +13,9 @@ function views_path(action) {
 };
 
 function index(req, res, next) {
-  if(req.user && !res.locals.currentDomain) {
-    res.render(views_path('index'), { title: 'My Dashboard' });
+  if(req.user && !req.currentResources) {
+    let token  = jwtToken.token(req.user.id, "User:", "/" )
+    res.render(views_path('index'), { title: 'My Dashboard', jwt_token: token});
   } else {
     res.redirect(subdomains.url(req, subdomains.base, '/'));
   }

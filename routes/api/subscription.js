@@ -23,7 +23,7 @@ function postQuote(req, res, next) {
 }
 
 function planAllowsToDoIt(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   subscriptionValidator.planAllowsToDoIt(accountId, req.query.features).then(function(result) {
     res.send();
   }, function(err) {
@@ -32,7 +32,7 @@ function planAllowsToDoIt(req, res, next) {
 }
 
 function getPlans(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
 
   subscription.getAllPlans(accountId).then(function(result) {
     res.send(result);
@@ -42,9 +42,9 @@ function getPlans(req, res, next) {
 }
 
 function updatePlan(req, res, next) {
-  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub#/account-profile/upgrade-plan')
+  let redirectUrl = subdomains.url(req, req.currentResources.account.name, '/account-hub#/account-profile/upgrade-plan')
   let params = {
-    accountId: res.locals.currentDomain.id,
+    accountId: req.currentResources.account.id,
     newPlanId: req.body.planId,
     redirectUrl: redirectUrl
   }

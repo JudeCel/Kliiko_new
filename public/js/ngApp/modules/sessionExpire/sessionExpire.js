@@ -5,7 +5,7 @@
 
   sessionExpireFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', 'domServices'];
   function sessionExpireFactory($q, globalSettings, $resource, dbg, domServices) {
-    var pingApi = $resource(globalSettings.restUrl + '/ping', null, {
+    var pingApi = $resource('/ping', null, {
       post: { method: 'post' }
     });
 

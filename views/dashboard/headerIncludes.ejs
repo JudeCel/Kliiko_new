@@ -3,8 +3,9 @@
 <script src="/js/vendors/jQuery/jquery-2.1.4.min.js"></script>
 <script src="/js/compiled/concat.js"></script>
 
-<script>
+<script type="text/javascript">
   (function(global){
+    localStorage.setItem('jwtToken',"<%= jwt_token %>");
     global.appData = <%- JSON.stringify(appData) %>
   })(this);
 </script>

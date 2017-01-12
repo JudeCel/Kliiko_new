@@ -14,14 +14,14 @@ module.exports = {
 };
 
 function comment(req, res, next) {
-  sessionServices.changeComment(req.params.id, req.body.comment, res.locals.currentDomain.id).then(
+  sessionServices.changeComment(req.params.id, req.body.comment, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 }
 
 function get(req, res, next) {
-  sessionServices.findAllSessions(req.user.id, res.locals.currentDomain).then(
+  sessionServices.findAllSessions(req.currentResources.user.id, req.currentResources.accountUser, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -35,21 +35,21 @@ function getAllSessionRatings(req, res, next) {
 }
 
 function remove(req, res, next) {
-  sessionServices.removeSession(req.params.id, res.locals.currentDomain.id).then(
+  sessionServices.removeSession(req.params.id, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 }
 
 function copy(req, res, next) {
-  sessionServices.copySession(req.params.id, res.locals.currentDomain.id).then(
+  sessionServices.copySession(req.params.id, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 }
 
 function updateRating(req, res, next) {
-  sessionServices.updateSessionMemberRating(req.body, req.user.id, res.locals.currentDomain.id).then(
+  sessionServices.updateSessionMemberRating(req.body, req.currentResources.user.id, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

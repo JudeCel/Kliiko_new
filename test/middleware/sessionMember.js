@@ -10,34 +10,39 @@ var models = require('./../../models');
 describe('MIDDLEWARE - Session Member', function() {
   let req, res;
 
-  function setVariables(userId, sessionId, accountId) {
+  function setVariables(userId, sessionId, accountUser) {
     req = {
       user: { id: userId },
-      params: { id: sessionId }
+      params: { id: sessionId },
+      currentResources: {
+        account: { id: accountUser.AccountId }, 
+        accountUser: {id: accountUser.id, role: accountUser.role},
+        user: {id: accountUser.UserId}
+      }
     }
     res = {
-      locals: { currentDomain: { id: accountId } }
+      locals: {}
     }
   }
 
-  beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
-      sessionFixture.createChat().then(function(result) {
-        _.map(result.sessionMembers, function(member) {
-          if(member.role == 'facilitator') {
-            models.AccountUser.find({ where: { id: member.accountUserId } }).then(function(accountUser) {
-              setVariables(accountUser.UserId, result.session.id, accountUser.AccountId);
-              done();
-            });
-          }
+  describe('happy path ', function() {
+    beforeEach(function(done) {
+      models.sequelize.sync({ force: true }).then(function() {
+        sessionFixture.createChat().then(function(result) {
+          _.map(result.sessionMembers, function(member) {
+            if(member.role == 'facilitator') {
+              models.AccountUser.find({ where: { id: member.accountUserId } }).then(function(accountUser) {
+                setVariables(accountUser.UserId, result.session.id, accountUser);
+                done();
+              });
+            }
+          });
+        }, function(error) {
+          done(error);
         });
-      }, function(error) {
-        done(error);
       });
     });
-  });
 
-  describe('happy path ', function() {
     it('call next Callback when has access', function(done)  {
       let result = sessionMemberMiddleware.hasAccess(['facilitator']);
       result(req, res, done);
@@ -46,14 +51,14 @@ describe('MIDDLEWARE - Session Member', function() {
 
   describe('sad path ', function() {
     function setFailVariables(done) {
-      res.status = function() {
+      res.status = () => {
         return {
           send: function(result) {
             try {
               assert.equal(result, sessionMemberMiddleware.accessDeniedMessage);
               done();
             } catch (e) {
-                done(e);
+              done(e);
             }
 
           }
@@ -68,13 +73,13 @@ describe('MIDDLEWARE - Session Member', function() {
     };
 
     it('should fail because no currentDomain account id', function(done)  {
-      delete res.locals.currentDomain.id;
+      delete req.currentResources.account.id;
       setFailVariables(done);
       sessionMemberMiddleware.hasAccess(['facilitator'])(req, res, shouldNotGetHere(done));
     });
 
     it('should fail because no user id', function(done)  {
-      delete req.user.id;
+      delete req.currentResources.user.id;
       setFailVariables(done);
       sessionMemberMiddleware.hasAccess(['facilitator'])(req, res, shouldNotGetHere(done));
     });

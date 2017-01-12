@@ -361,8 +361,12 @@ describe('Services -> ContactList', () => {
           ContactListService.exportContactList({ id: contactList.id + 100 }, testData.account).then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error, MessagesUtil.validators.subscription.planDoesntAllowToDoThis);
+            try {
+            assert.equal(error.message, MessagesUtil.validators.subscription.error.exportContactListAndParticipantHistory);
             done();
+            } catch (e) {
+              done(e);
+            }
           });
         }, function(err) {
           done(err);

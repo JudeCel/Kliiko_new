@@ -122,7 +122,7 @@ module.exports = {
       },
       secondStep: {
         topics: 'No topics selected',
-        stock: "You can't drag a Stock Topic. Edit to suit your needs and Save which creates either e New Topic or Copy Of."
+        stock: "You can't drag a Stock Topic. Edit to suit your needs and Save which creates either a New Topic or a Copy Of."
       },
       thirdStep: {
         emailTemplates: "You need to copy each of the required e-mail template."

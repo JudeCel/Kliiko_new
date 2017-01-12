@@ -7,10 +7,10 @@
   topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource', 'changesValidation'];
   function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource, changesValidation) {
     var restApi = {
-      topics: $resource(globalSettings.restUrl +'/topics'),
-      topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      sessionTopic: $resource(globalSettings.restUrl +'/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
-      sessionByInvite: $resource(globalSettings.restUrl +'/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+      topics: $resource('/topics'),
+      topic: $resource('/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      sessionTopic: $resource('/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
+      sessionByInvite: $resource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
     };
 
     var topicsAndSessionsFactory = {};
@@ -95,7 +95,7 @@
         dbg.log2('#topicsAndSessions > createNewTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message)
           : deferred.resolve(res);
       }
 
@@ -119,7 +119,7 @@
         dbg.log2('#topicsAndSessions > updateTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message)
           : deferred.resolve(res);
       }
       function error(err) {

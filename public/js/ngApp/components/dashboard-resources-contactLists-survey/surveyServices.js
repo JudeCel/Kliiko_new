@@ -2,10 +2,10 @@
   'use strict';
   angular.module('KliikoApp').factory('surveyServices', surveyServices);
   angular.module('KliikoApp.Root').factory('surveyServices', surveyServices);
-  surveyServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  surveyServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function surveyServices(globalSettings, $q, $resource, dbg) {
-    var surveyRestApi = $resource(globalSettings.restUrl + '/survey/:path', null, {
+  function surveyServices($q, $resource, dbg) {
+    var surveyRestApi = $resource('/survey/:path', null, {
       update: { method: 'PUT' },
       find: { method: 'GET', params: { path: 'find' } },
       status: { method: 'PUT', params: { path: 'status' } },
@@ -13,7 +13,8 @@
       answer: { method: 'POST', params: { path: 'answer' } },
       confirm: { method: 'PUT', params: { path: 'confirm' } },
       constants: { method: 'GET', params: { path: 'constants' } },
-      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } }
+      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } },
+      getSurveyStats: { method: 'GET', params: { path: 'stats' } },
     });
 
     var upServices = {};
@@ -31,6 +32,7 @@
     upServices.pickValidClass = pickValidClass;
     upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
+    upServices.getSurveyStats = getSurveyStats;
     return upServices;
 
     function getConstants() {
@@ -52,6 +54,21 @@
       surveyRestApi.canExportSurveyData({}, function(res) {
         dbg.log2('#surveyServices > canExportSurveyData > rest call responds');
         deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function getSurveyStats(id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > getSurveyStats > make rest call');
+      surveyRestApi.getSurveyStats({ id: id }, function(res) {
+        dbg.log2('#surveyServices > getSurveyStats > rest call responds');
+        deferred.resolve(res);
+      }, function(err) {
+        dbg.error('#surveyServices > getSurveyStats > error:', err);
+        messenger.error(err);
       });
 
       return deferred.promise;

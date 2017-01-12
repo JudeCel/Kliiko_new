@@ -4,12 +4,17 @@ var crc32 = require('crc-32');
 
 module.exports = {
   lowerCaseFirstLetter: lowerCaseFirstLetter,
+  upperCaseFirstLetter: upperCaseFirstLetter,
   hash: hash,
   camel2Human: camel2Human
 };
 
 function lowerCaseFirstLetter(string) {
   return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
+function upperCaseFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function hash(val) {

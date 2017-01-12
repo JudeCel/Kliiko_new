@@ -23,7 +23,7 @@ describe('SERVICE - Survey', function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
-          models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true}, { where: { subscriptionId: subscription.id } }).then(function() {
+          models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true, 'data.exportRecruiterStats': true}, { where: { subscriptionId: subscription.id } }).then(function() {
             done();
           }, function(error) {
             done(error);
@@ -824,6 +824,58 @@ describe('SERVICE - Survey', function() {
           }, function(error) {
             assert.equal(error, surveyServices.messages.notFound);
             done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('#getSurveyStats', function() {
+    describe('happy path', function() {
+      it('should succeed', function (done) {
+        let params = surveyParams();
+        delete params.confirmedAt;
+
+        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
+          let survey = result.data;
+          let answerParams = surveyAnswerParams(survey.SurveyQuestions);
+          answerParams.surveyId = survey.id;
+
+          surveyServices.answerSurvey(answerParams).then(function(result) {
+              surveyServices.getSurveyStats(survey.id, testData.account).then(function(result) {
+                let validResult = { 
+                  survey: { 
+                    name: params.name, 
+                    id: survey.id, 
+                    answers: 1 
+                  },
+                  questions: { 
+                    '1': { 
+                      name: 'Some default name 0',
+                      answers: { 
+                        '0': { name: '0 answer 0', count: 1, percent: 100 }, 
+                        '1': { name: '1 answer 0', count: 0, percent: 0 }, 
+                        '2': { name: '2 answer 0', count: 0, percent: 0 }, 
+                        '3': { name: '3 answer 0', count: 0, percent: 0 } 
+                      } 
+                    },
+                    '2': { 
+                      name: 'Some default name 1',
+                      answers: { 
+                        '0': { name: '0 answer 1', count: 1, percent: 100 }, 
+                        '1': { name: '1 answer 1', count: 0, percent: 0 }, 
+                        '2': { name: '2 answer 1', count: 0, percent: 0 }, 
+                        '3': { name: '3 answer 1', count: 0, percent: 0 }
+                      } 
+                    } 
+                  }
+                };
+
+                assert.deepEqual(result.data, validResult);
+                done();
+              }, function(error) {
+                done(error);
+              });
           });
         });
       });

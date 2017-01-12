@@ -35,23 +35,23 @@ describe('Middleware subdomain', () => {
     });
 
     it('assign currentDomain to res locaCallback', (done) =>  {
-      models.Account.findAll().then(function(result) {
-        subdomain(req, res, function() {
-          assert.deepEqual(res.locals.currentDomain, {realName: result[0].name, id: result[0].id, name: validAttrs.subdomain, roles: ["accountManager"] });
-          done();
+      models.Account.findAll({include: [models.AccountUser]}).then((result) => {
+        subdomain(req, res, () => {
+          let currentResources = {
+            account: { id: result[0].id, name: result[0].name }, 
+            accountUser: {id: result[0].AccountUsers[0].id, role: result[0].AccountUsers[0].role},
+            user: {id: result[0].AccountUsers[0].UserId, email: "dainis@gmail.com"}
+          }
+
+          try {
+            assert.deepEqual(req.currentResources, currentResources);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       })
     });
-
-    describe('hasAccess ', () => {
-      before((done) => {
-        subdomain(req, res, done);
-      });
-
-      it('assign currentDomain to res locaCallback', () =>  {
-        assert.isFunction(res.locals.hasAccess)
-      });
-    })
   });
 
   describe('failed ', () => {

@@ -15,12 +15,7 @@ var contactListImport = require('./contactListImport');
 var MessagesUtil = require('./../util/messages');
 let Bluebird = require('bluebird');
 
-var csv = require('fast-csv');
-var xlsx = require('xlsx');
-var path = require('path');
-const ROW_NR = 2;
 const MAX_CUSTOM_FIELDS = 16;
-
 
 module.exports = {
   create: create,

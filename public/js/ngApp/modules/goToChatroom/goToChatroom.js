@@ -5,7 +5,7 @@
 
   goToChatroomFactory.$inject = ['$q', '$resource', '$http', 'globalSettings', 'messenger'];
   function goToChatroomFactory($q, $resource, $http, globalSettings, messenger) {
-    var jwtTokenForMemberApi = $resource(globalSettings.restUrl + '/jwtTokenForMember');
+    var jwtTokenForMemberApi = $resource('/jwtTokenForMember');
 
     var blankWindow;
     var goToChatroomService = {};

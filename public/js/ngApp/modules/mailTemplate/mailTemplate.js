@@ -7,16 +7,16 @@
   function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope, changesValidation) {
 
     var mailRestApi = {
-      mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
-      mailTemplatesWithColors: $resource(globalSettings.restUrl + '/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      sessionMailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, { get: { method: 'GET' } }),
-      sessionMailTemplatesWithColors: $resource(globalSettings.restUrl + '/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      mailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/save', {}, {post: {method: 'POST'}}),
-      deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      resetMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/reset', {}, {post: {method: 'POST'}}),
-      previewMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/preview', {}, {post: {method: 'POST'}}),
-      sendMail: $resource(globalSettings.restUrl + '/mailTemplate/send', {}, {post: {method: 'POST'}}),
+      mailTemplates: $resource('/mailTemplates', {}, {get: {method: 'GET'}}),
+      mailTemplatesWithColors: $resource('/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      sessionMailTemplates: $resource('/sessionMailTemplates', {}, { get: { method: 'GET' } }),
+      sessionMailTemplatesWithColors: $resource('/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      mailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      saveMailTemplate: $resource('/mailTemplate/save', {}, {post: {method: 'POST'}}),
+      deleteMailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      resetMailTemplate: $resource('/mailTemplate/reset', {}, {post: {method: 'POST'}}),
+      previewMailTemplate: $resource('/mailTemplate/preview', {}, {post: {method: 'POST'}}),
+      sendMail: $resource('/mailTemplate/send', {}, {post: {method: 'POST'}})
     };
 
     var MailTemplateService = {};

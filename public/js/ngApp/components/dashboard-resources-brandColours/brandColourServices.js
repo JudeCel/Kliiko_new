@@ -2,10 +2,10 @@
   'use strict';
 
   angular.module('KliikoApp').factory('brandColourServices', brandColourServices);
-  brandColourServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  brandColourServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function brandColourServices(globalSettings, $q, $resource, dbg) {
-    var brandColorApi = $resource(globalSettings.restUrl + '/brandColour/:path', null, {
+  function brandColourServices($q, $resource, dbg) {
+    var brandColorApi = $resource('/brandColour/:path', null, {
       update: { method: 'PUT' },
       reset: { method: 'PUT', params: { path: 'default' } },
       copy: { method: 'POST', params: { path: 'copy' } },

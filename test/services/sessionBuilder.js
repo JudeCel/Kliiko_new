@@ -649,8 +649,12 @@ describe('SERVICE - SessionBuilder', function() {
             params.step = 'facilitatiorAndTopics';
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
-                done();
+                try {
+                  assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                  done();
+                } catch (error) {
+                  done(error);
+                }
               });
             }, function(error) {
               done(error);
@@ -812,19 +816,18 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#reopenSession', function(done) {
     describe('happy path', function(done) {
-      it('should go to fourth step', function(done) {
+      it.only('should go to fourth step', function(done) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
             models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               mailFixture.createMailTemplate().then(function() {
                 let closeParams = sessionParams(result);
-                let stepIndex = 4;
                 closeParams.status = "closed";
                 sessionBuilderServices.update(closeParams.id, closeParams.accountId, closeParams).then(function(closeResult) {
-                  sessionBuilderServices.goToStep(closeParams.id, closeParams.accountId, stepIndex).then(function(nextStepResult) {
-                    let openParams = sessionParams(result);
+                  sessionBuilderServices.goToStep(closeParams.id, closeParams.accountId, 1).then(function(nextStepResult) {
+                    let openParams = sessionParams(nextStepResult);
                     openParams.status = "open";
-                    sessionBuilderServices.update(openParams.id, openParams.accountId, openParams).then(function(closeResult) {
-                      assert.equal(closeResult.sessionBuilder.currentStep, "manageSessionParticipants");
+                    sessionBuilderServices.update(closeParams.id, openParams.accountId, openParams).then(function(openResult) {
+                      assert.equal(openResult.sessionBuilder.currentStep, "manageSessionParticipants");
                       done();
                     }, function(error) {
                       done(error);
