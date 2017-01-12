@@ -88,12 +88,12 @@ describe('Topic Service', function() {
       });
     });
 
-    it('update stock', function (done) {
+    it.only('update stock', function (done) {
       let attrs = getTopicParams();
       attrs.stock = true;
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
         topicService.create(attrs, true).then(function(topic){
-          let params = {id: topic.id, name: "update test"};
+          let params = {id: topic.id, name: "update test", accountId: testAccount.id};
           topicService.update(params).then(function(updatedTopic){
             assert.notEqual(updatedTopic.id, params.id);
             assert.equal(updatedTopic.name, params.name);
