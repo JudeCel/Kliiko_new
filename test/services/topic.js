@@ -88,7 +88,7 @@ describe('Topic Service', function() {
       });
     });
 
-    it.only('update stock', function (done) {
+    it('update stock', function (done) {
       let attrs = getTopicParams();
       attrs.stock = true;
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
