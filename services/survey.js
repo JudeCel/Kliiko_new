@@ -717,7 +717,9 @@ function createStats(survey) {
     populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
 
     surveyQuestion.answers.forEach(function(answer) {
-      populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
+      if (!_.isEmpty(answer)) {
+        populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
+      }
     });
 
     survey.SurveyAnswers.forEach(function(surveyAnswer) {
