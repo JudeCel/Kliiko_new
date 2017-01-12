@@ -10,7 +10,6 @@ var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
 var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
-var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
 const { setUpQueue} = require('./services/backgroundQueue.js');
 
