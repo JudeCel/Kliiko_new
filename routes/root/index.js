@@ -512,25 +512,14 @@ router.get('/terms_of_use_participant', function(req, res, next) {
 });
 
 router.get('/close_session/participate/:id', function(req, res, next) {
-  hadleCloseSessionParticipationResponse(req, res, constants.closeSession.confirmedParticipationMessage);
+  renderCloseSessionView(res, constants.closeSession.confirmedParticipationMessage);
 });
 
 router.get('/close_session/dont_participate/:id', function(req, res, next) {
-  hadleCloseSessionParticipationResponse(req, res, constants.closeSession.declinedParticipationMessage);
-});
-
-function hadleCloseSessionParticipationResponse(req, res, closeSessionText) {
   var accountUserId = new Buffer(req.params.id, 'base64').toString('ascii');
-  if (closeSessionText == constants.closeSession.declinedParticipationMessage) {
-    accountUserService.updateNotInFutureInfo(accountUserId).then(function() {
-      renderCloseSessionView(res, closeSessionText);
-    }, function(error) {
-      renderCloseSessionView(res, error);
-    })
-  } else {
-    renderCloseSessionView(res, closeSessionText);
-  }
-}
+  var closeSessionText = constants.closeSession.declinedParticipationMessage;
+  accountUserService.updateNotInFutureInfo(accountUserId).then(renderCloseSessionView(res, closeSessionText), renderCloseSessionView(res, error));
+});
 
 function renderCloseSessionView(res, closeSessionText) {
   res.render('closeSession', {
