@@ -95,7 +95,7 @@
         dbg.log2('#topicsAndSessions > createNewTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message)
           : deferred.resolve(res);
       }
 
@@ -119,7 +119,7 @@
         dbg.log2('#topicsAndSessions > updateTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message)
           : deferred.resolve(res);
       }
       function error(err) {

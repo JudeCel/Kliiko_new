@@ -371,3 +371,8 @@
     max-width: calc(20vw - 105px);
   }
 }
+
+.scroll-vertical {
+  height: calc(85vh - 350px);
+  overflow: auto;
+}

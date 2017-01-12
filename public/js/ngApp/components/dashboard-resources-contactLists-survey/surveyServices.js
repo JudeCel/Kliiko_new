@@ -13,7 +13,8 @@
       answer: { method: 'POST', params: { path: 'answer' } },
       confirm: { method: 'PUT', params: { path: 'confirm' } },
       constants: { method: 'GET', params: { path: 'constants' } },
-      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } }
+      canExportSurveyData: { method: 'GET', params: { path: 'canExportSurveyData' } },
+      getSurveyStats: { method: 'GET', params: { path: 'stats' } },
     });
 
     var upServices = {};
@@ -31,6 +32,7 @@
     upServices.pickValidClass = pickValidClass;
     upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
+    upServices.getSurveyStats = getSurveyStats;
     return upServices;
 
     function getConstants() {
@@ -52,6 +54,21 @@
       surveyRestApi.canExportSurveyData({}, function(res) {
         dbg.log2('#surveyServices > canExportSurveyData > rest call responds');
         deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function getSurveyStats(id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#surveyServices > getSurveyStats > make rest call');
+      surveyRestApi.getSurveyStats({ id: id }, function(res) {
+        dbg.log2('#surveyServices > getSurveyStats > rest call responds');
+        deferred.resolve(res);
+      }, function(err) {
+        dbg.error('#surveyServices > getSurveyStats > error:', err);
+        messenger.error(err);
       });
 
       return deferred.promise;

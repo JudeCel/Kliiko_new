@@ -9,11 +9,12 @@ var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
 var MessagesUtil = require('./../util/messages');
+var StringHelpers = require('./../util/stringHelpers');
 
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
-var bluebird = require('bluebird');
+var Bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
 
 const VALID_ATTRIBUTES = {
@@ -54,6 +55,8 @@ const VALID_ATTRIBUTES = {
 }
 
 const SMALL_AGE = 'Under 18';
+
+const CONTACT_DETAILS_STATS_FIELDS = ['gender', 'age'];
 
 function simpleParams(data, message) {
   return { data: data, message: message };
@@ -490,13 +493,11 @@ function confirmSurvey(params, account) {
   return deferred.promise;
 };
 
-function exportSurvey(params, account) {
-  let deferred = q.defer();
-
-  canExportSurveyData(account).then(function() {
+function getSurveyData(id, accountId) {
+  return new Bluebird(function (resolve, reject) {
     Survey.find({
-      where: { id: params.id, accountId: account.id },
-      attributes: ['id'],
+      where: { id: id, accountId: accountId },
+      attributes: ['id', 'name'],
       include: [{
         model: SurveyQuestion,
         attributes: VALID_ATTRIBUTES.question
@@ -506,22 +507,56 @@ function exportSurvey(params, account) {
       ]
     }).then(function(survey) {
       if(survey) {
+        resolve(survey);
+      } else {
+        reject(MessagesUtil.survey.notFound);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function exportSurvey(params, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyData(account).then(function() {
+      getSurveyData(params.id, account.id).then(function(survey) {
         let header = createCsvHeader(survey.SurveyQuestions);
         let data = createCsvData(header, survey);
-        deferred.resolve(simpleParams({ header: header, data: data }));
-      }
-      else {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+        resolve(simpleParams({ header: header, data: data }));
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
   });
-
-  return deferred.promise;
 };
+
+function getSurveyStats(id, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyStats(account).then(function() {
+      getSurveyData(id, account.id).then(function(survey) {
+        let stats = createStats(survey); 
+        resolve(simpleParams(stats));
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function canExportSurveyStats(account) {
+  return new Bluebird(function (resolve, reject) {
+    validators.planAllowsToDoIt(account.id, 'exportRecruiterStats').then(function() {
+      resolve({});
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
 
 function canExportSurveyData(account) {
   let deferred = q.defer();
@@ -580,9 +615,6 @@ function createCsvData(header, survey) {
         case 'string':
           object[header[index + indexDiff]] = answer.value;
           break;
-        case 'boolean':
-          assignBoolean(index + indexDiff, header, object, question, answer);
-          break;
         case 'object':
           if (answer.contactDetails) {
             for(var property in answer.contactDetails) {
@@ -608,15 +640,6 @@ function assignNumber(index, header, object, question, answer) {
       object[header[index]] = questionAnswer.name;
     }
   });
-};
-
-function assignBoolean(index, header, object, question, answer) {
-  object[header[index]] = answer.value ? 'Yes' : 'No';
-  if(answer.contactDetails) {
-    _.map(answer.contactDetails, function(value, key) {
-      object[_.startCase(key)] = value;
-    });
-  }
 };
 
 function validAnswerParams(params) {
@@ -680,6 +703,95 @@ function bulkUpdateQuestions(surveyId, questions, t) {
   return deferred.promise;
 }
 
+function createStats(survey) {
+  let res = {
+    survey: {
+      name: survey.name,
+      id: survey.id,
+      answers: survey.SurveyAnswers.length
+    },
+    questions: { }
+  };
+  
+  survey.SurveyQuestions.forEach(function(surveyQuestion) {
+    populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
+
+    surveyQuestion.answers.forEach(function(answer) {
+      if (!_.isEmpty(answer)) {
+        populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
+      }
+    });
+
+    survey.SurveyAnswers.forEach(function(surveyAnswer) {
+      let answer = surveyAnswer.answers[surveyQuestion.id];
+
+      switch(answer.type) {
+        case 'number':
+          res.questions[surveyQuestion.id].answers[answer.value].count++;
+          break;
+        case 'string':
+          res.questions[surveyQuestion.id].values.push(answer.value);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+              res.questions[surveyQuestion.id + field].answers[answer.contactDetails[field]].count++;
+            });
+          }
+          break;
+      }
+
+    });
+  });
+  
+  calculateStatsPercents(res.questions, res.survey.answers);
+  return res;
+}
+
+function setObjectKeyValueIfNotExists(object, key, value) {
+  if (!object[key]) {
+    object[key] = value;
+  }
+}
+
+function populateStatsWithQuestionIfNotExists(questions, question, contactDetails) {
+  if (contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      let questionName = StringHelpers.upperCaseFirstLetter(field);
+      setObjectKeyValueIfNotExists(questions, question.id + field, { name: questionName, answers: { } });
+    });
+  } else {
+    if (question.type == "textarea") {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, values: [] });
+    } else {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, answers: { } });
+    }
+  }
+}
+
+function populateStatsWithAnswerIfNotExists(questions, question, answer) {
+  if (answer.contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      let questionKey = question.id + field;
+      answer.contactDetails[field].options.forEach(function(option) {
+        setObjectKeyValueIfNotExists(questions[questionKey].answers, option, { name: option, count: 0, percent: 0 });
+      });
+    });
+  } else if (question.type != "textarea") {
+    setObjectKeyValueIfNotExists(questions[question.id].answers, answer.order, { name: answer.name, count: 0, percent: 0 });
+  }
+}
+
+function calculateStatsPercents(questions, total) {
+  _.forIn(questions, function(question, questionKey) {
+    if (question.answers) {
+       _.forIn(question.answers, function(value, key) {
+        value.percent = Math.round(100 * value.count / total);
+      });
+    }
+  });
+}
+
 function getIds(questions) {
   let ids = [];
   questions.forEach(function(question, index, array) {
@@ -731,5 +843,6 @@ module.exports = {
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  getSurveyStats: getSurveyStats
 };

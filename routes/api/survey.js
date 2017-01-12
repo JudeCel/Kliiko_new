@@ -15,6 +15,13 @@ function canExportSurveyData(req, res, next) {
   );
 }
 
+function getSurveyStats(req, res, next) {
+  surveyService.getSurveyStats(req.query.id, res.locals.currentDomain).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
+
 function find(req, res, next) {
   surveyService.findSurvey(req.query).then(
     getResponses(res).onSuccess,
@@ -100,5 +107,6 @@ module.exports = {
   answer: answer,
   confirm: confirm,
   getConstants: getConstants,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  getSurveyStats: getSurveyStats
 };

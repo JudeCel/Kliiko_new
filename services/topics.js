@@ -237,7 +237,7 @@ function create(params, isAdmin) {
     Topic.create(params).then(function(topic) {
       deferred.resolve(topic);
     },function(error) {
-      deferred.reject(filters.errors(error));
+      deferred.reject(error);
     });
   },function(error) {
     deferred.reject(error);
@@ -256,7 +256,6 @@ function update(params) {
           params.name = "Copy of " + topic.name;
         }
         delete params.id;
-        params.accountId = topic.accountId;
         return create(params);
       } else {
         return topic.update(params, { returning: true });
@@ -267,7 +266,7 @@ function update(params) {
   }).then(function(topic) {
     deferred.resolve(topic);
   }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+    deferred.reject(error);
   });
 
   return deferred.promise;

@@ -38,12 +38,12 @@
           </td>
           <td>
             <div ng-if="!survey.confirmedAt">Unpublished</div>
-            <div ng-if="survey.confirmedAt" class="surveyStatus {{ survey.closed ? 'surveyStatusClose' : 'surveyStatusOpen' }}">
+            <div ng-if="survey.confirmedAt" ng-init="survey.switchValue = !survey.closed">
               <toggle-switch
-                ng-model="survey.closed"
+                ng-model="survey.switchValue"
                 ng-change="sc.changeStatus(survey)"
-                on-label="CLOSE"
-                off-label="OPEN"
+                on-label="OPEN"
+                off-label="CLOSE"
                 >
               </toggle-switch>
             </div>
@@ -51,7 +51,7 @@
           <td class='text-right dashboardElementsEditRemove dashboardActions'>
             <span class="fa fa-copy" ng-click='sc.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.copy }}' ></span>
             <span class="fa fa-edit" ng-click='sc.changePage("edit", survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.edit }}'></span>
-            <span class="fa fa-bar-chart" title='{{ sc.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='sc.reportSurvey(survey.id)'></span>
+            <span class="fa fa-bar-chart" title='{{ sc.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='sc.showStats(survey)'></span>
             <span class="fa fa-mail-forward" ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.export }}' ></span>
             <span class="fa fa-remove" ng-if="sc.canDelete(survey)" ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}'></span>
           </td>
@@ -60,3 +60,5 @@
     </table>
   </div>
 </div>
+
+<ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/statsModal.html'"></ng-include>
