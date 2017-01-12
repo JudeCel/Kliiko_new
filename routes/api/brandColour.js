@@ -2,14 +2,14 @@ var brandProjectConstants = require('../../util/brandProjectConstants');
 var brandColourServices = require('../../services/brandColour');
 
 function get(req, res, next) {
-  brandColourServices.findAllSchemes(res.locals.currentDomain.id).then(
+  brandColourServices.findAllSchemes(req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function canCreateCustomColors(req, res, next) {
-  brandColourServices.canCreateCustomColors(res.locals.currentDomain.id).then(function(result) {
+  brandColourServices.canCreateCustomColors(req.currentResources.account.id).then(function(result) {
     res.send({result: result});
   }, function(err) {
     res.send({ error: err });
@@ -17,35 +17,35 @@ function canCreateCustomColors(req, res, next) {
 };
 
 function remove(req, res, next) {
-  brandColourServices.removeScheme(req.query, res.locals.currentDomain.id).then(
+  brandColourServices.removeScheme(req.query, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function copy(req, res, next) {
-  brandColourServices.copyScheme(req.body, res.locals.currentDomain.id).then(
+  brandColourServices.copyScheme(req.body, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function create(req, res, next) {
-  brandColourServices.createScheme(req.body, res.locals.currentDomain.id).then(
+  brandColourServices.createScheme(req.body, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function reset(req, res, next) {
-  brandColourServices.resetToDefaultScheme(req.body, res.locals.currentDomain.id).then(
+  brandColourServices.resetToDefaultScheme(req.body, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
 };
 
 function update(req, res, next) {
-  brandColourServices.updateScheme(req.body, res.locals.currentDomain.id).then(
+  brandColourServices.updateScheme(req.body, req.currentResources.account.id).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

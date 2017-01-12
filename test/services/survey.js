@@ -832,7 +832,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#getSurveyStats', function() {
     describe('happy path', function() {
-      it.only('should succeed', function (done) {
+      it('should succeed', function (done) {
         let params = surveyParams();
         delete params.confirmedAt;
 

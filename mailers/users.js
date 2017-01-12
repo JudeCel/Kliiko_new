@@ -10,6 +10,8 @@ var { sendMail } = require('./adapter');
 var constants = require('../util/constants');
 
 users.sendReactivateOrDeactivate = function(params, callback){
+  callback = callback || function(){}
+
   let templateType = !params.active ? 'deactivatedAccount' : 'reactivatedAccount';
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version

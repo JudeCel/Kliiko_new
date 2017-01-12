@@ -70,12 +70,22 @@
     });
   }
 
-  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger'];
-  function myInterceptor($log, $q, $rootScope, messenger) {
+  function useAPI_URL(config) {
+    var regex = /(\.html|\/api\/|http|\.template)/
+    return(!config.url.match(regex)) 
+  }
+  
+  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
+  function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
-
     var requestInterceptor = {
       request: function(config) {
+        if(useAPI_URL(config)){
+          config.url = (globalSettings.restUrl + config.url);
+        }
+
+        config.headers.Authorization = getToken();
+
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
           $rootScope.showSpinner = true;
@@ -85,10 +95,13 @@
       },
 
       'response': function(response) {
+        
         if (response.status == 404) {
           alert('that is all folks');
         }
+        
         if(response.config.transformResponse.length > 0) {
+          saveToken(response.headers()['refresh-token']);
           $rootScope.showSpinner = false;
           $rootScope.progressbarComplete();
           deactivateHelperNote();
@@ -101,6 +114,7 @@
         if(rejection.status == 404) {
           messenger.error(rejection.data);
         }
+
         $rootScope.showSpinner = false;
         $rootScope.progressbarComplete();
         return $q.reject(rejection);
@@ -114,6 +128,16 @@
     }
 
     return requestInterceptor;
+  }
+
+  function saveToken(token){
+    if(token){
+      window.localStorage.setItem('jwtToken', token);
+    }
+  }
+  
+  function getToken(){
+    return(window.localStorage.getItem("jwtToken"));
   }
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
@@ -183,9 +207,10 @@
         setSessionStorage(res);
         vm.user = res;
       });
-      accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
+      accountUser.getAccountUserData().then(function(res) {
+        vm.accountUser = res
+      });
       account.getAccountData().then(function(res) { vm.account = res });
-      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
       sessionExpire.init();
     }
 

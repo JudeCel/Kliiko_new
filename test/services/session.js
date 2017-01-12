@@ -93,7 +93,7 @@ describe('SERVICE - Session', function() {
     describe('#findAllSessions', function() {
       describe('happy path', function() {
         it('should succeed on finding all sessions', function (done) {
-          sessionServices.findAllSessions(testData.user.id, accountParams(), provider).then(function(result) {
+          sessionServices.findAllSessions(testData.user.id, testData.accountUser, testData.account, provider).then(function(result) {
             try {
               assert.equal(result.data[0].accountId, testData.account.id);
               done();

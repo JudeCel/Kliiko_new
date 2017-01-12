@@ -1,11 +1,11 @@
 angular.module('KliikoApp').factory('socket', socket);
-socket.$inject = ['$rootScope', 'globalSettings', 'fileUploader'];
+socket.$inject = ['$rootScope', 'globalSettings', '$window'];
 angular.module('KliikoApp.Root').factory('socket', socket);
 
-function socket($rootScope, globalSettings, fileUploader) {
+function socket($rootScope, globalSettings, $window) {
   var socket = new Phoenix.Socket(globalSettings.socketServerUrl, {
     params: {
-      token: fileUploader.token
+      token: $window.localStorage.getItem("jwtToken")
     },
     // logger: function(kind, msg, data) { console.log(kind +":"+ msg +":",  data) },
   });

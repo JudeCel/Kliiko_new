@@ -6,10 +6,9 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource', 'fileUploader', 'changesValidation'];
-  function SessionModel($q, globalSettings, $resource, fileUploader, changesValidation)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
-    var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
+  SessionModel.$inject = ['$q', '$resource', 'fileUploader', 'changesValidation'];
+  function SessionModel($q, $resource, fileUploader, changesValidation)  {
+    var sessionBuilderRestApi = $resource('/sessionBuilder/:id/:path/:arg', { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
       put: { method: 'PUT' },
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
@@ -25,15 +24,15 @@
     });
 
     var mailRestApi = {
-      mailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, {get: {method: 'GET'}})
+      mailTemplates: $resource('/sessionMailTemplates', {}, {get: {method: 'GET'}})
     };
-    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+    var chatSessionApi = $resource('/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
-    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path', {}, {
+    var sessionMemberApi = $resource('/sessionMember/:path', {}, {
       post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
 
@@ -163,7 +162,7 @@
             }
             deferred.resolve();
           });
-          
+
         }
       });
 
@@ -287,8 +286,8 @@
       var deferred = $q.defer();
 
       sessionMemberApi.post({}, params, function(res) {
-        if (res.error) { 
-          deferred.reject(res.error);  
+        if (res.error) {
+          deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
 
           changesValidation.validationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
@@ -309,7 +308,7 @@
       var deferred = $q.defer();
 
       var params = {
-        topicsArray: topicsArray, 
+        topicsArray: topicsArray,
         snapshot: this.snapshot
       }
       saveTopicsByParams(params, this).then(function(res) {
@@ -325,8 +324,8 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.addTopics({id: self.id}, params, function(res) {
-        if (res.error) { 
-          deferred.reject(res.error);  
+        if (res.error) {
+          deferred.reject(res.error);
         } else if (res.validation && !res.validation.isValid) {
 
           changesValidation.validationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {

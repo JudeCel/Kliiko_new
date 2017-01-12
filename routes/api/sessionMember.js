@@ -17,7 +17,7 @@ function addFacilitator(req, res, next) {
   sessionBuilderSnapshotValidationService.isFacilitatorDataValid(params.snapshot, params.accountUserId, params.sessionId, sessionBuilderService).then(function(validationRes) {
 
     if (validationRes.isValid) {
-      sessionMemberService.removeByRole('facilitator', params.sessionId, res.locals.currentDomain.id).then(function() {
+      sessionMemberService.removeByRole('facilitator', params.sessionId, req.currentResources.account.id).then(function() {
         sessionMemberService.createWithTokenAndColour(params).then(function(member) {
           inviteService.createFacilitatorInvite(params).then(function() {
             res.send({ facilitator: member, message: MessagesUtil.routes.sessionMember.addFacilitator });
@@ -37,7 +37,7 @@ function addFacilitator(req, res, next) {
   }, function (err) {
     res.send({error: err});
   });
-  
+
 }
 
 function getSessionMembers(req, res, next) {

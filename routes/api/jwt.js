@@ -4,7 +4,7 @@ var jwt = require('./../../lib/jwt');
 var request = require('request');
 
 function getToken(req, res, next) {
-  let token = jwt.token(res.locals.currentUser.accountUserId);
+  let token = jwt.token(req.user.accountUserId);
   res.send({ token: token });
 };
 
@@ -28,7 +28,7 @@ function getChatRedirectUrl(req, res, result) {
 }
 
 function jwtTokenForMember(req, res, next) {
-  jwt.tokenForMember(res.locals.currentUser.id, req.query.sessionId, req.query.callback_url).then(function(result) {
+  jwt.tokenForMember(req.currentResources.user.id, req.query.sessionId, req.query.callback_url).then(function(result) {
     getChatRedirectUrl(req, res, result);
   }, function(error) {
     res.send({ error: error });
@@ -36,6 +36,5 @@ function jwtTokenForMember(req, res, next) {
 }
 
 module.exports = {
-  getToken: getToken,
   jwtTokenForMember: jwtTokenForMember
 };

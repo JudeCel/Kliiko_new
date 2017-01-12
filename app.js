@@ -8,8 +8,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
+var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
-var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
 const { setUpQueue} = require('./services/backgroundQueue.js');
 
@@ -47,22 +47,23 @@ app.use(session({
 
 app.use(setUpQueue);
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(subdomain);
 app.use(flash());
 app.use(logger('dev'));
+var api = require('./routes/api');
+app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
-var api = require('./routes/api');
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(subdomain);
+
+app.use('/account-hub', sessionMiddleware.extendUserSession, dashboard);
+app.use('/resources', sessionMiddleware.extendUserSession, resources);
 
 app.use('/', routes);
-app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
-app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
-app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
-
 // Added socket.io routes
 // catch 404 and forward to error handler
 

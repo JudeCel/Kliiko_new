@@ -177,7 +177,7 @@
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
       }, function(error) {
-        messenger.error(error)
+        messenger.error(error);
       });
     }
 
