@@ -517,8 +517,11 @@ router.get('/close_session/participate/:id', function(req, res, next) {
 
 router.get('/close_session/dont_participate/:id', function(req, res, next) {
   var accountUserId = new Buffer(req.params.id, 'base64').toString('ascii');
-  var closeSessionText = constants.closeSession.declinedParticipationMessage;
-  accountUserService.updateNotInFutureInfo(accountUserId).then(renderCloseSessionView(res, closeSessionText), renderCloseSessionView(res, error));
+  accountUserService.updateNotInFutureInfo(accountUserId).then(function() {
+      renderCloseSessionView(res, constants.closeSession.declinedParticipationMessage);
+  }, function(error) {
+      renderCloseSessionView(res, error);
+  });
 });
 
 function renderCloseSessionView(res, closeSessionText) {
