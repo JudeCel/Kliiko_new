@@ -15,7 +15,17 @@ const loadResources = (req, res, next) => {
 
 const jwt = (req, res, next) => {
   expressJwt(
-    {secret: process.env.JWT_SECRET_KEY, requestProperty: 'auth'}
+    {
+      secret: process.env.JWT_SECRET_KEY, requestProperty: 'auth',
+      getToken: (req) => {
+        if (req.headers.authorization) {
+            return req.headers.authorization;
+        } else if (req.query && req.query.token) {
+          return req.query.token;
+        }
+        return null;
+      }
+    }
   )(req, res, next);
 }
 

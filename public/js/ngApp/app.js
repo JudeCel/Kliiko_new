@@ -137,7 +137,7 @@
   }
   
   function getToken(){
-    return('Bearer ' + window.localStorage.getItem("jwtToken"));
+    return(window.localStorage.getItem("jwtToken"));
   }
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];

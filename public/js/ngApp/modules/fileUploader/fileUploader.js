@@ -5,13 +5,11 @@
 
   fileUploaderFactory.$inject = ['$q', 'globalSettings', 'dbg', 'Upload', '$resource'];
   function fileUploaderFactory($q, globalSettings, dbg, Upload, $resource) {
-    var fileUploaderApiLocal = $resource('/jwtToken');
 
     var requestError = 'Request failed';
     var fileUploaderService = {};
 
     fileUploaderService.token = null;
-    fileUploaderService.getToken = getToken;
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
     fileUploaderService.remove = remove;
@@ -24,25 +22,7 @@
     fileUploaderService.show = show;
 
     return fileUploaderService;
-
-    function getToken() {
-      var deferred = $q.defer();
-      dbg.log2('#KliikoApp.fileUploader > get token');
-
-      fileUploaderApiLocal.get({}, function(res) {
-        dbg.log2('#KliikoApp.fileUploader > get token > server respond >');
-        if(res.error) {
-          deferred.reject(res.error);
-        }
-        else {
-          fileUploaderService.token = res.token;
-          deferred.resolve({ token: res.token });
-        }
-      });
-
-      return deferred.promise;
-    }
-
+    
     function upload(data) {
       var deferred = $q.defer();
       var server = serverData('resources');
@@ -51,7 +31,6 @@
       Upload.upload({
         url: server.url + 'upload',
         method: 'POST',
-        headers: server.headers,
         file: data.file,
         params: {
           scope: data.scope,
@@ -209,7 +188,6 @@
 
     function serverData(what) {
       return {
-        headers: { 'Authorization': fileUploaderService.token },
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }
@@ -241,9 +219,9 @@
       path = path || '';
       var server = serverData(what);
       return $resource(server.url + path, {}, {
-        get: { method: 'GET', headers: server.headers },
-        delete: { method: 'DELETE', headers: server.headers },
-        post: { method: 'POST', headers: server.headers },
+        get: { method: 'GET' },
+        delete: { method: 'DELETE' },
+        post: { method: 'POST' },
       });
     }
   }

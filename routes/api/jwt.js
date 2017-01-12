@@ -36,6 +36,5 @@ function jwtTokenForMember(req, res, next) {
 }
 
 module.exports = {
-  getToken: getToken,
   jwtTokenForMember: jwtTokenForMember
 };

@@ -59,7 +59,6 @@ router.put('/user', userRoutes.changePassword);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.post('/account', account.createNewAccount);
-router.get('/jwtToken', jwtRoutes.getToken);
 router.get('/jwtTokenForMember', jwtRoutes.jwtTokenForMember);
 
 router.get('/accountManager', PERMISSIONS.managerAdmin, accountManager.get);
