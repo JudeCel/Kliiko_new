@@ -283,11 +283,12 @@ function getSessionMembers(sessionId, acountUserIds) {
   });
 }
 
-function isCloseEmailSentToSessionMember(acountUserId) {
-    return new Bluebird(function (resolve, reject) {
+function isCloseEmailSentToSessionMember(acountUserId, sessionId) {
+  return new Bluebird(function (resolve, reject) {
     SessionMember.find({
       where: {
         accountUserId: acountUserId,
+        sessionId: sessionId,
         closeEmailSent: true
       }
     }).then(function(sessionMember) {

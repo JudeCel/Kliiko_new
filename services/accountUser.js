@@ -330,9 +330,9 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
-function updateNotInFutureInfo(id) {
+function updateNotInFutureInfo(id, sessionId) {
   return new Bluebird(function (resolve, reject) {
-    sessionMemberService.isCloseEmailSentToSessionMember(id).then(function(isSent) {
+    sessionMemberService.isCloseEmailSentToSessionMember(id, sessionId).then(function(isSent) {
       if (isSent) {
         updateInfo(id, "NoInFuture").then(function(result) {
           resolve();
