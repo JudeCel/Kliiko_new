@@ -77,7 +77,7 @@ function updateById(req, res) {
   }
 
   let params = req.body.topic;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   topicsService.update(params).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.updated })},
