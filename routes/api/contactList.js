@@ -63,7 +63,7 @@ function update(req, res, next) {
 
   let params = req.body;
   params.id = req.params.id;
-  params.accountId = rreq.currentResources.account.id;
+  params.accountId = req.currentResources.account.id;
 
   contactListService.update(params).then(function(result) {
     res.send({success: true, itemsUpdatedAmount:result, message: MessagesUtil.routes.contactList.updated });
@@ -81,7 +81,7 @@ function update(req, res, next) {
 function destroy(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
 
-  let accountId = rreq.currentResources.account.id;
+  let accountId = req.currentResources.account.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
     res.send({success: true, lists: lists, message: MessagesUtil.routes.contactList.removed});
   },function(err) {
@@ -119,7 +119,7 @@ function importContacts(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
   validations.body(res, req.body.contactsArray, 'contactsArray is missed');
 
-  let accountId = rreq.currentResources.account.id;
+  let accountId = req.currentResources.account.id;
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
