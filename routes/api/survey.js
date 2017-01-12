@@ -16,7 +16,7 @@ function canExportSurveyData(req, res, next) {
 }
 
 function getSurveyStats(req, res, next) {
-  surveyService.getSurveyStats(req.query.id, res.locals.currentDomain).then(
+  surveyService.getSurveyStats(req.query.id, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
