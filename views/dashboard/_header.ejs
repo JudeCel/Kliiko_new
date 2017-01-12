@@ -20,7 +20,7 @@
       <a href='/'><img class='row' src='/icons/Klzii_logo_lines.png'></a>
     </div>
     <div class='col-xs-1 current-domain-name'>
-      <%= currentDomain.realName %>
+      <%= currentResources.account.name %>
     </div>
     <div class='col-xs-12 col-md-7 btn-group remove-link-line nav-button-top-margin text-right' role='group'>
       <span id='welcome-user' class='hidden'>Welcome, {{ app.user.firstName }}!</span>
@@ -40,7 +40,7 @@
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a ng-click='app.openModal("changePasswordModal")'>Change Password<img class="my-details-container" src='/icons/password_green_flat.png' alt='' /></a></li>
         <li role="separator" class="divider"></li>
-        <li class='text-right text-size-dashboard'><a href='<%= currentUser.myDashboardUrl %>'>My Dashboard<img class="my-details-container" src='/icons/dashboard_blue.png' alt='' /></a></li>
+        <li class='text-right text-size-dashboard'><a href='/my-dashboard'>My Dashboard<img class="my-details-container" src='/icons/dashboard_blue.png' alt='' /></a></li>
         <li role="separator" class="divider" ng-if='app.accountUser.isAccountManager'></li>
         <li class='text-right text-size-dashboard' ng-if='app.accountUser.isAccountManager'>
           <a href='/account-hub/paymentDetails' target="_blank">Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a>

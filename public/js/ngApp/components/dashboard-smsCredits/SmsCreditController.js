@@ -5,9 +5,9 @@
     module('KliikoApp').
     controller('SmsCreditController', SmsCreditController);
 
-  SmsCreditController.$inject = ['dbg', '$modal','$scope', 'SmsCreditService', 'domServices', 'messenger', 'globalSettings'];
+  SmsCreditController.$inject = ['dbg', '$modal','$scope', 'SmsCreditService', 'domServices', 'messenger'];
 
-  function SmsCreditController(dbg, $modal, $scope, SmsCreditService, domServices, messenger, globalSettings){
+  function SmsCreditController(dbg, $modal, $scope, SmsCreditService, domServices, messenger){
     dbg.log2('#SmsCreditController  started');
     var vm =  this;
 

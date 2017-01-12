@@ -10,7 +10,7 @@ describe('Middleware policy', () => {
   describe('authorized ', () => {
     describe('success ', () => {
       it('call next Callback', (done) =>  {
-        res.locals.currentDomain = {name: "dainisl", roles: ["accountManager"]};
+        req.currentResources = {accountUser:  {role: "accountManager"}};
         let result = policy.authorized(["accountManager", "admin"]);
         result(req, res, done);
       });
@@ -18,7 +18,7 @@ describe('Middleware policy', () => {
 
     describe('failed ', () => {
       it('Access Denied', (done) =>  {
-        res.locals.currentDomain = {name: "dainisL", roles: ["accountManager"]};
+        req.currentResources = {accountUser:  {role: "accountManager"}};
         let result = policy.authorized(["admin"])(req, res, () => {throw("can't get here")});
         assert.equal(result, policy.accessDeniedMessage);
         done();

@@ -649,8 +649,12 @@ describe('SERVICE - SessionBuilder', function() {
             params.step = 'facilitatiorAndTopics';
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
-                done();
+                try {
+                  assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                  done();
+                } catch (error) {
+                  done(error);
+                }
               });
             }, function(error) {
               done(error);

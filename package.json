@@ -101,6 +101,7 @@
     "dotenv-extended": "^1.0.4",
     "ejs": "^2.4.1",
     "express": "^4.14.0",
+    "express-jwt": "^5.1.0",
     "express-session": "^1.14.2",
     "fast-csv": "^2.3.0",
     "gulp": "^3.9.1",

@@ -26,7 +26,11 @@ const cluster = require('cluster');
         break;
       case "backgroundWorkerServer":
         console.log("background Worker Server");
-        require("../apps/backgroundSideServer.js");
+        try {
+          require("../apps/backgroundSideServer.js");
+        } catch (e) {
+          console.log(e);
+        }
         break;
       default:
         console.log("Unhandled process role: " + process.env.ROLE);

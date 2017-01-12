@@ -42,8 +42,12 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
         subscriptionValidators.validate(testData.account.id + 100, 'session', 1).then(function() {
           done('Should not get here!');
         }).catch(function(error) {
-          assert.equal(error, subscriptionValidators.messages.notFound);
-          done();
+          try {
+            assert.equal(error, subscriptionValidators.messages.error.account);
+            done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
 
@@ -51,8 +55,12 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
         subscriptionValidators.validate(testData.account.id, 'randomString', 1).then(function() {
           done('Should not get here!');
         }).catch(function(error) {
-          assert.equal(error, subscriptionValidators.messages.notValidDependency);
-          done();
+          try {
+            assert.equal(error, subscriptionValidators.messages.notValidDependency);
+            done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
 
@@ -102,15 +110,20 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
           accountId: testData.account.id,
           name: 'some name',
           description: 'some descp',
-          thanks: 'some thanks'
+          thanks: 'some thanks',
+          confirmedAt: new Date()
         };
 
         models.Survey.create(params).then(function() {
           subscriptionValidators.validate(testData.account.id, 'survey', 1).then(function() {
             done('Should not get here!');
           }).catch(function(error) {
-            assert.equal(error, subscriptionValidators.countMessage('survey', 1));
-            done();
+            try {
+              assert.deepEqual(error, subscriptionValidators.countRecruiterMessage('survey', 1, testData.subscription));
+              done();
+            } catch (error) {
+              done(error);
+            }
           });
         }, function(error) {
           done(error)

@@ -14,12 +14,15 @@ describe('MAILERS - Invite ', () => {
         if(error) {
           done(error);
         }
-
-        assert.include(result.data.html, 'Hello! And welcome to klzii');
-        assert.include(result.data.html, 'You can login anytime with your');
-        assert.include(result.data.to, email);
-        assert.include(result.data.html, token);
-        done();
+        try {
+          assert.include(result.html, 'Hello! And welcome to klzii');
+          assert.include(result.html, 'You can login anytime with your');
+          assert.include(result.accepted[0], email);
+          assert.include(result.html, token);
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
   });

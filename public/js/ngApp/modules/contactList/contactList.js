@@ -6,13 +6,13 @@
   contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'Upload'];
   function contactListFactory($q, globalSettings, $resource, dbg, Upload)  {
     var contactListsApi = {
-      contactLists: $resource(globalSettings.restUrl +  '/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
-      contactComments: $resource(globalSettings.restUrl +  '/contactListsUser/comments', {}, {post: {method: 'POST'}}),
-      canExportContactListData: $resource(globalSettings.restUrl + '/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
+      contactLists: $resource('/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUsersToRemove: $resource('/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUser: $resource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsImport: $resource('/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsValidate: $resource('/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
+      contactComments: $resource('/contactListsUser/comments', {}, {post: {method: 'POST'}}),
+      canExportContactListData: $resource('/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
     };
 
 

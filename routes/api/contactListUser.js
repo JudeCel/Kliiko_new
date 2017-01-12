@@ -19,7 +19,7 @@ module.exports = {
 //
 function create(req, res, next) {
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   contactListUserService.create(params).then(function(result) {
     res.send({ user: result, message: MessagesUtil.routes.contactListUser.newUser, facMessage: MessagesUtil.routes.contactListUser.newFacilitator });
@@ -36,7 +36,7 @@ function create(req, res, next) {
 //
 function createBulk(req, res, next) {
   validations.params(req.params.list, 'query param @list is missed');
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
 
   contactListUserService.bulkCreate(params.list, accountId).then(function(result) {
     res.send(result);
@@ -54,7 +54,7 @@ function destroy(req, res, next) {
   validations.params(res, req.body.ids, 'query param @ids is missed');
 
   let ids = req.body.ids;
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   contactListUserService.destroy(ids, accountId).then(function (result) {
     res.send({success:true, total: result});
   },function(err) {
@@ -74,7 +74,7 @@ function update(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
 
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
   params.id = req.params.id;
 
   contactListUserService.update(params).then(function(result) {
@@ -92,8 +92,8 @@ function update(req, res, next) {
 //
 function comments(req, res, next) {
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
-  
+  params.accountId = req.currentResources.account.id;
+
   contactListUserService.comments(params).then(function(result) {
     res.send({ success: true, data: result });
   }, function(err) {

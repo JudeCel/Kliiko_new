@@ -5,11 +5,22 @@ var { sendMail } = require('./../../mailers/adapter.js');
 describe('sendMail ', () => {
   describe('success ', () => {
     it('creates a fake transport for testing', (done) =>  {
-      let fakeData = { datum1: "aString", datum2: 2, datum3: { iAmAnObject: true } };
-      sendMail(fakeData, function(err, response){
-        assert.equal(response.data,fakeData);
-        done();
-      });
+      let fakeData = { 
+        to: "to@gmail.com", 
+        from: "from@gmail.com", 
+        html: ""
+      };
+      sendMail(fakeData).then((response) => {
+        try {
+          assert.equal(response.accepted[0], fakeData.to);
+          assert.equal(response.envelope.from, fakeData.from);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      }, (error) => {
+        done(error);
+      })
     });
   });
 });
