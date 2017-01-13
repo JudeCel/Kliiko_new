@@ -541,7 +541,7 @@ function validateTemplate(template) {
       if (params.length) {
         _.map(params, function(variable) {
             if (template.content.indexOf(variable) == -1) {
-              if ((incentivePopulated || variable != "{Incentive}") && isStartDateRequired(result.startTime, result.endTime, variable)) {
+              if ((incentivePopulated || variable != "{Incentive}") && !skipStartDate(result.startTime, result.endTime, variable)) {
                 error = "Missing " + variable + " variable";
               }
             }
@@ -574,8 +574,8 @@ function validateTemplate(template) {
 
   return deferred.promise;
 
-  function isStartDateRequired(startTime, endTime, variableName) {
-    return variableName == "{Start Date}" && isEndDateAfterStartDate(startTime, endTime);
+  function skipStartDate(startTime, endTime, variableName) {
+    return variableName == "{Start Date}" && !isEndDateAfterStartDate(startTime, endTime) ;
   }
 }
 
