@@ -10,7 +10,6 @@ var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-var multer  = require('multer');
 
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
@@ -498,7 +497,7 @@ router.route('/my-dashboard/tour').get(myDashboardRoutes.tour);
 
 router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
-router.route('/mailgun/webhooks').post(multer().single(), mailgunRoutes.webhook);
+router.route('/mailgun/webhooks').post(mailgunRoutes.webhook);
 
 router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
 
