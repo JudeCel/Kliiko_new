@@ -162,15 +162,11 @@
       }
 
       function adjustSessionTimeSentenceIfFirstInvitation() {
-        var startAndEndDateSameSentence = "Open from {Start Time} to {End Time} on {Start Date}";
-        var startAndEndDateDiffersSentence = "Open from {Start Time} on {Start Date} to {End Time} on {End Date}";
-        var sessionTimeDefaultSentence = startAndEndDateSameSentence + "<br>" + startAndEndDateDiffersSentence;
-
         if(isFirstInvitationTemplate()) {
           if (isSessionBuilder()) {
-            setSessionTimeForSessionBuilderTemplate();
+            setSessionBuilderStartDateVisibility();
           } else {
-            setSessionTimeSentence(sessionTimeDefaultSentence);
+            showStartDateSpan();
           }
         }
 
@@ -182,21 +178,25 @@
           return $scope.step3Controller && $scope.step3Controller.session;
         }
 
-        function setSessionTimeForSessionBuilderTemplate() {
-          if (vm.currentTemplate.isCopy) {
-            if (isEndDateAfterStartDate() && isNotTemplateContainingEndDate()) {
-              setSessionTimeSentence(startAndEndDateDiffersSentence);  
-            }
+        function setSessionBuilderStartDateVisibility() {
+          if (isEndDateAfterStartDate()) {
+            showStartDateSpan();
           } else {
-            var sessionTimeSentence = isEndDateAfterStartDate() ? startAndEndDateDiffersSentence : startAndEndDateSameSentence;
-            setSessionTimeSentence(sessionTimeSentence);
+            hideStartDateSpan();
           }
         }
 
-        function setSessionTimeSentence(sessionTimeSentence) {
+        function hideStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")*>/g, "<span id=start-date-container style=display:none>");
+        }
+
+        function showStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")* style=(\")*display:none;(\")*>/g, "<span id=start-date-container>")
+        }
+
+        function toggleStartDateSpan(currentSpanRegEx, expectedSpan) {
           var currentContent = vm.currentTemplate.content;
-          var sessionTime = "<span id=session-time>" + sessionTimeSentence + "</span>";
-          vm.currentTemplate.content = currentContent.replace(/<span id=(\")*session-time(\")*>.*?<\/span>/gm, sessionTime);
+          vm.currentTemplate.content = currentContent.replace(currentSpanRegEx, expectedSpan);
         }
 
         function isEndDateAfterStartDate() {
@@ -204,10 +204,6 @@
           var startDate = new Date(session.startTime).setHours(0, 0, 0, 0);
           var endDate = new Date(session.endTime).setHours(0, 0, 0, 0);
           return endDate > startDate;
-        }
-
-        function isNotTemplateContainingEndDate() {
-          return vm.currentTemplate.content.indexOf("{End Date}") == -1;
         }
       }
 

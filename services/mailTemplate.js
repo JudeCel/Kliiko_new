@@ -494,105 +494,57 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
   return (result || shouldOverwrite);
 }
 
-function variablesForTemplate(type, sessionId) {
-  return new Bluebird(function(resolve) {
-    switch (type) {
-      case "firstInvitation": 
-        variablesForFirstInvitationTemplate(sessionId).then(function(result) {
-          resolve(result);
-        });
-        break;
-      case "closeSession":
-        resolve(["{First Name}", "{Incentive}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"]);
-        break;
-      case "confirmation":
-        resolve(["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Guest Email}", "{Host First Name}", "{Host Last Name}", "{Host Email}"]);
-        break;
-      case "generic":
-        resolve(["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"]);
-        break;
-      case "notAtAll":
-        resolve(["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"]);
-        break;
-      case "notThisTime":
-        resolve(["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"]);
-        break;
-      case "accountManagerConfirmation":
-        resolve(["{First Name}", "{Login}", "{Last Name}"]);
-        break;
-      default:
-        resolve([]);
-    }
-  });
+function variablesForTemplate(type) {
+  switch (type) {
+    case "firstInvitation":
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      break;
+    case "closeSession":
+      return ["{First Name}", "{Incentive}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      break;
+    case "confirmation":
+      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Guest Email}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
+      break;
+    case "generic":
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
+      break;
+    case "notAtAll":
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
+      break;
+    case "notThisTime":
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
+      break;
+    case "accountManagerConfirmation":
+      return ["{First Name}", "{Login}", "{Last Name}"];
+      break;
+    default:
+      return [];
+  }
 }
 
-function variablesForFirstInvitationTemplate(sessionId) {
-  let defaultFirstInvitationVariables = ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
-  
-  return new Bluebird(function(resolve, reject) {
-    if (sessionId) {
-      Session.find({
-        where: {
-          id: sessionId
-        }
-      }).then(function(session) {
-        if (session && !isEndDateAfterStartDate(session)) {
-          resolve(_.without(defaultFirstInvitationVariables, "{End Date}"));
-        } else {
-          resolve(defaultFirstInvitationVariables);
-        } 
-      }, function(error) {
-        resolve(defaultFirstInvitationVariables);
-      });
-    } else {
-      resolve(defaultFirstInvitationVariables);
-    }
-  });
-
-
-  function isEndDateAfterStartDate(session) {
-    return moment(session.endTime).isAfter(session.startTime, 'day');
-  }
+function isEndDateAfterStartDate(startTime, endTime) {
+  return moment(endTime).isAfter(startTime, 'day');
 }
 
 function validateTemplate(template) {
   let deferred = q.defer();
-  let sessionId = template.properties ? template.properties.sessionId : null;
-  variablesForTemplate(template['MailTemplateBase.category'], sessionId).then(function(params) {
-    var error = null;
+  var params = variablesForTemplate(template['MailTemplateBase.category']);
+  var error = null;
 
-    if (template.properties && template.properties.sessionId) {
-      Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
-        let incentivePopulated = false;
-        if (result && result.incentive_details) {
-          incentivePopulated = true;
-        }
+  if (template.properties && template.properties.sessionId) {
+    Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
+      let incentivePopulated = false;
+      if (result && result.incentive_details) {
+        incentivePopulated = true;
+      }
 
-        if (params.length) {
-          _.map(params, function(variable) {
-              if (template.content.indexOf(variable) == -1) {
-                if (incentivePopulated || variable != "{Incentive}") {
-                  error = "Missing " + variable + " variable";
-                }
-              }
-          });
-        }
-        if (error) {
-          deferred.reject(error);
-        } else {
-          deferred.resolve();
-        }
-
-      }, function(error) {
-        deferred.reject(MessagesUtil.session.notFound);
-      });
-    } else {
       if (params.length) {
         _.map(params, function(variable) {
-          if (template.content.indexOf(variable) == -1){
-            error = "Missing " + variable + " variable";
-            return;
-          }
+            if (template.content.indexOf(variable) == -1) {
+              if ((incentivePopulated || variable != "{Incentive}") && isStartDateRequired(result.startTime, result.endTime, variable)) {
+                error = "Missing " + variable + " variable";
+              }
+            }
         });
       }
       if (error) {
@@ -600,10 +552,31 @@ function validateTemplate(template) {
       } else {
         deferred.resolve();
       }
+
+    }, function(error) {
+      deferred.reject(MessagesUtil.session.notFound);
+    });
+  } else {
+    if (params.length) {
+      _.map(params, function(variable) {
+        if (template.content.indexOf(variable) == -1) {
+           error = "Missing " + variable + " variable";
+           return;
+        }
+      });
     }
-  });
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve();
+    }
+  }
 
   return deferred.promise;
+
+  function isStartDateRequired(startTime, endTime, variableName) {
+    return variableName == "{Start Date}" && isEndDateAfterStartDate(startTime, endTime);
+  }
 }
 
 function getMailTemplateForSession(req, callback) {
@@ -779,7 +752,7 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
-    template.content = formatTemplateString(template.content);
+    template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
@@ -851,7 +824,10 @@ function prepareDefaultStyles(str) {
 }
 
 //replace all "In Editor" variables with .ejs compatible variables
-function formatTemplateString(str) {
+function formatTemplateString(str, startDate, endDate) {
+  if (startDate && endDate) {
+    str = prepareFirstInvitationStartDateState(str, startDate, endDate);
+  }
   str = prepareDefaultStyles(str);
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
@@ -890,6 +866,17 @@ function formatTemplateString(str) {
   str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   return str;
+}
+
+function prepareFirstInvitationStartDateState(str, startDate, endDate) {
+  var visibleStartDate = "start-date-container\">";
+  var hiddenStartDate = "start-date-container\" style=\"display:none\">";
+
+  if (isEndDateAfterStartDate(startDate, endDate)) {
+    return str.replace(hiddenStartDate, visibleStartDate);
+  } else {
+    return str.replace(visibleStartDate, hiddenStartDate);
+  }
 }
 
 function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
