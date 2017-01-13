@@ -26,7 +26,6 @@ module.exports = {
 
 //Exports
 function createOrFindAccountManager(user, body, accountId) {
-  let deferred = q.defer();
   let params = prepareParams(body);
   params.role = 'accountManager';
   delete params.id;
@@ -56,7 +55,7 @@ function createOrFindAccountManager(user, body, accountId) {
     }).then((result) => {
       resolve(_.last(result));
     }, (error) => {
-      reject(filters.errors(error));
+      reject(error);
     })
   })
 }
