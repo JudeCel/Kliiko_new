@@ -102,7 +102,7 @@ router.get('/survey/stats', PERMISSIONS.facilitatorManagerAdmin, survey.getSurve
 
 // Subscription
 router.get('/subscriptionPlan', PERMISSIONS.managerAdmin, subscription.getPlans);
-router.get('/subscriptionPlan/checkPlanFeatures', PERMISSIONS.managerAdmin, subscription.planAllowsToDoIt);
+router.get('/subscriptionPlan/checkPlanFeatures', PERMISSIONS.facilitatorManagerAdmin, subscription.planAllowsToDoIt);
 router.put('/subscriptionPlan/updatePlan', PERMISSIONS.managerAdmin, subscription.updatePlan);
 router.put('/subscriptionPlan/UpdateViaCheckout', PERMISSIONS.managerAdmin, subscription.retrievCheckoutAndUpdateSub)
 router.post('/subscriptionPlan/postQuote', PERMISSIONS.managerAdmin, subscription.postQuote)
