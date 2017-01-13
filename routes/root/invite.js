@@ -62,7 +62,7 @@ function loginUser(req, res, next, user) {
     });
   } else {
     req.body.email = user.email;
-    userRoutes.login(req, res, next);
+    userRoutes.login(req, res, next, true);
   }
 }
 
