@@ -24,6 +24,7 @@ var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
 var uuid = require('node-uuid');
+var accountUserService = require('../../services/accountUser');
 
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
@@ -509,5 +510,25 @@ router.get('/terms_of_use', function(req, res, next) {
 router.get('/terms_of_use_participant', function(req, res, next) {
   res.render('terms_of_use_participant', { title: 'Terms of Use' });
 });
+
+router.get('/close_session/participate/:sessionId/:id', function(req, res, next) {
+  renderCloseSessionView(res, constants.closeSession.confirmedParticipationMessage);
+});
+
+router.get('/close_session/dont_participate/:sessionId/:id', function(req, res, next) {
+  var accountUserId = new Buffer(req.params.id, 'base64').toString('ascii');
+  accountUserService.updateNotInFutureInfo(accountUserId, req.params.sessionId).then(function() {
+      renderCloseSessionView(res, constants.closeSession.declinedParticipationMessage);
+  }, function(error) {
+      renderCloseSessionView(res, error);
+  });
+});
+
+function renderCloseSessionView(res, closeSessionText) {
+  res.render('closeSession', {
+     message: closeSessionText,
+     title: ''
+   });
+}
 
 module.exports = router;
