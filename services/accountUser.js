@@ -203,17 +203,26 @@ function updateAccountUserWithId(data, userId, transaction, callback) {
 }
 
 function updateWithUserId(data, userId, callback) {
+    let permitList = [
+      "gender", "firstName", "lastName", "email", "gender", "mobile",
+      "phoneCountryData", "landlineNumberCountryData", "landlineNumber", "companyName",
+      "country", "postCode", "state", "city", "city", "postalAddress"
+    ]
+
+    let accountUserPermitParams = _.pick(data, permitList)
+    let userPermitParams = _.pick(data, ['email'])
+
     models.sequelize.transaction().then(function(t) {
       User.find({
         where: {
           id: userId
         }
       }).then(function (result) {
-        result.update(data, {transaction: t}).then(function(updateResult) {
-          updateAccountUserWithId(data, userId, t, function(err, accountUserResult) {
+        result.update(userPermitParams, {transaction: t}).then(function(updateResult) {
+          updateAccountUserWithId(accountUserPermitParams, userId, t, function(err, accountUserResult) {
             if (err) {
               t.rollback().then(function() {
-              callback(filters.errors(err));
+                callback(filters.errors(err));
               });
             } else {
               t.commit().then(function() {
