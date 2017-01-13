@@ -10,18 +10,21 @@ module.exports = {
   login: login
 };
 
-function login(req, res, next) {
+function login(req, res, next, skipMissingCredentialsError) {
   passport.authenticate('local', function(err, user, info) {
     if (err || !user) {
       usersService.inviteInProcessExists(req.body.email, function(exists, token) {
         let error = exists ?
           { dialog: {link: { url: '/invite/' + token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.invitationAccepted} } :
           (err || info.message);
+        if (skipMissingCredentialsError && error == "Missing credentials") {
+          error = '';
+        }
         return res.render('login', {
           title: 'Login',
           error: error,
           message: '',
-          email: '',
+          email: req.body.email,
           googleUrl: '/auth/google',
           facebookUrl: '/auth/facebook'
          });

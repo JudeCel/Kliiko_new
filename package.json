@@ -115,7 +115,7 @@
     "moment": "^2.14.1",
     "moment-timezone": "^0.5.5",
     "morgan": "^1.7.0",
-    "multer": "^1.2.0",
+    "multer": "^1.2.1",
     "node-resque": "^4.0.5",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.6.4",

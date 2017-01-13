@@ -98,7 +98,7 @@
       return vm.stepMembers;
     }
 
-    vm.initStep = function(participants) {
+    vm.initStep = function() {
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
@@ -106,10 +106,6 @@
       vm.mouseOveringMember = [];
 
       if (vm.isParticipantPage()) {
-        if(participants.length == 0 && vm.stepMembers.length == 0) {
-          updateParticipantsList(null);
-        }
-
         vm.stepMembers = vm.session.steps.step4.participants;
         vm.pageTitle = "Guests";
       } else {

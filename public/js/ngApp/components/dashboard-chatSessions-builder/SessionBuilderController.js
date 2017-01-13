@@ -307,6 +307,7 @@
         deferred.resolve(3);
       }
       else if (vm.session.sessionData.step == "manageSessionParticipants") {
+        resetParticipantListIfNeed();
         deferred.resolve(4);
       }
       else if (vm.session.sessionData.step == "inviteSessionObservers") {
@@ -397,6 +398,18 @@
           invite: null,
         }
       })
+    }
+
+    function resetParticipantListIfNeed() {
+      if(vm.participants.length == 0 && vm.session.sessionData.participantListId != null) {
+        vm.session.updateStep({ participantListId: null }, vm.session).then(function(res) {
+          if (!res.ignored) {
+            vm.session.sessionData.participantListId = null;
+          }
+        }, function (error) {
+          messenger.error(error);
+        });
+      }
     }
 
     function addParticipantsFromList(list) {

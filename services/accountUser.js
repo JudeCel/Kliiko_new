@@ -11,6 +11,7 @@ var User = models.User;
 var _ = require('lodash');
 var q = require('q');
 var Bluebird = require('bluebird');
+var sessionMemberService = require('./sessionMember');
 
 const VALID_ATTRIBUTES = {
   accountUser: [
@@ -329,6 +330,24 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
+function updateNotInFutureInfo(id, sessionId) {
+  return new Bluebird(function (resolve, reject) {
+    sessionMemberService.isCloseEmailSentToSessionMember(id, sessionId).then(function(isSent) {
+      if (isSent) {
+        updateInfo(id, "NoInFuture").then(function(result) {
+          resolve();
+        }, function(error) {
+          reject(error);
+        });
+      } else {
+        reject(constants.closeSession.emailNotSent);
+      }
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
 //sessionName should be passed only if valueToIncrease == 'Accept'
 function updateInfo(id, valueToIncrease, sessionName, transaction) {
   return new Bluebird(function (resolve, reject) {
@@ -389,5 +408,6 @@ module.exports = {
   findById: findById,
   updateInfo: updateInfo,
   deleteOrRecalculate: deleteOrRecalculate,
-  recalculateRole: recalculateRole
+  recalculateRole: recalculateRole,
+  updateNotInFutureInfo: updateNotInFutureInfo
 }

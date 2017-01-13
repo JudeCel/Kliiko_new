@@ -33,7 +33,7 @@ router.get('/', policy.authorized(['facilitator','admin', 'accountManager']) , f
 });
 
 router.get('/landing', function(req, res) {
-  res.locals.jwt_token = jwtToken.token(req.currentResources.accountUser.id, "User:", "/" )
+  res.locals.jwt_token = jwtToken.token(req.currentResources.user.id, "User:", "/" )
   if(req.query.id && req.query.state == 'succeeded' ){
     subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
   }

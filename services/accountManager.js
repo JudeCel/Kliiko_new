@@ -26,7 +26,6 @@ module.exports = {
 
 //Exports
 function createOrFindAccountManager(user, body, accountId) {
-  let deferred = q.defer();
   let params = prepareParams(body);
   params.role = 'accountManager';
   delete params.id;
@@ -41,7 +40,7 @@ function createOrFindAccountManager(user, body, accountId) {
           delete params.role;
           resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
         }, (error) => {
-          reject(error);
+          reject(filters.errors(error));
         });
       })
     },

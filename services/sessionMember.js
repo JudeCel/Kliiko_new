@@ -22,7 +22,8 @@ module.exports = {
   processSessionMember: processSessionMember,
   refreshAccountUsersRole: refreshAccountUsersRole,
   findAllMembersIds: findAllMembersIds,
-  getSessionMembers: getSessionMembers
+  getSessionMembers: getSessionMembers,
+  isCloseEmailSentToSessionMember: isCloseEmailSentToSessionMember
 };
 
 function createWithTokenAndColour(params) {
@@ -276,6 +277,26 @@ function getSessionMembers(sessionId, acountUserIds) {
       }
     }).then(function(sessionMembers) {
       resolve(sessionMembers);
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function isCloseEmailSentToSessionMember(acountUserId, sessionId) {
+  return new Bluebird(function (resolve, reject) {
+    SessionMember.find({
+      where: {
+        accountUserId: acountUserId,
+        sessionId: sessionId,
+        closeEmailSent: true
+      }
+    }).then(function(sessionMember) {
+      if(sessionMember) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     }, function(error) {
       reject(error);
     });
