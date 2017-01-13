@@ -419,8 +419,8 @@ function updateSubscription(params, providers) {
 
   gatherInformation(params.accountId, params.newPlanId).then(function(result) {
     canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
-      accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
-        if(params.skipCardCheck || validCard(creditCardStatus)){
+
+        if(params.skipCardCheck) {
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
             updateSubscriptionData(chargebeePassParams(result)).then(function(result_1) {
               deferred.resolve(result_1);
@@ -430,16 +430,14 @@ function updateSubscription(params, providers) {
           }, function(error) {
             deferred.reject(error);
           })
-        }else{
+        } else {
           chargebeeSubUpdateViaCheckout(chargebeePassParams(result), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {
             deferred.reject(error);
           })
         }
-      }, function(error) {
-        deferred.reject(error);
-      })
+
     }, function(error) {
       deferred.reject(error);
     });
@@ -448,11 +446,6 @@ function updateSubscription(params, providers) {
   })
 
   return deferred.promise;
-}
-
-
-function validCard(creditCardStatus) {
-  return creditCardStatus == "valid"
 }
 
 function retrievCheckoutAndUpdateSub(hostedPageId) {
@@ -596,25 +589,6 @@ function chargebeeSubUpdate(params, provider) {
       deferred.reject(error.message);
     }else{
       deferred.resolve(result);
-    }
-  });
-
-  return deferred.promise;
-}
-
-function accountHasValidCeditCard(subscriptionId, provider) {
-  let deferred = q.defer();
-
-
-  if(!provider){
-    provider = chargebee.subscription.retrieve
-  }
-
-  provider(subscriptionId).request(function(error, result){
-    if(error){
-      deferred.reject(error);
-    }else{
-      deferred.resolve(result.customer.card_status)
     }
   });
 
