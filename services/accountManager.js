@@ -41,7 +41,7 @@ function createOrFindAccountManager(user, body, accountId) {
           delete params.role;
           resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
         }, (error) => {
-          reject(error);
+          reject(filters.errors(error));
         });
       })
     },
@@ -56,7 +56,7 @@ function createOrFindAccountManager(user, body, accountId) {
     }).then((result) => {
       resolve(_.last(result));
     }, (error) => {
-      reject(error);
+      reject(filters.errors(error));
     })
   })
 }
