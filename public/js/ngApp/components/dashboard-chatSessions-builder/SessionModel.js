@@ -57,6 +57,11 @@
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
+    SessionModel.prototype.isPropertyDisabled = isPropertyDisabled;
+    SessionModel.prototype.disablePropertyChanges = disablePropertyChanges;
+    SessionModel.prototype.enablePropertyChanges = enablePropertyChanges;
+
+    var disabledProperties = [];
 
     return SessionModel;
 
@@ -442,6 +447,42 @@
       });
 
       return deferred.promise;
+    }
+
+    function setPropertyElementEnabled(propertyName, enabled) {
+      var elementSelector = "*[data-property='" + propertyName + "']";
+      var elementAndAllInsideSelector = elementSelector + ", " + elementSelector + " *";
+      var value = enabled ? null : -1;
+      jQuery(elementAndAllInsideSelector).each(function() { 
+        $(this).attr('tabindex', value); 
+      });
+      var classValue = jQuery.browser.msie && jQuery.browser.version <= 10 ? "property-disabled-ie" : "property-disabled";
+      jQuery(elementSelector).each(function() { 
+        if (enabled) {
+          $(this).removeClass(classValue); 
+        } else {
+          $(this).addClass(classValue); 
+        }
+      });
+    }
+
+    function disablePropertyChanges(propertyName) {
+      if (disabledProperties.indexOf(propertyName) == -1) {
+        disabledProperties.push(propertyName);
+        setPropertyElementEnabled(propertyName, false);
+      }
+    }
+
+    function enablePropertyChanges(propertyName) {
+      var index = disabledProperties.indexOf(propertyName);
+      if (index != -1) {
+        disabledProperties.splice(index, 1);
+        setPropertyElementEnabled(propertyName, true);
+      }
+    }
+
+    function isPropertyDisabled(propertyName) {
+      return disabledProperties.indexOf(propertyName) != -1;
     }
 
   }

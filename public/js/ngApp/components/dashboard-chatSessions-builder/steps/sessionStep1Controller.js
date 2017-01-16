@@ -321,6 +321,7 @@
 
     function updateStep(dataObj) {
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
+        vm.session.disablePropertyChanges('dateAndTime');
         initCanSelectFacilitator();
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
           postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
@@ -329,6 +330,9 @@
               vm.step1.endTime = vm.session.steps.step1.endTime;
               vm.step1.timeZone = vm.session.steps.step1.timeZone;
             }
+            vm.session.enablePropertyChanges('dateAndTime');
+          }, function(error) {
+            vm.session.enablePropertyChanges('dateAndTime');
           });
         }
         return;
