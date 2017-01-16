@@ -110,8 +110,7 @@ function canCreateCustomColors(accountId) {
 }
 
 function resetToDefaultScheme(params, accountId) {
-  params.colours = {};
-  params.colours = assignDefaultColours(params.colours);
+  params.colours = assignDefaultColours({});
   return updateScheme(params, accountId);
 }
 
