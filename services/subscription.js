@@ -550,7 +550,7 @@ function chargebeePortalCreate(params, provider) {
 
 function chargebeeSubUpdateViaCheckout(params, redirectUrl, provider) {
   let deferred = q.defer();
-  let passThruContent = JSON.stringify(params)
+  let passThruContent = JSON.stringify(params);
 
   if(!provider) {
     provider = chargebee.hosted_page.checkout_existing;
