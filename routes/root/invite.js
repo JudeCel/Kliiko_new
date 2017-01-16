@@ -43,7 +43,7 @@ function accept(req, res, next) {
       console.log(error);
       inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
         if (user) {
-          res.render(views_path('index'), simpleParams('Invite', invite, error));
+          loginUser(req, res, next, user);
         } else {
           res.render(views_path('newUser'), simpleParams('Invite', invite, error));
         }

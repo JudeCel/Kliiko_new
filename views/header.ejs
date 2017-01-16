@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="/css/compiled/concat.css" type="text/css" media="screen" charset="utf-8">
     <script src="/js/vendors/jQuery/jquery-2.1.4.min.js"></script>
     <script src="/js/compiled/concat.js"></script>
+    <script type="text/javascript">
+      (function(global){
+        global.appData = <%- JSON.stringify(appData) %>
+      })(this);
+    </script>
 </head>
 <body>
   <div class='login-header'>

@@ -1,5 +1,5 @@
 <% include ../header %>
-<div ng-controller="AppController as app">
+<div ng-app="KliikoApp.Root" ng-controller="AppController as app">
   <div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>)">
     <div class='form-horizontal survey-container' id='GalleryController' ng-controller='GalleryController as gc'>
       <div ng-if='!sc.message'>
