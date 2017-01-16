@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -321,7 +321,7 @@
 
     function updateStep(dataObj) {
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
-        vm.session.disablePropertyChanges('dateAndTime');
+        propertyDisabler.disablePropertyChanges('dateAndTime');
         initCanSelectFacilitator();
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
           postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
@@ -330,9 +330,9 @@
               vm.step1.endTime = vm.session.steps.step1.endTime;
               vm.step1.timeZone = vm.session.steps.step1.timeZone;
             }
-            vm.session.enablePropertyChanges('dateAndTime');
+            propertyDisabler.enablePropertyChanges('dateAndTime');
           }, function(error) {
-            vm.session.enablePropertyChanges('dateAndTime');
+            propertyDisabler.enablePropertyChanges('dateAndTime');
           });
         }
         return;
