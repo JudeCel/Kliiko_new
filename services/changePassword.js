@@ -19,17 +19,17 @@ function save(req, callback){
     return callback(errors);
   }
 
-  let userId = req.user.id;
+  let userId = req.currentResources.user.id;
   let newPassword = req.body.password;
   let message = "";
-  let params = {email: req.user.email, name: req.user.firstName};
+  let params = {email: req.currentResources.user.email, name: req.currentResources.accountUser.firstName};
 
   usersService.changePassword(userId, newPassword, function(err, data){
     if (err) {
       return callback(err);
     }
     mailers.users.sendPasswordChangedSuccess(params);
-    callback(null, MessagesUtil.changePassword.success, req.user);
+    callback(null, MessagesUtil.changePassword.success, req.currentResources.user);
   });
 }
 
