@@ -38,7 +38,8 @@
     'KliikoApp.changesValidation',
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
-    'KliikoApp.sessionExpire'
+    'KliikoApp.sessionExpire',
+    'KliikoApp.propertyDisabler'
   ];
 
   angular

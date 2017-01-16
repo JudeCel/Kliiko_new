@@ -55,7 +55,7 @@
         </div>
       </uib-accordion-heading>
 
-      <div class="data-time-content-wrapper" style="display: flex">
+      <div class="data-time-content-wrapper" style="display: flex" data-property='dateAndTime'>
         <span class='date-time-label start'>Start</span>
         <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.startOpened = true' />
 
@@ -84,7 +84,7 @@
         </uib-timepicker>
       </div>
 
-      <div class="data-time-content-wrapper">
+      <div class="data-time-content-wrapper" data-property='dateAndTime'>
         <span class='date-time-label end'>End</span>
         <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.endOpened = true' />
 
@@ -113,7 +113,7 @@
         </uib-timepicker>
       </div>
 
-      <div class='data-time-content-wrapper'>
+      <div class='data-time-content-wrapper' data-property='dateAndTime'>
         <span class='date-time-label timeZone'>Time Zone</span>
         <select class='form-control border-radius-none'
           ng-controller='TimeZonePickerController as tzpc'
