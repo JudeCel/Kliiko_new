@@ -37,7 +37,6 @@ function createOrFindAccountManager(user, body, accountId) {
     (user, params, accountId) => {
       return new Bluebird((resolve, reject) => {
         AccountUser.build(AccountUserService.validateParams(params)).validate().then((validateErrors) => {
-          delete params.role;
           resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
         }, (error) => {
           reject(filters.errors(error));
@@ -50,7 +49,7 @@ function createOrFindAccountManager(user, body, accountId) {
   ]
 
   return new Bluebird((resolve, reject) => {
-    Bluebird.map(flow, (step) => {
+    Bluebird.mapSeries(flow, (step) => {
       return step(user, params, accountId);
     }).then((result) => {
       resolve(_.last(result));
@@ -171,20 +170,19 @@ function updateAccountUser(accountId, accountUserId) {
 }
 
 function createAccountUser(params, accountId) {
-  let deferred = q.defer();
-  adjustParamsForNewAccountUser(params, accountId);
+  return new Bluebird((resolve, reject) => {
+    params = adjustParamsForNewAccountUser(params, accountId);
 
-  AccountUser.create(params).then(function(newAccountUser){
-    addToContactList(newAccountUser).then(function() {
-      deferred.resolve(inviteParams(newAccountUser.id, accountId));
-    }, function(error) {
-      deferred.reject(filters.errors(error));
+    AccountUser.create(params).then(function(newAccountUser){
+      addToContactList(newAccountUser).then(function() {
+        resolve(inviteParams(newAccountUser.id, accountId));
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    }).catch(function(error) {
+      reject(filters.errors(error));
     });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
   });
-
-  return deferred.promise;
 }
 
 function addToContactList(accountUser) {
