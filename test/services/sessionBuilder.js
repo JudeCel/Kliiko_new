@@ -816,7 +816,7 @@ describe('SERVICE - SessionBuilder', function() {
 
   describe('#reopenSession', function(done) {
     describe('happy path', function(done) {
-      it.only('should go to fourth step', function(done) {
+      it('should go to fourth step', function(done) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
             models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               mailFixture.createMailTemplate().then(function() {
