@@ -110,7 +110,7 @@ function canCreateCustomColors(accountId) {
 }
 
 function resetToDefaultScheme(params, accountId) {
-  params.colours = brandProjectConstants.preferenceColours;
+  params.colours = assignDefaultColours({});
   return updateScheme(params, accountId);
 }
 
@@ -182,11 +182,21 @@ function manageFields() {
   let object = { chatRoom: [], email: [] };
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
-    object.chatRoom.push({
-      title: _.startCase(key),
-      model: key,
-      colour: value
-    });
+    if (key == "email") {
+      _.each(value, function (emailValue, emailKey) {
+        object.email.push({
+          title: _.startCase(emailKey),
+          model: emailKey,
+          colour: emailValue
+        });
+      });
+    } else {
+      object.chatRoom.push({
+        title: _.startCase(key),
+        model: key,
+        colour: value
+      });
+    }
   });
 
   return object;
@@ -211,7 +221,13 @@ function assignDefaultColours(colours) {
   let object = { };
 
   _.each(brandProjectConstants.preferenceColours, function (value, key) {
+    if (typeof(value) == "object") {
+      _.each(value, function (objValue, objKey) {
+        object[objKey] = objValue;
+      });
+    } else {
       object[key] = value;
+    }
   });
 
   return _.assign(object, colours || {});

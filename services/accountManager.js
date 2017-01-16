@@ -37,7 +37,6 @@ function createOrFindAccountManager(user, body, accountId) {
     (user, params, accountId) => {
       return new Bluebird((resolve, reject) => {
         AccountUser.build(AccountUserService.validateParams(params)).validate().then((validateErrors) => {
-          delete params.role;
           resolve(preValidate(user, accountId, params.email, (validateErrors || {})))
         }, (error) => {
           reject(filters.errors(error));
@@ -50,7 +49,7 @@ function createOrFindAccountManager(user, body, accountId) {
   ]
 
   return new Bluebird((resolve, reject) => {
-    Bluebird.map(flow, (step) => {
+    Bluebird.mapSeries(flow, (step) => {
       return step(user, params, accountId);
     }).then((result) => {
       resolve(_.last(result));
@@ -171,45 +170,64 @@ function updateAccountUser(accountId, accountUserId) {
 }
 
 function createAccountUser(params, accountId) {
-  let deferred = q.defer();
-  adjustParamsForNewAccountUser(params, accountId);
-
-  AccountUser.create(params).then(function(newAccountUser){
-    addToContactList(newAccountUser).then(function() {
-      deferred.resolve(inviteParams(newAccountUser.id, accountId));
-    }, function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+  return new Bluebird((resolve, reject) => {
+    params = adjustParamsForNewAccountUser(params, accountId);
+    AccountUser.find({
+      where: { AccountId: accountId, email: { ilike: params.email }  }
+    }).then((accountUser) => {
+      if (accountUser) {
+        AccountUserService.deleteOrRecalculate(accountUser.id, null, 'accountManager').then(() => {
+          addToContactList(accountUser, params.role).then(() => {
+            resolve(inviteParams(accountUser.id, accountId));
+          }, function(error) {
+            reject(filters.errors(error));
+          });
+        }, (error) => {
+          reject(error);
+        })
+      } else {
+        AccountUser.create(params).then((newAccountUser) =>{
+          addToContactList(newAccountUser).then(() => {
+            resolve(inviteParams(newAccountUser.id, accountId));
+          }, function(error) {
+            reject(filters.errors(error));
+          });
+        }).catch(function(error) {
+          reject(filters.errors(error));
+        });
+      }
+    })
   });
-
-  return deferred.promise;
 }
 
-function addToContactList(accountUser) {
-  let deferred = q.defer();
-
-  models.ContactList.find({
-    where: {
-      role: accountUser.role,
-      accountId: accountUser.AccountId
-    }
-  }).then(function(contactList) {
-    let params = {
-      accountUserId: accountUser.id,
-      accountId: accountUser.AccountId,
-      contactListId: contactList.id
-    };
-
-    models.ContactListUser.create(params).then(function() {
-      deferred.resolve();
-    },function(error) {
-      deferred.reject(filters.errors(error));
+function addToContactList(accountUser, role) {
+ return new Bluebird((resolve, reject) => {
+    models.ContactList.find({
+      where: {
+        role: (role || accountUser.role),
+        accountId: accountUser.AccountId
+      },
+      include: [{model: models.ContactListUser, where: {
+        accountUserId: accountUser.id},
+        required: false
+      }]
+    }).then((contactList) => {
+      if (_.isEmpty(contactList.ContactListUsers)) {
+        let params = {
+          accountUserId: accountUser.id,
+          accountId: accountUser.AccountId,
+          contactListId: contactList.id
+        };
+        models.ContactListUser.create(params).then(()=> {
+          resolve();
+        },function(error) {
+          reject(filters.errors(error));
+        });
+      } else {
+        resolve();
+      }
     });
-  });
-
-  return deferred.promise;
+ })
 }
 
 function adjustParamsForNewAccountUser(params, accountId) {
