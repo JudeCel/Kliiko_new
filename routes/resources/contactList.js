@@ -5,7 +5,7 @@ var contactListService = require('../../services/contactList');
 var accountUserService = require('../../services/accountUser');
 
 function exportContactList(req, res, next) {
-  accountUserService.findById(req.user.accountUserId).then(function(accountResult) {
+  accountUserService.findById(req.currentResources.accountUser.id).then(function(accountResult) {
     contactListService.exportContactList(req.params, accountResult.Account).then(function(result) {
       json2csv({ data: result.data, fields: result.header }, function(error, csv) {
         res.set('Content-Disposition', 'attachment; filename="contactlist.csv"');

@@ -130,7 +130,7 @@ function previewMailTemplatePost(req, res, next) {
 }
 
 function sendMail(req, res, next) {
-  MailTemplateService.sendTestEmail(req.body.mailTemplate, req.body.sessionId, req.user.accountUserId, function(error, data) {
+  MailTemplateService.sendTestEmail(req.body.mailTemplate, req.body.sessionId, req.currentResources.accountUser.id, function(error, data) {
     if (error) {
       res.send({ error: error });
     } else {
