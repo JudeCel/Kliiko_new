@@ -65,8 +65,13 @@ describe('Change Password', function() {
       body: {
         password: '123',
         repassword: '123'
-      },
-      user: testUser.dataValues
+        },
+      currentResources: {
+        user: testUser.dataValues,
+        accountUser: {
+          firstName: testUser.dataValues.firstName
+        }
+      }
     }
     changePassword.save(attrs, function(errors, user){
       assert.equal(errors.message, 'Validation error: Make sure your Password is at least 7 characters');
@@ -80,7 +85,12 @@ describe('Change Password', function() {
         password: 'okpassword',
         repassword: 'okpassword'
       },
-      user: testUser.dataValues
+      currentResources: {
+        user: testUser.dataValues,
+        accountUser: {
+          firstName: testUser.dataValues.firstName
+        }
+      }
     }
     changePassword.save(attrs, function(errors, message, user){
       assert.equal(message, changePassword.successMessage);
