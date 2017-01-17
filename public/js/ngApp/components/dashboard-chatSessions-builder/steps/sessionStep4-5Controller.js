@@ -113,7 +113,7 @@
         vm.lastStep = true;
         vm.pageTitle = "Spectators";
       }
-      socket.sessionsBuilderChannel(vm.session.id, function(channel) {
+      socket.sessionsBuilderChannel($scope, vm.session.id, function(channel) {
         vm.SocketChannel = channel;
         bindSocketEvents();
         deferred.resolve();
