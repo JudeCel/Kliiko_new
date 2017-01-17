@@ -12,7 +12,7 @@ var MessagesUtil = require('./../util/messages');
 function assignCurrentDomain(result, req) {
   req.currentResources = {
     accountUser: { id: result.id, role: result.role},
-    account: { id: result.Account.id, name: result.Account.name},
+    account: { id: result.Account.id, name: result.Account.name, subdomain: result.Account.subdomain},
     user: {id: result.User.id, email: result.User.email}
   };
 }
@@ -45,7 +45,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
         required: true
       },
       { model: models.Account,
-        attributes: ['id', 'name'],
+        attributes: ['id', 'name', 'subdomain'],
         where: {$and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)]},
         required: true
       }
