@@ -63,7 +63,7 @@ function deleteById(req, res, next) {
   }
   let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
 
-  topicsService.destroy(req.params.id).then(
+  topicsService.destroy(req.params.id, isAdmin).then(
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.removed })},
     function(error) { res.send({error:error})}
   );
