@@ -168,11 +168,11 @@
     function editTopic() {
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
         if (res.data.id == vm.topicData.id) {
-          vm.list[vm.editTopicIndex] = vm.topicData;
+          vm.list[vm.editTopicIndex] = res.data;
         } else {
           vm.list.push(res.data);
-          vm.prepareCurrentPageItems();
         }
+        vm.prepareCurrentPageItems();
         messenger.ok(res.message);
         domServices.modal('topicModalWindow', 'close');
         vm.topicData = {};
