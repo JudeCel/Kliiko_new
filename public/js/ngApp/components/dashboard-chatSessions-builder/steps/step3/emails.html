@@ -66,9 +66,11 @@
 
         <button class='btn btn-standart btn-lightgreen pull-right btn-small margin-right-10' ng-click='ec.openModal()'>Save As</button>
         <button class='btn btn-standart btn-green pull-right btn-small margin-right-10' ng-click='step3Controller.modifyAndSave(false, true)'>Apply</button>
-        <button class='btn btn-standart btn-blue pull-right btn-small margin-right-10' ng-click='ec.previewMailTemplate()'>Preview</button>
-        <button class='btn btn-standart btn-green pull-right btn-medium margin-right-10' ng-click="ec.sendEmail()">Test Email</button>
-        <input type='text' class="test-email-input pull-right margin-right-10" ng-disabled="true" value="{{ app.user.email }}"/>
+        <button class='btn btn-standart btn-blue pull-right btn-small margin-right-10 margin-bottom-10' ng-click='ec.previewMailTemplate()'>Preview</button>
+        <span class="testEmailBlock pull-right">
+          <button class='btn btn-standart btn-green pull-right btn-medium margin-right-10' ng-click="ec.sendEmail()">Test Email</button>
+          <input type='text' class="test-email-input pull-right margin-right-10" ng-disabled="true" value="{{ app.user.email }}"/>
+        </span>
       </div>
     </div>
   </section>
