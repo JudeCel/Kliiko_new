@@ -18,9 +18,9 @@ function assignCurrentDomain(result, req) {
 }
 
 function getSubdomain(req) {
-  let subdomains = req.subdomains
-  let skipSubdomains = _.split(process.env.SERVER_SKIP_SUBDOMAINS, ",")
-  subdomains = _.difference(req.subdomains, skipSubdomains)
+  let subdomains = req.subdomains;
+  let skipSubdomains = _.split(process.env.SERVER_SKIP_SUBDOMAINS, ",");
+  subdomains = _.difference(req.subdomains, skipSubdomains);
 
 
   if (_.last(subdomains)) {
