@@ -17,7 +17,7 @@ module.exports = {
 }
 
 function planSelectPage(req, res, next) {
-  let redirectUrl = subdomains.url(req, req.currentResources.account.name, '/account-hub/landing');
+  let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub/landing');
   if(req.originalUrl == '/account-hub/selectPlan' || req.originalUrl == '/account-hub/landing') {
     next();
   }

@@ -47,7 +47,7 @@ router.use(function (req, res, next) {
         if(req.path.includes("/account-hub")){
           next();
         }else{
-          res.redirect(subdomains.url(req, req.currentResources.account.name, '/account-hub'));
+          res.redirect(subdomains.url(req, req.currentResources.account.subdomain, '/account-hub'));
         }
       }else if(user && !account) {
         res.redirect(subdomains.url(req, process.env.SERVER_BASE_SUBDOMAIN, '/my-dashboard'));

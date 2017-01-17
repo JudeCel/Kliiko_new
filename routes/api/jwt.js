@@ -3,11 +3,6 @@
 var jwt = require('./../../lib/jwt');
 var request = require('request');
 
-function getToken(req, res, next) {
-  let token = jwt.token(req.user.accountUserId);
-  res.send({ token: token });
-};
-
 function getChatRedirectUrl(req, res, result) {
   var options = {
     url: req.query.chatUrl + '/api/auth/token/',

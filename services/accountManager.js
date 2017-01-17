@@ -176,7 +176,7 @@ function createAccountUser(params, accountId) {
       where: { AccountId: accountId, email: { ilike: params.email }  }
     }).then((accountUser) => {
       if (accountUser) {
-        AccountUserService.deleteOrRecalculate(accountUser.id, null, 'accountManager').then(() => {
+        AccountUserService.deleteOrRecalculate(accountUser.id, 'accountManager', null ).then(() => {
           addToContactList(accountUser, params.role).then(() => {
             resolve(inviteParams(accountUser.id, accountId));
           }, function(error) {
