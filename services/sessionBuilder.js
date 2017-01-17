@@ -86,7 +86,8 @@ function defaultTopicParams(session, topic) {
     landing: true,
     boardMessage: topic.boardMessage,
     name: topic.name,
-    sign: topic.sign
+    sign: "Click to access Topics",
+    lastSign: topic.sign
   };
 }
 
