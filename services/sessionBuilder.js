@@ -571,7 +571,15 @@ function canRemoveInvite(invite){
     models.SessionMember.find({
       attributes: ["id"],
       where: { sessionId: invite.sessionId, accountUserId: invite.accountUserId },
-      include: [{model: models.Message, attributes: ["id"]}]
+      include: [
+        {model: models.Message, attributes: ["id"]},
+        {
+          attributes: ["id"],
+          required: true,
+          model: models.Session,
+          where: {id: invite.sessionId, type: 'focus'}
+        }
+      ]
   }).then((sessionMember) => {
     if (sessionMember && sessionMember.Messages.length > 0) {
       reject("Is messiges in session");
