@@ -331,7 +331,8 @@
     }
 
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj, vm.session).then(null, function (err) {
+      vm.session.updateStep(dataObj, vm.session).then(null,
+        function (err) {
           errorMessenger.showError(err);
         }
       );

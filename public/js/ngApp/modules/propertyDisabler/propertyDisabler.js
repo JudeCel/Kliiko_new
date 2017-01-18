@@ -31,17 +31,19 @@
     }
 
     function disablePropertyChanges(propertyName) {
-      if (vm.disabledProperties.indexOf(propertyName) == -1) {
+      if (propertyName && vm.disabledProperties.indexOf(propertyName) == -1) {
         vm.disabledProperties.push(propertyName);
         setPropertyElementEnabled(propertyName, false);
       }
     }
 
     function enablePropertyChanges(propertyName) {
-      var index = vm.disabledProperties.indexOf(propertyName);
-      if (index != -1) {
-        vm.disabledProperties.splice(index, 1);
-        setPropertyElementEnabled(propertyName, true);
+      if (propertyName) {
+        var index = vm.disabledProperties.indexOf(propertyName);
+        if (index != -1) {
+          vm.disabledProperties.splice(index, 1);
+          setPropertyElementEnabled(propertyName, true);
+        }
       }
     }
 

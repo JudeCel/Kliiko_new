@@ -93,14 +93,19 @@
     }
 
     function updateOrCleanColorScheme(id, executeUpdate) {
+      propertyDisabler.disablePropertyChanges('colorScheme');
       if (vm.session.steps.step1.brandProjectPreferenceId == id) {
         vm.colorScheme = null;
         vm.session.steps.step1.brandProjectPreferenceId = null;
-        executeUpdate({ brandProjectPreferenceId: null });
       } else {
-        executeUpdate({ brandProjectPreferenceId: id });
         vm.session.steps.step1.brandProjectPreferenceId = id;
       }
+      vm.session.updateStep({ brandProjectPreferenceId: vm.session.steps.step1.brandProjectPreferenceId }, vm.session).then(function() {
+        propertyDisabler.enablePropertyChanges('colorScheme');
+      }, function() {
+        propertyDisabler.enablePropertyChanges('colorScheme');
+        messenger.error(err);
+      });
     }
 
     function newFacilitator(userData) {
@@ -321,6 +326,12 @@
 
     function updateStep(dataObj) {
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
+        if (propertyDisabler.isPropertyDisabled('dateAndTime')) {
+          setTimeout(function() {
+            updateStep(dataObj);
+          }, 10);
+          return;
+        }
         propertyDisabler.disablePropertyChanges('dateAndTime');
         initCanSelectFacilitator();
         if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
@@ -336,8 +347,9 @@
           });
         }
         return;
+      } else {
+        return postUpdateStep(dataObj);
       }
-      return postUpdateStep(dataObj);
     }
 
     // Gallery stuff
