@@ -149,10 +149,12 @@ function selectAccountManagerContactList(contactLists) {
 
 function prepareAccountManagerParams(params, account, user) {
   let  defaultStruct = {
-    role: 'accountManager',
     owner: true,
     AccountId: account.id,
     UserId: user.id
+  }
+  if (params.role != 'admin') {
+    params.role = 'accountManager';
   }
   return _.merge(params, defaultStruct);
 }
