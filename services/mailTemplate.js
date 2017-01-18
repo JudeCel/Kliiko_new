@@ -19,6 +19,7 @@ var constants = require('../util/constants');
 var momentTimeZone = require('moment-timezone');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 let Bluebird = require('bluebird');
+let moment = require('moment');
 
 module.exports = {
   validate: validate,
@@ -521,6 +522,10 @@ function variablesForTemplate(type) {
   }
 }
 
+function isEndDateAfterStartDate(startTime, endTime) {
+  return moment(endTime).isAfter(startTime, 'day');
+}
+
 function validateTemplate(template) {
   let deferred = q.defer();
   var params = variablesForTemplate(template['MailTemplateBase.category']);
@@ -536,7 +541,7 @@ function validateTemplate(template) {
       if (params.length) {
         _.map(params, function(variable) {
             if (template.content.indexOf(variable) == -1) {
-              if (incentivePopulated || variable != "{Incentive}") {
+              if ((incentivePopulated || variable != "{Incentive}") && !skipStartDate(result.startTime, result.endTime, variable)) {
                 error = "Missing " + variable + " variable";
               }
             }
@@ -554,7 +559,7 @@ function validateTemplate(template) {
   } else {
     if (params.length) {
       _.map(params, function(variable) {
-        if (template.content.indexOf(variable) == -1){
+        if (template.content.indexOf(variable) == -1) {
            error = "Missing " + variable + " variable";
            return;
         }
@@ -568,6 +573,10 @@ function validateTemplate(template) {
   }
 
   return deferred.promise;
+
+  function skipStartDate(startTime, endTime, variableName) {
+    return variableName == "{Start Date}" && !isEndDateAfterStartDate(startTime, endTime) ;
+  }
 }
 
 function getMailTemplateForSession(req, callback) {
@@ -767,7 +776,7 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
-    template.content = formatTemplateString(template.content);
+    template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
@@ -839,7 +848,10 @@ function prepareDefaultStyles(str) {
 }
 
 //replace all "In Editor" variables with .ejs compatible variables
-function formatTemplateString(str) {
+function formatTemplateString(str, startDate, endDate) {
+  if (startDate && endDate) {
+    str = prepareFirstInvitationStartDateState(str, startDate, endDate);
+  }
   str = prepareDefaultStyles(str);
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
@@ -878,6 +890,17 @@ function formatTemplateString(str) {
   str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
   return str;
+}
+
+function prepareFirstInvitationStartDateState(str, startDate, endDate) {
+  var visibleStartDate = "start-date-container\">";
+  var hiddenStartDate = "start-date-container\" style=\"display:none\">";
+
+  if (isEndDateAfterStartDate(startDate, endDate)) {
+    return str.replace(hiddenStartDate, visibleStartDate);
+  } else {
+    return str.replace(visibleStartDate, hiddenStartDate);
+  }
 }
 
 function composePreviewMailTemplate(mailTemplate, sessionId, callback) {

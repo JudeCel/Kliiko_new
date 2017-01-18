@@ -15,7 +15,7 @@ var _ = require('lodash');
 var q = require('q');
 
 
-function createNewAccountIfNotExists(params, userId) {
+function createNewAccountIfNotExists(params, userId, isAdmin) {
   let deferred = q.defer();
 
   if (!params.accountName || params.accountName == '') {
@@ -26,7 +26,7 @@ function createNewAccountIfNotExists(params, userId) {
         deferred.reject(filters.errors(MessagesUtil.account.accountExists));
       } else {
         models.AccountUser.find({ where: { UserId: userId, role: { $in: ["facilitator", "accountManager"] } } }).then(function(result) {
-          createNewAccount(params, userId, !result).then(function(createResult) {
+          createNewAccount(params, userId, !result, isAdmin).then(function(createResult) {
             deferred.resolve(createResult);
           }, function(error) {
             deferred.reject(error);
@@ -43,7 +43,7 @@ function createNewAccountIfNotExists(params, userId) {
   return deferred.promise;
 }
 
-function createNewAccount(params, userId, freeTrial) {
+function createNewAccount(params, userId, freeTrial, isAdmin) {
   let deferred = q.defer();
 
   let createNewAccountFunctionList = [
@@ -54,7 +54,7 @@ function createNewAccount(params, userId, freeTrial) {
           include: [models.AccountUser]
         }).then(function(result) {
 
-          let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial);
+          let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial, isAdmin);
           if (result.AccountUsers[0]) {
             createParams.firstName = result.AccountUsers[0].firstName;
             createParams.lastName = result.AccountUsers[0].lastName;
@@ -86,8 +86,8 @@ function createNewAccount(params, userId, freeTrial) {
   return deferred.promise;
 }
 
-function getCreateNewAccountParams(accountName, email, freeTrial) {
-  return {
+function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
+  let res = {
     accountName: accountName,
     firstName: accountName,
     gender: '',
@@ -96,13 +96,22 @@ function getCreateNewAccountParams(accountName, email, freeTrial) {
     active: false,
     selectedPlanOnRegistration: freeTrial ? 'free_trial' : 'free_account',
   };
+  if (isAdmin) {
+    res.role = 'admin';
+    res.selectedPlanOnRegistration = null;
+  }
+  return res;
 }
 
 function create(object, callback) {
   object.account = {};
   object.errors = object.errors || {};
 
-  Account.create({ name: object.params.accountName, selectedPlanOnRegistration: object.params.selectedPlanOnRegistration }, { transaction: object.transaction }).then(function(result) {
+  Account.create({ 
+    name: object.params.accountName, 
+    selectedPlanOnRegistration: object.params.selectedPlanOnRegistration, 
+    admin: object.params.role == "admin"
+  }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, type: 'focus', name: 'Default Focus Scheme', colours: {} }, object.transaction).then(function() {
         brandColourService.createDefaultForAccount({ accountId: result.id, type: 'forum', name: 'Default Forum Scheme', colours: {} }, object.transaction).then(function() {
