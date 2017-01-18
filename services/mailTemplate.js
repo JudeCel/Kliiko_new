@@ -572,7 +572,7 @@ function validateTemplate(template) {
 
 function getMailTemplateForSession(req, callback) {
   if (!req.template.properties || !req.template.properties.sessionId) {
-    return callback(req.template);
+    return callback();
   }
 
   let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
@@ -636,51 +636,75 @@ function removeTemplatesFromSession(ids, callback){
   }
 }
 
-function saveMailTemplate(template, createCopy, accountId, callback) {
+function validateTemplateSnapshot(shouldCreateTemplateCopy, snapshot, templateObject, callback) {
+  if (shouldCreateTemplateCopy) {
+    callback();
+  } else {
+    MailTemplate.find({ where: {id: templateObject.id} }).then(function(originalTemplate) {
+      let validationRes = sessionBuilderSnapshotValidation.isMailTemplateDataValid(snapshot, templateObject, originalTemplate);
+      if (validationRes.isValid) {
+        callback();
+      } else {
+        callback(null, { validation: validationRes });
+      }
+    }).catch(function(error) {
+      callback(error);
+    });
+  }
+}
+
+function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   if (template) {
     validateTemplate(template).then(function() {
 
       let templateObject = buildTemplate(template);
+      let shouldCreateTemplateCopy = shouldCreateCopy(templateObject.template, createCopy, accountId);
 
-      getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-        let ids = [];
-        if (!createCopy && result && result.length > 0) {
-          let validationRes = sessionBuilderSnapshotValidation.isMailTemplateDataValid(template.snapshot, templateObject, result[0]);
-          if (!validationRes.isValid) {
-            callback(null, { validation: validationRes });
-            return;
-          }
-          ids = _.map(result, 'id');
-        }
+      validateTemplateSnapshot(shouldCreateTemplateCopy, template.snapshot, templateObject, function(validationError, validationResult) {
+        if (validationError) {
+          callback(validationError);
+        } else if (validationResult) {
+          callback(null, validationResult);
+        } else {
 
-        removeTemplatesFromSession(ids, function() {
-          if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
-            templateObject.template.isCopy = true;
-            templateObject.template.AccountId = accountId;
-            if (createCopy) {
-              templateObject.template.sessionId = null;
+          getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
+            let ids = [];
+            if (!createCopy && result && result.length > 0) {
+              ids = _.map(result, 'id');
             }
 
-            create(templateObject.template, function(error, result) {
-              if (error) {
-                callback(error);
-              } else {
-                
-                setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
-              }
-            });
+            let isAdminDefault = isAdmin && template.properties && template.properties.sessionBuilder;
 
-          } else {
-            update(templateObject.id, templateObject.template, function(error, result) {
-              if (error) {
-                callback(error);
+            removeTemplatesFromSession(ids, function() {
+              if (shouldCreateTemplateCopy) {
+                templateObject.template.isCopy = true;
+                templateObject.template.AccountId = accountId;
+                if (createCopy) {
+                  templateObject.template.sessionId = null;
+                }
+
+                create(templateObject.template, function(error, result) {
+                  if (error) {
+                    callback(error);
+                  } else {
+                    setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdminDefault, callback);
+                  }
+                });
+
               } else {
-                setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
+                update(templateObject.id, templateObject.template, function(error, result) {
+                  if (error) {
+                    callback(error);
+                  } else {
+                    setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, isAdminDefault, callback);
+                  }
+                });
               }
-            });
-          }
-        });//removeTemplatesFromSession
-      });//getMailTemplateForSession
+            });//removeTemplatesFromSession
+          });//getMailTemplateForSession
+
+        }
+      });      
 
     }, function(error) {
       callback(error);
