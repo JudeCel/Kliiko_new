@@ -22,7 +22,7 @@ function index(req, res, next) {
     });
   }, (error) => {
     console.log(error, "invite.js:24");
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
@@ -50,8 +50,7 @@ function accept(req, res, next) {
       })
     });
   }, (error) => {
-    console.log(error, "invite.js:24");
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 };
 
@@ -96,9 +95,7 @@ function sessionAccept(req, res, next) {
       res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }
   }, function(error) {
-    console.log(error);
-    req.flash('message', { inviteError: true});
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
