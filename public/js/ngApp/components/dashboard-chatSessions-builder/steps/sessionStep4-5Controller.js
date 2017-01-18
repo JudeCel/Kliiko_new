@@ -392,7 +392,7 @@
       vm.session.removeMember(vm.currentMemberModal).then(function(res) {
         removeMemberFromList(vm.currentMemberModal);
         vm.currentMemberModal = null;
-        domServices.modal('confirmInviteRemoveModal', true);
+        domServices.modal(null, null, true);
         messenger.ok(res.message);
       }, function(error) {
         domServices.modal('confirmInviteRemoveModal', true);
@@ -405,7 +405,11 @@
         removeMemberFromList(member);
       } else {
         vm.currentMemberModal = member;
-        domServices.modal('confirmInviteRemoveModal');
+        if (vm.isObserverPage()) {
+          domServices.modal('confirmInviteRemoveObserverModal');
+        }else {
+          domServices.modal('confirmInviteRemoveModal');
+        }
       }
     }
 
