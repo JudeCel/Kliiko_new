@@ -632,19 +632,19 @@ bluebird@^3.0.1, bluebird@^3.0.5, bluebird@^3.3.4, bluebird@^3.4.5, bluebird@^3.
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.4.7.tgz#f72d760be09b7f76d08ed8fae98b289a8d05fab3"
 
 body-parser@^1.15.2:
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.15.2.tgz#d7578cf4f1d11d5f6ea804cef35dc7a7ff6dae67"
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.16.0.tgz#924a5e472c6229fb9d69b85a20d5f2532dec788b"
   dependencies:
     bytes "2.4.0"
     content-type "~1.0.2"
-    debug "~2.2.0"
+    debug "2.6.0"
     depd "~1.1.0"
-    http-errors "~1.5.0"
-    iconv-lite "0.4.13"
+    http-errors "~1.5.1"
+    iconv-lite "0.4.15"
     on-finished "~2.3.0"
-    qs "6.2.0"
-    raw-body "~2.1.7"
-    type-is "~1.6.13"
+    qs "6.2.1"
+    raw-body "~2.2.0"
+    type-is "~1.6.14"
 
 boom@2.x.x:
   version "2.10.1"
@@ -876,8 +876,8 @@ camelcase@^3.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
 
 caniuse-db@^1.0.30000525, caniuse-db@^1.0.30000604, caniuse-db@~1.0.30000492:
-  version "1.0.30000611"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000611.tgz#1075d14d9b3cc153caf5e9e35f45565b03304c37"
+  version "1.0.30000613"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000613.tgz#639133b7a5380c1416f9701d23d54d093dd68299"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -1451,7 +1451,7 @@ debug-fabulous@0.0.X:
     lazy-debug-legacy "0.0.X"
     object-assign "4.1.0"
 
-debug@*, debug@2.X, debug@^2.1.0, debug@^2.1.1, debug@^2.2, debug@^2.2.0, debug@^2.3.2:
+debug@*, debug@2.6.0, debug@2.X, debug@^2.1.0, debug@^2.1.1, debug@^2.2, debug@^2.2.0, debug@^2.3.2:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
   dependencies:
@@ -3515,7 +3515,7 @@ htmlparser2@^3.9.0, htmlparser2@~3.9.0:
     inherits "^2.0.1"
     readable-stream "^2.0.2"
 
-http-errors@~1.5.0:
+http-errors@~1.5.0, http-errors@~1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.5.1.tgz#788c0d2c1de2c81b9e6e8c01843b6b97eb920750"
   dependencies:
@@ -3557,11 +3557,7 @@ ical-generator@^0.2.7:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/ical-generator/-/ical-generator-0.2.9.tgz#67312e484a8681c7abc1bbe77237b13faa5b1eb8"
 
-iconv-lite@0.4.13, iconv-lite@^0.4.4, iconv-lite@^0.4.9:
-  version "0.4.13"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
-
-iconv-lite@0.4.15, iconv-lite@^0.4.5:
+iconv-lite@0.4.15, iconv-lite@^0.4.4, iconv-lite@^0.4.5, iconv-lite@^0.4.9:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
@@ -5391,7 +5387,11 @@ oauth@0.9.x:
   version "0.9.15"
   resolved "https://registry.yarnpkg.com/oauth/-/oauth-0.9.15.tgz#bd1fefaf686c96b75475aed5196412ff60cfb9c1"
 
-object-assign@*, object-assign@4.1.0, object-assign@^4.0.0, object-assign@^4.0.1, object-assign@^4.1.0:
+object-assign@*, object-assign@^4.0.0, object-assign@^4.0.1, object-assign@^4.1.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
+
+object-assign@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
 
@@ -6122,11 +6122,11 @@ qs@0.4.x:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-0.4.2.tgz#3cac4c861e371a8c9c4770ac23cda8de639b8e5f"
 
-qs@6.2.0, qs@~6.2.0:
+qs@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.0.tgz#3b7848c03c2dece69a9522b0fae8c4126d745f3b"
 
-qs@6.2.1:
+qs@6.2.1, qs@~6.2.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.1.tgz#ce03c5ff0935bc1d9d69a9f14cbd18e568d67625"
 
@@ -6153,12 +6153,12 @@ range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
 
-raw-body@~2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.1.7.tgz#adfeace2e4fb3098058014d08c072dcc59758774"
+raw-body@~2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.2.0.tgz#994976cf6a5096a41162840492f0bdc5d6e7fb96"
   dependencies:
     bytes "2.4.0"
-    iconv-lite "0.4.13"
+    iconv-lite "0.4.15"
     unpipe "1.0.0"
 
 rc@^1.0.1, rc@^1.1.2, rc@~1.1.6:
@@ -7003,8 +7003,8 @@ source-map-support@^0.2.10:
     source-map "0.1.32"
 
 source-map-support@^0.4.6:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.9.tgz#45eaa04f067e049d987b27599ed014a37750aaff"
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.10.tgz#d7b19038040a14c0837a18e630a196453952b378"
   dependencies:
     source-map "^0.5.3"
 
@@ -7588,7 +7588,7 @@ type-detect@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-1.0.0.tgz#762217cc06db258ec48908a1298e8b95121e8ea2"
 
-type-is@^1.6.4, type-is@~1.6.13:
+type-is@^1.6.4, type-is@~1.6.13, type-is@~1.6.14:
   version "1.6.14"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.14.tgz#e219639c17ded1ca0789092dd54a03826b817cb2"
   dependencies:

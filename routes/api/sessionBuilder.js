@@ -23,7 +23,8 @@ module.exports = {
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  setAnonymous: setAnonymous
+  setAnonymous: setAnonymous,
+  canRemoveInvite: canRemoveInvite
 };
 
 function initializeBuilder(req, res, next) {
@@ -120,6 +121,14 @@ function removeInvite(req, res, next) {
   sessionBuilderServices.removeInvite(req.params, accountId).then(function(message) {
     res.send({ message: message });
   }, function(error) {
+    res.send({ error: error });
+  });
+}
+function canRemoveInvite(req, res, next) {
+  let accountId = req.currentResources.account.id;
+  sessionBuilderServices.canRemoveInvite(req.params, accountId).then((message) => {
+    res.send({ message: message });
+  }, (error) => {
     res.send({ error: error });
   });
 }

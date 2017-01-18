@@ -254,7 +254,7 @@
 
     function updateParticipantsList(value) {
       vm.session.updateStep({ participantListId: value }, vm.session).then(function(res) {
-        if (!res.ignored) { 
+        if (!res.ignored) {
           vm.session.sessionData.participantListId = value;
         }
       }, function (error) {
@@ -391,13 +391,24 @@
       if(returnMemberInviteStatus(member) == 'notInvited') {
         removeMemberFromList(member);
       } else {
-        angularConfirm('Are you sure you want to do this?').then(function(response) {
-          vm.session.removeMember(member).then(function(res) {
-            removeMemberFromList(member);
-            messenger.ok(res.message);
-          }, function(error) {
-            messenger.error(error);
-          });
+        vm.session.canRemoveMember(member).then((resp) => {
+          if(resp.error){
+          }else{
+            domServices.modal('rejectedInviteRemoveModal');
+            console.log(resp.message, "message");
+          }
+
+
+          // angularConfirm('Are you sure you want to do this?').then(function(response) {
+          //   vm.session.removeMember(member).then(function(res) {
+          //     removeMemberFromList(member);
+          //     messenger.ok(res.message);
+          //   }, function(error) {
+          //     messenger.error(error);
+          //   });
+          // });
+        }, function(error) {
+
         });
       }
     }
