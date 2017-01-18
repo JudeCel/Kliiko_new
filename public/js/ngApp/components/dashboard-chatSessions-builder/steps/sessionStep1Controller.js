@@ -345,6 +345,8 @@
           }, function(error) {
             propertyDisabler.enablePropertyChanges('dateAndTime');
           });
+        } else {
+          propertyDisabler.enablePropertyChanges('dateAndTime');
         }
         return;
       } else {
