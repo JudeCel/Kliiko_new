@@ -3,8 +3,7 @@
 var moment = require('moment-timezone');
 var models = require('./../models');
 var filters = require('./../models/filters');
-var Session = models.Session;
-var AccountUser = models.AccountUser;
+var {Session, AccountUser} = models;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
@@ -569,7 +568,17 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
 
 function canRemoveInvite(invite){
   return new Bluebird((resolve, reject) => {
-    reject("pff");
+    models.SessionMember.find({
+      attributes: ["id"],
+      where: { sessionId: invite.sessionId, accountUserId: invite.accountUserId },
+      include: [{model: models.Message, attributes: ["id"]}]
+  }).then((sessionMember) => {
+    if (sessionMember && sessionMember.Messages.length > 0) {
+      reject("Is messiges in session");
+    }else{
+      resolve();
+    }
+  })
   });
 }
 
