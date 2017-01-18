@@ -51,7 +51,6 @@ module.exports = {
   sendCloseEmail: sendCloseEmail,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  canRemoveInvite: canRemoveInvite,
   sessionMailTemplateExists: sessionMailTemplateExists,
   searchSessionMembers: searchSessionMembers,
   sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
@@ -568,20 +567,9 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
   });
 }
 
-function canRemoveInvite(params){
+function canRemoveInvite(invite){
   return new Bluebird((resolve, reject) => {
-    models.Invite.find({
-      where: {
-        id: params.inviteId,
-        sessionId: params.id
-      }
-    }).then((invite) => {
-      if (invite) {
-        resolve("Invite can be removed");
-      } else {
-        reject("Invite can't be removed");
-      }
-    })
+    reject("pff");
   });
 }
 
@@ -595,11 +583,15 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      inviteService.removeInvite(invite).then(() =>{
-        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+      canRemoveInvite(invite).then(() => {
+        inviteService.removeInvite(invite).then(() =>{
+          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+        }, (error) => {
+          deferred.reject(error);
+        });
       }, (error) => {
         deferred.reject(error);
-      });
+      })
     } else {
       deferred.reject(MessagesUtil.sessionBuilder.inviteNotFound);
     }

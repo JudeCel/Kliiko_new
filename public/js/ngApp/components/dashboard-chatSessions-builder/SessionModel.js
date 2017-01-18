@@ -14,7 +14,6 @@
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
       inviteMembers: { method: 'POST', params: { path: 'invite' } },
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
-      canRemoveInvite: { method: 'POST', params: { path: 'canRemoveInvite' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
       sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
       setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
@@ -53,7 +52,6 @@
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
-    SessionModel.prototype.canRemoveMember = canRemoveMember;
     SessionModel.prototype.sendGenericEmail = sendGenericEmail;
     SessionModel.prototype.sendCloseEmail = sendCloseEmail;
     SessionModel.prototype.processStepResponse = processStepResponse;
@@ -395,22 +393,6 @@
 
       if(member.invite) {
         sessionBuilderRestApi.removeInvite({ id: self.id, arg: member.invite.id }, function(res) {
-          if(res.error) {
-            deferred.reject(res.error);
-          }else {
-            deferred.resolve(res);
-          }
-        });
-      };
-      return deferred.promise;
-    }
-    
-    function canRemoveMember(member) {
-      var self = this;
-      var deferred = $q.defer();
-
-      if(member.invite) {
-        sessionBuilderRestApi.canRemoveInvite({ id: self.id, arg: member.invite.id }, function(res) {
           if(res.error) {
             deferred.reject(res.error);
           }else {
