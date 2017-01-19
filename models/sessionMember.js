@@ -17,7 +17,8 @@ module.exports = (Sequelize, DataTypes) => {
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionMemberRoles },
     comment: { type: DataTypes.TEXT, allowNull: true },
     rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } },
-    closeEmailSent: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    closeEmailSent: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    typeOfCreation: { type: DataTypes.ENUM, allowNull: false, values: ['system', 'invite'], defaultValue: 'invite'}
   }, {
     indexes: [ { fields: ['token'] } ],
     timestamps: true,

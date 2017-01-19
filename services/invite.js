@@ -405,55 +405,6 @@ function processEmailStatus(id, apiResp, emailStatus) {
     })
   })
 }
-function processMailWebhook(webhookParams) {
-  console.log(webhookParams, 'invite.js:409')
-
-  let updateParams = {}
-
-  if (webhookParams.event == "failed") {
-    updateParams.webhookMessage = webhookParams.reason
-    updateParams.webhookEvent = webhookParams.event
-    updateParams.webhookTime = new Date()
-    updateParams.emailStatus = "failed";
-  }
-  if (webhookParams.event == "dropped") {
-    updateParams.webhookMessage = webhookParams.reason
-    updateParams.webhookEvent = webhookParams.event
-    updateParams.webhookTime = new Date()
-    updateParams.emailStatus = "failed";
-  }
-
-  if (webhookParams.event == "bounced") {
-    updateParams.webhookMessage = webhookParams.error
-    updateParams.webhookEvent = webhookParams.event
-    updateParams.webhookTime = new Date()
-    updateParams.emailStatus = "failed";
-  }
-
-  if (webhookParams.event == "delivered") {
-    updateParams.emailStatus = "sent";
-    updateParams.webhookEvent = webhookParams.event
-    updateParams.webhookTime = new Date()
-    updateParams.webhookMessage = "Delivered"
-  }
-
-  return new Bluebird((resolve, reject) => {
-    if(_.isEmpty(webhookParams)){
-      return reject("empty body");
-    }
-    if (updateParams.emailStatus) {
-      let mailMessageId = webhookParams["Message-Id"].replace(/[<>]/g, "");
-
-      Invite.update(updateParams, {where: {mailMessageId: mailMessageId}}).then((result) => {
-        resolve(result);
-      }, (error) => {
-        reject(filters.errors(error));
-      });
-    }else{
-      resolve([0]);
-    }
-  });
-}
 
 function declineInvite(token) {
   return new Bluebird((resolve, reject) => {
@@ -887,7 +838,6 @@ module.exports = {
   messages: MessagesUtil.invite,
   sendInvite: sendInvite,
   processEmailStatus: processEmailStatus,
-  processMailWebhook: processMailWebhook,
   createBulkInvites: createBulkInvites,
   createInvite: createInvite,
   findAndRemoveAccountManagerInvite: findAndRemoveAccountManagerInvite,

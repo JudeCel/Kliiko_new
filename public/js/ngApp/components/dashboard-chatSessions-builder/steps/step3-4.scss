@@ -25,6 +25,9 @@
 
   iframe#templateContent-wysiwyg-iframe {
     height: 471px;
+    @media (max-width: 1286px) {
+      height: 449px;
+    }
   }
 
   input.dis {

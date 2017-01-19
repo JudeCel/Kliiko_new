@@ -64,7 +64,8 @@ function addDefaultObservers(session) {
           sessionId: session.id,
           accountUserId: accountUser.id,
           username: accountUser.firstName,
-          role: 'observer'
+          role: 'observer',
+          typeOfCreation: 'system'
         }).then(function(result) {
           resolve(result);
         }, function(error) {
@@ -86,7 +87,8 @@ function defaultTopicParams(session, topic) {
     landing: true,
     boardMessage: topic.boardMessage,
     name: topic.name,
-    sign: topic.sign
+    sign: "Click to access Topics",
+    lastSign: topic.sign
   };
 }
 

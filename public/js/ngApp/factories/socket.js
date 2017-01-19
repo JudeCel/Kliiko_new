@@ -20,8 +20,13 @@ function socket($rootScope, globalSettings, $window) {
   }
 
   return {
-    sessionsBuilderChannel: function (sessionId, callback) {
+    sessionsBuilderChannel: function (scope, sessionId, callback) {
+
       if (!channel) {
+        scope.$on("$destroy", function handleDestroyEvent() {
+          console.log("$destroy")
+          channel = null;
+        });
         channel = socket.channel("sessionsBuilder:" + sessionId);
       }
       if (channel.state != 'joined') {

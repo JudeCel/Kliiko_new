@@ -63,6 +63,10 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
 
   setMemberUserName(params, session).then((newParams) => {
     let sessionMemberParams = newParams.sessionMemberParams
+
+    if (!sessionMemberParams.typeOfCreation) {
+      sessionMemberParams.typeOfCreation = 'invite'
+    }
     let memberCount = newParams.memberCount
 
     if(sessionMember) {

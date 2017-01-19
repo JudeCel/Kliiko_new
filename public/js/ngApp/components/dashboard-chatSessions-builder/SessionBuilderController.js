@@ -75,7 +75,7 @@
     vm.lastOnlineUsersDumpForMessage = [];
 
     function subscribeCannel() {
-      socket.sessionsBuilderChannel(vm.session.id, function(channel) {
+      socket.sessionsBuilderChannel($scope, vm.session.id, function(channel) {
 
         function syncState(state) {
           if (state) {
@@ -331,7 +331,8 @@
     }
 
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj, vm.session).then(null, function (err) {
+      vm.session.updateStep(dataObj, vm.session).then(null,
+        function (err) {
           errorMessenger.showError(err);
         }
       );

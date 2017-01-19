@@ -93,11 +93,11 @@ function mailTemplatePost(req, res, next) {
 }
 
 function saveMailTemplatePost(req, res, next) {
-  let canOverwrite = policy.hasAccess([req.currentResources.accountUser.role], ['admin']);
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
   let sessionId = req.body.mailTemplate.properties && req.body.mailTemplate.properties.sessionId;
-  let makeCopy = canOverwrite && !sessionId ? false : req.body.copy;
-  var accountId = canOverwrite && !sessionId ? null : req.currentResources.account.id;
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, function(error, result) {
+  let makeCopy = isAdmin && !sessionId ? false : req.body.copy;
+  let accountId = isAdmin && !sessionId ? null : req.currentResources.account.id;
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, isAdmin, function(error, result) {
     if (result && result.validation && !result.validation.isValid) {
       res.send(result);
     } else {

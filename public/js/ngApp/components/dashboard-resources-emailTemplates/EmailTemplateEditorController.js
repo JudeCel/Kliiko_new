@@ -161,6 +161,52 @@
         }
       }
 
+      function adjustSessionTimeSentenceIfFirstInvitation() {
+        if(isFirstInvitationTemplate()) {
+          if (isSessionBuilder()) {
+            setSessionBuilderStartDateVisibility();
+          } else {
+            showStartDateSpan();
+          }
+        }
+
+        function isFirstInvitationTemplate() {
+          return vm.currentTemplate['MailTemplateBase.category'] == "firstInvitation";
+        }
+
+        function isSessionBuilder() {
+          return $scope.step3Controller && $scope.step3Controller.session;
+        }
+
+        function setSessionBuilderStartDateVisibility() {
+          if (isEndDateAfterStartDate()) {
+            showStartDateSpan();
+          } else {
+            hideStartDateSpan();
+          }
+        }
+
+        function hideStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")*>/g, "<span id=start-date-container style=display:none>");
+        }
+
+        function showStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")* style=(\")*display:none;(\")*>/g, "<span id=start-date-container>")
+        }
+
+        function toggleStartDateSpan(currentSpanRegEx, expectedSpan) {
+          var currentContent = vm.currentTemplate.content;
+          vm.currentTemplate.content = currentContent.replace(currentSpanRegEx, expectedSpan);
+        }
+
+        function isEndDateAfterStartDate() {
+          var session = $scope.step3Controller.session;
+          var startDate = new Date(session.startTime).setHours(0, 0, 0, 0);
+          var endDate = new Date(session.endTime).setHours(0, 0, 0, 0);
+          return endDate > startDate;
+        }
+      }
+
       function populateTemplate(res) {
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
@@ -184,6 +230,7 @@
         }
 
         populateContentWithColors();
+        adjustSessionTimeSentenceIfFirstInvitation();
       }
 
     }

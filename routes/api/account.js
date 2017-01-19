@@ -1,6 +1,7 @@
 'use strict';
 
 var accountServices = require('./../../services/account');
+var policy = require('./../../middleware/policy.js');
 
 function get(req, res, next) {
   if(!req.currentResources.account) {
@@ -15,7 +16,8 @@ function get(req, res, next) {
 };
 
 function createNewAccount(req, res, next) {
-  accountServices.createNewAccountIfNotExists(req.body, req.currentResources.user.id).then(function(result) {
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
+  accountServices.createNewAccountIfNotExists(req.body, req.currentResources.user.id, isAdmin).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });
