@@ -1,5 +1,5 @@
 'use strict';
-var {sequelize, SessionMember, Invite } = require('./../../models');
+var {sequelize, SessionMember } = require('./../../models');
 let Bluebird = require('bluebird');
 var _ = require('lodash');
 
