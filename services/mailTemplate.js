@@ -523,6 +523,11 @@ function variablesForTemplate(type) {
 }
 
 function isEndDateAfterStartDate(startTime, endTime) {
+  //TODO: Remove console.log after DE1210 will be fixed!
+  console.log("----------------------------------------------------------");
+  console.log("START DATE: ", startTime);
+  console.log("END DATE: ", endTime);
+  console.log("IS END DATE AFTER START DATE: ", moment(endTime).isAfter(startTime, 'day'));
   return moment(endTime).isAfter(startTime, 'day');
 }
 
@@ -897,8 +902,10 @@ function prepareFirstInvitationStartDateState(str, startDate, endDate) {
   var hiddenStartDate = "start-date-container\" style=\"display:none\">";
 
   if (isEndDateAfterStartDate(startDate, endDate)) {
+    console.log("REPLACING hiddenStartDate with visibleStartDate");
     return str.replace(hiddenStartDate, visibleStartDate);
   } else {
+    console.log("REPLACING visibleStartDate with hiddenStartDate");
     return str.replace(visibleStartDate, hiddenStartDate);
   }
 }
