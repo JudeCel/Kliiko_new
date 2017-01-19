@@ -135,8 +135,9 @@
           if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
+              $('#templateContent').wysiwyg('setContent', content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
-              setContent(vm.currentTemplate.content);
+              vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
             });
           } else {
 
