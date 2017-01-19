@@ -53,7 +53,8 @@ module.exports = {
   canAddObservers: canAddObservers,
   sessionMailTemplateExists: sessionMailTemplateExists,
   searchSessionMembers: searchSessionMembers,
-  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot,
+  addDefaultObservers: addDefaultObservers
 };
 
 function addDefaultObservers(session) {

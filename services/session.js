@@ -11,9 +11,11 @@ var topicsService = require('./topics');
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+let Bluebird = require('bluebird');
 var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
+var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
 
 
@@ -306,6 +308,14 @@ function copySession(sessionId, accountId, provider) {
               copySessionTopics(accountId, sessionId, session.id).then(function(successResponse) {
                 callback();
               }, function(errorResponse) {
+                //we ignore error because data is copied step by step, and one error shouldn't stop following copying
+                callback();
+              });
+            },
+            function (callback) {
+              sessionBuilder.addDefaultObservers(session).then(() => {
+                callback();
+              }, (errorResponse) => {
                 //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                 callback();
               });
