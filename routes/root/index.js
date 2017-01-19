@@ -18,7 +18,6 @@ var inviteRoutes = require('./invite.js');
 var surveyRoutes = require('./survey.js');
 var myDashboardRoutes = require('./myDashboard.js');
 var chargebeeRoutes = require('./chargebee.js');
-var mailgunRoutes = require('./mailgun.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
@@ -496,8 +495,6 @@ router.route('/my-dashboard').get(myDashboardRoutes.index);
 router.route('/my-dashboard/tour').get(myDashboardRoutes.tour);
 
 router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
-
-router.route('/mailgun/webhooks').post(mailgunRoutes.webhook);
 
 router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
 
