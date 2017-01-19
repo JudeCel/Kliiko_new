@@ -28,6 +28,10 @@ function getAllData(userId, protocol, provider) {
     where: { UserId: userId },
     include: [{
       model: SessionMember,
+      required: false,
+      where: {
+       $or: [{typeOfCreation: {$ne: 'system'}}, {role: {$ne: 'observer'}}]
+      },
       include: [{
         model: Session,
         include: [{

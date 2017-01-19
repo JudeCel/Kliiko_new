@@ -2,7 +2,7 @@
 var models = require("../models");
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
+  up: (queryInterface, Sequelize) => {
     return models.sequelize.sync();
   }
 };

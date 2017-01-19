@@ -64,7 +64,8 @@ function addDefaultObservers(session) {
           sessionId: session.id,
           accountUserId: accountUser.id,
           username: accountUser.firstName,
-          role: 'observer'
+          role: 'observer',
+          typeOfCreation: 'system'
         }).then(function(result) {
           resolve(result);
         }, function(error) {
