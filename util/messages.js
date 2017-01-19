@@ -107,6 +107,9 @@ module.exports = {
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
     sessionClosed: "You can't send invites because session has been closed",
+    cantRemoveInvite: {
+      messages: "Is posted messages"
+    },
 
     errors: {
       cantAddObservers: "Please Update your subscription plan, to invite Spectators to your session.",

@@ -582,7 +582,7 @@ function canRemoveInvite(invite){
       ]
   }).then((sessionMember) => {
     if (sessionMember && sessionMember.Messages.length > 0) {
-      reject("Is messiges in session");
+      reject(MessagesUtil.sessionBuilder.cantRemoveInvite.messages);
     }else{
       resolve();
     }
