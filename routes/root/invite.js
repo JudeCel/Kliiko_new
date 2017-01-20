@@ -103,17 +103,15 @@ function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
     res.render(views_path('declined'), simpleParams('Invite', result.invite));
   }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
 function sessionNotAtAll(req, res, next) {
-  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(result) {
+  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then((result) => {
     res.render(views_path('declined'), simpleParams('Invite', result.invite));
-  }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+  }, (error) => {
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 

@@ -698,6 +698,8 @@ function declineSessionInvite(token, status) {
       }, (error) =>  {
         reject(filters.errors(error));
       });
+    }, (error) => {
+      reject(error);
     });
   });
 }
