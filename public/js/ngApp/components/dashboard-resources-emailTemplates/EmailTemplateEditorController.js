@@ -135,7 +135,7 @@
           if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
-              $('#templateContent').wysiwyg('setContent', content);
+              $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
               vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
             });
