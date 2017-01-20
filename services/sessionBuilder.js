@@ -19,6 +19,7 @@ var sessionValidator = require('./validators/session');
 var subscriptionValidator = require('./validators/subscription');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
+var sessionMemberService = require('./sessionMember');
 var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
@@ -78,7 +79,7 @@ function defaultVideoParams(resource, topic) {
 }
 
 function addDefaultTopic(session, sessionMember) {
-  models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
+  return models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
     if (topic) {
       let topicParams = defaultTopicParams(session, topic);
       models.SessionTopics.create(topicParams).then(function(sessionTopic) {
@@ -90,7 +91,7 @@ function addDefaultTopic(session, sessionMember) {
 }
 
 function addDefaultTopicVideo(session) {
-  resourcesService.getDefaultVideo(session.type).then(function(resource) {
+  return resourcesService.getDefaultVideo(session.type).then(function(resource) {
     if (resource) {
       models.SessionTopics.find({ where: { sessionId: session.id, landing: true } }).then(function(topic) {
         if (topic) {
@@ -103,15 +104,19 @@ function addDefaultTopicVideo(session) {
   });
 }
 
-function createNewSessionDefaultItems(session) {
-  return new Bluebird(function (resolve, reject) {
-    addDefaultTopic(session, sessionMember).then(function(sessionMember) {
-      resolve();
-    }, function(error) {
-      resolve();
-    }).catch(function(error) {
-      resolve();
-    });
+function createNewSessionDefaultItems(session, userId) {
+  return new Bluebird((resolve, reject) => {
+    sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
+      addDefaultTopic(session, sessionMember).then((sessionMember) => {
+        resolve();
+      }, (error) => {
+        resolve();
+      }).catch((error) => {
+        resolve();
+      });
+    }, (error) => {
+      reject(error)
+    })
   });
 }
 
@@ -124,12 +129,14 @@ function initializeBuilder(params) {
     params.endTime = params.date;
 
     Session.create(params).then(function(session) {
-      createNewSessionDefaultItems(session).then(function() {
+      createNewSessionDefaultItems(session, params.userId).then(function() {
         sessionBuilderObject(session).then(function(result) {
           deferred.resolve(result);
         }, function(error) {
           deferred.reject(error);
         });
+      }, (error) => {
+        deferred.reject(error);
       });
     }).catch(function(error) {
       deferred.reject(filters.errors(error));

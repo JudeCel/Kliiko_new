@@ -27,7 +27,12 @@ module.exports = {
 };
 
 function initializeBuilder(req, res, next) {
-  let params = { accountId: req.currentResources.account.id, date: req.body.date, timeZone: req.body.timeZone };
+  let params = {
+    accountId: req.currentResources.account.id,
+    userId: req.currentResources.user.id,
+    date: req.body.date,
+    timeZone: req.body.timeZone
+  };
   sessionBuilderServices.initializeBuilder(params).then(function(result) {
     res.send(result);
   }, function(error) {
