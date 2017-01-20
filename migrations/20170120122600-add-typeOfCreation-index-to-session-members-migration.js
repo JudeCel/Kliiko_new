@@ -7,11 +7,7 @@
      return new Bluebird((resolve, reject) => {
        queryInterface.addIndex(
            'SessionMembers',
-           ['sessionId','accountUserId'],
-           {
-             indexName: 'UniqSessionMemberBySession',
-             indicesType: 'UNIQUE'
-           }
+           ['typeOfCreation']
          ).then(() => {
          resolve();
        }, (error) => {
@@ -20,6 +16,6 @@
    });
    },
    down: (queryInterface, Sequelize) => {
-     return queryInterface.removeIndex('SessionMembers', 'UniqSessionMemberBySession');
+     return queryInterface.removeIndex('SessionMembers', ['typeOfCreation']);
    }
  };

@@ -16,6 +16,6 @@
    });
    },
    down: (queryInterface, Sequelize) => {
-     return queryInterface.removeIndex('SessionMembers', 'typeOfCreation');
+     return queryInterface.removeIndex('SessionMembers', ['sessionId']);
    }
  };
