@@ -3,8 +3,7 @@
 var moment = require('moment-timezone');
 var models = require('./../models');
 var filters = require('./../models/filters');
-var Session = models.Session;
-var AccountUser = models.AccountUser;
+var {Session, AccountUser} = models;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
@@ -53,7 +52,7 @@ module.exports = {
   canAddObservers: canAddObservers,
   sessionMailTemplateExists: sessionMailTemplateExists,
   searchSessionMembers: searchSessionMembers,
-  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot,
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
 };
 
 function defaultTopicParams(session, topic) {
@@ -542,6 +541,30 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
   });
 }
 
+function canRemoveInvite(invite){
+  return new Bluebird((resolve, reject) => {
+    models.SessionMember.find({
+      attributes: ["id"],
+      where: { sessionId: invite.sessionId, accountUserId: invite.accountUserId },
+      include: [
+        {model: models.Message, attributes: ["id"]},
+        {
+          attributes: ["id"],
+          required: true,
+          model: models.Session,
+          where: {id: invite.sessionId, type: 'focus'}
+        }
+      ]
+  }).then((sessionMember) => {
+    if (sessionMember && sessionMember.Messages.length > 0) {
+      reject(MessagesUtil.sessionBuilder.cantRemoveInvite.messages);
+    }else{
+      resolve();
+    }
+  })
+  });
+}
+
 function removeInvite(params) {
   let deferred = q.defer();
 
@@ -552,8 +575,12 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      inviteService.removeInvite(invite).then(() =>{
-        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+      canRemoveInvite(invite).then(() => {
+        inviteService.removeInvite(invite).then(() =>{
+          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+        }, (error) => {
+          deferred.reject(error);
+        });
       }, (error) => {
         deferred.reject(error);
       });
