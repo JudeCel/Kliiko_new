@@ -42,7 +42,7 @@ function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo");
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
-      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role'],
+      attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role', 'active'],
       group: [
         "ContactList.id",
         "ContactListUsers.id",
@@ -198,34 +198,50 @@ function reqiredFieldsForList(list) {
 }
 
 function create(params) {
-  let deferred = q.defer();
-
-  validators.subscription(params.accountId, 'contactList', 1).then(function() {
-    ContactList.create(params).then(function(result) {
-      result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }, function(error) {
-    deferred.reject(error);
+  return new Bluebird((resolve, reject) => {
+    valiadteMaxPerAccount(params.accountId).then(()=> {
+      validators.subscription(params.accountId, 'contactList', 1).then(function() {
+        ContactList.create(params).then(function(result) {
+          result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
+          resolve(result);
+        }, function(error) {
+          reject(filters.errors(error));
+        });
+      }, function(error) {
+        reject(error);
+      });
+    }, (error)=> {
+      reject(error);
+    })
   });
+}
 
-  return deferred.promise;
+function valiadteMaxPerAccount(accountId) {
+  return new Bluebird((resolve, reject) => {
+    models.ContactList.findAndCountAll({where: {accountId: accountId, active: false}}).then((result)=> {
+      if(result.count < 50){
+        resolve();
+      }else{
+        reject("You have reached max limit for contact list 50");
+      }
+    }, (error) => {
+      reject(error);
+    });
+  });
 }
 
 function update(params) {
-  let deferred = q.defer();
-  validators.hasValidSubscription(params.accountId).then(function() {
-    ContactList.update(params,  {where: {id: params.id} }).then(function(result) {
-      deferred.resolve(result);
-    }, function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }, function(error) {
-    deferred.reject(error);
+  return new Bluebird((resolve, reject) => {
+    validators.hasValidSubscription(params.accountId).then(() => {
+      ContactList.update(params,  {where: {id: params.id} }).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    }, (error) => {
+      reject(error);
+    })
   })
-  return deferred.promise;
 }
 
 function createDefaultLists(accountId, t) {

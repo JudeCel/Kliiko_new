@@ -20,6 +20,7 @@
     <div class='col-md-12 fixed-bottom-margin'>
       <div class='dashboard-container' ng-init='clc.initCanExportContactListData()'>
         <div id="contact-lists-left-column" class="col-md-3 text-left">
+          <div ng-if="clc.showListStatusButton()" class='btn-standart btn-green btn-large'>{{clc.listStatusMessage()}}</div>
           <div id="list-of-contacts">
             <div class="header">
               Select a Contact List
@@ -89,7 +90,7 @@
 
           <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
+              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Delete this List</div>
             </span>
 
             <span ng-if="clc.canExport">
@@ -116,3 +117,4 @@
 
 <!----------- MODALS ---------------------->
 <ng-include src="clc.basePath+'particles/modals.tpl.html'"></ng-include>
+<ng-include src="clc.basePath+ '/modals/reachedLimitModal.html'"></ng-include>

@@ -32,7 +32,7 @@ const DEPENDENCIES = {
     key: 'contactListCount',
     model: models.ContactList,
     params: function(accountId) {
-      return { where: { accountId: accountId, editable: true } };
+      return { where: { accountId: accountId, editable: true, active: true } };
     },
     countMessage: countMessage
   },

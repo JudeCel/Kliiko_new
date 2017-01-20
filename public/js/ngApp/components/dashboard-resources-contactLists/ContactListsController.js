@@ -27,7 +27,7 @@
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.contactListToAdd = [];
-    vm.showContactComments = { 
+    vm.showContactComments = {
       pagination: {
         currentPage: 1,
         itemsPerPage: 5,
@@ -78,8 +78,10 @@
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
     vm.disableNextSortingFilter = disableNextSortingFilter;
-    vm.showContactCommentsModal = showContactCommentsModal; 
+    vm.showContactCommentsModal = showContactCommentsModal;
     vm.prepareCurrentPageComments = prepareCurrentPageComments;
+    vm.showListStatusButton = showListStatusButton;
+    vm.listStatusMessage = listStatusMessage;
 
     vm.pagination = {
       currentPage: 1,
@@ -91,6 +93,21 @@
 
     // required for correct list switching.
     var isSelected = false;
+
+    function showListStatusButton() {
+      return(vm.lists.activeList && vm.lists.activeList.role == 'participant');
+    }
+
+    function listStatusMessage() {
+      if (vm.lists.activeList) {
+        console.log(vm.lists.activeList);
+        if (vm.lists.activeList.active) {
+          return('Deactive Contact list');
+        }else{
+          return('Reactive Contact list');
+        }
+      }
+    }
 
     function requireField(field) {
       if (vm.lists.activeList && vm.lists.activeList.reqiredFields && vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
@@ -245,7 +262,7 @@
           prepareCustomFields();
         },
         function(err) {
-          messenger.error(err);
+          domServices.modal('reachedLimitModal');
           dbg.error('#ContactListController > submitNewList > error: ', err);
         }
       )
@@ -296,7 +313,7 @@
     }
 
     function deleteList(listItem, index) {
-      var confirmed = confirm('Are you sure, that you want to delete this contact list?');
+      var confirmed = confirm('Are you sure, that you want to delete this Contact List?');
       if (!confirmed) return;
 
       vm.lists.delete(listItem, index).then(
@@ -806,7 +823,7 @@
 
     function prepareCurrentPageComments() {
       if (vm.showContactComments.comments.length > 0) {
-        vm.showContactComments.pagination.items =  vm.showContactComments.comments.slice((vm.showContactComments.pagination.currentPage - 1) * vm.showContactComments.pagination.itemsPerPage, 
+        vm.showContactComments.pagination.items =  vm.showContactComments.comments.slice((vm.showContactComments.pagination.currentPage - 1) * vm.showContactComments.pagination.itemsPerPage,
           vm.showContactComments.pagination.currentPage * vm.showContactComments.pagination.itemsPerPage);
       } else {
         vm.showContactComments.pagination.items = {};
