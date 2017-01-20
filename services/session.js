@@ -312,14 +312,6 @@ function copySession(sessionId, accountId, provider) {
                 callback();
               });
             },
-            function (callback) {
-              sessionBuilder.addDefaultObservers(session).then(() => {
-                callback();
-              }, (errorResponse) => {
-                //we ignore error because data is copied step by step, and one error shouldn't stop following copying
-                callback();
-              });
-            },
             function(callback) {
               MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
                 callback();
