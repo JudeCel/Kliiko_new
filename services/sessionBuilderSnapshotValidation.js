@@ -125,6 +125,8 @@ function getSessionSnapshot(session) {
 }
 
 function isMailTemplateDataValid(snapshot, params, mailTemplate) {
+  if(!snapshot) {return result(true)}
+
   let currentSnapshot = getMailTemplateSnapshot(mailTemplate);
   for (let i=0; i<constants.sessionBuilderValidateChanges.mailTemplate.fields.length; i++) {
     let fieldName = constants.sessionBuilderValidateChanges.mailTemplate.fields[i];
