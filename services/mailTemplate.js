@@ -19,6 +19,7 @@ var constants = require('../util/constants');
 var momentTimeZone = require('moment-timezone');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 let Bluebird = require('bluebird');
+let moment = require('moment');
 
 module.exports = {
   validate: validate,
@@ -522,9 +523,10 @@ function variablesForTemplate(type) {
 }
 
 function isEndDateAfterStartDate(startTime, endTime) {
-    var startDate = new Date(startTime).setHours(0, 0, 0, 0);
-    var endDate = new Date(endTime).setHours(0, 0, 0, 0);
-    return endDate > startDate;
+  var startDate = moment(startTime, 'YYYY-MM-DD').toDate();
+  var endDate = moment(endTime, 'YYYY-MM-DD').toDate();
+
+  return moment(endDate).isAfter(startDate);
 }
 
 function validateTemplate(template) {
