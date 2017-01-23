@@ -20,6 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         ContactList.belongsTo(models.Account, { foreignKey: 'accountId' });
         ContactList.hasMany(models.ContactListUser, { foreignKey: 'contactListId' });
+        ContactList.hasMany(models.Survey, { foreignKey: 'contactListId' });
       }
     }
   });

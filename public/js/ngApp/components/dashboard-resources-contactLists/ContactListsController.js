@@ -325,14 +325,18 @@
 
       // populate with existing data
       vm.newList.name = vm.lists.activeList.name;
-      for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
-        var I = i+1;
-        vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+      if(!vm.lists.activeList.survey){
+        for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
+          var I = i+1;
+          vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+        }
       }
     }
 
     function editCustomFields() {
-      vm.modalTab2 = true;
+      if(!vm.lists.activeList.survey){
+        vm.modalTab2 = true;
+      }
       prepareCustomFields();
       domServices.modal('contactList-addNewListModal');
     }

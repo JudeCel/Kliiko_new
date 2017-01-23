@@ -184,7 +184,7 @@ function createOrUpdateContactList(survey, fields, t) {
         let contactList = ContactList.build({
             name: survey.name,
             accountId: survey.accountId,
-            editable: false,
+            editable: true,
           }, { transaction: t });
 
           fillCustomFields(fields, contactList);
