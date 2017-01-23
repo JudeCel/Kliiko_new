@@ -66,6 +66,7 @@ describe('Services -> ContactList', () => {
         let attrs = contactListParams();
 
         ContactListService.create(attrs).then(function(contactList) {
+          assert.equal(contactList.active, true)
           assert.equal(contactList.name, attrs.name);
           assert.isTrue(contactList.editable);
           assert.sameMembers(contactList.defaultFields, constants.contactListDefaultFields);
@@ -77,20 +78,20 @@ describe('Services -> ContactList', () => {
       });
 
       it("destroy", (done) => {
-      let attrs = contactListParams();
+        let attrs = contactListParams();
 
-        ContactListService.create(attrs).then(function(contactList) {
-          ContactListService.destroy(contactList.id, testData.account.id).then(function(result) {
-            testData.account.getContactLists().then(function(CLResults) {
+        ContactListService.create(attrs).then((contactList) => {
+          ContactListService.destroy(contactList.id, testData.account.id).then((result)  =>{
+            testData.account.getContactLists().then((CLResults) => {
               assert.equal(CLResults.length, 3);
               done();
-            }, function(err) {
+            }, (err) => {
               done(err);
             })
-          },function(err) {
+          }, (err) => {
             done(err);
           })
-        }, function(err) {
+        }, (err) => {
           done(err);
         });
       })
@@ -106,6 +107,67 @@ describe('Services -> ContactList', () => {
           assert.isObject(err)
           done();
         });
+      });
+    });
+  });
+
+  describe("#deactivateList", () => {
+    it("can deactivate ", (done) => {
+      let attrs = contactListParams();
+      ContactListService.create(attrs).then((contactList) => {
+        ContactListService.deactivateList(contactList.id, testData.account.id).then((deactivateContactList) => {
+          try {
+            assert.equal(deactivateContactList.active, false)
+            done();
+          } catch (error) {
+            done(error);
+          }
+        }, (error) => {
+          done(error);
+        })
+      }, (error) => {
+        done(error);
+      });
+    });
+
+    it("can't deactivate default list ", (done) => {
+      testData.account.getContactLists().then(function(CLResults) {
+        ContactListService.deactivateList(CLResults[0], testData.account.id).then(() => {
+          done("Should not get here!!!");
+        }, (error) => {
+          done();
+        });
+      }, (error) => {
+        try {
+          assert.equal(error, MessagesUtil.contactList.notFound)
+          done();
+        } catch (e) {
+          done(e);
+        }
+      })
+    });
+  });
+
+  describe("#activateList", () => {
+    it("can activateList ", (done) => {
+      let attrs = contactListParams();
+      ContactListService.create(attrs).then((contactList) => {
+        ContactListService.deactivateList(contactList.id, testData.account.id).then((deactivateContactList) => {
+          ContactListService.activateList(deactivateContactList.id, testData.account.id).then((activeList) => {
+            try {
+              assert.equal(activeList.active, true)
+              done();
+            } catch (error) {
+              done(error);
+            }
+          }, (error) => {
+            done(error);
+          })
+        }, (error) => {
+          done(error);
+        })
+      }, (error) => {
+        done(error);
       });
     });
   });

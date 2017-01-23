@@ -16,7 +16,7 @@ var MessagesUtil = require('./../util/messages');
 let Bluebird = require('bluebird');
 
 const MAX_CUSTOM_FIELDS = 16;
-
+const MAX_LIST_LIMIT = 50
 module.exports = {
   create: create,
   update: update,
@@ -26,17 +26,56 @@ module.exports = {
   parseFile: contactListImport.parseFile,
   validateContactList: contactListImport.validateContactList,
   exportContactList: exportContactList, 
-  canExportContactListData: canExportContactListData
+  activateList: activateList,
+  deactivateList: deactivateList,
+  canExportContactListData: canExportContactListData,
+  valiadteMaxPerAccount: valiadteMaxPerAccount
 };
 
-function destroy(contacListId, accoutId) {
-  let deferred = q.defer();
-  ContactList.destroy({where: {id: contacListId, accountId: accoutId, editable: true} }).then(function(result) {
-    deferred.resolve(prepareData(result));
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
-  return deferred.promise;
+  function deactivateList(id, accoutId) {
+    return new Bluebird((resolve, reject) => {
+      ContactList.find({where: {id: id, accountId: accoutId, editable: true} }).then((contactList) => {
+        if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
+        
+        contactList.update({active: false}).then((result) => {
+          resolve(result);
+        }, (error) => {
+          reject(filters.errors(error));
+        })
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    });
+  }
+  
+  function activateList(id, accountId) {
+    return new Bluebird((resolve, reject) => {
+      ContactList.find({where: {id: id, accountId: accountId, editable: true} }).then((contactList) => {
+        if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
+          validators.subscription(accountId, 'contactList', 1).then(() => {
+            contactList.update({active: true}).then((result) => {
+              resolve(result);
+            }, (error) => {
+              reject(filters.errors(error));
+            })
+          }, (error) => {
+            reject(error);
+          });
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    });
+  }
+
+function destroy(contacListId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    ContactList.destroy({where: {id: contacListId, accountId: accountId, editable: true} }).then((result) => {
+      resolve(prepareData(result));
+    }, (error) => {
+      reject(filters.errors(error));
+    });
+  })
+
 }
 function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo");
@@ -219,10 +258,10 @@ function create(params) {
 function valiadteMaxPerAccount(accountId) {
   return new Bluebird((resolve, reject) => {
     models.ContactList.findAndCountAll({where: {accountId: accountId, active: false}}).then((result)=> {
-      if(result.count < 50){
-        resolve();
+      if(result.count < MAX_LIST_LIMIT){
+        resolve(result.coun);
       }else{
-        reject("You have reached max limit for contact list 50");
+        reject(MessagesUtil.contactList.reachedMaxLimit);
       }
     }, (error) => {
       reject(error);
