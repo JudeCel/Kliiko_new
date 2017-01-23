@@ -15,7 +15,7 @@ var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe.only('SERVICE - Survey', function() {
+describe('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
