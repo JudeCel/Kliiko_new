@@ -90,7 +90,7 @@
 
           <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
             <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Delete this List</div>
+              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Delete this List</div>
             </span>
 
             <span ng-if="clc.canExport">
@@ -118,3 +118,4 @@
 <!----------- MODALS ---------------------->
 <ng-include src="clc.basePath+'particles/modals.tpl.html'"></ng-include>
 <ng-include src="clc.basePath+ '/modals/reachedLimitModal.html'"></ng-include>
+<ng-include src="clc.basePath+ '/modals/deleteConfirmationModal.html'"></ng-include>

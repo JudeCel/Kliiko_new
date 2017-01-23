@@ -82,6 +82,7 @@
     vm.prepareCurrentPageComments = prepareCurrentPageComments;
     vm.showListStatusButton = showListStatusButton;
     vm.listStatusMessage = listStatusMessage;
+    vm.deleteContactList = deleteContactList;
 
     vm.pagination = {
       currentPage: 1,
@@ -100,7 +101,6 @@
 
     function listStatusMessage() {
       if (vm.lists.activeList) {
-        console.log(vm.lists.activeList);
         if (vm.lists.activeList.active) {
           return('Deactive Contact list');
         }else{
@@ -277,7 +277,6 @@
         return;
       }
 
-
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
@@ -293,10 +292,6 @@
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
-
-
-
-
     }
 
     function prepareParsedList(list) {
@@ -312,17 +307,22 @@
       return output
     }
 
-    function deleteList(listItem, index) {
-      var confirmed = confirm('Are you sure, that you want to delete this Contact List?');
-      if (!confirmed) return;
+    function deleteContactList(listItem, index){
+      vm.modalWindowAttrs = {item: listItem,  index: index}
+      console.log(listItem)
+      domServices.modal('deleteConfirmationModal');
 
-      vm.lists.delete(listItem, index).then(
+    }
+
+    function deleteList() {
+      vm.lists.delete(vm.modalWindowAttrs.item, vm.modalWindowAttrs.index).then(
         function (res) {
-          dbg.log('#ContactListController > removeList > success: List "'+ listItem.name + '" removed');
-          messenger.ok(res.message);
+          dbg.log('#ContactListController > removeList > success: List "'+ vm.modalWindowAttrs.item.name + '" removed');
+          domServices.modal('deleteConfirmationModal', true);
+          vm.modalWindowAttrs = null;
 
           var newIndex = vm.lists.activeListIndex - 1;
-          vm.lists.changeActiveList(newIndex)
+          vm.lists.changeActiveList(newIndex);
 
         },
         function (err) {
