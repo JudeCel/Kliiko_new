@@ -15,7 +15,7 @@ var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe('SERVICE - Survey', function() {
+describe.only('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
@@ -406,21 +406,31 @@ describe('SERVICE - Survey', function() {
       it('should update survey', function (done) {
         let params = surveyParams();
 
-        surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
+        surveyServices.createSurveyWithQuestions(params, testData.account).then((result) => {
           let survey = result.data;
-          assert.equal(survey.closed, false);
+          try {
+            assert.equal(survey.closed, false);
+          } catch (error) {
+            return done(error);
+          }
 
           params.id = survey.id;
           params.closed = true;
 
-          surveyServices.updateSurvey(params, testData.account).then(function(result) {
-            assert.equal(result.message, surveyServices.messages.updated);
-            assert.equal(result.data.id, survey.id);
-            assert.equal(result.data.closed, true);
-            done();
-          }, function(error) {
+          surveyServices.updateSurvey(params, testData.account).then((updateSurvey) => {
+            try {
+              assert.equal(updateSurvey.message, surveyServices.messages.updated);
+              assert.equal(updateSurvey.data.id, survey.id);
+              assert.equal(updateSurvey.data.closed, true);
+              done();
+            } catch (error) {
+              done(error)
+            }
+          }, (error) =>  {
             done(error);
           });
+        }, (error) => {
+          done(error)
         });
       });
 
@@ -612,12 +622,16 @@ describe('SERVICE - Survey', function() {
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
           surveyServices.copySurvey({ id: survey.id }, testData.account).then(function(result) {
-            assert.notEqual(result.data.id, survey.id);
+            try {
+              assert.notEqual(result.data.id, survey.id);
 
-            Survey.count().then(function(c) {
-              assert.equal(c, 2);
-              done();
-            });
+              Survey.count().then(function(c) {
+                assert.equal(c, 2);
+                done();
+              });
+            } catch (error) {
+               done(error);
+            }
           }, function(error) {
             done(error);
           });
@@ -749,11 +763,14 @@ describe('SERVICE - Survey', function() {
 
         surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
           let survey = result.data;
-          let date = new Date();
 
-          surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }, testData.account).then(function(result) {
-            assert.deepEqual(result.data.confirmedAt, date);
-            done();
+          surveyServices.confirmSurvey({ id: survey.id }, testData.account).then(function(result) {
+            try {
+              assert.isNotNull(result.data.confirmedAt);
+              done();
+            } catch (error) {
+              done(error);
+            }
           }, function(error) {
             done(error);
           });
