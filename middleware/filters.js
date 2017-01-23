@@ -5,6 +5,7 @@ var AccountUser = models.AccountUser;
 var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
 var subscriptionService = require('../services/subscription');
+var sessionMembersService = require('../services/sessionMember');
 var myDashboardServices = require('../services/myDashboard');
 var jwt = require('../lib/jwt');
 var _ = require('lodash');
@@ -65,11 +66,12 @@ function myDashboardPage(req, res, next, accountUserId, forceLanding) {
     if (!managers) {
       let theOnlySession = getTheOnlySession(result);
       if (theOnlySession && (theOnlySession.showStatus == 'Open' || theOnlySession.showStatus == 'Expired')) {
-        jwt.tokenForMember(req.user.id, theOnlySession.id, myDashboardUrl).then(function(result) {
-          getUrl(res, result.token, myDashboardUrl);
-        }, function(error) {
-          res.redirect(myDashboardUrl);
-        });
+          sessionMembersService.findOrCreate(req.user.id, theOnlySession.id).then((sessionMmeber) => {
+            let token = jwt.token(sessionMmeber.id, 'SessionMember:', myDashboardUrl);
+            getUrl(res, token, myDashboardUrl);
+          }, (error) => {
+            res.redirect(myDashboardUrl);
+          });
       } else {
         res.redirect(myDashboardUrl);
       }

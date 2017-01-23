@@ -606,6 +606,7 @@ function acceptInvite(token, params={}) {
           }).then(() => {
             transaction.commit().then(() => {
               findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+                console.log("findInvite done",invite.token)
                 resolve({invite, user, message: MessagesUtil.invite.confirmed});
               }, (error) => {
                 reject("User not found");
@@ -631,13 +632,12 @@ function shouldUpdateRole(accountUser, newRole, transaction) {
 
     if(roles.indexOf(newRole) > roles.indexOf(accountUser.role)) {
       accountUser.update({ role: newRole }, {transaction: transaction}).then(() => {
-        resolve()
+        resolve();
       },(error) => {
         reject(filters.errors(error))
       })
-    }
-    else {
-      resolve()
+    }else {
+      resolve();
     }
   })
 }
