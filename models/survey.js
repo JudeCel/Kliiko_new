@@ -5,6 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     resourceId: { type: DataTypes.INTEGER, allowNull: true },
+    contactListId: { type: DataTypes.INTEGER, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     description: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     thanks: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
@@ -18,6 +19,7 @@ module.exports = (Sequelize, DataTypes) => {
       associate: function(models) {
         Survey.hasMany(models.SurveyQuestion, { onDelete: 'cascade', foreignKey: 'surveyId' });
         Survey.hasMany(models.SurveyAnswer, { onDelete: 'cascade', foreignKey: 'surveyId' });
+        Survey.belongsTo(models.ContactList, { foreignKey: 'contactListId' });
         Survey.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Survey.belongsTo(models.Account, { foreignKey: 'accountId' });
       }

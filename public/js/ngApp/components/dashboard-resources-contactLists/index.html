@@ -89,21 +89,21 @@
           <!-- TABLE -->
 
           <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
-            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Delete this List</div>
+            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable" class="pull-left btn-container">
+              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Remove this List</div>
             </span>
 
-            <span ng-if="clc.canExport">
+            <span ng-if="clc.canExport" class="pull-left btn-container">
               <a class='btn btn-standart btn-green btn-medium' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
             </span>
 
-            <span ng-if="clc.lists.activeList.editable">
-              &nbsp; or &nbsp;
+            <span ng-if="clc.lists.activeList.editable" class="pull-left btn-container">
+              <span class="margin-sides-5">or</span>
               <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-              <span ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()">&nbsp; or &nbsp;</span>
+              <span ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" class="margin-sides-5">or</span>
             </span>
 
-            <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-large">
+            <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-large pull-left btn-container">
               <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
               <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
             </div>
