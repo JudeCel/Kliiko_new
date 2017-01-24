@@ -97,7 +97,9 @@
     var isSelected = false;
 
     function toggleSatus(){
-      vm.lists.toggleListState(vm.lists.activeList.id).then(function() {}, 
+      vm.lists.toggleListState(vm.lists.activeList).then(function() {
+        vm.lists.activeList.active = vm.lists.activeList;
+      }, 
       function(error) {
         domServices.modal('reachedLimitToggleSatusModal');
         console.log(error);

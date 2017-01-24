@@ -281,10 +281,9 @@
       return deferred.promise;
     }
 
-    function toggleListState(listId) {
+    function toggleListState(list) {
       var deferred = $q.defer();
-
-      contactListsApi.toggleListState.post({ id: listId }, function(res) {
+      contactListsApi.toggleListState.post({ id: list.id }, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {
