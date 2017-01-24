@@ -166,7 +166,7 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
-function updateContactList(survey, fields, t){
+function updateContactList(contactList, survey, fields, t){
   return new Bluebird((resolve, reject) => {
     fillCustomFields(fields, contactList);
     contactList.customFields = _.uniq(contactList.customFields);
@@ -206,7 +206,7 @@ function createOrUpdateContactList(survey, fields, t) {
    return new Bluebird((resolve, reject) => {
       survey.getContactList({ transaction: t }).then((contactList) => {
         if(contactList){
-          resolve(updateContactList(survey, fields, t));
+          resolve(updateContactList(contactList, survey, fields, t));
         }else{
           resolve(createContactList(survey, fields, t));
         }
