@@ -67,7 +67,7 @@
             <td>{{ session.showStatus }}</td>
             <td class='text-right col-xs-3'>
 
-              <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.openCopySessionDialog(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
               <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
 
@@ -88,4 +88,6 @@
 
     <div class='col-xs-12 fixed-bottom-margin'></div>
   </div>
+
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modal.html'"></ng-include>
 </div>

@@ -300,6 +300,13 @@ function copySession(sessionId, accountId, provider) {
       let facilitator = result.data.dataValues.facilitator;
       delete result.data.dataValues.id;
       delete result.data.dataValues.facilitator;
+      delete result.data.dataValues.status;
+      delete result.data.dataValues.type;
+      delete result.data.dataValues.anonymous;
+      delete result.data.dataValues.resourceId;
+      delete result.data.dataValues.brandProjectPreferenceId;
+      delete result.data.dataValues.startTime;
+      delete result.data.dataValues.endTime;
       result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
       result.data.dataValues.step = "setUp";
       Session.create(result.data.dataValues).then(function(session) {

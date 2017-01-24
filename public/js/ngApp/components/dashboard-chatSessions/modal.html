@@ -1,0 +1,36 @@
+<div class='modal fade' id='copySessionConfirm' role='dialog'>
+  <div class='modal-dialog'>
+    <div class='modal-content border-red border-radius-none'>
+        <div class='modal-header'>
+            <h2 class='modal-title text-center'>Copy Session</h2>
+        </div>
+      <div class='modal-body'>
+        <div class='row'>
+          <div class='col-md-12'>
+            <div class="text-center">
+                Are you sure you want to Copy the <strong>{{csc.currentSelectedSession.name}}</strong> Session?
+            </div>
+            <div class="text-center">
+                The following items will be copied, which you can edit:
+            </div>
+            <br>
+            <div class="text-center">Topic names and their order</div>
+            <div class="text-center">Bilboard text</div>
+            <div class="text-center">Completed Email Templates</div>
+            <br>
+            <div class="text-center">The Session Name will be Copy of <strong>{{csc.currentSelectedSession.name}}</strong></div>
+            <div class="text-center">Re-Name in Edit Chat Session</div>
+          </div>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-standart btn-red pull-left btn-small margin-right-10' data-dismiss='modal'>
+            Cancel
+        </button>
+        <button ng-click='csc.copySession(csc.currentSelectedSession)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
