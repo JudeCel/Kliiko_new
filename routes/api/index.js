@@ -119,6 +119,8 @@ router.get('/contactLists/canExportContactListData', PERMISSIONS.facilitatorMana
 router.post('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactList.importContacts);
 router.post('/contactLists/:id/validate', PERMISSIONS.facilitatorManagerAdmin, contactList.validateContacts);
+router.post('/contactLists/:id/activate', PERMISSIONS.facilitatorManagerAdmin, contactList.activateList);
+router.post('/contactLists/:id/deactivate', PERMISSIONS.facilitatorManagerAdmin, contactList.deactivateList);
 
 router.put('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.update);
 router.delete('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.destroy);
