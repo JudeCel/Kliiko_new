@@ -111,11 +111,11 @@ describe('Services -> ContactList', () => {
     });
   });
 
-  describe("#deactivateList", () => {
+  describe("#toggleListState", () => {
     it("can deactivate ", (done) => {
       let attrs = contactListParams();
       ContactListService.create(attrs).then((contactList) => {
-        ContactListService.deactivateList(contactList.id, testData.account.id).then((deactivateContactList) => {
+        ContactListService.toggleListState(contactList.id, testData.account.id).then((deactivateContactList) => {
           try {
             assert.equal(deactivateContactList.active, false)
             done();
@@ -132,7 +132,7 @@ describe('Services -> ContactList', () => {
 
     it("can't deactivate default list ", (done) => {
       testData.account.getContactLists().then(function(CLResults) {
-        ContactListService.deactivateList(CLResults[0], testData.account.id).then(() => {
+        ContactListService.toggleListState(CLResults[0], testData.account.id).then(() => {
           done("Should not get here!!!");
         }, (error) => {
           done();
@@ -146,14 +146,12 @@ describe('Services -> ContactList', () => {
         }
       })
     });
-  });
-
-  describe("#activateList", () => {
+  
     it("can activateList ", (done) => {
       let attrs = contactListParams();
       ContactListService.create(attrs).then((contactList) => {
-        ContactListService.deactivateList(contactList.id, testData.account.id).then((deactivateContactList) => {
-          ContactListService.activateList(deactivateContactList.id, testData.account.id).then((activeList) => {
+        ContactListService.toggleListState(contactList.id, testData.account.id).then((deactivateContactList) => {
+          ContactListService.toggleListState(deactivateContactList.id, testData.account.id).then((activeList) => {
             try {
               assert.equal(activeList.active, true)
               done();
@@ -171,6 +169,7 @@ describe('Services -> ContactList', () => {
       });
     });
   });
+
 
   describe('#parseFile', function() {
     var testFileValid = { xls: 'test/fixtures/contactList/list_valid.xls', csv: 'test/fixtures/contactList/list_valid.csv' };

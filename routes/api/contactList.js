@@ -16,8 +16,7 @@ module.exports = {
   importContacts: importContacts,
   validateContacts: validateContacts,
   canExportContactListData: canExportContactListData,
-  activateList: activateList,
-  deactivateList: deactivateList
+  toggleListState: toggleListState
 };
 
 function index(req, res, next) {
@@ -91,35 +90,18 @@ function destroy(req, res, next) {
   });
 }
 
-// Activate List Params example
+// toggleListState List Params example
 // {
 //    id: INTEGER/required => 1
 //  }
 //
 
-function activateList(req, res, next) {
+function toggleListState(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
 
   let accountId = req.currentResources.account.id;
-  contactListService.activateList(req.params.id, accountId).then((lists) => {
+  contactListService.toggleListState(req.params.id, accountId).then(() => {
     res.send({message: MessagesUtil.routes.contactList.activated});
-  },(err) => {
-    res.send({ error: err });
-  });
-}
-
-// Deactivate List Params example
-// {
-//    id: INTEGER/required => 1
-//  }
-//
-
-function deactivateList(req, res, next) {
-  validations.params(res, req.params.id, 'query param @id is missed');
-
-  let accountId = req.currentResources.account.id;
-  contactListService.deactivateList(req.params.id, accountId).then((lists) => {
-    res.send({message: MessagesUtil.routes.contactList.deactivated});
   },(err) => {
     res.send({ error: err });
   });

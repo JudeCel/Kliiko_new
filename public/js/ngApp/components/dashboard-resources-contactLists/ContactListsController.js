@@ -83,6 +83,7 @@
     vm.showListStatusButton = showListStatusButton;
     vm.listStatusMessage = listStatusMessage;
     vm.deleteContactList = deleteContactList;
+    vm.toggleSatus = toggleSatus;
 
     vm.pagination = {
       currentPage: 1,
@@ -94,6 +95,14 @@
 
     // required for correct list switching.
     var isSelected = false;
+
+    function toggleSatus(){
+      vm.lists.toggleListState(vm.lists.activeList.id).then(function() {}, 
+      function(error) {
+        domServices.modal('reachedLimitToggleSatusModal');
+        console.log(error);
+      });
+    }
 
     function showListStatusButton() {
       return(vm.lists.activeList && vm.lists.activeList.role == 'participant');
@@ -280,7 +289,7 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
-      vm.lists.updateActiveItem(parsedList).then(
+      vm.lists.F(parsedList).then(
         function (res) {
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok(res.message);
@@ -713,7 +722,7 @@
     }
 
     function updateActiveCustomList(newList, parsedList) {
-      vm.lists.updateActiveItem(parsedList).then(
+      vm.lists.F(parsedList).then(
         function (res) {
           messenger.ok(res.message);
           var oldFields = vm.contactListDropItems.customFields;

@@ -26,34 +26,19 @@ module.exports = {
   parseFile: contactListImport.parseFile,
   validateContactList: contactListImport.validateContactList,
   exportContactList: exportContactList, 
-  activateList: activateList,
-  deactivateList: deactivateList,
+  toggleListState: toggleListState,
   canExportContactListData: canExportContactListData,
   valiadteMaxPerAccount: valiadteMaxPerAccount
 };
-
-  function deactivateList(id, accoutId) {
-    return new Bluebird((resolve, reject) => {
-      ContactList.find({where: {id: id, accountId: accoutId, editable: true} }).then((contactList) => {
-        if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
-        
-        contactList.update({active: false}).then((result) => {
-          resolve(result);
-        }, (error) => {
-          reject(filters.errors(error));
-        })
-      }, (error) => {
-        reject(filters.errors(error));
-      });
-    });
-  }
   
-  function activateList(id, accountId) {
+  function toggleListState(id, accountId) {
     return new Bluebird((resolve, reject) => {
       ContactList.find({where: {id: id, accountId: accountId, editable: true} }).then((contactList) => {
         if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
-          validators.subscription(accountId, 'contactList', 1).then(() => {
-            contactList.update({active: true}).then((result) => {
+          let validCount = contactList.active ?  0 : 1
+
+          validators.subscription(accountId, 'contactList', validCount).then(() => {
+            contactList.update({active: !contactList.active}).then((result) => {
               resolve(result);
             }, (error) => {
               reject(filters.errors(error));
@@ -216,6 +201,7 @@ function prepareData(lists) {
   _.map(lists, (list)=> {
     collection.push( {
       id: list.id,
+      active: list.active,
       editable: list.editable,
       defaultFields: list.defaultFields,
       customFields: list.customFields,

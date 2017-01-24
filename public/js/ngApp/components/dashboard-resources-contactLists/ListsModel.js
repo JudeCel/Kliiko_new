@@ -27,6 +27,7 @@
     ListsModel.prototype.generateImportPreview = generateImportPreview;
     ListsModel.prototype.addImportedContacts = addImportedContacts;
     ListsModel.prototype.validateContactImportData = validateContactImportData;
+    ListsModel.prototype.toggleListState = toggleListState;
 
     return ListsModel;
 
@@ -103,6 +104,24 @@
       return list;
     }
 
+    /**
+     * Get all lists, store them as ListItemModel and sort by 'id'
+     */
+    function toggleListState(id) {
+      var deferred = $q.defer();
+      var self = this;
+
+      contactListServices.toggleListState(id).then(
+        function(res) {
+          deferred.resolve();
+        },
+        function(err) { 
+          deferred.reject(err)
+         }
+      );
+
+      return deferred.promise;
+    }
     /**
      * Get all lists, store them as ListItemModel and sort by 'id'
      */
