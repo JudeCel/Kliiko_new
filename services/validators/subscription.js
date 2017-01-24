@@ -80,7 +80,7 @@ function validate(accountId, type, count, params) {
           if(c + count <= maxCount || maxCount == -1) {
             deferred.resolve(subscription);
           } else {
-              deferred.reject(dependency.countMessage(type, maxCount, subscription));
+            deferred.reject(dependency.countMessage(type, maxCount, subscription));
           }
         }, function(error) {
           deferred.reject(filters.errors(error));

@@ -8,6 +8,7 @@ var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
+var contactListServices = require('./../services/contactList');
 var MessagesUtil = require('./../util/messages');
 var StringHelpers = require('./../util/stringHelpers');
 
@@ -165,46 +166,54 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
+function updateContactList(survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    fillCustomFields(fields, contactList);
+    contactList.customFields = _.uniq(contactList.customFields);
+    contactList.name = survey.name;
+
+    contactList.save({ transaction: t }).then(function(contactList) {
+      resolve(contactList);
+    }).catch(ContactList.sequelize.ValidationError, function(error) {
+      reject(filters.errors(error));
+    }).catch(function(error) {
+      reject(error);
+    });
+  })
+}
+function createContactList(survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    let contactList = ContactList.build({
+        name: survey.name,
+        accountId: survey.accountId,
+        editable: true,
+      }, { transaction: t });
+
+      fillCustomFields(fields, contactList);
+      contactListServices.create(contactList.dataValues, t).then((contactList) => {
+        survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
+          resolve(contactList);
+        }, (error) => {
+          reject(filters.errors(error));
+        })
+      }, (error) => {
+        reject(filters.errors(error))
+      });
+  })
+}
+
 function createOrUpdateContactList(survey, fields, t) {
-    let deferred = q.defer();
-    survey.getContactList({ transaction: t }).then((contactList) => {
-      if(contactList){
-          fillCustomFields(fields, contactList);
-          contactList.customFields = _.uniq(contactList.customFields);
-          contactList.name = survey.name;
-
-          contactList.save({ transaction: t }).then(function(contactList) {
-            deferred.resolve(contactList);
-          }).catch(ContactList.sequelize.ValidationError, function(error) {
-            deferred.reject(filters.errors(error));
-          }).catch(function(error) {
-            deferred.reject(error);
-          });
-      }else{
-        let contactList = ContactList.build({
-            name: survey.name,
-            accountId: survey.accountId,
-            editable: true,
-          }, { transaction: t });
-
-          fillCustomFields(fields, contactList);
-          contactList.save({ transaction: t }).then((contactList)=> {
-            survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
-              deferred.resolve(contactList);
-            }, (error) => {
-              deferred.reject(filters.errors(error));
-            })
-          }).catch(ContactList.sequelize.ValidationError, function(error) {
-            deferred.reject(filters.errors(error));
-          }).catch(function(error) {
-            deferred.reject(error);
-          });
-      }
-    }, (error) => {
-      deferred.reject(error);
-    })
-
-  return deferred.promise;
+   return new Bluebird((resolve, reject) => {
+      survey.getContactList({ transaction: t }).then((contactList) => {
+        if(contactList){
+          resolve(updateContactList(survey, fields, t));
+        }else{
+          resolve(createContactList(survey, fields, t));
+        }
+      }, (error) => {
+        reject(error);
+      })
+   })
 }
 
 function fillCustomFields(fields, contactList) {

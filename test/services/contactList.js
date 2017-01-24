@@ -9,7 +9,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var MessagesUtil = require('./../../util/messages');
 var _ = require('lodash');
 
-describe.only('Services -> ContactList', () => {
+describe('Services -> ContactList', () => {
   var testData;
   beforeEach(function(done) {
     models.sequelize.sync({force: true}).done((error, result) => {

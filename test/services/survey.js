@@ -15,7 +15,7 @@ var userFixture = require('./../fixtures/user');
 var assert = require('chai').assert;
 var _ = require('lodash');
 
-describe('SERVICE - Survey', function() {
+describe.only('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
@@ -23,7 +23,7 @@ describe('SERVICE - Survey', function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
-          models.SubscriptionPreference.update({'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true, 'data.exportRecruiterStats': true}, { where: { subscriptionId: subscription.id } }).then(function() {
+          models.SubscriptionPreference.update({'data.contactListCount': 5, 'data.surveyCount': 5, 'data.exportRecruiterSurveyData': true, 'data.exportRecruiterStats': true}, { where: { subscriptionId: subscription.id } }).then(function() {
             done();
           }, function(error) {
             done(error);

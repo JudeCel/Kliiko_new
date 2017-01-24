@@ -245,17 +245,17 @@ function reqiredFieldsForList(list) {
   return constants.contactListReqiredFields;
 }
 
-function create(params) {
+function create(params, transaction) {
   return new Bluebird((resolve, reject) => {
     valiadteMaxPerAccount(params.accountId).then(()=> {
-      validators.subscription(params.accountId, 'contactList', 1).then(function() {
-        ContactList.create(params).then(function(result) {
+      validators.subscription(params.accountId, 'contactList', 1).then(() =>{
+        ContactList.create(params, {transaction: transaction}).then((result) => {
           result.dataValues.maxCustomFields = MAX_CUSTOM_FIELDS;
           resolve(result);
-        }, function(error) {
+        }, (error) => {
           reject(filters.errors(error));
         });
-      }, function(error) {
+      }, (error) => {
         reject(error);
       });
     }, (error)=> {
@@ -268,14 +268,14 @@ function valiadteMaxPerAccount(accountId) {
   return new Bluebird((resolve, reject) => {
     models.ContactList.findAndCountAll({where: {accountId: accountId, active: false}}).then((result)=> {
       if(result.count < MAX_LIST_LIMIT){
-        resolve(result.coun);
+        resolve(result.count);
       }else{
         reject(MessagesUtil.contactList.reachedMaxLimit);
       }
     }, (error) => {
       reject(error);
     });
-  }, function(error) {
+  }, (error) => {
     deferred.reject(error);
   });
 
