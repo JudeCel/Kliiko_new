@@ -84,10 +84,18 @@ function allByAccount(accountId, sessionId) {
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role', 'active'],
       group: [
         "ContactList.id",
-        "ContactListUsers.id",
         "ContactListUsers.AccountUser.id",
-        "ContactListUsers.AccountUser.Invites.id" ],
-      include: [{
+        "ContactListUsers.id",
+        "ContactListUsers.AccountUser.Invites.id",
+        "Surveys.id",
+        ],
+      include: [
+        {
+          model: models.Survey, 
+          required: false, 
+          attributes: ['id'] 
+        }, 
+        {
         model: models.ContactListUser, attributes: ['id', 'customFields', 'accountUserId'],
         include: [{
           model: models.AccountUser,
@@ -214,6 +222,7 @@ function prepareData(lists) {
       maxCustomFields: MAX_CUSTOM_FIELDS,
       visibleFields: list.visibleFields,
       participantsFields: list.participantsFields,
+      survey: !_.isEmpty(list.Surveys),
       name: list.name,
       role: list.role,
       reqiredFields: reqiredFieldsForList(list),
@@ -266,21 +275,38 @@ function valiadteMaxPerAccount(accountId) {
     }, (error) => {
       reject(error);
     });
+  }, function(error) {
+    deferred.reject(error);
   });
+
+  return deferred.promise;
 }
 
 function update(params) {
   return new Bluebird((resolve, reject) => {
     validators.hasValidSubscription(params.accountId).then(() => {
-      ContactList.update(params,  {where: {id: params.id} }).then((result) => {
-        resolve(result);
-      }, (error) => {
+      models.sequelize.transaction((t) => {
+        return ContactList.find({where: {id: params.id}}, {transaction: t}).then((contactList) => {
+          return contactList.update(params, { transaction: t}).then((result) => {
+           return  models.Survey.update({name: result.name}, {where: {contactListId: contactList.id}, transaction: t}).then(() => {
+             return result
+           }, (error) => {
+             throw error;
+           })
+          }, (error) => {
+            throw error;
+          });
+        });
+      }).then((contactList) => {
+          resolve(contactList);
+      }).catch((error) => {
         reject(filters.errors(error));
       });
     }, (error) => {
       reject(error);
     })
   })
+  return deferred.promise;
 }
 
 function createDefaultLists(accountId, t) {
