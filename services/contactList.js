@@ -65,7 +65,9 @@ function destroy(contacListId, accountId) {
 function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo");
     let deferred = q.defer();
-    ContactList.findAll({where: { accountId: accountId },
+    let where = { accountId: accountId }
+    if(sessionId) { where.active = true }
+    ContactList.findAll({where: where,
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role', 'active'],
       group: [
         "ContactList.id",
