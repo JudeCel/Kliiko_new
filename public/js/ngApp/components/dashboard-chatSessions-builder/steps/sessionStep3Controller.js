@@ -30,8 +30,8 @@
 
     vm.getPreparedMailTemplateList();
 
-    vm.templateName = function(baseName) {
-      return baseName;
+    vm.templateName = function(template) {
+      return template.sessionId ? template.name + " - " + vm.session.steps.step1.name : template.name;
     }
 
     vm.isCreated = function(template) {
@@ -62,12 +62,15 @@
       });
     }
 
+    vm.openApplyModal = function() {
+      vm.templateNameAdd = null;
+      domServices.modal('applyTemplateModal');
+    }
+
     vm.modifyAndSave = function(createCopy, addSessionInfo) {
       //null - will pickup current template
-      if(vm.templateNameAdd) {
-        domServices.modal('templateNameModal', true);
-      }
       vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd).then(function() {
+        domServices.modal('applyTemplateModal', 'close');
         vm.getPreparedMailTemplateList();
       }, function() {
         //failure is handled in mail template controller. This is a wrapper
