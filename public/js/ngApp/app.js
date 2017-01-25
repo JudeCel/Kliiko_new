@@ -205,13 +205,20 @@
 
     function init() {
       user.getUserData(vm).then(function(res) {
-        setSessionStorage(res);
         vm.user = res;
+        vm.accountUser =  res;
+        setSessionStorage(res);
       });
-      accountUser.getAccountUserData().then(function(res) {
-        vm.accountUser = res
-      });
-      account.getAccountData().then(function(res) { vm.account = res });
+      
+      // accountUser.getAccountUserData().then(function(accountUserRes) {
+        // vm.accountUser = accountUserRes
+        account.getAccountData().then(function(accountRes) {
+          vm.account = accountRes;
+          vm.adminInToAdmin = (vm.account.admin && accountUser.isAdmin)
+        });
+      // });
+
+      
       sessionExpire.init();
     }
 

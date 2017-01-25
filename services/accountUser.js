@@ -245,6 +245,33 @@ function updateWithUserId(data, userId, callback) {
   });
 }
 
+function systemInfo(userId, accountId) {
+  let deferred = q.defer();
+
+  AccountUser.find({
+    attributes: VALID_ATTRIBUTES.accountUser,
+    where: {
+      AccountId: accountId,
+      UserId: userId
+    },
+    include: [{
+      model: Account,
+      attributes: ['id', 'admin'],
+      required: false
+    }]
+  }).then(function(accountUser) {
+    if(accountUser) {
+      deferred.resolve(accountUser);
+    }
+    else {
+      deferred.reject({ message: MessagesUtil.accountUser.notFound });
+    }
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
 function findWithSessionMembers(userId, accountId) {
   let deferred = q.defer();
 
@@ -414,6 +441,7 @@ module.exports = {
   updateWithUserId: updateWithUserId,
   findWithUser: findWithUser,
   findWithSessionMembers: findWithSessionMembers,
+  systemInfo: systemInfo,
   validateParams: validateParams,
   findWithEmail: findWithEmail,
   findById: findById,
