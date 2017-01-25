@@ -32,6 +32,7 @@
     vm.maxCommentLength = 100;
 
     // step 4 + 5
+    vm.removeInvite = removeInvite;
     vm.inviteMembers = inviteMembers;
     vm.sendCloseEmail = sendCloseEmail;
     vm.modalWindowHandler = modalWindowHandler;
@@ -254,7 +255,7 @@
 
     function updateParticipantsList(value) {
       vm.session.updateStep({ participantListId: value }, vm.session).then(function(res) {
-        if (!res.ignored) { 
+        if (!res.ignored) {
           vm.session.sessionData.participantListId = value;
         }
       }, function (error) {
@@ -387,18 +388,28 @@
       return builderServices.findSelectedMembers(vm, false, false);
     }
 
+    function removeInvite() {
+      vm.session.removeMember(vm.currentMemberModal).then(function(res) {
+        removeMemberFromList(vm.currentMemberModal);
+        vm.currentMemberModal = null;
+        domServices.modal(null, null, true);
+        messenger.ok(res.message);
+      }, function(error) {
+        domServices.modal('confirmInviteRemoveModal', true);
+        domServices.modal('rejectedInviteRemoveModal');
+      });
+    }
+
     function removeFromList(member) {
       if(returnMemberInviteStatus(member) == 'notInvited') {
         removeMemberFromList(member);
       } else {
-        angularConfirm('Are you sure you want to do this?').then(function(response) {
-          vm.session.removeMember(member).then(function(res) {
-            removeMemberFromList(member);
-            messenger.ok(res.message);
-          }, function(error) {
-            messenger.error(error);
-          });
-        });
+        vm.currentMemberModal = member;
+        if (vm.isObserverPage()) {
+          domServices.modal('confirmInviteRemoveObserverModal');
+        }else {
+          domServices.modal('confirmInviteRemoveModal');
+        }
       }
     }
 

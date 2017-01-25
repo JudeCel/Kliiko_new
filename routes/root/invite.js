@@ -22,7 +22,7 @@ function index(req, res, next) {
     });
   }, (error) => {
     console.log(error, "invite.js:24");
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
@@ -50,8 +50,7 @@ function accept(req, res, next) {
       })
     });
   }, (error) => {
-    console.log(error, "invite.js:24");
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 };
 
@@ -96,9 +95,7 @@ function sessionAccept(req, res, next) {
       res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
     }
   }, function(error) {
-    console.log(error);
-    req.flash('message', { inviteError: true});
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
@@ -106,17 +103,15 @@ function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
     res.render(views_path('declined'), simpleParams('Invite', result.invite));
   }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
 function sessionNotAtAll(req, res, next) {
-  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(result) {
+  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then((result) => {
     res.render(views_path('declined'), simpleParams('Invite', result.invite));
-  }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+  }, (error) => {
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 

@@ -523,11 +523,10 @@ function variablesForTemplate(type) {
 }
 
 function isEndDateAfterStartDate(startTime, endTime) {
-  let dateFormat = 'YYYY-MM-DD';
-  let startDate = moment(startTime).format(dateFormat); 
-  let endDate = moment(endTime).format(dateFormat);
+  var startDate = moment(startTime, 'YYYY-MM-DD').toDate();
+  var endDate = moment(endTime, 'YYYY-MM-DD').toDate();
 
-  return moment(endDate).isAfter(startDate, 'day');
+  return moment(endDate).isAfter(startDate);
 }
 
 function validateTemplate(template) {

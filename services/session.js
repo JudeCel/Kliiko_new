@@ -11,9 +11,11 @@ var topicsService = require('./topics');
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+let Bluebird = require('bluebird');
 var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
+var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
 
 

@@ -3,8 +3,7 @@
 var moment = require('moment-timezone');
 var models = require('./../models');
 var filters = require('./../models/filters');
-var Session = models.Session;
-var AccountUser = models.AccountUser;
+var {Session, AccountUser} = models;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
@@ -20,6 +19,7 @@ var sessionValidator = require('./validators/session');
 var subscriptionValidator = require('./validators/subscription');
 var topicsService = require('./topics');
 var resourcesService = require('./resources');
+var sessionMemberService = require('./sessionMember');
 var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
@@ -27,7 +27,7 @@ var helpers = require('./../mailers/helpers');
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
-var bluebird = require('bluebird');
+var Bluebird = require('bluebird');
 
 const MIN_MAIL_TEMPLATES = 4;
 const MAX_STEP_INDEX = 4;
@@ -56,28 +56,6 @@ module.exports = {
   sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
 };
 
-function addDefaultObservers(session) {
-  return new bluebird(function (resolve, reject) {
-    models.AccountUser.findAll({ where: { AccountId: session.accountId, role: { $in: ['admin', 'accountManager'] } } }).then(function(accountUsers) {
-      _.map(accountUsers, function(accountUser) {
-        sessionMemberServices.createWithTokenAndColour({
-          sessionId: session.id,
-          accountUserId: accountUser.id,
-          username: accountUser.firstName,
-          role: 'observer',
-          typeOfCreation: 'system'
-        }).then(function(result) {
-          resolve(result);
-        }, function(error) {
-          reject(error);
-        });
-      });
-    }, function(error) {
-      reject(error);
-    });
-  });
-}
-
 function defaultTopicParams(session, topic) {
   return {
     topicId: topic.id,
@@ -101,7 +79,7 @@ function defaultVideoParams(resource, topic) {
 }
 
 function addDefaultTopic(session, sessionMember) {
-  models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
+  return models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
     if (topic) {
       let topicParams = defaultTopicParams(session, topic);
       models.SessionTopics.create(topicParams).then(function(sessionTopic) {
@@ -113,7 +91,7 @@ function addDefaultTopic(session, sessionMember) {
 }
 
 function addDefaultTopicVideo(session) {
-  resourcesService.getDefaultVideo(session.type).then(function(resource) {
+  return resourcesService.getDefaultVideo(session.type).then(function(resource) {
     if (resource) {
       models.SessionTopics.find({ where: { sessionId: session.id, landing: true } }).then(function(topic) {
         if (topic) {
@@ -126,19 +104,19 @@ function addDefaultTopicVideo(session) {
   });
 }
 
-function createNewSessionDefaultItems(session) {
-  return new bluebird(function (resolve, reject) {
-    addDefaultObservers(session).then(function(sessionMember) {
-      addDefaultTopic(session, sessionMember).then(function(sessionMember) {
+function createNewSessionDefaultItems(session, userId) {
+  return new Bluebird((resolve, reject) => {
+    sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
+      addDefaultTopic(session, sessionMember).then((sessionMember) => {
         resolve();
-      }, function(error) {
+      }, (error) => {
+        resolve();
+      }).catch((error) => {
         resolve();
       });
-    }, function(error) {
-      resolve();
-    }).catch(function(error) {
-      resolve();
-    });
+    }, (error) => {
+      reject(error)
+    })
   });
 }
 
@@ -151,12 +129,14 @@ function initializeBuilder(params) {
     params.endTime = params.date;
 
     Session.create(params).then(function(session) {
-      createNewSessionDefaultItems(session).then(function() {
+      createNewSessionDefaultItems(session, params.userId).then(function() {
         sessionBuilderObject(session).then(function(result) {
           deferred.resolve(result);
         }, function(error) {
           deferred.reject(error);
         });
+      }, (error) => {
+        deferred.reject(error);
       });
     }).catch(function(error) {
       deferred.reject(filters.errors(error));
@@ -222,7 +202,7 @@ function update(sessionId, accountId, params) {
   let snapshot = params.snapshot;
   delete params.snapshot;
 
-  return new bluebird(function (resolve, reject) {
+  return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
       let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
       if (validationRes.isValid) {
@@ -245,7 +225,7 @@ function isSessionChangedToActive(params) {
 }
 
 function doUpdate(originalSession, params) {
-  return new bluebird(function (resolve, reject) {
+  return new Bluebird(function (resolve, reject) {
 
     let updatedSession;
     validators.hasValidSubscription(originalSession.accountId).then(function() {
@@ -568,6 +548,30 @@ function findAccountUsersByIds(ids, contactListUsersIds) {
   });
 }
 
+function canRemoveInvite(invite){
+  return new Bluebird((resolve, reject) => {
+    models.SessionMember.find({
+      attributes: ["id"],
+      where: { sessionId: invite.sessionId, accountUserId: invite.accountUserId },
+      include: [
+        {model: models.Message, attributes: ["id"]},
+        {
+          attributes: ["id"],
+          required: true,
+          model: models.Session,
+          where: {id: invite.sessionId, type: 'focus'}
+        }
+      ]
+  }).then((sessionMember) => {
+    if (sessionMember && sessionMember.Messages.length > 0) {
+      reject(MessagesUtil.sessionBuilder.cantRemoveInvite.messages);
+    }else{
+      resolve();
+    }
+  })
+  });
+}
+
 function removeInvite(params) {
   let deferred = q.defer();
 
@@ -578,8 +582,12 @@ function removeInvite(params) {
     }
   }).then(function(invite) {
     if(invite) {
-      inviteService.removeInvite(invite).then(() =>{
-        deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+      canRemoveInvite(invite).then(() => {
+        inviteService.removeInvite(invite).then(() =>{
+          deferred.resolve(MessagesUtil.sessionBuilder.inviteRemoved);
+        }, (error) => {
+          deferred.reject(error);
+        });
       }, (error) => {
         deferred.reject(error);
       });
@@ -818,7 +826,7 @@ function sessionBuilderObjectSnapshot(steps, stepName) {
 }
 
 function sessionBuilderObjectStepSnapshot(sessionId, accountId, stepName) {
-  return new bluebird(function (resolve, reject) {
+  return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(session) {
       stepsDefinition(session).then(function(result) {
         let snapshot = sessionBuilderObjectSnapshot(result, stepName);
@@ -1043,8 +1051,8 @@ function canAddObservers(accountId) {
 function validateMultipleSteps(session, steps) {
   let keys = Object.keys(steps);
 
-  return new bluebird(function (resolve, reject) {
-    bluebird.each(keys, (key) => {
+  return new Bluebird(function (resolve, reject) {
+    Bluebird.each(keys, (key) => {
       let currentStep = steps[key];
       let params = findCurrentStep(steps, currentStep.stepName);
       params.id = session.id;

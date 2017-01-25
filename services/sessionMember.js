@@ -1,6 +1,6 @@
 'use strict';
 
-var {Session, AccountUser, SessionMember} = require('./../models');
+var {Account, Session, AccountUser, SessionMember} = require('./../models');
 var filters = require('./../models/filters');
 var brandProjectConstants = require('../util/brandProjectConstants');
 var constants = require('./../util/constants');
@@ -23,9 +23,74 @@ module.exports = {
   refreshAccountUsersRole: refreshAccountUsersRole,
   findAllMembersIds: findAllMembersIds,
   getSessionMembers: getSessionMembers,
-  isCloseEmailSentToSessionMember: isCloseEmailSentToSessionMember
+  isCloseEmailSentToSessionMember: isCloseEmailSentToSessionMember,
+  findOrCreate: findOrCreate,
+  addDefaultObserver: addDefaultObserver
 };
 
+function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.find({
+      where: {id: id},
+      role: { $in: defaultSystemMemberRoles},
+      include: [{model: SessionMember, required: false, where: {id: session.id}}]
+    }).then((accountUser) => {
+      if (_.isEmpty(accountUser.SessionMembers)) {
+        createWithTokenAndColour({
+          sessionId: session.id,
+          accountUserId: accountUser.id,
+          username: accountUser.firstName,
+          role: 'observer',
+          typeOfCreation: 'system'
+        }).then((sessionMember) => {
+          resolve(sessionMember);
+        }, (error) => {
+          reject(error);
+        });
+      }
+    }, (error) => {
+      reject();
+    });
+  });
+}
+
+function findOrCreate(userId, sessionId) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({where: {id: sessionId},
+      include: [{model: Account,
+        include: [{
+          model: AccountUser,
+          include: [{model: SessionMember, required: false, where: { sessionId: sessionId }}],
+          required: true,
+          where: {
+            UserId: userId
+          }
+        }]
+      }]
+    })
+    .then((session) => {
+      if (!session) { return reject(MessagesUtil.lib.jwt.notPart)}
+
+      let accountUser = session.Account.AccountUsers[0]
+      if (accountUser.SessionMembers[0]) {
+        resolve(accountUser.SessionMembers[0])
+      }else{
+        let defaultSystemMemberRoles = ['accountManager', 'admin']
+        if (_.includes(defaultSystemMemberRoles, accountUser.role)) {
+          addDefaultObserver(accountUser, session, defaultSystemMemberRoles).then((sessionMember) => {
+            resolve(sessionMember);
+          }, (error) => {
+            reject(MessagesUtil.lib.jwt.notPart);
+          })
+        }else{
+          reject(MessagesUtil.lib.jwt.notPart);
+        }
+      }
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
 function createWithTokenAndColour(params) {
   let deferred = q.defer();
   params.token = params.token || uuid.v1();
@@ -194,7 +259,7 @@ function removeByRole(role, sessionId, accountId) {
     let accountUserIds = _.map(members, 'accountUserId');
     SessionMember.destroy({ where: { id: ids } }).then(function(removedCount) {
       _.map(managers, function(sessionMember) {
-        sessionMember.update({ role: 'observer' });
+        sessionMember.update({ role: 'observer', typeOfCreation: 'system' });
       });
       refreshAccountUsersRole(accountUserIds).then(function() {
         deferred.resolve(removedCount);

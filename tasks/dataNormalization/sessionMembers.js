@@ -14,7 +14,13 @@ function updateTypeOfCreation() {
       { type: sequelize.QueryTypes.SELECT}
     ).then((result) =>  {
         console.log(result, "result");
-        let ids = _.map(result, (i) => {return i.id})
+        let ids = []
+        _.each(result, (i) => {
+          if(i.id != null){
+            ids.push(i.id)
+          }
+        })
+        console.log(ids);
         SessionMember.update({typeOfCreation: 'system'}, {where: {id: {$notIn: ids }}}).then((updateResult) => {
           console.log(updateResult);
           resolve();

@@ -20,7 +20,16 @@ module.exports = (Sequelize, DataTypes) => {
     closeEmailSent: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     typeOfCreation: { type: DataTypes.ENUM, allowNull: false, values: ['system', 'invite'], defaultValue: 'invite'}
   }, {
-    indexes: [ { fields: ['token'] } ],
+    indexes: [
+      { name: "UniqSessionMemberBySession",
+        unique: true,
+        fields: ['sessionId','accountUserId']
+      },
+      { fields: ['sessionId'] },
+      { fields: ['accountUserId'] },
+      { fields: ['typeOfCreation'] },
+      { fields: ['token'] }
+    ],
     timestamps: true,
     classMethods: {
       associate: function(models) {

@@ -20,15 +20,19 @@
      * Open or close selected @modalId modal window
      * @param modalId {string}
      * @param [close] {boolean}
+     * @param [force] {boolean}
      */
-    function handleModalActions(modalId, close) {
+    function handleModalActions(modalId, close, force) {
+      if (force) {
+        $('body .modal.fade:visible').modal('hide');
+        return
+      }
+
       if(close) {
         jQuery('#' + modalId).modal('hide');
         $rootScope.$broadcast('modal-close', modalId);
-      }
-      else {
+      } else {
         var id, modals = $('body .modal.fade:visible');
-
         if(modals.length) {
           id = modals[0].id;
           if(modalId != id) {
@@ -37,8 +41,13 @@
         }
 
         if(modalId != id) {
-          jQuery('#' + modalId).modal('show');
-          $rootScope.$broadcast('modal-open', modalId);
+          var modal = jQuery('#' + modalId)
+          if (modal.length) {
+            modal.modal('show');
+            $rootScope.$broadcast('modal-open', modalId);
+          }else{
+            console.error("modal window not found with id: ", modalId, " check includes and modal window id")
+          }
         }
       }
     }
