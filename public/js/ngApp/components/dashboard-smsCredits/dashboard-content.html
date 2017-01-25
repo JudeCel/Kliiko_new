@@ -1,7 +1,6 @@
 <section id='sms-credits' ng-controller='SmsCreditController as sms'>
   <span class="row">
     <span class="col-md-12">
-
       <div class="panel panel-success border-green border-radius-none">
         <div class="panel-body">
           <h4>
@@ -47,7 +46,7 @@
                 </td>
 
                 <td>
-                  <a href="" class="btn btn-standart btn-green btn-medium btn-margin pull-right" ng-click="sms.purchaseCredits(smsCredit.addon.id, selectedQty)">
+                  <a id="purchase-submit" href="" class="btn btn-standart btn-green btn-medium btn-margin pull-right" ng-click="sms.checkout(smsCredit.addon.id, selectedQty)">
                     Purchase
                   </a>
                 </td>
@@ -59,3 +58,23 @@
     </span>
   </span>
 </section>
+  <div id="checkout-info" class="row"></div>
+  
+  <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="max-width: 540px;">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">
+                    Payment Information
+                </h4>
+            </div>
+            <!--add custom attribute data-cb-modal-body="body" to modal body -->
+            <div class="modal-body"  data-cb-modal-body="body" style="padding-left: 0px;padding-right: 0px;">
+            </div>
+        </div> 
+    </div>
+  </div> 
+
+
+<script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js">            
+</script>

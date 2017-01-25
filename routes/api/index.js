@@ -111,6 +111,7 @@ router.post('/subscriptionPlan/postQuote', PERMISSIONS.managerAdmin, subscriptio
 router.get('/subscriptionSmsCredits', PERMISSIONS.managerAdmin, smsCredit.get);
 router.post('/subscriptionSmsCredits/puchaseCredits', PERMISSIONS.managerAdmin, smsCredit.purchase);
 router.get('/subscriptionSmsCredits/creditCount', PERMISSIONS.managerAdmin, smsCredit.creditCount);
+router.get('/subscriptionSmsCredits/checkout', PERMISSIONS.managerAdmin, smsCredit.checkout);
 
 // contact List
 router.get('/contactLists', PERMISSIONS.facilitatorManagerAdmin, contactList.index);

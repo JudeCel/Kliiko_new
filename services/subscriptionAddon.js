@@ -21,7 +21,8 @@ module.exports = {
   messages: MessagesUtil.subscriptionAddon,
   getAllAddons: getAllAddons,
   creditCount: creditCount,
-  chargeAddon: chargeAddon
+  chargeAddon: chargeAddon,
+  checkout: checkout
 }
 
 function getAllAddons() {
@@ -90,6 +91,40 @@ function chargeAddon(params) {
       });
     }
   }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
+
+  return deferred.promise;
+}
+
+
+// Example params for charging addon
+// params = {
+//   accountId: accountId,
+//   addonId: addonId,
+//   addonQuantity: addonQuantity,
+//   subscriptionId: subscriptionId
+// }
+
+function checkout(params) {
+  let deferred = q.defer();
+
+  Subscription.find({ where: { accountId: params.accountId }}).then((subscription) => {
+      chargebee.hosted_page.update_payment_method({
+          customer : {
+            id : subscription.customerId
+          },
+          iframe_messaging: true,
+          embed: true
+      }).request((error, result) => {
+        if(error){
+          deferred.reject(error.message);
+        }else{
+          result.hosted_page.site_name =  process.env.CHARGEBEE_SITE
+          deferred.resolve(result);
+        }
+      });
+  }).catch((error) => {
     deferred.reject(filters.errors(error));
   });
 
