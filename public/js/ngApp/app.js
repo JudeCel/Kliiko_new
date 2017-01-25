@@ -198,6 +198,7 @@
   function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
+    vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
     $rootScope.$on('app.updateUser', init);
 
@@ -205,27 +206,19 @@
 
     function init() {
       user.getUserData(vm).then(function(res) {
-        vm.user = res;
-        vm.accountUser =  res;
         setSessionStorage(res);
+        sessionExpire.init();
       });
-      
-      // accountUser.getAccountUserData().then(function(accountUserRes) {
-        // vm.accountUser = accountUserRes
-        account.getAccountData().then(function(accountRes) {
-          vm.account = accountRes;
-          vm.adminInToAdmin = (vm.account.admin && accountUser.isAdmin)
-        });
-      // });
-
-      
-      sessionExpire.init();
     }
 
     function openModal(id) {
       setTimeout(function () {
         domServices.modal(id);
       }, 10);
+    }
+
+    function hasPermissions(perrmission){
+      return vm.permissions[perrmission]
     }
 
     function setSessionStorage(res) {

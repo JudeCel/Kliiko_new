@@ -9,30 +9,10 @@
     var accountRestApi = $resource('/account', {}, {post: {method: 'POST'}});
 
     var UserService = {};
-    UserService.getAccountData = getAccountData;
     UserService.createNewAccount = createNewAccount;
     UserService.account = {};
     return UserService;
-
-    function getAccountData() {
-      dbg.log2('#KliikoApp.account > get account');
-      var deferred = $q.defer();
-
-      accountRestApi.get({}, function (res) {
-        dbg.log2('#KliikoApp.account > get account > server respond >', res);
-        if(res.error) {
-          deferred.reject(res.error);
-        }
-        else {
-          UserService.account = res;
-          fetchSubscription(UserService.account);
-          deferred.resolve(UserService.account);
-        }
-      });
-
-      return deferred.promise;
-    }
-
+    
     function createNewAccount(data) {
       var deferred = $q.defer();
 
