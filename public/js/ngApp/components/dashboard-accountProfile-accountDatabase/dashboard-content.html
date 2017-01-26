@@ -24,6 +24,7 @@
             <th>Account Manager</th>
             <th>Registered</th>
             <th>E-mail</th>
+            <th>Admin Access</th>
             <th>Send Newsletter</th>
             <th>Address</th>
             <th>City</th>
@@ -47,6 +48,16 @@
             </td>
             <td>{{ accountUser.createdAt | date: dateFormat }}</td>
             <td>{{ accountUser.email }}</td>
+            <td>
+              {{account.hasActiveAdmin}}
+              <input 
+                type="radio" 
+                name="adminForAccount-{{account.id}}" 
+                value="true" 
+                ng-model="account.hasActiveAdmin"
+                ng-change="addAdmin(account)"
+              >
+            </td>
             <td>{{ accountUser.reveiveNewsLetters | yesOrNo }}</td>
             <td>{{ accountUser.postalAddress }}</td>
             <td>{{ accountUser.city }}</td>
@@ -70,4 +81,5 @@
   </div>
 
   <ng-include src="'/js/ngApp/components/dashboard-accountProfile-accountDatabase/modal.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-accountProfile-accountDatabase/addAdminModal.html'"></ng-include>
 </section>

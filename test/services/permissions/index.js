@@ -14,6 +14,7 @@ describe('SERVICE - permissions', () => {
                 done();
             })
         });
+        
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, true)});
         it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, true)});
         it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
