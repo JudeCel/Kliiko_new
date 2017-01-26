@@ -892,6 +892,7 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
   str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
+  str = str.replace(/\{System Requirements\}/ig, "<%= systemRequirementsUrl %>");
   return str;
 }
 
