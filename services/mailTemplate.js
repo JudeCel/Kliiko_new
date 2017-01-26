@@ -825,7 +825,6 @@ function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
     if (accountUser) {
       composePreviewMailTemplate(mailTemplate, sessionId, function(result) {
         if (result.error) {
-          console.log("ERRRRRR: ", result.error);
           callback(result.error);
         } else {
           var params = {
