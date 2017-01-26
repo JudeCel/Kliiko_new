@@ -1,7 +1,7 @@
-<section ng-if="app.hasPermissions('canSeeFreeTrialWarning') && app.subscription.name == 'free_trial'">
+<section ng-if="app.hasPermissions('canSeeFreeTrialWarning')">
   <div class="row row-centered margin-top-2rem">
     <div class='col-md-offset-1 col-md-10 сol-centered text-center'>
-       <p class="warning" ng-if="app.subscription.name"><img src="/icons/ic_attention.png" class="ic"> Your free trial will expire in {{app.accountUser.trial.daysLeft}} day<span ng-if="app.accountUser.trial.daysLeft > 1">s</span> </p>
+       <p class="warning" ng-if=" app.subscription.name == 'free_trial'"><img src="/icons/ic_attention.png" class="ic"> Your free trial will expire in {{app.accountUser.trial.daysLeft}} day<span ng-if="app.accountUser.trial.daysLeft > 1">s</span> </p>
     </div>
   </div>
 

@@ -218,7 +218,11 @@
     }
 
     function hasPermissions(perrmission){
-      return vm.permissions[perrmission]
+      if(vm.permissions){
+        return vm.permissions[perrmission]
+      }else{
+        return false
+      }
     }
 
     function setSessionStorage(res) {

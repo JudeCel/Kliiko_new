@@ -21,6 +21,12 @@ const canSystemMailTemplates = (account, accountUser) => {
 const canSeeFreeTrialWarning = (account, accountUser) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
+const canSmsCredits = (account, accountUser) => {
+    return(checkRoles(accountUser.role, ['accountManager']))
+}
+const canPaymentDetails = (account, accountUser) => {
+    return(checkRoles(accountUser.role, ['accountManager']))
+}
 
 const permissionsObject = { 
     canAccountDatabase: canAccountDatabase,
@@ -29,7 +35,9 @@ const permissionsObject = {
     canSessionRating: canSessionRating,
     canSystemMailTemplates: canSystemMailTemplates,
     canBannerMessages: canBannerMessages,
-    canSeeFreeTrialWarning: canSeeFreeTrialWarning
+    canSeeFreeTrialWarning: canSeeFreeTrialWarning,
+    canSmsCredits: canSmsCredits,
+    canPaymentDetails: canPaymentDetails
 } 
 
 const Bluebird = require('bluebird');

@@ -28,10 +28,10 @@
         }
         else {
           $('#welcome-user').removeClass('hidden');
-          console.log(res)
           UserService.app.user = res.user;
           UserService.app.account = res.account;
-          UserService.app.permissions = res.accountPerrmissions;
+          UserService.app.accountUser = res.accountUser;
+          UserService.app.permissions = res.perrmissions;
           UserService.app.subscription = res.subscription;
 
           deferred.resolve(UserService.user);
