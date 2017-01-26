@@ -8,9 +8,9 @@
       <div id="mail-template-list" class="mail-template-list">
         <span ng-repeat="(key, t) in ec.emailTemplates" ng-if="ec.addedList[t.id]">
           <a class="list-group-item border-radius-none" ng-click="ec.startEditingTemplate(key)" ng-if="!t.isCopy"
-            ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.accountUser.isAdmin)}">
+            ng-class="{'active': ec.isCurrent(key), 'list-group-item-white' : ec.isEditable(t, app.hasPermissions('canSystemMailTemplates'))}">
 
-            <div ng-if="!ec.isEditable(t, app.accountUser.isAdmin)">
+            <div ng-if="!ec.isEditable(t, app.hasPermissions('canSystemMailTemplates'))">
               {{::t.name}}
               <span class='pull-right glyphicon glyphicon-chevron-right' aria-hidden='true' ng-if='ec.viewingTemplateName != inherit["MailTemplateBase.name"]'></span>
               <span class='pull-right glyphicon glyphicon-chevron-down' aria-hidden='true' ng-if='ec.viewingTemplateName == inherit["MailTemplateBase.name"]'></span>

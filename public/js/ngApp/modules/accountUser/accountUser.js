@@ -9,7 +9,6 @@
 
     var vm = {};
     vm.getAccountUserData = getAccountUserData;
-    // vm.isAdmin = isAdmin;
     vm.accountUser = {};
     return vm;
 
@@ -24,21 +23,11 @@
           deferred.reject(res.error);
         }
         else {
-          // vm.accountUser = fetchRole(res);
           deferred.resolve(res);
         }
       });
 
       return deferred.promise;
-    }
-
-    // function isAdmin() {
-    //   return vm.accountUser.isAdmin;
-    // }
-
-    function fetchRole(accountUser) {
-      var role = 'is' + vm.accountUser.role.capitalize();
-      accountUser[role] = true;
     }
   }
 })();

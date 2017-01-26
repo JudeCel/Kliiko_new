@@ -12,9 +12,6 @@ const canUpgradePlan = (account, accountUser) => {
 const canSessionRating = (account, accountUser) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canBannerMessages = (account, accountUser) => {
-    return(account.admin && checkRoles(accountUser.role, ['admin']))
-}
 const canSystemMailTemplates = (account, accountUser) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
@@ -27,6 +24,12 @@ const canSmsCredits = (account, accountUser) => {
 const canPaymentDetails = (account, accountUser) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
+const canStockCreateTopics = (account, accountUser) => {
+    return(account.admin && checkRoles(accountUser.role, ['admin']))
+}
+const canUploadBanners = (account, accountUser) => {
+    return(account.admin && checkRoles(accountUser.role, ['admin']))
+}
 
 const permissionsObject = { 
     canAccountDatabase: canAccountDatabase,
@@ -34,10 +37,11 @@ const permissionsObject = {
     canUpgradePlan: canUpgradePlan,
     canSessionRating: canSessionRating,
     canSystemMailTemplates: canSystemMailTemplates,
-    canBannerMessages: canBannerMessages,
     canSeeFreeTrialWarning: canSeeFreeTrialWarning,
     canSmsCredits: canSmsCredits,
-    canPaymentDetails: canPaymentDetails
+    canPaymentDetails: canPaymentDetails,
+    canStockCreateTopics: canStockCreateTopics,
+    canUploadBanners: canUploadBanners,
 } 
 
 const Bluebird = require('bluebird');
