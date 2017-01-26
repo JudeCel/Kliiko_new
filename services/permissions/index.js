@@ -6,6 +6,15 @@ const canAccountDatabase = (account, accountUser) => {
 const canAccountManagers = (_account, accountUser) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
+const canCreateNewSession = (_account, accountUser) => {
+    return(checkRoles(accountUser.role, ['accountManager', 'admin']))
+}
+const canEditSession = (_account, accountUser) => {
+    return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
+}
+const canSeeChatSessions = (_account, accountUser) => {
+    return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
+}
 const canUpgradePlan = (account, accountUser) => {
     return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
@@ -42,6 +51,9 @@ const permissionsObject = {
     canPaymentDetails: canPaymentDetails,
     canStockCreateTopics: canStockCreateTopics,
     canUploadBanners: canUploadBanners,
+    canCreateNewSession: canCreateNewSession,
+    canEditSession: canEditSession,
+    canSeeChatSessions: canSeeChatSessions,
 } 
 
 const Bluebird = require('bluebird');

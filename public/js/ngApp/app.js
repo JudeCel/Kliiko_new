@@ -194,13 +194,13 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$cookies', '$injector', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $cookies, $injector, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
     vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
-    $rootScope.$on('app.updateUser', init);
+    $rootScope.$on('app.user', init);
 
     init();
 
