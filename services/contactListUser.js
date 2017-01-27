@@ -248,7 +248,7 @@ function create(params, transaction, skipeValidtions) {
 function createNewAccountUser(params, transaction) {
   let deferred = q.defer();
   ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
-    AccountUserService.create(params.defaultFields, params.accountId, contactList.role, transaction).then(function(accountUser) {
+    AccountUserService.create(params.defaultFields, params.accountId, (params.role || contactList.role), transaction).then(function(accountUser) {
       updateAccountUserIfUserFound(accountUser, params.defaultFields.email, transaction).then(function(accountUser) {
         deferred.resolve(accountUser);
       }, function(error) {

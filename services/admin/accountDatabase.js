@@ -68,24 +68,26 @@ function addAdmin({accountId, email}, _accountUserId) {
         let adminAccountUser = accountUsers[0]
         models.sequelize.transaction().then((transaction) => {
           ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
-            let contactListUser = {
-              accountId: accountId,
-              contactListId: contactList.id,
-              defaultFields: {
-                firstName: adminAccountUser.firstName,
-                lastName: adminAccountUser.lastName,
-                email: adminAccountUser.email,
-                gender: adminAccountUser.gender
-              }}
+          let contactListUserParams = {
+            accountId: accountId,
+            contactListId: contactList.id,
+            role: adminAccountUser.role,
+            defaultFields: {
+              firstName: adminAccountUser.firstName,
+              lastName: adminAccountUser.lastName,
+              email: adminAccountUser.email,
+              gender: adminAccountUser.gender
+            }}
 
-            ContactListUserService.create(contactListUser, transaction).then((contactListUser) => {
+            ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
               let inviteParams = {
                 accountUserId: contactListUser.accountUserId,
                 accountId: accountId,
                 role: adminAccountUser.role
               }
+
               inviteService.createInvite(inviteParams, transaction).then(() => {
-                  resolve(accountUsers);
+                  resolve(adminAccountUser);
                 }, (error) => {
                   reject(error);
               });

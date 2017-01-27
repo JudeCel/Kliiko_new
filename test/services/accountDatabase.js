@@ -2,7 +2,7 @@
 
 var models = require('./../../models');
 var MessagesUtil = require('./../../util/messages');
-var Account = models.Account;
+var {Account, ContactList, ContactListUser, Invite} = models;
 var usersServices = require('./../../services/users');
 var accountDatabaseService = require('./../../services/admin/accountDatabase');
 var userFixture = require('./../fixtures/user');
@@ -28,7 +28,7 @@ describe('SERVICE - AccountDatabase', () => {
     });
   });
 
-  describe.only("#addAdmin", () =>{
+  describe("#addAdmin", () =>{
     it("when not admin email", (done) => {
       let params = {email: testAccountUser.email}
       accountDatabaseService.addAdmin(params,testAccount.id).then(() => {
@@ -43,8 +43,8 @@ describe('SERVICE - AccountDatabase', () => {
         }
       })
     });
-    
-    it("gived admin email", (done) => {
+
+    it("give admin email", (done) => {
       let adminParams = {
         firstName: "firstName",
         lastName: 'lastName',
@@ -56,8 +56,21 @@ describe('SERVICE - AccountDatabase', () => {
 
       userFixture.createAdminUser(adminParams).then((adminUser) => {
         let params = {email: adminUser.email, accountId: testAccount.id}
-        accountDatabaseService.addAdmin(params,testAccount.id).then(() => {
-          done();
+        accountDatabaseService.addAdmin(params, testAccount.id).then((adminAccoutUser) => {
+          ContactListUser.find({where: {userId: adminAccoutUser.UserId, accountId: testAccount.id}, 
+            include: [{model: ContactList}]
+          }).then((contactListUser) => {
+            Invite.find({where: {accountUserId: contactListUser.accountUserId, role: 'admin'}}).then((invite) => {
+              try {
+                assert.equal(contactListUser.ContactList.role, 'accountManager');
+                assert.isObject(invite);
+                assert.isObject(adminAccoutUser);
+                done();
+              } catch (error) {
+                done(error);
+              }
+            })
+          });
         }, (error) => {
           done(error);
         })
