@@ -3,13 +3,14 @@
 var assert = require('chai').assert;
 var PermissionsService = require('./../../../services/permissions');
 
-describe('SERVICE - permissions', () => {
+describe.only('SERVICE - permissions', () => {
     describe("Admin in admin account", () => {
         var permisssions = {}
         before((done) => {
             var account =  {admin: true}
             var accountUser = {role: 'admin'}
-            PermissionsService.forAccount(account, accountUser).then((result) => {
+            var sub = {uploadToGallery: true}
+            PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
             })
@@ -28,6 +29,8 @@ describe('SERVICE - permissions', () => {
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, true)});
         it("canEditSession", () => {assert.equal(permisssions.canEditSession, true)});
         it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
+        it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
+        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, true)});
     });
 
     describe("Admin in regular account", () => {
@@ -35,7 +38,8 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'admin'}
-            PermissionsService.forAccount(account, accountUser).then((result) => {
+            var sub = {uploadToGallery: true}
+            PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
             })
@@ -53,6 +57,7 @@ describe('SERVICE - permissions', () => {
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, true)});
         it("canEditSession", () => {assert.equal(permisssions.canEditSession, true)});
         it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
+        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, true)});
     });
 
     describe("Account Manager in regular account", () => {
@@ -60,7 +65,8 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'accountManager'}
-            PermissionsService.forAccount(account, accountUser).then((result) => {
+            var sub = {uploadToGallery: true}
+            PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
             })
@@ -79,6 +85,7 @@ describe('SERVICE - permissions', () => {
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, true)});
         it("canEditSession", () => {assert.equal(permisssions.canEditSession, true)});
         it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
+        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, true)});
     });
 
     describe("Host in regular account", () => {
@@ -86,7 +93,8 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'facilitator'}
-            PermissionsService.forAccount(account, accountUser).then((result) => {
+            var sub = {uploadToGallery: true}
+            PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
             })
@@ -105,5 +113,6 @@ describe('SERVICE - permissions', () => {
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, false)});
         it("canEditSession", () => {assert.equal(permisssions.canEditSession, true)});
         it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
+        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, false)});
     });
 });

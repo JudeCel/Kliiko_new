@@ -1,44 +1,48 @@
 'use strict';
 var _ = require('lodash');
-const canAccountDatabase = (account, accountUser) => {
+const canAccountDatabase = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canAccountManagers = (_account, accountUser) => {
+const canAccountManagers = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
-const canCreateNewSession = (_account, accountUser) => {
+const canCreateNewSession = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
-const canEditSession = (_account, accountUser) => {
+const canEditSession = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
 }
-const canSeeChatSessions = (_account, accountUser) => {
+const canSeeChatSessions = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
 }
-const canUpgradePlan = (account, accountUser) => {
+const canUpgradePlan = (account, accountUser, sub) => {
     return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
-const canSessionRating = (account, accountUser) => {
+const canSessionRating = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canSystemMailTemplates = (account, accountUser) => {
+const canSystemMailTemplates = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canSeeFreeTrialWarning = (account, accountUser) => {
+const canSeeFreeTrialWarning = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
-const canSmsCredits = (account, accountUser) => {
+const canSmsCredits = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
-const canPaymentDetails = (account, accountUser) => {
+const canPaymentDetails = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
-const canStockCreateTopics = (account, accountUser) => {
+const canStockCreateTopics = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canUploadBanners = (account, accountUser) => {
+const canUploadBanners = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
+const canUploadToGallery = (account, accountUser, sub) => {
+    return(checkRoles(accountUser.role, ['admin', 'accountManager']) && checkSub(account, accountUser, sub, 'uploadToGallery'))
+}
+
 
 const permissionsObject = { 
     canAccountDatabase: canAccountDatabase,
@@ -54,15 +58,16 @@ const permissionsObject = {
     canCreateNewSession: canCreateNewSession,
     canEditSession: canEditSession,
     canSeeChatSessions: canSeeChatSessions,
+    canUploadToGallery: canUploadToGallery
 } 
 
 const Bluebird = require('bluebird');
-const forAccount = (account, accountUser)  => {
+const forAccount = (account, accountUser, sub)  => {
     return new Bluebird( (resolve, reject) => {
         try {
             let permissions = Object.assign({}, permissionsObject)
             Object.keys(permissions).map((i) => {
-                permissions[i] = permissions[i](account, accountUser)
+                permissions[i] = permissions[i](account, accountUser, sub)
             })
             resolve(permissions);
         } catch (error) {
@@ -75,6 +80,13 @@ const forAccount = (account, accountUser)  => {
 
 function checkRoles(role, allowedRoles) {
   return _.includes(allowedRoles, role);
+}
+function checkSub(account, acountUser, sub, key) {
+  if(acountUser.role == 'admin'){
+      return true;
+  }else{
+    return sub[key]
+  }
 }
 module.exports = {
     forAccount: forAccount
