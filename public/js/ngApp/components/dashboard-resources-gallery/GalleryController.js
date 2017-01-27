@@ -368,6 +368,7 @@
     function openUploadModal(current, parent, replaceResource, modalTitle) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
+      vm.isReplacingStock = replaceResource && replaceResource.stock;
       if (replaceResource) {
         vm.modalTitle = "Replace resource";
         parent.modal.replace = true;
