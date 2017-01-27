@@ -30,7 +30,7 @@
     dbg.log2('#AccountDatabaseController started');
 
     $scope.accounts = [];
-    $scope.addAdminForm = {'email': "", 'accountId': null};
+    $scope.modalObject = {addAdminForm: {'email': ""}}
 
     init();
 
@@ -48,19 +48,21 @@
     };
 
     $scope.addAdmin = function(account) {
-      $scope.addAdminForm.accountId = account.id;
+      account.hasActiveAdmin = false;
+      $scope.modalObject.account = account
       domServices.modal('addAdminModal');
     };
 
     $scope.submitAddAdminForm = function() {
-      AccountDatabaseServices.addAdmin($scope.addAdminForm).then(function(res) {
+      var params = {email: $scope.modalObject.addAdminForm.email, accountId: $scope.modalObject.account.id}
+      AccountDatabaseServices.addAdmin(params).then(function(res) {
          if(res.error) {
           messenger.error(res.error);
         }else{
           messenger.ok(res.message);
+          $scope.modalObject.account.hasActiveAdmin = true
+          $scope.modalObject = {};
           domServices.modal('addAdminModal', true);
-          $scope.addAdminForm.email = ""
-          $scope.addAdminForm.accountId = null;
         }
       });
     };

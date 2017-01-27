@@ -10,11 +10,12 @@
         <div class='form-group'>
           <center>Enter email address </center>
           <center>
-              <input type="email" ng-model='addAdminForm.email'>
+            <form name="addAdminForm">
+              <input type="email" ng-model='modalObject.addAdminForm.email'>
+            <form>
           </center>
         </div>
       </div>
-
       <div class='modal-footer'>
         <button type='button' class='btn-standart btn-red pull-left' data-dismiss='modal'>Cancel</button>
         <button type='button' class='btn-standart btn-green pull-right' ng-click="submitAddAdminForm()">add</button>
