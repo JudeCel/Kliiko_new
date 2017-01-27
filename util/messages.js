@@ -8,7 +8,8 @@ module.exports = {
   accountDatabase: {
     notFound: 'Account User not found',
     notVerified: 'Account is not verified',
-    selfDisable: 'You cannot disable your account'
+    selfDisable: 'You cannot disable your account',
+    adminNotFound: 'Admin not found with email:'
   },
   accountManager: {
     removed: 'Successfully removed account from Account List',

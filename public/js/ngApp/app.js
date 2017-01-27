@@ -194,31 +194,35 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$cookies', '$injector', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $cookies, $injector, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
+    vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
-    $rootScope.$on('app.updateUser', init);
+    $rootScope.$on('app.user', init);
 
     init();
 
     function init() {
       user.getUserData(vm).then(function(res) {
         setSessionStorage(res);
-        vm.user = res;
+        sessionExpire.init();
       });
-      accountUser.getAccountUserData().then(function(res) {
-        vm.accountUser = res
-      });
-      account.getAccountData().then(function(res) { vm.account = res });
-      sessionExpire.init();
     }
 
     function openModal(id) {
       setTimeout(function () {
         domServices.modal(id);
       }, 10);
+    }
+
+    function hasPermissions(perrmission){
+      if(vm.permissions){
+        return vm.permissions[perrmission]
+      }else{
+        return false
+      }
     }
 
     function setSessionStorage(res) {

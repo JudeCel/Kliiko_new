@@ -8,7 +8,9 @@
 
     var UserService = {};
     UserService.app = {};
+    UserService.account = {};
     UserService.user = {};
+    UserService.permissions = {};
     UserService.getUserData = getUserData;
     UserService.changeUserPassword = changeUserPassword;
     UserService.updateUserData = updateUserData;
@@ -26,14 +28,20 @@
         }
         else {
           $('#welcome-user').removeClass('hidden');
-          UserService.user = res;
+          console.log(res);
+          UserService.app.user = res.user;
+          UserService.app.account = res.account;
+          UserService.app.accountUser = res.accountUser;
+          UserService.app.permissions = res.perrmissions;
+          UserService.app.subscription = res.subscription;
+
           deferred.resolve(UserService.user);
         }
       });
 
       return deferred.promise;
     }
-
+    
     function changeUserPassword(data){
       var deferred = $q.defer();
 

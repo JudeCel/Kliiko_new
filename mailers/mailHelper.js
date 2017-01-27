@@ -11,6 +11,7 @@ function sendEmail(templateName, params, callback, passParamsToGetActiveMailTemp
     }
     params.termsOfUseUrl = terms_of_service.filter(params);
     params.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
+    params.systemRequirementsUrl = helpers.getUrl('', null, '/system_requirements');
     let mailContent = mailTemplateService.composeMailFromTemplate(result, params);
     if (mailContent.error) {
       return callback(mailContent.error);

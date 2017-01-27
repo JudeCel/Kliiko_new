@@ -63,7 +63,7 @@ function destroy(contacListId, accountId) {
 
 }
 function allByAccount(accountId, sessionId) {
-    let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo");
+    let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo").concat("role");
     let deferred = q.defer();
     let where = { accountId: accountId }
     if(sessionId) { where.active = true }

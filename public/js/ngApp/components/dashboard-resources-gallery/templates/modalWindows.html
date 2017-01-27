@@ -112,7 +112,7 @@
           </div>
         </div>
 
-        <div class='form-group' ng-if='app.accountUser.isAdmin'>
+        <div class='form-group' ng-if="app.hasPermissions('canStockCreateTopics')">
           <div class='checkbox checkbox-sm checkbox-success survey-input'>
             <input class='styled' id='checkbox' type='checkbox' name='checkbox' ng-model='gc.newResource.stock'>
             <label for='checkbox'>Stock?</label>
