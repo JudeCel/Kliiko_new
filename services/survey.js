@@ -202,6 +202,13 @@ function createContactList(survey, fields, t){
   })
 }
 
+
+function tryFindCOntactList(survey, t) {
+   survey.getContactList({ transaction: t }).then((contactList) => {
+     
+   })
+}
+
 function createOrUpdateContactList(survey, fields, t) {
    return new Bluebird((resolve, reject) => {
       survey.getContactList({ transaction: t }).then((contactList) => {
@@ -406,27 +413,29 @@ function answerSurvey(params) {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
       return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
         let fields = getContactListFields(survey.SurveyQuestions);
-        return createOrUpdateContactList(survey, fields, t).then(function(contactList) {
-          if(!_.isEmpty(fields)) {
-            let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
-              clParams.contactListId = contactList.id;
-              clParams.accountId = survey.accountId;
+         survey.getContactList({ transaction: t }).then((contactList) => {
+           updateContactList(contactList, survey, fields, t).then((contactList) => {
+              if(!_.isEmpty(fields)) {
+                let clParams = findContactListAnswers(contactList, validParams.answers);
+                if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
+                  clParams.contactListId = contactList.id;
+                  clParams.accountId = survey.accountId;
 
-              return contactListUserServices.create(clParams).then(function(result) {
+                  return contactListUserServices.create(clParams).then(function(result) {
+                    return survey;
+                  }, function(error) {
+                    throw error;
+                  });
+                } else {
+                  return survey;
+                }
+              } else {
                 return survey;
-              }, function(error) {
-                throw error;
-              });
-            }
-            else {
-              return survey;
-            }
-          }
-          else {
-            return survey;
-          }
-        }, function(error) {
+              }
+           }, (error) => {
+             throw error;
+           })
+         }, (error) => {
           throw error;
         });
       });
