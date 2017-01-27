@@ -59,11 +59,16 @@ const permissionsObject = {
 const Bluebird = require('bluebird');
 const forAccount = (account, accountUser)  => {
     return new Bluebird( (resolve, reject) => {
-        let permissions = Object.assign({}, permissionsObject)
-        Object.keys(permissions).map((i) => {
-            permissions[i] = permissions[i](account, accountUser)
-        })
-        resolve(permissions);
+        try {
+            let permissions = Object.assign({}, permissionsObject)
+            Object.keys(permissions).map((i) => {
+                permissions[i] = permissions[i](account, accountUser)
+            })
+            resolve(permissions);
+        } catch (error) {
+            reject(error);
+        }
+
     });
 }
 
