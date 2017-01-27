@@ -49,12 +49,11 @@
             <td>{{ accountUser.createdAt | date: dateFormat }}</td>
             <td>{{ accountUser.email }}</td>
             <td>
-              {{account.hasActiveAdmin}}
-              <input 
+              <input ng-if="$index == 0" 
                 type="radio" 
-                name="adminForAccount-{{account.id}}" 
-                value="true" 
+                name="adminForAccount-{{account.id}}"
                 ng-model="account.hasActiveAdmin"
+                ng-value="true"
                 ng-change="addAdmin(account)"
               >
             </td>

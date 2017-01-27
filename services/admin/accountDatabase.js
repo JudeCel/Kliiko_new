@@ -18,26 +18,28 @@ var validAttributes = [
 ];
 
 function findAllAccounts(callback) {
-  let accountUserAttrs = constants.safeAccountUserParams.concat('createdAt');
+  let accountUserAttrs = constants.safeAccountUserParams.concat('createdAt').concat('role');
 
   Account.findAll({
     attributes: ['id','admin', 'name'],
+    where: {admin: false},
     include: [
       { model: AccountUser, 
-        where: { role: 'accountManager' }, 
+        where: {role: {$in: ['accountManager', 'admin']}}, 
+        order: 'createdAt ASC',
         attributes: accountUserAttrs,
         include: [ 
           { model: User, attributes: ['id'] } ] },
           {model: Subscription, attributes: ['planId']}
         ]
   }).then((accounts) => {
-    callback(null, mapDate(accounts));
+    callback(null, mapData(accounts));
   }, (error) => {
       callback(filters.errors(error));
   });
 };
 
-function mapDate(accounts) {
+function mapData(accounts) {
   return accounts.map((account) => {
     let adminUsers = account.AccountUsers.filter((au) => { if(au.role == 'admin') {return au} })
     if(_.isEmpty(adminUsers)){
