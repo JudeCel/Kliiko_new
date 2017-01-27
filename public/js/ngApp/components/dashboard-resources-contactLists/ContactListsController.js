@@ -75,6 +75,7 @@
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
+    vm.canEditOrDelete = canEditOrDelete;
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
     vm.disableNextSortingFilter = disableNextSortingFilter;
@@ -120,6 +121,9 @@
 
     function setSessionId(sessionId) {
       vm.sessionId = sessionId;
+    }
+    function canEditOrDelete(member) {
+      return !member.admin
     }
 
     function removeSpecificLists() {
@@ -518,7 +522,7 @@
     }
 
     function canSelectMember(member) {
-      return !vm.hideStuff || member.canInvite;
+      return (!vm.hideStuff || member.canInvite) && !member.admin;
     }
 
     /**

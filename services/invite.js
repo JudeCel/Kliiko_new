@@ -103,7 +103,7 @@ function facilitatorInviteParams(accountUser, sessionId) {
   }
 }
 
-function createInvite(params) {
+function createInvite(params, transaction) {
   return new Bluebird((resolve, reject) => {
     let sql = {
       where: {
@@ -127,11 +127,11 @@ function createInvite(params) {
       sentAt: new Date(),
       role: params.role
     }
-
-    models.sequelize.transaction().then((transaction) => {
+    
+    buildTransaction(transaction).then((transaction) => {
       Invite.build(buildAttrs).validate().done(() => {
         sql.transaction = transaction;
-        Invite.destroy(sql).then((result) => {
+        Invite.destroy(sql).then(() => {
           Invite.create(buildAttrs, {transaction: transaction}).then((result) => {
             enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
               Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }, transaction: transaction}).then((invite)=> {
@@ -144,7 +144,7 @@ function createInvite(params) {
             }, (error) => {
               reject(error);
             });
-          }).catch(function(error) {
+          }).catch((error) => {
             transaction.rollback().then(() => {
               if(error.name == 'SequelizeUniqueConstraintError') {
                 reject({ email: 'User has already been invited' });
@@ -160,6 +160,16 @@ function createInvite(params) {
     });
   });
 };
+
+function buildTransaction(transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (transaction) {
+      resolve(transaction);
+    }else{
+      resolve(models.sequelize.transaction())
+    }
+  })
+}
 
 function simpleParams(invite, message) {
   return { invite: invite, message: message }
