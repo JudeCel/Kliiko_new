@@ -25,10 +25,6 @@
       });
 
       return deferred.promise;
-    }
-
-    function fetchSubscription(account) {
-      UserService.account["isActiveSubscription"] = UserService.account.Subscription ? UserService.account.Subscription.active : false;
-    }
+    };
   }
 })();
