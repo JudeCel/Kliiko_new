@@ -62,7 +62,7 @@ function addAdmin({accountId, email}, _accountUserId) {
   return new Bluebird((resolve, reject) => {
     AccountUser.findAll({where: {email: email, role: 'admin'}}).then((accountUsers) => {
       if (_.isEmpty(accountUsers)) {
-        reject(`Admin not found with email: ${email}`);
+        reject((MessagesUtil.accountDatabase.adminNotFound  + email));
       } else {
 
         let adminAccountUser = accountUsers[0]
@@ -82,7 +82,7 @@ function addAdmin({accountId, email}, _accountUserId) {
               let inviteParams = {
                 accountUserId: contactListUser.accountUserId,
                 accountId: accountId,
-                role: 'admin'
+                role: adminAccountUser.role
               }
               inviteService.createInvite(inviteParams, transaction).then(() => {
                   resolve(accountUsers);
