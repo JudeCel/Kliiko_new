@@ -88,7 +88,7 @@
       <div class='modal-body'>
         <div class='form-group'>
           <label for='name'>Name</label>
-          <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' required>
+          <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' ng-disabled="gc.isReplacingStock" required>
         </div>
 
         <div ng-if='typeOf.videoService' class='form-group'>
