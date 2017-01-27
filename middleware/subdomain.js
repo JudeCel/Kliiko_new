@@ -50,7 +50,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
         required: true
       },
       { model: models.Account,
-        attributes: ['id', 'name', 'subdomain'],
+        attributes: ['id', 'name', 'subdomain', 'admin'],
         where: {$and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)]},
         required: true
       }

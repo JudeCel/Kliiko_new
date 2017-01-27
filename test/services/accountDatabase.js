@@ -109,21 +109,20 @@ describe('SERVICE - AccountDatabase', function() {
     });
   });
 
-  it('#csvData', function (done) {
-    accountDatabaseService.csvData().then(function(data) {
+  it('#csvData', (done) => {
+    accountDatabaseService.csvData().then((data) => {
       let csvDataSample = csvData();
       let dataRow = data[0];
       assert.isArray(data);
-      // I need to make sure we execute sync  way!!!
-      let _res = _.forEach(csvHeader(), function(val, _k) {
         try {
-          assert.equal(data[0][val].toString(), csvDataSample[val].toString());
+          assert.deepEqual(data[0],csvDataSample);
+          done()
+
         } catch (e) {
-          done("CSV field: " + val + " -> " + e)
+          done(e)
+
         }
-      });
-      done();
-    }, function(err) {
+    }, (err) => {
       done(err)
     });
   });

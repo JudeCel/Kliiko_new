@@ -18,12 +18,14 @@ var validAttributes = [
 ];
 
 function findAllAccounts(callback) {
+  let accountUserAttrs = constants.safeAccountUserParams.concat('createdAt');
+
   Account.findAll({
     attributes: ['id','admin', 'name'],
     include: [
       { model: AccountUser, 
         where: { role: 'accountManager' }, 
-        attributes: constants.safeAccountUserParams,
+        attributes: accountUserAttrs,
         include: [ 
           { model: User, attributes: ['id'] } ] },
           {model: Subscription, attributes: ['planId']}
