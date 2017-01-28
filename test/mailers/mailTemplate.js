@@ -49,7 +49,7 @@ let params = {
   timeZone: momentTimeZone.tz.names()[0]
 };
 
-describe('send MailTemplates',  () => {
+describe.only('send MailTemplates',  () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
@@ -70,16 +70,18 @@ describe('send MailTemplates',  () => {
         include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
         attributes: constants.mailTemplateFields,
         raw: true
-      }).then(function (result) {
-        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
-          assert.isNull(error);
-          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
-
-          done();
-        });
-
-      }).catch(function (err) {
-        assert.isNull(err);
+      }).then((result) => {
+        try {
+          mailTemplateService.saveMailTemplate(result, false, accountId, false, (error, saveResult) => {
+            assert.isNull(error);
+            assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
+            done();
+          });
+        } catch (error) {
+          done(error);
+        }
+      }).catch((err) => {
+        done(err);
       });
     })
 
@@ -90,7 +92,7 @@ describe('send MailTemplates',  () => {
         raw: true
       }).then(function (result) {
         result.properties = {sessionId: 0};
-        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
+        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
           assert.isNull(error);
           assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
           done();
