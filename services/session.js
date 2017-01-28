@@ -307,6 +307,7 @@ function copySession(sessionId, accountId, provider) {
       delete result.data.dataValues.brandProjectPreferenceId;
       delete result.data.dataValues.startTime;
       delete result.data.dataValues.endTime;
+      result.data.dataValues.isInactive = true;
       result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
       result.data.dataValues.step = "setUp";
       Session.create(result.data.dataValues).then(function(session) {
