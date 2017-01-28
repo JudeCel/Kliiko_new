@@ -101,11 +101,13 @@
             <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep" messages-directive='clear'>
               Next step
             </div>
-            <div ng-if="!sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.finishSessionBuilder()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep" messages-directive='clear'>
-              Finish with builder
-            </div>
-            <div ng-if="sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep" messages-directive='clear'>
-              Activate Session
+            <div ng-show="sbc.lastStep">
+              <div ng-if="!sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.finishSessionBuilder()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
+                Finish with builder
+              </div>
+              <div ng-if="sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
+                Activate Session
+              </div>
             </div>
             <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
               Enter Chat Room
