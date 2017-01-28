@@ -49,7 +49,7 @@ let params = {
   timeZone: momentTimeZone.tz.names()[0]
 };
 
-describe.only('send MailTemplates',  () => {
+describe('send MailTemplates',  () => {
   before((done) => {
     models.sequelize.sync({force: true}).done((error, result) => {
       userFixture.createUserAndOwnerAccount().then(function(result) {

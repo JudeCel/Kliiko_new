@@ -15,7 +15,6 @@ const { setUpQueue} = require('./services/backgroundQueue.js');
 
 var app = express();
 var flash = require('connect-flash');
-// var fs = require('fs');
 var _ = require('lodash');
 var airbrake = require('./lib/airbrake').instance;
 app.use(airbrake.expressHandler());

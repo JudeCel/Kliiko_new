@@ -295,7 +295,7 @@
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
 
-      vm.lists.F(parsedList).then(
+      vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           domServices.modal('contactList-addNewListModal', 'close');
           messenger.ok(res.message);
@@ -728,7 +728,7 @@
     }
 
     function updateActiveCustomList(newList, parsedList) {
-      vm.lists.F(parsedList).then(
+      vm.lists.updateActiveItem(parsedList).then(
         function (res) {
           messenger.ok(res.message);
           var oldFields = vm.contactListDropItems.customFields;
