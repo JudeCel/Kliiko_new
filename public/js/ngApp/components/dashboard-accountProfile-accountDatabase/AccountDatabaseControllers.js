@@ -29,7 +29,9 @@
   function AccountDatabaseController(dbg, AccountDatabaseServices, $scope, $filter, messenger, domServices) {
     dbg.log2('#AccountDatabaseController started');
 
-    $scope.accounts = {};
+    $scope.accounts = [];
+    $scope.modalObject = {addAdminForm: {'email': ""}}
+
     init();
 
     function init() {
@@ -43,6 +45,26 @@
     $scope.editComment = function(accountUser) {
       $scope.currentAccountUser = accountUser;
       domServices.modal('accountDatabaseCommentModal');
+    };
+
+    $scope.addAdmin = function(account) {
+      account.hasActiveAdmin = false;
+      $scope.modalObject.account = account
+      domServices.modal('addAdminModal');
+    };
+
+    $scope.submitAddAdminForm = function() {
+      var params = {email: $scope.modalObject.addAdminForm.email, accountId: $scope.modalObject.account.id}
+      AccountDatabaseServices.addAdmin(params).then(function(res) {
+         if(res.error) {
+          messenger.error(res.error);
+        }else{
+          messenger.ok(res.message);
+          $scope.modalObject.account.hasActiveAdmin = true
+          $scope.modalObject = {};
+          domServices.modal('addAdminModal', true);
+        }
+      });
     };
 
     $scope.closeModal = function() {

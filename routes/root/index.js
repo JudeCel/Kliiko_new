@@ -522,6 +522,10 @@ router.get('/close_session/dont_participate/:sessionId/:id', function(req, res, 
   });
 });
 
+router.get('/system_requirements', function (req, res, next) {
+  res.render('systemRequirements', { title: 'System Requirements'});
+});
+
 function renderCloseSessionView(res, closeSessionText) {
   res.render('closeSession', {
      message: closeSessionText,

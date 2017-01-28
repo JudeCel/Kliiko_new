@@ -44,8 +44,8 @@
           </td>
           <td>{{ accountUser.status }}</td>
           <td class='text-right dashboardElementsEditRemove'>
-            <img src='/icons/dashboardElement_edit.png' alt='' / ng-click="amc.openModal(amc.editModalTitle, 'edit', accountUser)">
-            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='amc.removeAccountUser(accountUser)' ng-if='!amc.isAccountOwner(accountUser)' />
+            <img src='/icons/dashboardElement_edit.png' alt='' / ng-click="amc.openModal(amc.editModalTitle, 'edit', accountUser)" ng-if=amc.canEdit(accountUser)>
+            <img src='/icons/dashboardElement_remove.png' alt='' ng-click='amc.removeAccountUser(accountUser)' ng-if='amc.canDelete(accountUser)' />
           </td>
         </tr>
       </tbody>

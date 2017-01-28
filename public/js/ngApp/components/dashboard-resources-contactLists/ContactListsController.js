@@ -75,6 +75,7 @@
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
+    vm.canEditOrDelete = canEditOrDelete;
     vm.isObserverListSelected = isObserverListSelected;
     vm.findIndexByListName = findIndexByListName;
     vm.disableNextSortingFilter = disableNextSortingFilter;
@@ -120,6 +121,9 @@
 
     function setSessionId(sessionId) {
       vm.sessionId = sessionId;
+    }
+    function canEditOrDelete(member) {
+      return !member.admin
     }
 
     function removeSpecificLists() {
@@ -325,14 +329,18 @@
 
       // populate with existing data
       vm.newList.name = vm.lists.activeList.name;
-      for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
-        var I = i+1;
-        vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+      if(!vm.lists.activeList.survey){
+        for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
+          var I = i+1;
+          vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+        }
       }
     }
 
     function editCustomFields() {
-      vm.modalTab2 = true;
+      if(!vm.lists.activeList.survey){
+        vm.modalTab2 = true;
+      }
       prepareCustomFields();
       domServices.modal('contactList-addNewListModal');
     }
@@ -514,7 +522,7 @@
     }
 
     function canSelectMember(member) {
-      return !vm.hideStuff || member.canInvite;
+      return (!vm.hideStuff || member.canInvite) && !member.admin;
     }
 
     /**
