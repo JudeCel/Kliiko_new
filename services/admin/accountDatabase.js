@@ -4,12 +4,13 @@ var MessagesUtil = require('./../../util/messages');
 var mailers = require('../../mailers');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
-var Account = models.Account;
-var User = models.User;
-var AccountUser = models.AccountUser;
+var inviteService = require('./../..//services/invite');
+var ContactListUserService = require('./../..//services/contactListUser');
+var {ContactList, User, Account, AccountUser, Subscription} = models;
 var constants = require('../../util/constants');
-var _ = require('lodash');
+const _ = require('lodash');
 var q = require('q');
+const Bluebird = require('bluebird');
 
 var validAttributes = [
   'comment',
@@ -17,14 +18,39 @@ var validAttributes = [
 ];
 
 function findAllAccounts(callback) {
+  let accountUserAttrs = constants.safeAccountUserParams.concat('createdAt').concat('role');
+
   Account.findAll({
-    include: [{ model: AccountUser, where: { role: 'accountManager' }, include: [ { model: User } ] }, {model: models.Subscription} ]
-  }).then(function(accounts) {
-    callback(null, accounts);
-  }, function(error) {
+    attributes: ['id','admin', 'name'],
+    where: {admin: false},
+    include: [
+      { model: AccountUser, 
+        where: {role: {$in: ['accountManager', 'admin']}}, 
+        order: 'createdAt ASC',
+        attributes: accountUserAttrs,
+        include: [ 
+          { model: User, attributes: ['id'] } ] },
+          {model: Subscription, attributes: ['planId']}
+        ]
+  }).then((accounts) => {
+    callback(null, mapData(accounts));
+  }, (error) => {
       callback(filters.errors(error));
   });
 };
+
+function mapData(accounts) {
+  return accounts.map((account) => {
+    let adminUsers = account.AccountUsers.filter((au) => { if(au.role == 'admin') {return au} })
+    if(_.isEmpty(adminUsers)){
+      account.dataValues.hasActiveAdmin = false; 
+    }else{
+      account.dataValues.hasActiveAdmin = true; 
+    }
+
+    return account
+  });
+}
 
 function shouldUpdateUser(params, byUser) {
   //is active field being updated
@@ -32,6 +58,51 @@ function shouldUpdateUser(params, byUser) {
     return !(params.userId == byUser.accountUserId);
   }
   return true;
+}
+
+function addAdmin({accountId, email}, _accountUserId) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.findAll({where: {email: email, role: 'admin'}}).then((accountUsers) => {
+      if (_.isEmpty(accountUsers)) {
+        reject((MessagesUtil.accountDatabase.adminNotFound  + email));
+      } else {
+
+        let adminAccountUser = accountUsers[0]
+        models.sequelize.transaction().then((transaction) => {
+          ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
+          let contactListUserParams = {
+            accountId: accountId,
+            contactListId: contactList.id,
+            role: adminAccountUser.role,
+            defaultFields: {
+              firstName: adminAccountUser.firstName,
+              lastName: adminAccountUser.lastName,
+              email: adminAccountUser.email,
+              gender: adminAccountUser.gender
+            }}
+
+            ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
+              let inviteParams = {
+                accountUserId: contactListUser.accountUserId,
+                accountId: accountId,
+                role: adminAccountUser.role
+              }
+
+              inviteService.createInvite(inviteParams, transaction).then(() => {
+                  resolve(adminAccountUser);
+                }, (error) => {
+                  reject(error);
+              });
+            }, (error) => {
+              reject(error);
+            });
+          }, (error) => {
+            reject(error);
+          });
+        })
+      }
+    })
+  });
 }
 
 function updateAccountUserComment(params) {
@@ -179,5 +250,6 @@ module.exports = {
   updateAccountUser: updateAccountUser,
   updateAccountUserComment: updateAccountUserComment,
   csvData: csvData,
-  csvHeader: csvHeader
+  csvHeader: csvHeader,
+  addAdmin: addAdmin
 };

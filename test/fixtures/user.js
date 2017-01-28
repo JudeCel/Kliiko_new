@@ -1,8 +1,7 @@
 'use strict';
 
 var models = require('./../../models');
-var Account = models.Account;
-var AccountUser = models.AccountUser;
+var {User,Account, AccountUser} = models
 
 var usersServices  = require('./../../services/users');
 
@@ -11,8 +10,26 @@ var async = require('async');
 
 module.exports = {
   createUserAndOwnerAccount: createUserAndOwnerAccount,
+  createAdminUser: createAdminUser,
   createMultipleAccountUsers: createMultipleAccountUsers
 }
+
+function createAdminUser(params) {
+  return Account.create({ name: params.role, admin: true }).then(function(account) {
+    return User.create(params).then((user) => {
+      return AccountUser.create({
+        UserId: user.id,
+        AccountId: account.id,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        gender: params.gender,
+        email: params.email,
+        role: params.role
+      });
+    })
+  });
+}
+
 
 function createUserAndOwnerAccount(params) {
   let deferred = q.defer();

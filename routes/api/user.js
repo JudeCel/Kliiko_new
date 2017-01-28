@@ -33,16 +33,7 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  if(req.currentResources.accountUser) {
-    res.send(req.currentResources.accountUser);
-  }
-  else {
-    AccountUserService.findWithUser(req.currentResources.user).then(function(result) {
-      res.send(result)
-    }, function(error) {
-      res.status(404).send(error);
-    });
-  }
+    res.send(req.currentResources);
 }
 
 function changePassword(req, res, next) {

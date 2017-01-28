@@ -823,14 +823,18 @@ function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
     where: { id: accountUserId },
   }).then(function(accountUser) {
     if (accountUser) {
-      composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
-        var params = {
-          orginalStartTime: new Date(),
-          orginalEndTime:  new Date(),
-          email: accountUser.email
-        };
+      composePreviewMailTemplate(mailTemplate, sessionId, function(result) {
+        if (result.error) {
+          callback(result.error);
+        } else {
+          var params = {
+            orginalStartTime: new Date(),
+            orginalEndTime:  new Date(),
+            email: accountUser.email
+          };
 
-        templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
+          templateMailer.sendMailWithTemplateAndCalendarEvent(result, params, callback);
+        }
       });
     } else {
       callback({ error: MessagesUtil.accountUser.notFound });
@@ -932,6 +936,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
     resetPasswordUrl: "#/resetPasswordUrl",
+    systemRequirementsUrl: "#/systemRequirementsdUrl",
     timeZone: ""
   };
   if (sessionId) {
@@ -961,13 +966,21 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
           mailPreviewVariables.facilitatorMobileNumber = result.SessionMembers[0].AccountUser.mobile;
         }
       }
-      var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-      template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-      callback(template);
+
+      processMailTemplate(mailTemplate, mailPreviewVariables, callback);
     });
   } else {
-    var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-    template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-    callback(template);
+    processMailTemplate(mailTemplate, mailPreviewVariables, callback);
+  }
+
+  function processMailTemplate(mailTemplate, mailPreviewVariables, callback) {
+    var result = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+
+    if (result.error) {
+      callback({ error: result.error });
+    } else {
+      result.content = result.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      callback(result);
+    }
   }
 }

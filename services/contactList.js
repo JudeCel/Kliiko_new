@@ -39,7 +39,7 @@ function destroy(contacListId, accoutId) {
   return deferred.promise;
 }
 function allByAccount(accountId, sessionId) {
-    let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo");
+    let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo").concat("role");
     let deferred = q.defer();
     ContactList.findAll({where: { accountId: accountId },
       attributes: ['id', 'name', 'defaultFields', 'customFields', 'visibleFields', 'editable', 'participantsFields', 'role'],

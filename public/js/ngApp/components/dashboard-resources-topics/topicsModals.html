@@ -25,7 +25,7 @@
             <span class='help-block'>Characters left: {{ topics.charactersLeft("sign") }}</span>
           </div>
 
-          <div class='form-group' ng-if='topics.canSetStock(topics.topicData, app.accountUser.isAdmin)'>
+          <div class='form-group' ng-if='topics.canSetStock(topics.topicData, app.hasPermissions("canStockCreateTopics"))'>
             <div class='checkbox checkbox-sm checkbox-success survey-input'>
               <input class='styled' id='checkbox' type='checkbox' name='checkbox' ng-model='topics.topicData.stock'>
               <label for='checkbox'>Stock?</label>
