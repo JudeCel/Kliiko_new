@@ -203,15 +203,22 @@ function createContactList(survey, fields, t){
 }
 
 
-function tryFindCOntactList(survey, t) {
-   survey.getContactList({ transaction: t }).then((contactList) => {
-     
-   })
+function tryFindContactList(survey, t) {
+   return new Bluebird((resolve, reject) => {
+    ContactList.find({
+      where: {accountId: survey.accountId, 
+        $or: [{id: survey.contactListId, name: survey.name}]},
+      transaction: t}).then((contactList) => {
+        resolve(contactList); 
+    }, (error) => {
+      reject(error);
+    });
+   });
 }
 
 function createOrUpdateContactList(survey, fields, t) {
    return new Bluebird((resolve, reject) => {
-      survey.getContactList({ transaction: t }).then((contactList) => {
+     tryFindContactList(survey, t).then((contactList) => {
         if(contactList){
           resolve(updateContactList(contactList, survey, fields, t));
         }else{
@@ -254,13 +261,17 @@ function createSurveyWithQuestions(params, account) {
       models.sequelize.transaction(function (t) {
         return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
           let fields = getContactListFields(survey.SurveyQuestions);
-
-          return createOrUpdateContactList(survey, fields, t).then(function(contactList) {
-            return survey;
-          }, function(error) {
+          return createOrUpdateContactList(survey, fields, t).then((contactList) => {
+            if(contactList){
+              return updateContactList(contactList, survey, fields, t).then(() => {
+                return survey;
+              });
+            }else{
+              return survey;
+            }
+          }, (error) => {
             throw error;
           });
-
         });
       }).then(function(survey) {
         survey.update({ url: validUrl(survey) }).then(function(survey) {
@@ -409,21 +420,21 @@ function answerSurvey(params) {
 
   let validParams = validAnswerParams(params);
 
-  models.sequelize.transaction(function (t) {
-    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
-      return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
-        let fields = getContactListFields(survey.SurveyQuestions);
-         survey.getContactList({ transaction: t }).then((contactList) => {
-           updateContactList(contactList, survey, fields, t).then((contactList) => {
+  models.sequelize.transaction((t) => {
+    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
+      return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
+         return tryFindContactList(survey, t).then((contactList) => {
+          if(!contactList) { return survey }
+          let fields = getContactListFields(survey.SurveyQuestions);
+           return updateContactList(contactList, survey, fields, t).then((contactList) => {
               if(!_.isEmpty(fields)) {
                 let clParams = findContactListAnswers(contactList, validParams.answers);
                 if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
                   clParams.contactListId = contactList.id;
                   clParams.accountId = survey.accountId;
-
-                  return contactListUserServices.create(clParams).then(function(result) {
+                  return contactListUserServices.create(clParams).then((result) => {
                     return survey;
-                  }, function(error) {
+                  }, (error)  => {
                     throw error;
                   });
                 } else {
@@ -440,11 +451,11 @@ function answerSurvey(params) {
         });
       });
     })
-  }).then(function(survey) {
+  }).then((survey) =>{
     deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
-  }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
+  }).catch(SurveyAnswer.sequelize.ValidationError, (error) => {
     deferred.reject(filters.errors(error));
-  }).catch(function(error) {
+  }).catch((error) => {
     deferred.reject(error);
   });
 
