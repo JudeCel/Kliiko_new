@@ -11,6 +11,7 @@ var passport = require('./middleware/passport');
 var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
 var sessionMiddleware = require('./middleware/session');
+var cors = require('cors');
 const { setUpQueue} = require('./services/backgroundQueue.js');
 
 var app = express();
@@ -46,7 +47,7 @@ app.use(session({
 }));
 
 app.use(setUpQueue);
-
+app.use(cors());
 app.use(flash());
 app.use(logger('dev'));
 var api = require('./routes/api/index');
