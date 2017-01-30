@@ -3,7 +3,7 @@
 var assert = require('chai').assert;
 var PermissionsService = require('./../../../services/permissions');
 
-describe.only('SERVICE - permissions', () => {
+describe('SERVICE - permissions', () => {
     describe("Admin in admin account", () => {
         var permisssions = {}
         before((done) => {

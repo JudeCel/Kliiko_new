@@ -8,6 +8,7 @@ var constants = require('../../util/constants');
 var models = require('./../../models');
 
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionMemberService = require('./../../services/sessionMember');
 var inviteService = require('./../../services/invite');
 var async = require('async');
 var _ = require('lodash');
@@ -259,8 +260,7 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             let nextStepIndex = 2;
             params.name = 'My first session';
-
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   assert.equal(result.sessionBuilder.steps.step1.name, params.name);
@@ -268,7 +268,11 @@ describe('SERVICE - SessionBuilder', function() {
                 }, function(error) {
                   done(error);
                 });
+              }, (error) => {
+                done(error)
               });
+            }, (error) => {
+              done(error);
             });
           }, function(error) {
             done(error);
@@ -515,7 +519,7 @@ describe('SERVICE - SessionBuilder', function() {
           let nextStepIndex = 2;
           params.name = 'My first session';
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               inviteService.createFacilitatorInvite({sessionId: member.sessionId, accountUserId: member.accountUserId}).then(function() {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
@@ -574,7 +578,7 @@ describe('SERVICE - SessionBuilder', function() {
             cb();
           }
           else {
-            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(params.id)).then(function(member) {
               cb();
             }, function(error) {
               cb(error);
@@ -589,9 +593,7 @@ describe('SERVICE - SessionBuilder', function() {
             models.Topic.create(topicParams(params.accountId)).then(function(topic) {
               sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                 session.addTopics([topic]).then(function() {
-                  models.SessionTopics.findAll().then(function(result) {
-                    cb();
-                  })
+                  cb();
                 }, function(error) {
                   cb(error);
                 });
@@ -644,7 +646,7 @@ describe('SERVICE - SessionBuilder', function() {
       it('should fail because no topics', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           //remove default topic from DB
-          models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(function() {
+          models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(() => {
             let params = sessionParams(result);
             let nextStepIndex = 3;
             params.step = 'facilitatiorAndTopics';
@@ -660,7 +662,8 @@ describe('SERVICE - SessionBuilder', function() {
             }, function(error) {
               done(error);
             });
-          }, function(error) {
+          }, (error) => {
+            console.log(error);
             done(error);
           });
         });
@@ -796,7 +799,7 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should go to fourth step', function(done) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               mailFixture.createMailTemplate().then(function() {
                 let params = sessionParams(result);
                 params.status = "closed";
@@ -819,7 +822,7 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should go to fourth step', function(done) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               mailFixture.createMailTemplate().then(function() {
                 let closeParams = sessionParams(result);
                 closeParams.status = "closed";

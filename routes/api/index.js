@@ -27,28 +27,11 @@ let contactListUser = require('./contactListUser');
 let sessionMember = require('./sessionMember');
 module.exports = router;
 
-// Common Rules
-router.use((req, res, next)  => {
-  let exceptionPaths = ["/survey/constants", "/survey/find", "/ping"];
-  if (req.currentResources || _.includes(exceptionPaths, req.path)) {
-    next();
-  } else {
-    notAuthExit(res);
-  }
-});
-
-//Common not authorized message
-function notAuthExit(res) {
-  res.status(403).send('not authorized');
-}
-
 var PERMISSIONS = {
   admin: policy.authorized(['admin']),
   managerAdmin: policy.authorized(['accountManager', 'admin']),
   facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
-
-router.post('/ping', (req, res, next) => { res.send({})});
 
 // Main Routes
 router.get('/myDashboard/data', myDashboard.getAllData);
@@ -94,10 +77,7 @@ router.post('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.create);
 router.put('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.update);
 router.post('/survey/copy', PERMISSIONS.facilitatorManagerAdmin, survey.copy);
 router.put('/survey/status', PERMISSIONS.facilitatorManagerAdmin, survey.status);
-router.get('/survey/find', survey.find);
-router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
-router.get('/survey/constants', survey.getConstants);
 router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
 router.get('/survey/stats', PERMISSIONS.facilitatorManagerAdmin, survey.getSurveyStats);
 
@@ -120,6 +100,7 @@ router.get('/contactLists/canExportContactListData', PERMISSIONS.facilitatorMana
 router.post('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactList.importContacts);
 router.post('/contactLists/:id/validate', PERMISSIONS.facilitatorManagerAdmin, contactList.validateContacts);
+router.post('/contactLists/:id/toggleListState', PERMISSIONS.facilitatorManagerAdmin, contactList.toggleListState);
 
 router.put('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.update);
 router.delete('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.destroy);

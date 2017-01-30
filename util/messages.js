@@ -174,6 +174,7 @@ module.exports = {
   },
   contactList: {
     notFound: 'Contact List not found!',
+    reachedMaxLimit: 'You have reached max limit for contact list 50'
   },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
