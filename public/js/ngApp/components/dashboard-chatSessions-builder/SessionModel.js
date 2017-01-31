@@ -258,6 +258,7 @@
             deferred.reject(err);
           });
         } else {
+          sessionModel.showStatus = res.sessionBuilder.showStatus;
           sessionModel.sessionData.showStatus = res.sessionBuilder.showStatus;
           sessionModel.steps = res.sessionBuilder.steps;
           sessionModel.snapshot = res.sessionBuilder.snapshot;
