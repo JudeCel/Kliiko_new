@@ -13,6 +13,7 @@
 
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.openCopySessionDialog = openCopySessionDialog;
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
@@ -35,6 +36,8 @@
       itemsPerPage: 10,
       sessions: []
     }
+
+    var confirmCopySessionDialog = "copySessionConfirm";
 
     changePage('index');
 
@@ -123,10 +126,15 @@
       });
     }
 
+    function openCopySessionDialog(session) {
+      vm.currentSelectedSession = session;
+      domServices.modal(confirmCopySessionDialog);
+    }
+
     function copySession(session) {
       if(!vm.inAction) {
         vm.inAction = true;
-
+      
         chatSessionsServices.copySession({ id: session.id }).then(function(res) {
           vm.inAction = false;
           if(res.error) {
@@ -137,6 +145,8 @@
             vm.sessions.push(res.data);
             prepareSessionsPagination();
           }
+
+          domServices.modal(confirmCopySessionDialog, 'close');
         });
       }
     };
