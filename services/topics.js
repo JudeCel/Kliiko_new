@@ -275,7 +275,13 @@ function updateStockTopic(topic, params, isAdmin){
         delete params.id;
         resolve(create(params))
      }else{
-       resolve(topic.update(params, { returning: true }));
+       if(isAdmin){
+          resolve(topic.update(params, { returning: true }));
+       }else{
+        params.parentTopicId = topic.id;
+        delete params.id;
+        resolve(create(params))
+       }
      }
   })
 }
