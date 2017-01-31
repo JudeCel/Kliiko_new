@@ -34,7 +34,7 @@
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
               </div>
               <div class="check-empty" ng-if="topic.stock">&nbsp;</div>
-              {{ topic.name }}
+              {{ tc.topicName(topic) }}
               <span ng-if="topic.stock">(Stock)</span>
               <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" ng-if="tc.canDelete(topic)" src="/icons/dashboardElement_remove.png" title="Delete">
               <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">

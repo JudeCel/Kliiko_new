@@ -15,13 +15,16 @@ function unique(sequelize, model, fieldName, otherValue) {
               sequelize.fn('regexp_replace', sequelize.fn('lower', value), "\\s", '', 'g')
             )]
           };
-        }
-        else {
+        } else {
           where[fieldName] = value;
         }
 
         if(otherValue.accountContext) {
           where.accountId = this.accountId;
+        }
+
+        if(otherValue.topicContext) {
+          where.parentTopicId = this.parentTopicId;
         }
       }
       else {
