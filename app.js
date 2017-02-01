@@ -47,13 +47,12 @@ app.use(session({
 }));
 
 app.use(setUpQueue);
-app.use(cors());
 app.use(flash());
 app.use(logger('dev'));
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
 app.use('/api',  apiPublic);
-app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
+app.use('/api', cors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
