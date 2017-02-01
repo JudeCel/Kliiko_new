@@ -43,7 +43,7 @@ const canUploadBanners = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
 const canUploadToGallery = (account, accountUser, sub) => {
-    return(checkRoles(accountUser.role, ['admin', 'accountManager']) && checkSub(account, accountUser, sub, 'uploadToGallery'))
+    return(checkRoles(accountUser.role, ['admin', 'accountManager', 'facilitator']) && checkSub(account, accountUser, sub, 'uploadToGallery'))
 }
 
 

@@ -155,20 +155,19 @@
       return 'session-' + session.showStatus.toLowerCase();
     }
 
-    function hasAccess(sessionId, accountUser) {
-      var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
-      if(found > -1) {
-        return true;
-      }
-      else {
-        for(var i in accountUser.SessionMembers) {
-          var member = accountUser.SessionMembers[i];
-          if(member.sessionId == sessionId) {
-            found = vm.sessionListManageRoles.sessionMember.indexOf(member.role);
-            return (found > -1);
-          }
-        }
-      }
+    function hasAccess(session, accountUserId) {
+      var canAccess = false;
+      if(session.facilitator && (session.facilitator.accountUserId == accountUserId) ){
+        canAccess = true;
+      }else{
+        session.SessionMembers.map(function(member) {
+          member.accountUserId == accountUserId;
+          canAccess = true;
+          return false; 
+        });
+      };
+      
+      return canAccess;
     };
 
     function changePage(page, session) {
