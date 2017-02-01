@@ -52,7 +52,9 @@ app.use(logger('dev'));
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
 app.use('/api',  apiPublic);
-app.use('/api', cors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
+
+var corsOrigin = new RegExp(process.env.SERVER_CHAT_DOMAIN_URL + "(:\d+|\.[a-z]+)", "g");
+app.use('/api', cors({ origin: corsOrigin}), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
