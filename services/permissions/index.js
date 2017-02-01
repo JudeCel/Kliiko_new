@@ -3,7 +3,10 @@ var _ = require('lodash');
 const canAccountDatabase = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
-const canAccountManagers = (_account, accountUser, sub) => {
+const canAccountManagers = (account, accountUser, sub) => {
+    return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
+}
+const canAccountProfile = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
 const canCreateNewSession = (_account, accountUser, sub) => {
@@ -58,7 +61,8 @@ const permissionsObject = {
     canCreateNewSession: canCreateNewSession,
     canEditSession: canEditSession,
     canSeeChatSessions: canSeeChatSessions,
-    canUploadToGallery: canUploadToGallery
+    canUploadToGallery: canUploadToGallery,
+    canAccountProfile: canAccountProfile
 } 
 
 const Bluebird = require('bluebird');
