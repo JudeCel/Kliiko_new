@@ -277,13 +277,16 @@
           prepareCustomFields();
         },
         function(err) {
-          domServices.modal('reachedLimitModal');
+          if((typeof(err) == 'object')) {
+            messenger.error(err);
+          }else{
+            domServices.modal('reachedLimitModal');
+          }
           dbg.error('#ContactListController > submitNewList > error: ', err);
         }
       )
 
     }
-
     function updateList() {
       if (vm.newListErrorMessage) return;
       if (!vm.newList.name) {
