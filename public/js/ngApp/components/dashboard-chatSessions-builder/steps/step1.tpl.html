@@ -276,7 +276,7 @@
             <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length" data-property='colorScheme'>
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
-                  <div class='panel-body' ng-click='bcc.openModalPreview(scheme)' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
+                  <div class='panel-body' style='font-weight:normal; background-color: {{ scheme.colours.browserBackground }};'>
                     <ng-include src="'/js/ngApp/components/dashboard-resources-brandColours/templates/preview.html'"></ng-include>
                   </div>
                   <input class="hidden" id="{{ $index }}-scheme" type="radio" ng-model="step1Controller.colorScheme" ng-value="scheme" ng-click="step1Controller.updateOrCleanColorScheme(scheme.id)">
