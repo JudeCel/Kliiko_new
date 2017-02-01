@@ -246,30 +246,57 @@ function create(params, isAdmin) {
   return deferred.promise;
 }
 
-function update(params) {
-  let deferred = q.defer();
+function update(params, isAdmin) {
+  return new Bluebird((resolve, reject) => {
+    Topic.find({ where: { id: params.id } }).then((topic) => {
+      if (topic) {
+        if(topic.stock){
+          resolve(updateStockTopic(topic, params, isAdmin));
+        }else{
+          resolve(updateRegularTopic(topic, params, isAdmin));
+        }
+      } else {
+        deferred.reject(MessagesUtil.topics.notFound);
+      }
+    }).then((topic) => {
+      resolve(topic);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
 
-  Topic.find({ where: { id: params.id } }).then(function(topic) {
-    if (topic) {
-      if (topic.stock) {
-        if (params.name == topic.name) {
-          params.name = "Copy of " + topic.name;
+function updateStockTopic(topic, params, isAdmin){
+  return new Bluebird((resolve, reject) => {
+     if(params.sessionId){
+       if (params.name == topic.name) {
+            params.parentTopicId = topic.id;
+          }
+        delete params.id;
+        resolve(create(params))
+     }else{
+       if(isAdmin){
+          resolve(topic.update(params, { returning: true }));
+       }else{
+        params.parentTopicId = topic.id;
+        delete params.id;
+        resolve(create(params))
+       }
+     }
+  })
+}
+function updateRegularTopic(topic, params, isAdmin){
+  return new Bluebird((resolve, reject) => {
+     if(params.sessionId){
+       if (params.name == topic.name) {
+          params.parentTopicId = topic.id;
         }
         delete params.id;
-        return create(params);
-      } else {
-        return topic.update(params, { returning: true });
-      }
-    } else {
-      deferred.reject(MessagesUtil.topics.notFound);
-    }
-  }).then(function(topic) {
-    deferred.resolve(topic);
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
+        resolve(create(params))
+     }else{
+       resolve(topic.update(params, { returning: true }));
+     }
+  })
 }
 
 function sessionTopicUpdateParams(params) {

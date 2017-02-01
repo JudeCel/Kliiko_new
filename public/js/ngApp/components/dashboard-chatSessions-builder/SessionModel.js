@@ -57,6 +57,7 @@
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
+    SessionModel.prototype.activateSession = activateSession;
 
     return SessionModel;
 
@@ -187,6 +188,23 @@
       return deferred.promise;
     }
 
+    function activateSession() {
+      var self = this;
+      var deferred = $q.defer();
+      self.updateStep({ isInactive: false }, self).then(
+        function (res) {
+          if (!res.ignored) {
+            self.status = self.sessionData.status = status;
+          }
+          deferred.resolve(res);
+        },
+        function (err) {
+          deferred.reject(err);
+        }
+      );
+      return deferred.promise;
+    }
+
     function setAnonymous() {
       var self = this;
       var deferred = $q.defer();
@@ -240,6 +258,7 @@
             deferred.reject(err);
           });
         } else {
+          sessionModel.showStatus = res.sessionBuilder.showStatus;
           sessionModel.sessionData.showStatus = res.sessionBuilder.showStatus;
           sessionModel.steps = res.sessionBuilder.steps;
           sessionModel.snapshot = res.sessionBuilder.snapshot;

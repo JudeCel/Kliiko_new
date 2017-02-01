@@ -17,11 +17,11 @@ function addShowStatus(session, chargebeeSub) {
 
   if(session.status == "open") {
     var date = new Date();
-    if((chargebeeSub && date > endDate) || date > new Date(session.endTime)) {
-      settings.showStatus = 'Expired';
-    }
-    else if(date < new Date(session.startTime)) {
+    if(date < new Date(session.startTime) || session.isInactive) {
       settings.showStatus = 'Pending';
+    }
+    else if((chargebeeSub && date > endDate) || date > new Date(session.endTime)) {
+      settings.showStatus = 'Expired';
     }
     else {
       settings.showStatus = 'Open';

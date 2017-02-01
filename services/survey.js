@@ -205,10 +205,12 @@ function createContactList(survey, fields, t){
 
 function tryFindContactList(survey, t) {
    return new Bluebird((resolve, reject) => {
+
     ContactList.find({
       where: {accountId: survey.accountId, 
-        $or: [{id: survey.contactListId, name: survey.name}]},
-      transaction: t}).then((contactList) => {
+        $or: [{id: survey.contactListId}, {name: survey.name}]},
+        transaction: t}
+      ).then((contactList) => {
         resolve(contactList); 
     }, (error) => {
       reject(error);
@@ -270,6 +272,7 @@ function createSurveyWithQuestions(params, account) {
               return survey;
             }
           }, (error) => {
+
             throw error;
           });
         });
@@ -397,6 +400,7 @@ function copySurvey(params, account) {
             deferred.reject(error);
           });
         }, function(error) {
+
           deferred.reject(error);
         });
       }

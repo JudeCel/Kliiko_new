@@ -29,7 +29,7 @@
       <div class='panel panel-default'>
         <div class='panel-heading' ng-click='topics.togglePanel(t)'>
           <h3 class='panel-title topic-{{t.stock ? "stock" : "not-stock"}}'>
-            {{ t.name }}
+            {{ topics.topicName(t) }}
             <span ng-if="t.stock">(Stock)</span>
             <span ng-click="$event.stopPropagation()">
               <img class='pull-right ic' ng-click='topics.deleteTopic(t.id)' ng-if="topics.canDelete(t, app.hasPermissions('canStockCreateTopics'))" src='/icons/dashboardElement_remove.png' title='Delete'>

@@ -45,6 +45,7 @@
     vm.charactersLeft = charactersLeft;
     vm.togglePanel = togglePanel;
     vm.setType = setType;
+    vm.topicName = topicName;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
 
     init();
@@ -68,6 +69,14 @@
       vm.type = type;
       vm.pagination.currentPage = 1;
       vm.prepareCurrentPageItems();
+    }
+
+    function topicName(topic){
+      if(topic.parentTopicId){
+        return ("Copy of " + topic.name) 
+      }else{
+        return (topic.name) 
+      }
     }
 
     function prepareCurrentPageItems() {
@@ -166,6 +175,10 @@
     }
 
     function editTopic() {
+      if(vm.session){
+        vm.topicData.sessionId = vm.session.id
+      }
+      
       topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
         if (res.data.id == vm.topicData.id) {
           vm.list[vm.editTopicIndex] = res.data;
