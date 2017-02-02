@@ -765,6 +765,7 @@ function prepareMailDefaultParameters(params) {
   let defaultParams = {
     termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
     privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
+    systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",

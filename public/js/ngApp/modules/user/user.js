@@ -28,7 +28,6 @@
         }
         else {
           $('#welcome-user').removeClass('hidden');
-          console.log(res);
           UserService.app.user = res.user;
           UserService.app.account = res.account;
           UserService.app.accountUser = res.accountUser;

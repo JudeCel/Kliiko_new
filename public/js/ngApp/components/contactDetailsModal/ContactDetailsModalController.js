@@ -19,7 +19,7 @@
       vm.userDetailsForm.$setUntouched();
 
       vm.errors = {};
-      vm.userData = angular.copy(user.user);
+      vm.userData = angular.copy(user.app.accountUser);
       delete vm.userData.id;
       $scope.$apply();
     });

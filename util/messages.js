@@ -174,6 +174,7 @@ module.exports = {
   },
   contactList: {
     notFound: 'Contact List not found!',
+    reachedMaxLimit: 'You have reached max limit for contact list 50'
   },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
@@ -211,7 +212,7 @@ module.exports = {
   topics: {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
-      relatedSession: "Can't delete topic is related session",
+      relatedSession: "This Topic is currently being used in a Session, and can't be deleted.",
       default: "Can't delete default topic",
       stock: "Can't delete stock topic"
     }

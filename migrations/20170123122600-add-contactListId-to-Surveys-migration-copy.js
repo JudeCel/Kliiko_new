@@ -5,7 +5,7 @@
  module.exports = {
    up: (queryInterface, Sequelize) => {
      return new Bluebird((resolve, reject) => {
-       queryInterface.addColumn('Surveys', 'contactListId', { type: Sequelize.INTEGER, allowNull: true }).then(() => {
+       queryInterface.addColumn('Surveys', 'contactListId', { onDelete: 'SET NULL', type: Sequelize.INTEGER, allowNull: true }).then(() => {
          resolve();
        }, (error) => {
          validateError(error, resolve, reject);

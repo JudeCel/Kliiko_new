@@ -13,6 +13,7 @@
 
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.openCopySessionDialog = openCopySessionDialog;
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
@@ -35,6 +36,8 @@
       itemsPerPage: 10,
       sessions: []
     }
+
+    var confirmCopySessionDialog = "copySessionConfirm";
 
     changePage('index');
 
@@ -123,10 +126,15 @@
       });
     }
 
+    function openCopySessionDialog(session) {
+      vm.currentSelectedSession = session;
+      domServices.modal(confirmCopySessionDialog);
+    }
+
     function copySession(session) {
       if(!vm.inAction) {
         vm.inAction = true;
-
+      
         chatSessionsServices.copySession({ id: session.id }).then(function(res) {
           vm.inAction = false;
           if(res.error) {
@@ -137,6 +145,8 @@
             vm.sessions.push(res.data);
             prepareSessionsPagination();
           }
+
+          domServices.modal(confirmCopySessionDialog, 'close');
         });
       }
     };
@@ -145,20 +155,19 @@
       return 'session-' + session.showStatus.toLowerCase();
     }
 
-    function hasAccess(sessionId, accountUser) {
-      var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
-      if(found > -1) {
-        return true;
-      }
-      else {
-        for(var i in accountUser.SessionMembers) {
-          var member = accountUser.SessionMembers[i];
-          if(member.sessionId == sessionId) {
-            found = vm.sessionListManageRoles.sessionMember.indexOf(member.role);
-            return (found > -1);
-          }
-        }
-      }
+    function hasAccess(session, accountUserId) {
+      var canAccess = false;
+      if(session.facilitator && (session.facilitator.accountUserId == accountUserId) ){
+        canAccess = true;
+      }else{
+        session.SessionMembers.map(function(member) {
+          member.accountUserId == accountUserId;
+          canAccess = true;
+          return false; 
+        });
+      };
+      
+      return canAccess;
     };
 
     function changePage(page, session) {

@@ -44,6 +44,7 @@
 
     vm.closeSession = closeSession;
     vm.openSession = openSession;
+    vm.activateSession = activateSession;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
@@ -486,6 +487,15 @@
     function canCommentAndRate() {
       return isSelectParticipantStep() && isSessionClosed();
     }
+
+    function activateSession() {
+      vm.session.activateSession().then(function(res) {
+        finishSessionBuilder();
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
   }
 
 })();

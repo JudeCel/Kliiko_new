@@ -15,7 +15,8 @@ module.exports = {
   parseImportFile: parseImportFile,
   importContacts: importContacts,
   validateContacts: validateContacts,
-  canExportContactListData: canExportContactListData
+  canExportContactListData: canExportContactListData,
+  toggleListState: toggleListState
 };
 
 function index(req, res, next) {
@@ -72,7 +73,7 @@ function update(req, res, next) {
   })
 }
 
-// Create Params example
+// Destroy Params example
 // {
 //    id: INTEGER/required => 1
 //  }
@@ -85,6 +86,23 @@ function destroy(req, res, next) {
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
     res.send({success: true, lists: lists, message: MessagesUtil.routes.contactList.removed});
   },function(err) {
+    res.send({ error: err });
+  });
+}
+
+// toggleListState List Params example
+// {
+//    id: INTEGER/required => 1
+//  }
+//
+
+function toggleListState(req, res, next) {
+  validations.params(res, req.params.id, 'query param @id is missed');
+
+  let accountId = req.currentResources.account.id;
+  contactListService.toggleListState(req.params.id, accountId).then(() => {
+    res.send({message: MessagesUtil.routes.contactList.activated});
+  },(err) => {
     res.send({ error: err });
   });
 }

@@ -15,7 +15,7 @@ const { setUpQueue} = require('./services/backgroundQueue.js');
 
 var app = express();
 var flash = require('connect-flash');
-var fs = require('fs');
+var _ = require('lodash');
 var airbrake = require('./lib/airbrake').instance;
 app.use(airbrake.expressHandler());
 // view engine setup
@@ -49,7 +49,9 @@ app.use(setUpQueue);
 
 app.use(flash());
 app.use(logger('dev'));
-var api = require('./routes/api');
+var api = require('./routes/api/index');
+var apiPublic = require('./routes/api/public');
+app.use('/api',  apiPublic);
 app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');

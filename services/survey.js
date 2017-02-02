@@ -8,6 +8,7 @@ var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
 var contactListUserServices = require('./../services/contactListUser');
+var contactListServices = require('./../services/contactList');
 var MessagesUtil = require('./../util/messages');
 var StringHelpers = require('./../util/stringHelpers');
 
@@ -165,46 +166,70 @@ function removeSurvey(params, account) {
   return deferred.promise;
 };
 
-function createOrUpdateContactList(survey, fields, t) {
-    let deferred = q.defer();
-    survey.getContactList({ transaction: t }).then((contactList) => {
-      if(contactList){
-          fillCustomFields(fields, contactList);
-          contactList.customFields = _.uniq(contactList.customFields);
-          contactList.name = survey.name;
+function updateContactList(contactList, survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    fillCustomFields(fields, contactList);
+    contactList.customFields = _.uniq(contactList.customFields);
+    contactList.name = survey.name;
 
-          contactList.save({ transaction: t }).then(function(contactList) {
-            deferred.resolve(contactList);
-          }).catch(ContactList.sequelize.ValidationError, function(error) {
-            deferred.reject(filters.errors(error));
-          }).catch(function(error) {
-            deferred.reject(error);
-          });
-      }else{
-        let contactList = ContactList.build({
-            name: survey.name,
-            accountId: survey.accountId,
-            editable: true,
-          }, { transaction: t });
+    contactList.save({ transaction: t }).then(function(contactList) {
+      resolve(contactList);
+    }).catch(ContactList.sequelize.ValidationError, function(error) {
+      reject(filters.errors(error));
+    }).catch(function(error) {
+      reject(error);
+    });
+  })
+}
+function createContactList(survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    let contactList = ContactList.build({
+        name: survey.name,
+        accountId: survey.accountId,
+        editable: true,
+      }, { transaction: t });
 
-          fillCustomFields(fields, contactList);
-          contactList.save({ transaction: t }).then((contactList)=> {
-            survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
-              deferred.resolve(contactList);
-            }, (error) => {
-              deferred.reject(filters.errors(error));
-            })
-          }).catch(ContactList.sequelize.ValidationError, function(error) {
-            deferred.reject(filters.errors(error));
-          }).catch(function(error) {
-            deferred.reject(error);
-          });
-      }
+      fillCustomFields(fields, contactList);
+      contactListServices.create(contactList.dataValues, t).then((contactList) => {
+        survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
+          resolve(contactList);
+        }, (error) => {
+          reject(filters.errors(error));
+        })
+      }, (error) => {
+        reject(filters.errors(error))
+      });
+  })
+}
+
+
+function tryFindContactList(survey, t) {
+   return new Bluebird((resolve, reject) => {
+
+    ContactList.find({
+      where: {accountId: survey.accountId, 
+        $or: [{id: survey.contactListId}, {name: survey.name}]},
+        transaction: t}
+      ).then((contactList) => {
+        resolve(contactList); 
     }, (error) => {
-      deferred.reject(error);
-    })
+      reject(error);
+    });
+   });
+}
 
-  return deferred.promise;
+function createOrUpdateContactList(survey, fields, t) {
+   return new Bluebird((resolve, reject) => {
+     tryFindContactList(survey, t).then((contactList) => {
+        if(contactList){
+          resolve(updateContactList(contactList, survey, fields, t));
+        }else{
+          resolve(createContactList(survey, fields, t));
+        }
+      }, (error) => {
+        reject(error);
+      })
+   })
 }
 
 function fillCustomFields(fields, contactList) {
@@ -238,13 +263,18 @@ function createSurveyWithQuestions(params, account) {
       models.sequelize.transaction(function (t) {
         return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
           let fields = getContactListFields(survey.SurveyQuestions);
+          return createOrUpdateContactList(survey, fields, t).then((contactList) => {
+            if(contactList){
+              return updateContactList(contactList, survey, fields, t).then(() => {
+                return survey;
+              });
+            }else{
+              return survey;
+            }
+          }, (error) => {
 
-          return createOrUpdateContactList(survey, fields, t).then(function(contactList) {
-            return survey;
-          }, function(error) {
             throw error;
           });
-
         });
       }).then(function(survey) {
         survey.update({ url: validUrl(survey) }).then(function(survey) {
@@ -370,6 +400,7 @@ function copySurvey(params, account) {
             deferred.reject(error);
           });
         }, function(error) {
+
           deferred.reject(error);
         });
       }
@@ -393,40 +424,42 @@ function answerSurvey(params) {
 
   let validParams = validAnswerParams(params);
 
-  models.sequelize.transaction(function (t) {
-    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
-      return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
-        let fields = getContactListFields(survey.SurveyQuestions);
-        return createOrUpdateContactList(survey, fields, t).then(function(contactList) {
-          if(!_.isEmpty(fields)) {
-            let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
-              clParams.contactListId = contactList.id;
-              clParams.accountId = survey.accountId;
-
-              return contactListUserServices.create(clParams).then(function(result) {
+  models.sequelize.transaction((t) => {
+    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
+      return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
+         return tryFindContactList(survey, t).then((contactList) => {
+          if(!contactList) { return survey }
+          let fields = getContactListFields(survey.SurveyQuestions);
+           return updateContactList(contactList, survey, fields, t).then((contactList) => {
+              if(!_.isEmpty(fields)) {
+                let clParams = findContactListAnswers(contactList, validParams.answers);
+                if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
+                  clParams.contactListId = contactList.id;
+                  clParams.accountId = survey.accountId;
+                  return contactListUserServices.create(clParams).then((result) => {
+                    return survey;
+                  }, (error)  => {
+                    throw error;
+                  });
+                } else {
+                  return survey;
+                }
+              } else {
                 return survey;
-              }, function(error) {
-                throw error;
-              });
-            }
-            else {
-              return survey;
-            }
-          }
-          else {
-            return survey;
-          }
-        }, function(error) {
+              }
+           }, (error) => {
+             throw error;
+           })
+         }, (error) => {
           throw error;
         });
       });
     })
-  }).then(function(survey) {
+  }).then((survey) =>{
     deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
-  }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
+  }).catch(SurveyAnswer.sequelize.ValidationError, (error) => {
     deferred.reject(filters.errors(error));
-  }).catch(function(error) {
+  }).catch((error) => {
     deferred.reject(error);
   });
 

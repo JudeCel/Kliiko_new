@@ -1,0 +1,22 @@
+<div id='deleteConfirmationModal' class='modal fade' role='dialog'>
+  <div class='modal-dialog deleteConfirmationModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Are you sure?</h2>
+      </div>
+
+      <div class='modal-body'>
+        <div class='form-group'>
+          <center>Do you want to permanently Delete this Contact List?</center>
+          <center>If you are a Senior or Core Plan you can Export</center>
+          <center>and store a CSV file.</center>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn-standart btn-red pull-left' data-dismiss='modal'>Cancel</button>
+        <button type='button' class='btn-standart btn-green pull-right' ng-click="clc.deleteList()">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>

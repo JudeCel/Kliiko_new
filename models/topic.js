@@ -7,9 +7,10 @@ module.exports = (Sequelize, DataTypes) => {
   var Topic = Sequelize.define('Topic', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
+    parentTopicId: { type: DataTypes.INTEGER, allowNull: true },
     boardMessage: { type: DataTypes.STRING, allowNull: true, validate: { isLength: validations.length('boardMessage', { max: topicConstants.validations.boardMessage }) } },
     name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true,
-      isUnique: validations.unique(Sequelize, 'Topic', 'name', { accountContext: true }),
+      isUnique: validations.unique(Sequelize, 'Topic', 'name', { accountContext: true, topicContext: true }),
       isLength: validations.length('name', { max: topicConstants.validations.name })
     } },
     sign: { type: DataTypes.STRING, allowNull: true, validate: { isLength: validations.length('sign', { max: topicConstants.validations.sign })

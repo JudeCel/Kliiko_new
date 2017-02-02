@@ -11,6 +11,7 @@
       contactListsUser: $resource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsImport: $resource('/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       contactListsValidate: $resource('/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
+      toggleListState: $resource('/contactLists/:id/toggleListState', {id:'@id'}, {post: {method: 'POST'}}),
       contactComments: $resource('/contactListsUser/comments', {}, {post: {method: 'POST'}}),
       canExportContactListData: $resource('/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
     };
@@ -32,7 +33,7 @@
     publicServices.addImportedContacts = addImportedContacts;
     publicServices.validateContactImportData = validateContactImportData;
     publicServices.canExportContactListData = canExportContactListData;
-
+    publicServices.toggleListState = toggleListState;
 
     return publicServices;
 
@@ -276,6 +277,19 @@
         }
       });
 
+
+      return deferred.promise;
+    }
+
+    function toggleListState(list) {
+      var deferred = $q.defer();
+      contactListsApi.toggleListState.post({ id: list.id }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
 
       return deferred.promise;
     }
