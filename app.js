@@ -12,11 +12,11 @@ var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
 var sessionMiddleware = require('./middleware/session');
 const { setUpQueue} = require('./services/backgroundQueue.js');
-
 var app = express();
 var flash = require('connect-flash');
 var _ = require('lodash');
 var airbrake = require('./lib/airbrake').instance;
+var cors = require('./middleware/cors');
 app.use(airbrake.expressHandler());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -46,13 +46,13 @@ app.use(session({
 }));
 
 app.use(setUpQueue);
-
 app.use(flash());
 app.use(logger('dev'));
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
 app.use('/api',  apiPublic);
-app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
+
+app.use('/api', cors.setCors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
