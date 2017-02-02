@@ -53,7 +53,7 @@ var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
 app.use('/api',  apiPublic);
 
-var corsOrigin = new RegExp(process.env.SERVER_CHAT_DOMAIN_URL + "(:\\d+|\\.[a-z]+)", "g");
+var corsOrigin = new RegExp(process.env.SERVER_CHAT_DOMAIN_URL + "(:\\d+)*", "g");
 app.use('/api', cors({ origin: corsOrigin}), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
