@@ -76,12 +76,11 @@
               </span>
 
               <span ng-if="clc.canExport">
-                <a class='btn btn-standart btn-green btn-medium' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
+                <a class='btn btn-standart btn-green btn-medium margin-top-m2' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
               </span>
 
               <span ng-if="clc.lists.activeList.editable">
                 <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-
               </span>
 
               <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive btn-large">
