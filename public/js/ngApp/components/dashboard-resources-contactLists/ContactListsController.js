@@ -99,7 +99,7 @@
 
     function toggleSatus(){
       vm.lists.toggleListState(vm.lists.activeList).then(function() {
-        vm.lists.activeList.active = vm.lists.activeList;
+        vm.lists.activeList.active = !vm.lists.activeList.active;
       }, 
       function(error) {
         domServices.modal('reachedLimitToggleSatusModal');
@@ -108,7 +108,7 @@
     }
 
     function showListStatusButton() {
-      return(vm.lists.activeList && vm.lists.activeList.role == 'participant');
+      return !vm.sessionId && vm.lists.activeList && vm.lists.activeList.role == 'participant';
     }
 
     function listStatusMessage() {
