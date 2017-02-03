@@ -53,9 +53,7 @@
     vm.rateMember = rateMember;
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
-    vm.showSpinner = showSpinner;
-    vm.populateSessionMemberQueue = [];
-    vm.populateSessionMembersScheduled = false;
+    vm.showSpinner = showSpinner;;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -82,16 +80,24 @@
       }
     }
 
-    vm.prepareData = function(participants, observers) {
+    vm.prepareData = function(sbc) {
       if(vm.previousStep != vm.session.sessionData.step) {
         vm.previousStep = vm.session.sessionData.step;
         vm.currentFilter = 'all';
       }
 
       if (vm.isParticipantPage()) {
-        vm.stepMembers = participants;
+        // if(sbc.isSessionClosed()){
+          vm.stepMembers = vm.session.steps.step4.participants;
+        // }else{
+        //   vm.stepMembers = sbc.participants;
+        // }
       } else if (vm.isObserverPage()) {
-        vm.stepMembers = observers;
+        // if(sbc.isSessionClosed()){
+          vm.stepMembers = vm.session.steps.step5.observers;
+        // }else{
+        //   vm.stepMembers = sbc.observers;
+        // }
       } else {
         vm.stepMembers = [];
       }
@@ -128,113 +134,40 @@
       }, 10);
     }
 
-    function populateSessionMemberBulk() {
-      vm.populateSessionMembersScheduled = false;
-      if (vm.populateSessionMemberQueue.length > 0) {
-        builderServices.getSessionMembers(vm.session.id, vm.populateSessionMemberQueue).then(function(res) {
-          if (res.error) {
-            messenger.error(res.error);
-          } else {
-            for(var i=0; i<res.length; i++) {
-              var sessionMember = res[i];
-              removeFromPopulateSessionMemberQueue(sessionMember.accountUserId);
-              updateSessionMember(sessionMember);
-            }
-          }
-        });
-      }
-    }
-
-    function removeFromPopulateSessionMemberQueue(accountUserId) {
-      for (var i=0; i<vm.populateSessionMemberQueue.length; i++) {
-        if (vm.populateSessionMemberQueue[i] == accountUserId) {
-          vm.populateSessionMemberQueue.splice(i, 1);
-          break;
-        }
-      }
-    }
-
-    function updateSessionMember(sessionMember) {
-      var i = 0;
-      while (i < vm.stepMembers.length) {
-        var item = vm.stepMembers[i];
-        if (item.id == sessionMember.accountUserId) {
-          item.sessionMember = sessionMember;
-          break;
-        }
-        i++;
-      }
-
-      if(!$scope.$$phase) {
-        $scope.$apply();
-      }
-    }
-
-    function populateSessionMember(accountUserId) {
-      if (vm.populateSessionMemberQueue.indexOf(accountUserId) == -1) {
-        if (!vm.populateSessionMembersScheduled) {
-          vm.populateSessionMembersScheduled = true;
-          setTimeout(populateSessionMemberBulk, 2000);
-        }
-        vm.populateSessionMemberQueue.push(accountUserId);
-      }
-    }
-
     function updateInviteItem(resp) {
-      var i = 0;
-      while (i < vm.stepMembers.length) {
-        var item = vm.stepMembers[i];
-        if(item.id == resp.accountUserId) {
-          item.invite = resp;
-          break;
-        }
-        i++;
-      }
-
-      if(!$scope.$$phase) {
-        $scope.$apply();
-      }
+    $scope.$evalAsync(
+      function( $scope ) {
+        vm.stepMembers.map(function(item) {
+          if(item.id == resp.accountUserId) {
+            angular.copy(resp, item.invite);
+          }
+        })
+      });
     }
 
     function bindSocketEvents() {
+      vm.SocketChannel.off("inviteUpdate");
+      vm.SocketChannel.off("inviteDelete");
+
       vm.SocketChannel.on("inviteUpdate", function(resp) {
-        var i = 0;
-        var needUpdateItem  = null;
-        while (i < vm.stepMembers.length) {
-          var item = vm.stepMembers[i];
+        vm.stepMembers.map(function(item) {
           if(item.id == resp.accountUserId) {
             item.invite = (item.invite || {});
-
             if (item.invite.emailStatus == 'waiting' && resp.emailStatus == "sent") {
-              item.invite.emailStatus = "sentDone"
+              resp.emailStatus = "sentDone"
 
               setTimeout(function() {
+                resp.emailStatus = "sent"
                 updateInviteItem(resp);
               }, 2000);
-
-            }else{
-              item.invite = resp;
             }
             item.isSelected = false;
-
-            if (!item.sessionMember) {
-              needUpdateItem = item.id ;
-            }
-
-            break;
+            updateInviteItem(resp);
+            
+            return false;
           }
-          i++
-        }
-
-        if (resp.status == "confirmed" && needUpdateItem) {
-          populateSessionMember(needUpdateItem);
-        }
-
-        if(!$scope.$$phase) {
-          $scope.$apply();
-        }
+        });
       });
-
 
       vm.SocketChannel.on("inviteDelete", function(resp) {
         vm.stepMembers.map(function(item) {
