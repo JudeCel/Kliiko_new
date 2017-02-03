@@ -53,7 +53,7 @@
             <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in step2Controller.sessionTopicsArray">
               <span>
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
-                {{ topic.sessionTopic.name }}
+                {{ step2Controller.getSessionTopicName(topic) }}
               </span>
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">

@@ -105,7 +105,7 @@
     }
 
     /**
-     * Get all lists, store them as ListItemModel and sort by 'id'
+     * toggle list active
      */
     function toggleListState(id) {
       var deferred = $q.defer();

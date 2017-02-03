@@ -44,6 +44,7 @@
   }
 
   #contact-lists-left-column {
+    padding-left: 0px;
 
     #list-of-contacts {
       margin-top: 10px;
@@ -191,13 +192,18 @@
   ////////
 
   #contact-lists-right-column {
-
+    padding-right: 0px;
     overflow: inherit;
 
     #list-mass-actions {
       .check {
         float: left;
         margin-right: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        @media (max-width: 1389px){
+          margin-right: 12px;
+        }
       }
     }
 
@@ -379,4 +385,74 @@
       }
     }
   }
+}
+
+#list-mass-actions {
+  text-align: left;
+
+  @media (max-width: 1735px){
+    .btn-large {
+      min-width: 180px;
+      width: 180px;
+      max-width: 180px;
+      .ng-custom-select {
+        .btn-large {
+          ul {
+            width: 180px !important;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 1665px){
+    .btn-large {
+      min-width: 160px;
+      width: 160px;
+      max-width: 160px;
+      .ng-custom-select {
+        .btn-large {
+          min-width: 170px;
+          width: 170px;
+          max-width: 170px;
+          padding-left: 10px !important;
+          ul {
+            width: 170px !important;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 1589px){
+    .btn-large, .btn-medium {
+      min-width: 110px;
+      width: auto;
+      max-width: 140px;
+      .ng-custom-select {
+        .btn-large {
+          min-width: 155px;
+          width: 155px;
+          max-width: 155px;
+          padding-left: 8px !important;
+          ul {
+            width: 155px !important;
+          }
+        }
+        .wrapper-dropdown-cd:after {
+          right: 8px !important;
+        }
+      }
+    }
+  }
+}
+
+.activate-deactivate-list {
+  @media (max-width: 1315px){
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+.margin-top-m2 {
+  margin-top: -2px;
 }

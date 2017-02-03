@@ -64,8 +64,7 @@
           deferred.reject(res.error);
         }
         else {
-          UserService.app.user = res.user;
-          UserService.user = res.user;
+          UserService.app.accountUser = res.user;
           deferred.resolve(res);
         }
       });

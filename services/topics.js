@@ -278,24 +278,18 @@ function updateStockTopic(topic, params, isAdmin){
        if(isAdmin){
           resolve(topic.update(params, { returning: true }));
        }else{
-        params.parentTopicId = topic.id;
-        delete params.id;
-        resolve(create(params))
+          if (params.name == topic.name) {
+            params.parentTopicId = topic.id;
+          }
+          delete params.id;
+          resolve(create(params))
        }
      }
   })
 }
 function updateRegularTopic(topic, params, isAdmin){
   return new Bluebird((resolve, reject) => {
-     if(params.sessionId){
-       if (params.name == topic.name) {
-          params.parentTopicId = topic.id;
-        }
-        delete params.id;
-        resolve(create(params))
-     }else{
-       resolve(topic.update(params, { returning: true }));
-     }
+      resolve(topic.update(params, { returning: true }));
   })
 }
 
