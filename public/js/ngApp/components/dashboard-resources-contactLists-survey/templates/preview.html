@@ -109,7 +109,7 @@
             </div>
           </div>
 
-          <div ng-if='question.resource'>
+          <div ng-if='question.resource' ng-controller='GalleryController as gc'>
             {{ resource = question.resource; "" }}
             <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           </div>
