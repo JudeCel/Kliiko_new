@@ -34,6 +34,7 @@
     vm.onDragStart = onDragStart;
     vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
     vm.getTopicStockClass = getTopicStockClass;
+    vm.getSessionTopicName = getSessionTopicName;
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -81,6 +82,14 @@
       }
 
       return false;
+    }
+
+    function getSessionTopicName(topic){
+       if(topic.parentTopicId){
+        return ("Copy of " + topic.sessionTopic.name) 
+      }else{
+        return (topic.sessionTopic.name) 
+      }
     }
 
     function selectAllTopics(list) {
