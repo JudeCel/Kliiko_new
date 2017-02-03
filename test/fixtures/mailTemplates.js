@@ -224,6 +224,7 @@ function createMailTemplate() {
     addTemplate,
     addTemplate,
     addTemplate,
+    addTemplate,
     createMailTemplateCopies
   ], function(error, result) {
     if(error) {
