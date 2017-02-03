@@ -74,7 +74,8 @@ module.exports = {
     'passwordResetRequest': "Reset Password Request",
     'passwordChangeSuccess': "Change Password Success",
     'registerConfirmationEmail': "Confirmation Email",
-    'registerConfirmationEmailSuccess': "Confirmation Email Success"
+    'registerConfirmationEmailSuccess': "Confirmation Email Success",
+    'emailNotification': 'Email Notification'
   },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
