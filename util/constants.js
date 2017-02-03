@@ -131,5 +131,6 @@ module.exports = {
     confirmedParticipationMessage: "That\'s great thanks, we\'ll let you know when we have another Chat Session.",
     declinedParticipationMessage: "Thanks, we\'ll make sure your\'re not asked again.",
     emailNotSent: "No close session emails sent."
-  }
+  },
+  emailNotifications: ['none', 'privateMessages', 'all']
 }
