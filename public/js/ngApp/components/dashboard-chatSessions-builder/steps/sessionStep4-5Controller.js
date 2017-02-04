@@ -87,17 +87,17 @@
       }
 
       if (vm.isParticipantPage()) {
-        // if(sbc.isSessionClosed()){
-          vm.stepMembers = vm.session.steps.step4.participants;
-        // }else{
-        //   vm.stepMembers = sbc.participants;
-        // }
+        if(sbc.isSessionClosed()){
+          vm.stepMembers = sbc.session.steps.step4.participants;
+        }else{
+          vm.stepMembers = sbc.participants;
+        }
       } else if (vm.isObserverPage()) {
-        // if(sbc.isSessionClosed()){
-          vm.stepMembers = vm.session.steps.step5.observers;
-        // }else{
-        //   vm.stepMembers = sbc.observers;
-        // }
+        if(sbc.isSessionClosed()){
+          vm.stepMembers = sbc.session.steps.step5.observers;
+        }else{
+          vm.stepMembers = sbc.observers;
+        }
       } else {
         vm.stepMembers = [];
       }
