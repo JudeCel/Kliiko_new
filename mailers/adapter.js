@@ -39,7 +39,6 @@ const testTransporter = {
 };
 
 const config = () =>  {
-  return testTransporter;
   switch (process.env.NODE_ENV) {
     case "test":
       return testTransporter;

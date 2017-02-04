@@ -472,7 +472,7 @@
       return vm.session.currentStep == "manageSessionParticipants";
     }
 
-    function isSessionClosed(callback) {
+    function isSessionClosed() {
       return vm.session.sessionData.showStatus == 'Closed';
     }
 
