@@ -47,6 +47,7 @@
     vm.setType = setType;
     vm.topicName = topicName;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
+    vm.trimClipboardText = trimClipboardText;
 
     init();
 
@@ -246,6 +247,16 @@
 
       function error(err) {
         messenger.error(err);
+      }
+    }
+
+    function trimClipboardText(event, maxLength) {
+      var clipboard =  getClipboardCrossBrowser(event);
+      var clipboardText = clipboard.getData('Text');
+      vm.topicData.boardMessage = clipboardText.substring(0, maxLength);
+
+      function getClipboardCrossBrowser(event) {
+        return event.originalEvent.clipboardData || window.clipboardData;
       }
     }
   }

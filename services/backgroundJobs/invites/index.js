@@ -2,6 +2,7 @@
 
 function sendInvite(inviteId, callback) {
   const { sendInvite, processEmailStatus }  = require('../../invite.js');
+  
   sendInvite(inviteId).then((resp) => {
     processEmailStatus(inviteId, resp).then(() => {
       callback();
