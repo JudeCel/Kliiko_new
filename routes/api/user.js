@@ -24,7 +24,8 @@ function userPost(req, res, next) {
     if (err) {
       res.send({error:err});
     } else {
-      res.send({ user: req.body, message: MessagesUtil.routes.user.updateContactDetails });
+      var message = Object.keys(req.body).length == 1 && req.body.emailNotification ? MessagesUtil.routes.user.updateEmailNotifications : MessagesUtil.routes.user.updateContactDetails;
+      res.send({ user: req.body, message: message });
     }
   });
 }
@@ -33,14 +34,14 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-    res.send(req.currentResources);
+  res.send(req.currentResources);
 }
 
 function changePassword(req, res, next) {
   changePasswordService.save(req, function(errors, message, user){
     if (errors) {
       res.send({ error: errors.message, message: message });
-    }else{
+    } else {
       res.send({ message: message });
     }
   });

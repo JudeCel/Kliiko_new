@@ -9,13 +9,24 @@
           <form method="post">
 
             <div class="form-group">
-              1 2 3
+              <p>
+                <input type="radio" id="emailNotificationNone" value="none" ng-model="enmc.accountUserData.emailNotification"/>
+                <label for="emailNotificationNone">Don't send any Notifications</label>
+              </p>
+              <p>
+                <input type="radio" id="emailNotificationPrivateMessages" value="privateMessages" ng-model="enmc.accountUserData.emailNotification"/>
+                <label for="emailNotificationPrivateMessages">Send only whenever someone sends me a Private Message</label>
+              </p>
+              <p>
+                <input type="radio" id="emailNotificationAll" value="all" ng-model="enmc.accountUserData.emailNotification"/>
+                <label for="emailNotificationAll">Send whenever someone Posts or sends me a Private Message</label>
+              </p>
             </div>
 
             <div class='modal-footer'>
                 <button type="button" ng-click="enmc.cancel()"
                         class="btn btn-standart btn-red btn-small pull-left">Cancel</button>
-                <button type="button" ng-click="enmc.createNewAccount(myDashboard)"
+                <button type="button" ng-click="enmc.save()"
                         class="btn btn-standart btn-green btn-small pull-right">Save</button>
             </div>
 
