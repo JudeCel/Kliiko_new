@@ -4,8 +4,8 @@
   angular.module('KliikoApp').controller('EmailNotificationModalController', EmailNotificationModalController)
   angular.module('KliikoApp.Root').controller('EmailNotificationModalController', EmailNotificationModalController)
 
-  EmailNotificationModalController.$inject = ['dbg', 'user', 'domServices', 'messenger'];
-  function EmailNotificationModalController(dbg, user, domServices, messenger) {
+  EmailNotificationModalController.$inject = ['dbg', 'user', 'domServices', 'messenger', '$scope'];
+  function EmailNotificationModalController(dbg, user, domServices, messenger, $scope) {
     dbg.log2('#EmailNotificationModalController started');
 
     var vm = this;
@@ -17,6 +17,7 @@
     $('#emailNotificationModal').on('show.bs.modal', function (event) {
       vm.accountUserData = {emailNotification: user.app.accountUser.emailNotification};
       vm.errors = {};
+      $scope.$apply();
     });
 
     function save(dashboardController) {
