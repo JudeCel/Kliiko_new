@@ -362,12 +362,34 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
       raw: true,
       order: "id ASC"
   }).then(function(result) {
-    sortMailTemplates(result);
-    callback(null, result);
+    getTemplatesSessionNames(result).then(function(templates) {
+      sortMailTemplates(result);
+      callback(null, result);
+    }, function(error) {
+      callback(error);
+    });
   }).catch(function(error) {
     callback(error);
   });
 };
+
+function getTemplatesSessionNames(templates) {
+  return new Bluebird((resolve, reject) => {
+    Bluebird.each(templates, (template) => {
+      if (template.sessionId) {
+        return Session.find({ where: { id: template.sessionId } }).then((session) => {
+          template.sessionName = session.name;
+        }, (error) => {
+          reject(error)
+        });
+      }
+    }).then(() => {
+      resolve(templates);
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
 
 function sortMailTemplates(result) {
   let templateOrder = {"firstInvitation": 1, "confirmation": 2, "notThisTime": 3, "notAtAll": 4, "closeSession": 5, "generic": 6};
@@ -487,7 +509,7 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (template.properties.templateName) {
       result = true;
-      template.name = template.name + " " + template.properties.templateName;
+      template.name = template.properties.templateName;
     }
   }
 

@@ -2,6 +2,7 @@
 
 var constants = require('../util/constants');
 var validations = require('./validations');
+var MessagesUtil = require('./../util/messages');
 
 module.exports = (Sequelize, DataTypes) => {
   var MailTemplate = Sequelize.define('MailTemplate', {
@@ -19,8 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
   }, {
     indexes:[{
       name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
-      // unique: { msg: MessagesUtil.models.accountUser.email },
-      unique: { msg: "This is test" },
+      unique: { msg: 'THIS IS TEST' },
       fields: ['name', 'AccountId', 'MailTemplateBaseId']
     }],
     classMethods: {
