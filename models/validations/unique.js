@@ -23,7 +23,7 @@ function unique(sequelize, model, fieldName, otherValue) {
           where.accountId = this.accountId;
         }
 
-        if(otherValue.topicContext) {
+        if(otherValue.topicContext && this.parentTopicId) {
           where.parentTopicId = this.parentTopicId;
         }
       }
