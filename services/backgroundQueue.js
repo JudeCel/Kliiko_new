@@ -5,11 +5,17 @@ const connectionDetails = require('../config/backgroudServer.js');
 let Bluebird = require('bluebird');
 let queue = null;
 const invitesJobs = require('./backgroundJobs/invites/index.js');
+const emailNotificationsJobs = require('./backgroundJobs/emailNotifications/index.js');
 
 const jobs = {
   "invite": {
     perform: (inviteId, callback) => {
       invitesJobs.sendInvite(inviteId, callback);
+    },
+  },
+  "emailNotifications": {
+    perform: (sessionMemberId, callback) => {
+      emailNotificationsJobs.sendNotification(sessionMemberId, callback);
     },
   },
 }
