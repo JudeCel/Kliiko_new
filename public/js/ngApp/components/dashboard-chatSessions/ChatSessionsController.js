@@ -157,9 +157,9 @@
 
     function hasAccess(session, accountUserId) {
       var canAccess = false;
-      if(session.facilitator && (session.facilitator.accountUserId == accountUserId) ){
+      if(session.facilitator && (session.facilitator.accountUserId == accountUserId) || session.isInactive){
         canAccess = true;
-      }else{
+      } else {
         session.SessionMembers.map(function(member) {
           member.accountUserId == accountUserId;
           canAccess = true;

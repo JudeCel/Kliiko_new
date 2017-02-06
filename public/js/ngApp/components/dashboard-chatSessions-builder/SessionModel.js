@@ -316,6 +316,7 @@
           });
 
         } else {
+          self.snapshot.facilitatorId = res.snapshot.facilitatorId;
           deferred.resolve(res);
         }
       });

@@ -118,12 +118,13 @@ function prepareAccountUsers(accountUsers, protocol) {
     observer: { name: 'Spectators', field: 'observer', data: [] }
   };
 
-  _.map(accountUsers, function(accountUser) {
+  _.each(accountUsers, function(accountUser) {
+    
     if (_.includes(['admin', 'accountManager'], accountUser.role)) {
       userSwitch(object, accountUser, protocol);
     }
 
-    _.map(accountUser.SessionMembers, function(sessionMember) {
+    _.each(accountUser.SessionMembers, function(sessionMember) {
       let user = _.cloneDeep(accountUser);
       user.role = sessionMember.role;
       user.SessionMembers = [sessionMember];
@@ -182,7 +183,9 @@ function userSwitch(object, user, protocol) {
 }
 
 function addDashboardUrl(accountUser, path, protocol) {
-  accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.subdomain, path);
+  if(accountUser.active){
+    accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.subdomain, path);
+  }
 }
 
 function addSession(accountUser) {

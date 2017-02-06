@@ -337,7 +337,7 @@
           //this is for case when preview button pressed after save but before server responce
           var template = res.template || vm.currentTemplate;
           contentFrame.html(template.content);
-          $("#mailTemplatePreviewSubject").html(template.subject);
+          $("#mailTemplatePreviewSubject").text(template.subject);
         } else {
           messenger.error(res.error);
         }

@@ -14,7 +14,7 @@
         <td>{{ au.Account.name }}</td>
         <td>{{ au.active ? "active" : "not active" }}</td>
         <td>
-          <a href='{{ au.dashboardUrl }}' class='go-to-green-button pull-right'>Enter Account Hub <span class='glyphicon glyphicon-menu-right'/></a>
+          <a ng-if='au.dashboardUrl' href='{{ au.dashboardUrl }}' class='go-to-green-button pull-right'>Enter Account Hub <span class='glyphicon glyphicon-menu-right'/></a>
         </td>
       </tr>
     </tbody>
@@ -32,7 +32,7 @@
           {{ au.active ? "active" : "not active" }}
         </td>
         <td>
-          <a href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' title='Go to Account Hub' />
+          <a  ng-if='au.dashboardUrl' href='{{ au.dashboardUrl }}' class='go-to-dashboard glyphicon glyphicon-play pull-right' title='Go to Account Hub' />
         </td>
       </tr>
     </tbody>
