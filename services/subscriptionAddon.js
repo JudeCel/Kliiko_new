@@ -68,7 +68,7 @@ function chargeAddon(params) {
   let deferred = q.defer();
 
   return new Bluebird((resolve, reject) => {
-    subscriptionValidator.planAllowsToDoIt(params.accountId, 'canBuySms').then((subscription) => {
+    subscriptionValidator.plan(params.accountId, 'canBuySms').then((subscription) => {
       if(!params.addon_quantity) {
         return reject(MessagesUtil.subscriptionAddon.missingQuantity);
       }
