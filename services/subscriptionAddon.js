@@ -5,12 +5,14 @@
 var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var subscriptionValidator = require('./validators/subscription');
 var Subscription = models.Subscription;
 var Account = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+var Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 
 // We can get credit count when we call addon from chargebee system, there is unit field for addon.
@@ -65,35 +67,27 @@ function creditCount(accountId) {
 function chargeAddon(params) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { accountId: params.accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
-    if(subscription.planId == 'free_account') {
-      deferred.reject(MessagesUtil.subscriptionAddon.notAllowed);
-    }
-    else {
+  return new Bluebird((resolve, reject) => {
+    subscriptionValidator.planAllowsToDoIt(params.accountId, 'canBuySms').then((subscription) => {
       if(!params.addon_quantity) {
-        return deferred.reject(MessagesUtil.subscriptionAddon.missingQuantity);
+        return reject(MessagesUtil.subscriptionAddon.missingQuantity);
       }
       params.subscriptionId = subscription.subscriptionId
       params.customerId = subscription.customerId
       params.id = subscription.id
       params.currentSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-      chargebeeAddonCharge(params).then(function(result) {
-        addSmsCreditsToAccountSubscription(params, result.invoice).then(function(result) {
-          deferred.resolve({smsCretiCount: result, message: MessagesUtil.subscriptionAddon.successfulPurchase});
-        }, function(error) {
-          deferred.reject(error);
-        })
-
-      }, function(error) {
-        deferred.reject(error);
+      chargebeeAddonCharge(params).then((result) => {
+        return addSmsCreditsToAccountSubscription(params, result.invoice)
+      }).then((result) => {
+        resolve({smsCretiCount: result, message: MessagesUtil.subscriptionAddon.successfulPurchase});
+      }).catch((error) => {
+        reject(error);
       });
-    }
-  }).catch(function(error) {
-    deferred.reject(filters.errors(error));
+    }).catch((error) => {
+      reject({ planTooLow: true, message: filters.errors(error) });
+    });
   });
-
-  return deferred.promise;
 }
 
 // Helpers

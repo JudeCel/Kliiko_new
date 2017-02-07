@@ -63,12 +63,16 @@
         addon_quantity: qty
       }).then(function(result) {
         if(result.error){
-          messenger.error(result.error);
+          if(result.error.planTooLow) {
+            domServices.modal('smsCreditsModal');
+          }
+          else {
+            messenger.error(result.error);
+          }
         }else{
           vm.currentSmsCreditCount = result.smsCretiCount;
           messenger.ok(result.message);
         }
-
       })
     }
 
