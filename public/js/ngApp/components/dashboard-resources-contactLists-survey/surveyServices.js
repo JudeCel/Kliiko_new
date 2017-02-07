@@ -2,9 +2,9 @@
   'use strict';
   angular.module('KliikoApp').factory('surveyServices', surveyServices);
   angular.module('KliikoApp.Root').factory('surveyServices', surveyServices);
-  surveyServices.$inject = ['$q', '$resource', 'dbg'];
+  surveyServices.$inject = ['$q', '$resource', 'dbg', 'globalSettings', '$window'];
 
-  function surveyServices($q, $resource, dbg) {
+  function surveyServices($q, $resource, dbg, globalSettings, $window) {
     var surveyRestApi = $resource('/survey/:path', null, {
       update: { method: 'PUT' },
       find: { method: 'GET', params: { path: 'find' } },
@@ -33,6 +33,7 @@
     upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
     upServices.getSurveyStats = getSurveyStats;
+    upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
     return upServices;
 
     function getConstants() {
@@ -57,6 +58,9 @@
       });
 
       return deferred.promise;
+    }
+    function exportSurveyStatsUrl(surveyId, format) {
+      return(globalSettings.serverChatDomainUrl + '/api/surveys/report/'+surveyId+'/'+format+'/' + $window.localStorage.getItem("jwtToken"));
     }
 
     function getSurveyStats(id) {
