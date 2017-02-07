@@ -20,7 +20,7 @@ module.exports = (Sequelize, DataTypes) => {
   }, {
     indexes:[{
       name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
-      unique: { msg: 'THIS IS TEST' },
+      unique: true,
       fields: ['name', 'AccountId', 'MailTemplateBaseId']
     }],
     classMethods: {

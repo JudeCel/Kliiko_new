@@ -89,7 +89,13 @@ function create(params, callback) {
       });
     }).catch(function(error) {
       transaction.rollback().then(function() {
-        callback(filters.errors(error));
+        let handledError;
+        if (error.name == 'SequelizeUniqueConstraintError') {
+          handledError = { name: MessagesUtil.mailTemplate.error.uniqueName };
+        } else {
+          handledError = filters.errors(error);
+        }
+        callback(handledError);
       });
     });
   });
@@ -509,7 +515,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (template.properties.templateName) {
       result = true;
-      template.name = template.properties.templateName;
     }
   }
 
@@ -692,6 +697,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
     validateTemplate(template).then(function() {
 
       let templateObject = buildTemplate(template);
+      assignTemplateName(templateObject.template);
       let shouldCreateTemplateCopy = shouldCreateCopy(templateObject.template, createCopy, accountId);
 
       validateTemplateSnapshot(shouldCreateTemplateCopy, template.snapshot, templateObject, function(validationError, validationResult) {
@@ -745,6 +751,12 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
     });
   } else {
     callback(MessagesUtil.mailTemplate.error.notProvided);
+  }
+
+  function assignTemplateName(template) {
+    if (template.properties.templateName) {
+      template.name = template.properties.templateName;
+    }
   }
 }
 
