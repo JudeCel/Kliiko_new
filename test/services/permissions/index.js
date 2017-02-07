@@ -13,11 +13,11 @@ describe('SERVICE - permissions', () => {
             PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
-            })
+            });
         });
         
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, true)});
-        it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, true)});
+        it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, false)});
         it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, true)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, true)});
@@ -113,6 +113,6 @@ describe('SERVICE - permissions', () => {
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, false)});
         it("canEditSession", () => {assert.equal(permisssions.canEditSession, true)});
         it("canSeeChatSessions", () => {assert.equal(permisssions.canSeeChatSessions, true)});
-        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, false)});
+        it("canUploadToGallery", () => {assert.equal(permisssions.canUploadToGallery, true)});
     });
 });
