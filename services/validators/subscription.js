@@ -58,7 +58,6 @@ module.exports = {
   messages: MessagesUtil.validators.subscription,
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
-  plan: plan,
   canAddAccountUsers: canAddAccountUsers,
   countMessage: countMessage,
   countRecruiterMessage: countRecruiterMessage
@@ -143,29 +142,6 @@ function planAllowsToDoIt(accountId, keys) {
         resolve();
       }
     }, function(error) {
-      reject(error);
-    });
-  });
-}
-
-function plan(accountId, key) {
-  return new bluebird((resolve, reject) => {
-    subscriptionValidator.validate(accountId).then((account) => {
-      const subscription = account.Subscription;
-      if(subscription) {
-        models.SubscriptionPlan.find({ where: { id: subscription.subscriptionPlanId } }).then((plan) => {
-          if(!plan[key]) {
-            reject(prepareErrorMessage(key, subscription));
-          }
-          else {
-            resolve(subscription);
-          }
-        });
-      }
-      else {
-        resolve();
-      }
-    }).catch((error) => {
       reject(error);
     });
   });
