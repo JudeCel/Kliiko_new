@@ -3,7 +3,7 @@
 let models = require('./../models');
 let filters = require('./../models/filters');
 let { enqueue } = require('./backgroundQueue');
-let { AccountUser, Session } = models;
+let { AccountUser, Session, SessionMember } = models;
 let AccountUserService = require('./accountUser');
 let sessionMemberService = require('./sessionMember');
 let socialProfileService = require('./socialProfile');
@@ -19,24 +19,77 @@ let _ = require('lodash');
 let q = require('q');
 let Bluebird = require('bluebird');
 let mailUrlHelper = require('../mailers/helpers');
+var notificationMailer = require('../mailers/notification');
 
 
 function sendNotification(accountUserId, sessionId) {
+  return new Bluebird((resolve, reject) => {
 
+    AccountUser.find({
+      where: { id: accountUserId },
+      attributes: constants.safeAccountUserParams,
+      include: {model: models.ContactListUser}
+    }).then(function(accountUser) {
+      if (!accountUser) { return reject(MessagesUtil.accountUser.notFound) }
 
-  AccountUser.find({
-    where: { id: accountUserId }
-  }).then(function(accountUser) {
-    if (!invite) { return deferred.reject(MessagesUtil.invite.notFound) }
+      Session.find({
+        where: { id: sessionId },
+        attributes: ["name"],
+      }).then(function(session) {
+        if (!session) { return reject(MessagesUtil.session.notFound) }
 
-    resolve(result);
-  }, function(error) {
-    reject(filters.errors(error));
+        SessionMember.find({
+          where: {
+            sessionId: sessionId,
+            role: 'facilitator'
+          },
+          include: [AccountUser]
+        }).then(function(sessionMember) {
+          if (!sessionMember) { return reject(MessagesUtil.sessionMember.notFound) }
+
+          send(accountUser, session, sessionMember.AccountUser).then(function(accountUser) {
+            resolve();
+          }, function(error) {
+            reject(filters.errors(error));
+          });
+
+        }, function(error) {
+          reject(filters.errors(error));
+        });
+        
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+      
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+
   });
-
-//todo:
 }
 
+function send(accountUser, session, facilitator) {
+  return new Bluebird((resolve, reject) => {
+
+    let params = {
+      unsubscribeMailUrl: mailUrlHelper.getUrl(accountUser.ContactListUsers[0].unsubscribeToken, null, '/unsubscribe/'),
+      firstName: accountUser.firstName,
+      sessionName: session.name,
+      facilitatorFirstName: facilitator.firstName,
+      facilitatorLastName: facilitator.lastName,
+      facilitatorMail: facilitator.email,
+      email: accountUser.email
+    }
+
+    notificationMailer.sendNotification(params, function (error, data) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
 
 module.exports = {
   sendNotification: sendNotification
