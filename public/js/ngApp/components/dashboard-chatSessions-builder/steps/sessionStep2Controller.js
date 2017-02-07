@@ -63,6 +63,10 @@
     function canDragElement(topic) {
       var can = false, selected = getSelectedTopics();
 
+      if (topic.stock) {
+        return false;
+      } 
+
       if(!selected.length) {
         return true;
       }
