@@ -89,13 +89,12 @@ function create(params, callback) {
       });
     }).catch(function(error) {
       transaction.rollback().then(function() {
-        let handledError;
         if (error.name == 'SequelizeUniqueConstraintError') {
-          handledError = { name: MessagesUtil.mailTemplate.error.uniqueName };
+          callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
         } else {
-          handledError = filters.errors(error);
+          callback(filters.errors(error));
         }
-        callback(handledError);
+        ;
       });
     });
   });
