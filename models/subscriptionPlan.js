@@ -27,6 +27,7 @@ module.exports = (Sequelize, DataTypes) => {
     topicCount: { type: DataTypes.INTEGER, allowNull: false },
     priority: { type: DataTypes.INTEGER, allowNull: false },
     surveyCount: { type: DataTypes.INTEGER, allowNull: false },
+    canBuySms: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 
     chargebeePlanId: { type: DataTypes.STRING, allowNull: false,
       validate: {

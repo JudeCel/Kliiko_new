@@ -25,12 +25,12 @@ module.exports = {
   createDefaultLists: createDefaultLists,
   parseFile: contactListImport.parseFile,
   validateContactList: contactListImport.validateContactList,
-  exportContactList: exportContactList, 
+  exportContactList: exportContactList,
   toggleListState: toggleListState,
   canExportContactListData: canExportContactListData,
   valiadteMaxPerAccount: valiadteMaxPerAccount
 };
-  
+
   function toggleListState(id, accountId) {
     return new Bluebird((resolve, reject) => {
       ContactList.find({where: {id: id, accountId: accountId, editable: true} }).then((contactList) => {
@@ -78,10 +78,10 @@ function allByAccount(accountId, sessionId) {
         ],
       include: [
         {
-          model: models.Survey, 
-          required: false, 
-          attributes: ['id'] 
-        }, 
+          model: models.Survey,
+          required: false,
+          attributes: ['id']
+        },
         {
         model: models.ContactListUser, attributes: ['id', 'customFields', 'accountUserId'],
         include: [{
@@ -264,10 +264,8 @@ function valiadteMaxPerAccount(accountId) {
       reject(error);
     });
   }, (error) => {
-    deferred.reject(error);
+    reject(error);
   });
-
-  return deferred.promise;
 }
 
 function update(params) {
@@ -376,7 +374,7 @@ function createCsvHeader(contactList) {
       fields[field] = stringHelpers.camel2Human(field);
     }
   });
-  
+
   return fields;
 };
 
