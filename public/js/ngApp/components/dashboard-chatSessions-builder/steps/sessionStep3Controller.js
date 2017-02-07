@@ -30,10 +30,6 @@
 
     vm.getPreparedMailTemplateList();
 
-    vm.templateName = function(template) {
-      return template.sessionId ? template.name + " - " + vm.session.steps.step1.name : template.name;
-    }
-
     vm.isCreated = function(template) {
       var className = 'glyphicon';
       var typeClass = ' glyphicon-remove';
