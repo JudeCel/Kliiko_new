@@ -278,6 +278,9 @@
       if (view == 'monthly') {
         vm.subPlans = vm.monthlyPlans;
       }
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      });
     }
 
     function submitContactusForm() {
