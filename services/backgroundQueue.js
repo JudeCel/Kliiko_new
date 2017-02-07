@@ -14,8 +14,8 @@ const jobs = {
     },
   },
   "emailNotifications": {
-    perform: (sessionMemberId, callback) => {
-      emailNotificationsJobs.sendNotification(sessionMemberId, callback);
+    perform: (accountUserId, sessionId, callback) => {
+      emailNotificationsJobs.sendNotification(accountUserId, sessionId, callback);
     },
   },
 }
