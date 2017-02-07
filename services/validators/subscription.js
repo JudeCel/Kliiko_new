@@ -135,7 +135,7 @@ function planAllowsToDoIt(accountId, keys) {
         if (keyError) {
           reject(prepareErrorMessage(keyError, subscription));
         } else {
-          resolve();
+          resolve(subscription);
         }
       }
       else {
