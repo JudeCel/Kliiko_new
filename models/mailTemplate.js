@@ -2,7 +2,6 @@
 
 var constants = require('../util/constants');
 var validations = require('./validations');
-var MessagesUtil = require('./../util/messages');
 
 module.exports = (Sequelize, DataTypes) => {
   var MailTemplate = Sequelize.define('MailTemplate', {
