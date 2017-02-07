@@ -107,16 +107,21 @@ router.get('/', function (req, res, next) {
 function prepareUrlParams(parameters, query) {
   if (query) {
     if (query.name) {
-      parameters.lastName = query.name;
+      parameters.firstName = query.name;
     }
     if (query.email) {
       parameters.email = query.email;
     }
 
-    if (query.package) {
+    if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
-      parameters.selectedPlanOnRegistration = query.package;
+      if (query.package) {
+        parameters.selectedPlanOnRegistration = query.package;
+      } else {
+        parameters.page = "junior_monthly";
+      }
     }
+
   }
 }
 
