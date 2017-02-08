@@ -24,7 +24,8 @@ function userPost(req, res, next) {
     if (err) {
       res.send({error:err});
     } else {
-      var message = Object.keys(req.body).length == 1 && req.body.emailNotification ? MessagesUtil.routes.user.updateEmailNotifications : MessagesUtil.routes.user.updateContactDetails;
+      var isOnlyEmailNotificationCahnged = Object.keys(req.body).length == 1 && req.body.emailNotification;
+      var message = isOnlyEmailNotificationCahnged ? MessagesUtil.routes.user.updateEmailNotifications : MessagesUtil.routes.user.updateContactDetails;
       res.send({ user: req.body, message: message });
     }
   });
