@@ -224,12 +224,19 @@
     }
 
     function showOkMark(step) {
-      return isValidStep(step) && isNotActiveStep(step);
+      return isValidStep(step) && isNotActiveStep(step) && isVisited(step);
     }
 
     function isValidStep(step) {
-      var stepPropertyName = "step" + step;
-      return vm.session.steps && vm.session.steps[stepPropertyName].error == null;
+      return vm.session.steps && vm.session.steps[getStepPropertyName(step)].error == null;
+    }
+
+    function isVisited(step) {
+      return vm.session.steps[getStepPropertyName(step)].isVisited;
+    }
+
+    function getStepPropertyName(step) {
+      return "step" + step;
     }
 
     function isNotActiveStep(step) {

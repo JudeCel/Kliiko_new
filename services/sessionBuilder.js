@@ -385,13 +385,14 @@ function goToStep(id, accountId, destinationStep) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     findSession(id, accountId).then(function(session) {
+      session.isVisited[session.step] = true;
       sessionBuilderObject(session).then(function(sessionObj) {
 
         validateMultipleSteps(session, sessionObj.sessionBuilder.steps).then(function(steps) {
           sessionObj.sessionBuilder.steps = steps;
           let step = getDestinationStep(sessionObj.sessionBuilder, destinationStep);
 
-          session.updateAttributes({ step: step }).then(function(updatedSession) {
+          session.updateAttributes({ step: step, isVisited: session.isVisited }).then(function(updatedSession) {
             sessionBuilderObject(updatedSession, steps).then(function(result) {
               deferred.resolve(result);
             }, function(error) {
@@ -878,12 +879,14 @@ function stepsDefinition(session, steps) {
     resourceId: session.resourceId,
     anonymous: session.anonymous,
     brandProjectPreferenceId: session.brandProjectPreferenceId,
-    error: getStepError(steps, "step1")
+    error: getStepError(steps, "step1"),
+    isVisited: session.isVisited["setUp"]
   };
 
   object.step2 = {
     stepName: 'facilitatiorAndTopics',
-    error: getStepError(steps, "step2")
+    error: getStepError(steps, "step2"),
+    isVisited: session.isVisited["facilitatiorAndTopics"]
   };
   async.parallel([
     function(cb) {
@@ -901,7 +904,8 @@ function stepsDefinition(session, steps) {
         stepName: 'manageSessionEmails',
         incentive_details: session.incentive_details,
         emailTemplates: [],
-        error: getStepError(steps, "step3")
+        error: getStepError(steps, "step3"),
+        isVisited: session.isVisited["manageSessionEmails"]
       };
       cb();
     },
@@ -915,7 +919,8 @@ function stepsDefinition(session, steps) {
             stepName: 'manageSessionParticipants',
             participantListId: session.participantListId,
             participants: members,
-            error: getStepError(steps, "step4")
+            error: getStepError(steps, "step4"),
+            isVisited: session.isVisited["manageSessionParticipants"]
           };
           cb();
         }
@@ -930,7 +935,8 @@ function stepsDefinition(session, steps) {
           object.step5 = {
             stepName: 'inviteSessionObservers',
             observers: members,
-            error: getStepError(steps, "step5")
+            error: getStepError(steps, "step5"),
+            isVisited: session.isVisited["inviteSessionObservers"]
           };
           cb();
         }
