@@ -579,6 +579,9 @@
         vm.lists.generateImportPreview(res.data);
         domServices.modal('modals-import-preview');
         processImportData(res);
+        setTimeout(function() {
+          jQuery('body').addClass('modal-open');
+        }, 1000);
       }, function(err) {
         messenger.error(messagesUtil.contactList.import.failed);
         vm.importErrorMessage = messagesUtil.contactList.import.corrupted;
@@ -612,11 +615,7 @@
       vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.contactListFields.defaultFields);
       vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
 
-
-
       vm.modalTab1 = true;
-
-      domServices.modal('contactList-addContactManual', 'close');
       prepareCustomFields();
 
       for (var j = 0; j < vm.importedFields.length; j++) {
