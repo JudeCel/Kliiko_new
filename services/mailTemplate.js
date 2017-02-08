@@ -753,7 +753,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   }
 
   function assignTemplateName(template) {
-    if (template.properties.templateName) {
+    if (template.properties && template.properties.templateName) {
       template.name = template.properties.templateName;
     }
   }
