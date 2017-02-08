@@ -41,8 +41,8 @@ function deleteOrRecalculate(id, addRole, removeRole, transaction) {
 
     AccountUser.find(query).then((accountUser) => {
       if (accountUser) {
-        recalculateRole(accountUser, addRole, removeRole).then((newRole) => {
-          accountUser.update({role: newRole}, {transaction: transaction}).then((updatedAccountUser) => {
+        recalculateRole(accountUser, addRole, removeRole).then((params) => {
+          accountUser.update(params, {transaction: transaction}).then((updatedAccountUser) => {
             resolve(updatedAccountUser);
           }, (error) => {
             reject(error);
@@ -72,7 +72,7 @@ function recalculateRole(accountUser, newRole, removeRole) {
 
     const currentRole = accountUser.role;
 
-    let  relatedRoles = _.uniq(accountUser.SessionMembers.map((sm) => { return sm.role }));
+    let  relatedRoles = _.uniq((accountUser.SessionMembers || []).map((sm) => { return sm.role }));
 
     if (removeRole && roles.indexOf(currentRole) < roles.indexOf(removeRole)) {
       relatedRoles.push(currentRole);
@@ -86,8 +86,7 @@ function recalculateRole(accountUser, newRole, removeRole) {
       relatedRoles.push(currentRole);
     }
 
-    // always starts with lowest role
-    let destinationRoll = 'observer';
+    let destinationRoll = null;
     let index = 0;
 
     while (index < roles.length) {
@@ -98,7 +97,11 @@ function recalculateRole(accountUser, newRole, removeRole) {
       index++
     };
 
-    resolve(destinationRoll);
+    const params = { active: !!destinationRoll };
+    if(destinationRoll) {
+      params.role = destinationRoll;
+    }
+    resolve(params);
   })
 }
 

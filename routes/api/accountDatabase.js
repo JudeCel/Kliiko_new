@@ -22,6 +22,15 @@ function addAdmin(req, res, next) {
     res.send({ error: error });
   });
 };
+
+function remAdmin(req, res, next) {
+  accountDatabaseService.remAdmin(req.body, req.currentResources.accountUser.id).then((account) => {
+    res.send({ account: account });
+  }, (error) => {
+    res.send({ error: error });
+  });
+};
+
 function update(req, res, next) {
   accountDatabaseService.updateAccountUser(req.body, req.currentResources.user, function(error, account) {
     if(error) {
@@ -45,5 +54,6 @@ module.exports = {
   get: get,
   updateAccountUserComment: updateAccountUserComment,
   update: update,
-  addAdmin: addAdmin
+  addAdmin: addAdmin,
+  remAdmin: remAdmin
 };

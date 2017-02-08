@@ -3,7 +3,7 @@
 const assert = require('assert');
 const logic = require('./../../tasks/updateSubscriptionPlansLogic');
 
-describe.only('Update Subscription Plans Logic', () => {
+describe('Update Subscription Plans Logic', () => {
 
   it('private#assign', (done) => {
     const plan = { key1: 123, key2: 123 };

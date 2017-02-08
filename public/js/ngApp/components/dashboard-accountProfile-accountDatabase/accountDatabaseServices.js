@@ -7,6 +7,7 @@
     var accountDatabaseRestApi = {
       accountDatabase: $resource('/accountDatabase/:id/', null, { update: { method: 'PUT' } }),
       addAdmin: $resource('/accountDatabase/:id/addAdmin', null, { post: { method: 'POST' } }),
+      remAdmin: $resource('/accountDatabase/:id/remAdmin', null, { post: { method: 'POST' } }),
       comment: $resource('/accountDatabase/:id/comment', null, { update: { method: 'PUT', params: { id: '@id' } } })
     };
 
@@ -16,6 +17,7 @@
     upServices.updateAccountUser = updateAccountUser;
     upServices.updateAccountUserComment = updateAccountUserComment;
     upServices.addAdmin = addAdmin;
+    upServices.remAdmin = remAdmin;
     return upServices;
 
     function getAccountDatabases() {
@@ -36,6 +38,18 @@
       dbg.log2('#AccountDatabaseServices > addAdmin > make rest call', data);
       accountDatabaseRestApi.addAdmin.post({ id: data.accountId }, data, function(res) {
         dbg.log2('#AccountDatabaseServices > addAdmin > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function remAdmin(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountDatabaseServices > remAdmin > make rest call', data);
+      accountDatabaseRestApi.remAdmin.post({ id: data.accountId }, data, function(res) {
+        dbg.log2('#AccountDatabaseServices > remAdmin > rest call responds');
         deferred.resolve(res);
       });
 

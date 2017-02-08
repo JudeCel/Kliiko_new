@@ -48,9 +48,27 @@
     };
 
     $scope.addAdmin = function(account) {
-      account.hasActiveAdmin = false;
-      $scope.modalObject.account = account
-      domServices.modal('addAdminModal');
+      account.hasActiveAdmin = !account.hasActiveAdmin;
+      $scope.modalObject.account = account;
+      if(!account.hasActiveAdmin) {
+        domServices.modal('addAdminModal');
+      }
+      else {
+        $scope.removeAdmin(account);
+      }
+    };
+
+    $scope.removeAdmin = function(account) {
+      var params = { accountId: account.id };
+      AccountDatabaseServices.remAdmin(params).then(function(res) {
+         if(res.error) {
+          messenger.error(res.error);
+        }else{
+          account.hasActiveAdmin = res.account.hasActiveAdmin;
+          account.AccountUsers = res.account.AccountUsers;
+          $scope.modalObject = {};
+        }
+      });
     };
 
     $scope.submitAddAdminForm = function() {
@@ -105,8 +123,7 @@
       }
     };
 
-    $scope.chooseIconForUser = function(account, user) {
-      var accountUser = $scope.findRightAccountUser(account, user);
+    $scope.chooseIconForUser = function(account, accountUser) {
       if(accountUser.active) {
         return '/icons/ic_tick.png';
       }
