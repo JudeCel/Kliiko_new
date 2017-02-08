@@ -260,7 +260,7 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             let nextStepIndex = 2;
             params.name = 'My first session';
-           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+            sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   assert.equal(result.sessionBuilder.steps.step1.name, params.name);
