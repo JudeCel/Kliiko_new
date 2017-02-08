@@ -376,3 +376,7 @@
   height: calc(85vh - 350px);
   overflow: auto;
 }
+
+.emailNotificationModal .form-group label {
+  font-weight: normal;
+}

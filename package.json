@@ -22,7 +22,8 @@
     "updateSessionMemberTypeOfCreation": "node ./tasks/dataNormalization/updateSessionMemberTypeOfCreation.js",
     "updateContactLists": "node ./tasks/updateContactLists.js",
     "createDefaultTopics": "node ./tasks/createDefaultTopics.js",
-    "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js"
+    "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js",
+    "addMailTemplate": "node ./tasks/addMailTemplate.js"
   },
   "engineStrict": true,
   "engine": {
