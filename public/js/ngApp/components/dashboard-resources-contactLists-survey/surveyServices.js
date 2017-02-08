@@ -60,7 +60,8 @@
       return deferred.promise;
     }
     function exportSurveyStatsUrl(surveyId, format) {
-      return(globalSettings.serverChatDomainUrl + '/api/surveys/report/'+surveyId+'/'+format+'/' + $window.localStorage.getItem("jwtToken"));
+      var apiUrl = '/api/surveys/report/'+surveyId+'/'+format+'/';
+      return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
     }
 
     function getSurveyStats(id) {
