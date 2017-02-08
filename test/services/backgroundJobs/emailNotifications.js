@@ -76,11 +76,11 @@ describe('Background Jobs - Email Notifications', function() {
     it("failed session not found", (done) => {
       backgroundJobsEmailNotifications.sendNotification(accountUserId, 1000, (error) => {
         try {
-            assert.equal(error, messages.session.notFound);
-            done()
-          } catch (e) {
-            done(e)
-          }
+          assert.equal(error, messages.session.notFound);
+          done()
+        } catch (e) {
+          done(e)
+        }
       });
     });
 
