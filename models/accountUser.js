@@ -36,7 +36,7 @@ module.exports = (Sequelize, DataTypes) => {
   }, {
     indexes: [{
         name: 'compositeUserIdAndAccountIdAndEmail',
-        unique: { msg: MessagesUtil.models.accountUser.email },
+        unique: true,
         fields: ['email', 'UserId', 'AccountId']
       },
       { fields: ['email'] },

@@ -77,7 +77,8 @@ module.exports = {
     notFound: 'Mail Template not found',
     error: {
       categoryNotFound: 'Mail Template category not found',
-      notProvided: 'Mail Template not provided'
+      notProvided: 'Mail Template not provided',
+      uniqueName: 'Mail Template name has already been taken',
     },
     testMailSent: 'A Test Email has been successfully sent'
   },

@@ -100,8 +100,10 @@ function saveMailTemplatePost(req, res, next) {
   MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, isAdmin, function(error, result) {
     if (result && result.validation && !result.validation.isValid) {
       res.send(result);
+    } else if (error) {
+      res.send({ error: error });
     } else {
-      res.send({error: error, templates: result, message: MessagesUtil.routes.mailTemplates.saved });
+      res.send({ templates: result, message: MessagesUtil.routes.mailTemplates.saved });
     }
   });
 }
