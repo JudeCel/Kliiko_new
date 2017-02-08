@@ -81,6 +81,7 @@ module.exports = {
     sessionMember: ['facilitator'],
   },
   accountNameRegExp: ["^[a-zA-Z0-9 ]+$",'i'],
+  restrictedAccountNames: ['chat', 'www', 'focus', 'forum', 'social forum'],
   mobileRegExp: ["^[0-9]+$",'i'],
   dateFormat: 'MM-dd-yyyy',
   dateFormatWithTime: 'MM-dd-yyyy, HH:mm',

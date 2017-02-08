@@ -265,7 +265,8 @@ module.exports = {
         min: ' must be longer than XXX characters',
         max: ' must not be longer than XXX characters'
       },
-      firstLastName: 'Invalid XXX format'
+      firstLastName: 'Invalid XXX format',
+      restrictedAccountName: 'This Account name is restricted'
     },
     filters: {
       uniqueAccountName: 'Name has already been taken',
