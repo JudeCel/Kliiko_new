@@ -49,7 +49,8 @@ const DEPENDENCIES = {
     model: models.Topic,
     params: function(accountId) {
       return { where: { accountId: accountId, default: false } };
-    }
+    },
+    countMessage: countMessage
   },
   countMessage: countMessage
 };
