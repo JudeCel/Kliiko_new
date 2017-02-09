@@ -86,7 +86,7 @@ function checkRoles(role, allowedRoles) {
   return _.includes(allowedRoles, role);
 }
 function checkSub(account, acountUser, sub, key) {
-  if(acountUser.role == 'admin'){
+  if(acountUser.role == 'admin' || account.admin){
       return true;
   }else{
     return sub[key]
