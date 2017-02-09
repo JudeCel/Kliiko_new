@@ -1,6 +1,8 @@
 "use strict";
 var assert = require('assert');
 var models  = require('./../../models');
+var constants = require('../../util/constants')
+var MessagesUtil = require('../../util/messages');
 var Account  = models.Account;
 var encryptedPasswordLength = 60
 
@@ -78,6 +80,18 @@ describe('Account', () => {
           assert.equal(error, undefined);
           done()
         })
+      });
+
+      it('should fail due to restricted account name', (done) => {
+        let attrs = {
+          name: constants.restrictedAccountNames[0],
+        }
+        Account.create(attrs).then(function(account) {
+          done("Shouldn't create account");
+        }).catch(function(error) {
+          assert.equal(error.errors[0].message, MessagesUtil.models.validations.restrictedAccountName);
+          done();
+        });
       });
     });
   });
