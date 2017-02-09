@@ -23,7 +23,14 @@ module.exports = (Sequelize, DataTypes) => {
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
     type: { type: DataTypes.ENUM, values: ['focus', 'forum'] },
     anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    isInactive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    isInactive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    isVisited: { type: DataTypes.JSON, allowNull: false, defaultValue: { 
+      setUp: false, 
+      facilitatiorAndTopics: false, 
+      manageSessionEmails: false,
+      manageSessionParticipants: false,
+      inviteSessionObservers: false 
+    } },
   }, {
     timestamps: true,
     hooks: {
