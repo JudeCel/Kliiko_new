@@ -74,13 +74,15 @@ module.exports = {
     'passwordResetRequest': "Reset Password Request",
     'passwordChangeSuccess': "Change Password Success",
     'registerConfirmationEmail': "Confirmation Email",
-    'registerConfirmationEmailSuccess': "Confirmation Email Success"
+    'registerConfirmationEmailSuccess': "Confirmation Email Success",
+    'emailNotification': 'Email Notification'
   },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
   },
   accountNameRegExp: ["^[a-zA-Z0-9 ]+$",'i'],
+  restrictedAccountNames: ['chat', 'www', 'focus', 'forum', 'social forum'],
   mobileRegExp: ["^[0-9]+$",'i'],
   dateFormat: 'MM-dd-yyyy',
   dateFormatWithTime: 'MM-dd-yyyy, HH:mm',
@@ -130,5 +132,6 @@ module.exports = {
     confirmedParticipationMessage: "That\'s great thanks, we\'ll let you know when we have another Chat Session.",
     declinedParticipationMessage: "Thanks, we\'ll make sure your\'re not asked again.",
     emailNotSent: "No close session emails sent."
-  }
+  },
+  emailNotifications: ['none', 'privateMessages', 'all']
 }

@@ -60,11 +60,12 @@
       var deferred = $q.defer();
 
       usersRestApi.post(data, function (res) {
-        if(res.error) {
+        if (res.error) {
           deferred.reject(res.error);
-        }
-        else {
-          UserService.app.accountUser = res.user;
+        } else {
+          for (var field in res.user) {
+            UserService.app.accountUser[field] = res.user[field];
+          }
           deferred.resolve(res);
         }
       });

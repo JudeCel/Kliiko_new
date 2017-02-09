@@ -48,6 +48,12 @@
           </a>
         </li>
         <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'>
+          <a ng-click='app.openModal("emailNotificationModal")'> Email Notifications
+            <img class="my-details-container" src='/icons/email_notification.png' alt='' />
+          </a>
+        </li>
+        <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/my-dashboard'>My Dashboard<img class="my-details-container" src='/icons/dashboard_blue.png' alt='' /></a></li>
         <li role="separator" class="divider" ng-if="app.hasPermissions('canPaymentDetails')"></li>
         <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canPaymentDetails')">
@@ -69,3 +75,4 @@
 
   <% include _changePasswordModal %>
   <% include _contactDetailsModal %>
+  <% include _emailNotificationModal %>

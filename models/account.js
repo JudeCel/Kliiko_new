@@ -1,6 +1,7 @@
 'use strict';
 var constants = require('../util/constants');
 var validations = require('./validations');
+var MessagesUtil = require('../util/messages');
 
 module.exports = (Sequelize, DataTypes) => {
   var Account = Sequelize.define('Account', {
@@ -16,6 +17,7 @@ module.exports = (Sequelize, DataTypes) => {
         }
       },
       validate: {
+        isCorrectName: validations.notInLower(constants.restrictedAccountNames, MessagesUtil.models.validations.restrictedAccountName),
         notEmpty: true,
         is: constants.accountNameRegExp,
         isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true }),

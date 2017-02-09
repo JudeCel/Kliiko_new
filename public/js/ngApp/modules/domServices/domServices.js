@@ -30,7 +30,6 @@
 
       if(close) {
         jQuery('#' + modalId).modal('hide');
-        $rootScope.$broadcast('modal-close', modalId);
       } else {
         var id, modals = $('body .modal.fade:visible');
         if(modals.length) {
@@ -41,10 +40,9 @@
         }
 
         if(modalId != id) {
-          var modal = jQuery('#' + modalId)
+          var modal = jQuery('#' + modalId);
           if (modal.length) {
             modal.modal('show');
-            $rootScope.$broadcast('modal-open', modalId);
           }else{
             console.error("modal window not found with id: ", modalId, " check includes and modal window id")
           }
