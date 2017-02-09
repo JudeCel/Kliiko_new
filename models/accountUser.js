@@ -31,7 +31,8 @@ module.exports = (Sequelize, DataTypes) => {
     },
     comment: { type: DataTypes.TEXT, allowNull: true, validate: { isLength: validations.length('comment', { max: 200 }) } },
     email: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, is: constants.emailRegExp, isLength: validations.length('email', { max: 60 }) } },
-    invitesInfo: { type: DataTypes.JSON, allowNull: false, defaultValue: {NoInFuture: 0, NotAtAll: 0, Invites: 0, NoReply: 0, NotThisTime: 0, Future: "-", Accept: 0, LastSession: "-"} }
+    invitesInfo: { type: DataTypes.JSON, allowNull: false, defaultValue: {NoInFuture: 0, NotAtAll: 0, Invites: 0, NoReply: 0, NotThisTime: 0, Future: "-", Accept: 0, LastSession: "-"} },
+    emailNotification: { type: DataTypes.ENUM, allowNull: false, values: constants.emailNotifications, defaultValue: 'all' }
   }, {
     indexes: [{
         name: 'compositeUserIdAndAccountIdAndEmail',

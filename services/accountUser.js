@@ -211,7 +211,7 @@ function updateWithUserId(data, userId, callback) {
     let permitList = [
       "gender", "firstName", "lastName", "email", "gender", "mobile",
       "phoneCountryData", "landlineNumberCountryData", "landlineNumber", "companyName",
-      "country", "postCode", "state", "city", "city", "postalAddress"
+      "country", "postCode", "state", "city", "city", "postalAddress", "emailNotification"
     ]
 
     let accountUserPermitParams = _.pick(data, permitList)

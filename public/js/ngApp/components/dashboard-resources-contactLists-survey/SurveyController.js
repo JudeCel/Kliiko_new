@@ -31,6 +31,7 @@
     vm.saveSurvey = saveSurvey;
     vm.exportSurvey = exportSurvey;
     vm.showStats = showStats;
+    vm.exportStatsUrl = exportStatsUrl;
 
     // Inits
     vm.initQuestion = initQuestion;
@@ -130,8 +131,8 @@
       });
     };
 
-    function exportStats(surveyId, type) {
-      //todo: export  stats
+    function exportStatsUrl(surveyId, type) {
+      return surveyServices.exportSurveyStatsUrl(surveyId, type);
     };
 
     function changeStatus(survey) {

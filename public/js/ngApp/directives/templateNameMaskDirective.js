@@ -31,6 +31,7 @@ function templateNameMask() {
     function handleBlur(element, scope) {
         element.blur(function() {
             scope.template.name = element.val();
+            element.val(getTemplateName(scope.template));
         });
     }
 
