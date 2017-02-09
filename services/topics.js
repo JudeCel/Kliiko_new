@@ -31,7 +31,7 @@ function getAll(accountId) {
   Topic.findAll({
     order: '"name" ASC',
     where: {
-      $or: [{ 
+      $or: [{
         accountId: accountId
       }, {
         stock: true
@@ -237,7 +237,7 @@ function create(params, isAdmin) {
     Topic.create(params).then(function(topic) {
       deferred.resolve(topic);
     },function(error) {
-      deferred.reject(error);
+      deferred.reject(filters.errors(error));
     });
   },function(error) {
     deferred.reject(error);
@@ -261,7 +261,7 @@ function update(params, isAdmin) {
     }).then((topic) => {
       resolve(topic);
     }).catch((error) => {
-      reject(error);
+      reject(filters.errors(error));
     });
   });
 }
@@ -276,7 +276,7 @@ function updateStockTopic(topic, params, isAdmin){
         resolve(create(params))
      }else{
        if(isAdmin){
-          resolve(topic.update(params, { returning: true }));
+        simpleUpdate(topic, params, resolve, reject);
        }else{
           if (params.name == topic.name) {
             params.parentTopicId = topic.id;
@@ -289,8 +289,14 @@ function updateStockTopic(topic, params, isAdmin){
 }
 function updateRegularTopic(topic, params, isAdmin){
   return new Bluebird((resolve, reject) => {
-      resolve(topic.update(params, { returning: true }));
+      simpleUpdate(topic, params, resolve, reject);
   })
+}
+
+function simpleUpdate(topic, params, resolve, reject) {
+  topic.update(params, { returning: true })
+    .then((topic) => resolve(topic))
+    .catch((error) => reject(filters.errors(error)))
 }
 
 function sessionTopicUpdateParams(params) {
