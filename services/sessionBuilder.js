@@ -385,12 +385,12 @@ function goToStep(id, accountId, destinationStep) {
   let deferred = q.defer();
   validators.hasValidSubscription(accountId).then(function() {
     findSession(id, accountId).then(function(session) {
-      session.isVisited[session.step] = true;
       sessionBuilderObject(session).then(function(sessionObj) {
 
         validateMultipleSteps(session, sessionObj.sessionBuilder.steps).then(function(steps) {
           sessionObj.sessionBuilder.steps = steps;
           let step = getDestinationStep(sessionObj.sessionBuilder, destinationStep);
+          session.isVisited[step] = true;
 
           session.updateAttributes({ step: step, isVisited: session.isVisited }).then(function(updatedSession) {
             sessionBuilderObject(updatedSession, steps).then(function(result) {
