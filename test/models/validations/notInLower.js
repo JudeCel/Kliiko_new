@@ -19,18 +19,17 @@ describe('not in validation (lower case)', () => {
 
     describe('string is in restricted values', () => {
         it('should fail validation (variant 1)', (done) => {
-            assertIsFailedValidation('test', done);
+            notIn('test', (error) => {
+                assert.equal(error, message);
+                done();
+            });
         });
 
         it('should fail validation (variant 2)', (done) => {
-            assertIsFailedValidation('TEST2', done);
+            notIn('TEST2', (error) => {
+                assert.equal(error, message);
+                done();
+            });
         });
     });
-
-    function assertIsFailedValidation(restricted, done) {
-        notIn(restricted, (error) => {
-            assert.equal(error, message);
-            done();
-        });
-    }
 });
