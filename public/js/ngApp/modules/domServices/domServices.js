@@ -29,6 +29,9 @@
       }
 
       if(close) {
+        if(typeof close === 'function') {
+          jQuery('#' + modalId).on('hidden.bs.modal', close);
+        }
         jQuery('#' + modalId).modal('hide');
       } else {
         var id, modals = $('body .modal.fade:visible');

@@ -100,7 +100,7 @@
     function toggleSatus(){
       vm.lists.toggleListState(vm.lists.activeList).then(function() {
         vm.lists.activeList.active = !vm.lists.activeList.active;
-      }, 
+      },
       function(error) {
         domServices.modal('reachedLimitToggleSatusModal');
         console.log(error);
@@ -280,7 +280,9 @@
           if((typeof(err) == 'object')) {
             messenger.error(err);
           }else{
-            domServices.modal('reachedLimitModal');
+            domServices.modal('contactList-addNewListModal', function() {
+              domServices.modal('reachedLimitModal');
+            });
           }
           dbg.error('#ContactListController > submitNewList > error: ', err);
         }
