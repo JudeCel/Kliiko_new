@@ -919,7 +919,6 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
-
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
@@ -1014,6 +1013,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
       callback({ error: result.error });
     } else {
       result.content = result.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      result.content = result.content.replace(/href="\{Calendar\}"/ig, "");
       callback(result);
     }
   }
