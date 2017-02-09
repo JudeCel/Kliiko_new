@@ -54,7 +54,7 @@ router.get('/accountManager/canAddAccountManager', PERMISSIONS.managerAdmin, acc
 router.get('/accountDatabase', PERMISSIONS.admin, accountDatabase.get);
 router.put('/accountDatabase/:id', PERMISSIONS.admin, accountDatabase.update);
 router.post('/accountDatabase/:id/addAdmin', PERMISSIONS.admin, accountDatabase.addAdmin);
-router.post('/accountDatabase/:id/remAdmin', PERMISSIONS.admin, accountDatabase.remAdmin);
+router.post('/accountDatabase/:id/removeAdmin', PERMISSIONS.admin, accountDatabase.removeAdmin);
 router.put('/accountDatabase/:accountUserId/comment', PERMISSIONS.admin, accountDatabase.updateAccountUserComment);
 
 router.post('/banners', PERMISSIONS.admin, banners.create);

@@ -23,8 +23,8 @@ function addAdmin(req, res, next) {
   });
 };
 
-function remAdmin(req, res, next) {
-  accountDatabaseService.remAdmin(req.body, req.currentResources.accountUser.id).then((account) => {
+function removeAdmin(req, res, next) {
+  accountDatabaseService.removeAdmin(req.body, req.currentResources.accountUser.id).then((account) => {
     res.send({ account: account });
   }, (error) => {
     res.send({ error: error });
@@ -55,5 +55,5 @@ module.exports = {
   updateAccountUserComment: updateAccountUserComment,
   update: update,
   addAdmin: addAdmin,
-  remAdmin: remAdmin
+  removeAdmin: removeAdmin
 };

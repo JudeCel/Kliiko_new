@@ -60,7 +60,7 @@
 
     $scope.removeAdmin = function(account) {
       var params = { accountId: account.id };
-      AccountDatabaseServices.remAdmin(params).then(function(res) {
+      AccountDatabaseServices.removeAdmin(params).then(function(res) {
          if(res.error) {
           messenger.error(res.error);
         }else{

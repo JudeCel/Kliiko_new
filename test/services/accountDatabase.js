@@ -39,25 +39,33 @@ describe('SERVICE - AccountDatabase', () => {
           done();
         } catch (error) {
           done(error);
-          
+
         }
       })
     });
 
-    it("give admin email", (done) => {
-      let adminParams = {
-        firstName: "firstName",
-        lastName: 'lastName',
-        gender: '',
-        email: 'admin@admin.lv',
-        role: 'admin',
-        password: "rrrrrrrrrrr"
-      }
+    describe('description', function () {
+      var adminUser;
+      beforeEach((done) => {
+        let adminParams = {
+          firstName: "firstName",
+          lastName: 'lastName',
+          gender: '',
+          email: 'admin@admin.lv',
+          role: 'admin',
+          password: "rrrrrrrrrrr"
+        }
+        userFixture.createAdminUser(adminParams)
+          .then((user) => {
+            adminUser = user;
+            done();
+          }).catch((error) => done(error));
+      });
 
-      userFixture.createAdminUser(adminParams).then((adminUser) => {
+      it("give admin email", (done) => {
         let params = {email: adminUser.email, accountId: testAccount.id}
         accountDatabaseService.addAdmin(params, testAccount.id).then((adminAccoutUser) => {
-          ContactListUser.find({where: {userId: adminAccoutUser.UserId, accountId: testAccount.id}, 
+          ContactListUser.find({where: {userId: adminAccoutUser.UserId, accountId: testAccount.id},
             include: [{model: ContactList}]
           }).then((contactListUser) => {
             Invite.find({where: {accountUserId: contactListUser.accountUserId, role: 'admin'}}).then((invite) => {
@@ -74,9 +82,56 @@ describe('SERVICE - AccountDatabase', () => {
         }, (error) => {
           done(error);
         })
-      }, (error) => {
-        done(error);
       })
+
+      it("reactivate admin account for this user", (done) => {
+        let params = { email: adminUser.email, accountId: testAccount.id }
+        accountDatabaseService.addAdmin(params, testAccount.id).then((adminAccoutUser) => {
+          return accountDatabaseService.removeAdmin(params);
+        }).then((account) => {
+          assert.equal(account.dataValues.hasActiveAdmin, false);
+          account.AccountUsers.map((accountUser) => {
+            assert.equal(accountUser.active, accountUser.role !== 'admin');
+          });
+
+          return accountDatabaseService.addAdmin(params, account.dataValues.id);
+        }).then((accountUser) => {
+          assert.equal(accountUser.role, 'admin');
+          assert.equal(accountUser.active, true);
+          done();
+        }).catch((error) => done(error));
+      })
+    });
+  });
+
+  describe("#removeAdmin", () =>{
+    it("remove given admin", (done) => {
+      let adminParams = {
+        firstName: "firstName",
+        lastName: 'lastName',
+        gender: '',
+        email: 'admin@admin.lv',
+        role: 'admin',
+        password: "rrrrrrrrrrr"
+      }
+      let id, params = {};
+
+      userFixture.createAdminUser(adminParams).then((adminUser) => {
+        params = { email: adminUser.email, accountId: testAccount.id };
+        return accountDatabaseService.addAdmin(params);
+      }).then((adminAccoutUser) => {
+        id = adminAccoutUser.id;
+        assert.equal(adminAccoutUser.role, 'admin');
+
+        return accountDatabaseService.removeAdmin(params);
+      }).then((account) => {
+        assert.equal(account.dataValues.hasActiveAdmin, false);
+        account.AccountUsers.map((accountUser) => {
+          assert.equal(accountUser.active, accountUser.role !== 'admin');
+        });
+
+        done();
+      }).catch((error) => done(error));
     })
   });
 

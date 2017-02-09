@@ -69,7 +69,9 @@ function addAdmin({accountId, email}, _accountUserId) {
       } else {
         AccountUser.find({ where: { AccountId: accountId, role: 'admin', email: email,  active: false } }).then((accountUser) => {
           if(accountUser) {
-            accountUser.update({ active: true }).then(() => resolve(accountUser));
+            accountUserService.deleteOrRecalculate(accountUser.id, 'admin')
+              .then((accountUser) => resolve(accountUser))
+              .catch((error) => reject(error));
           }
           else {
             let adminAccountUser = accountUsers[0]
@@ -112,17 +114,14 @@ function addAdmin({accountId, email}, _accountUserId) {
   });
 }
 
-function remAdmin({ accountId }) {
+function removeAdmin({ accountId }) {
   return new Bluebird((resolve, reject) => {
     AccountUser.find({ where: { AccountId: accountId, role: 'admin' }, include: [{ model: Account, include: [AccountUser] }] }).then((accountUser) => {
       if(!accountUser) return reject('Not found');
       accountUserService.deleteOrRecalculate(accountUser.id, null, 'admin')
         .then(() => Account.find({ where: { id: accountId }, include: [AccountUser] }))
         .then((account) => resolve(mapData([account])[0]))
-        .catch((error) => {
-          console.error(error);
-          reject(error)
-        });
+        .catch((error) => reject(error));
     });
   });
 }
@@ -274,5 +273,5 @@ module.exports = {
   csvData: csvData,
   csvHeader: csvHeader,
   addAdmin: addAdmin,
-  remAdmin: remAdmin
+  removeAdmin: removeAdmin
 };

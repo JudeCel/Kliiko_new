@@ -78,7 +78,7 @@ function recalculateRole(accountUser, newRole, removeRole) {
       relatedRoles.push(currentRole);
     }
 
-    if (newRole && roles.indexOf(currentRole) > roles.indexOf(newRole)) {
+    if (newRole && roles.indexOf(currentRole) >= roles.indexOf(newRole)) {
       relatedRoles.push(newRole);
     }
 
