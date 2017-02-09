@@ -313,7 +313,8 @@ module.exports = {
       invite: 'Successfully invited contacts'
     },
     user: {
-      updateContactDetails: 'Contact details updated successfully.'
+      updateContactDetails: 'Contact details updated successfully.',
+      updateEmailNotifications: 'Email notifications updated successfully.'
     },
     sessionMember: {
       addFacilitator: 'Host was successfully set'
