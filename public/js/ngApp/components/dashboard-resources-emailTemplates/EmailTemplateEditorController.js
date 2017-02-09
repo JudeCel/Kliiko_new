@@ -131,7 +131,7 @@
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-
+          
           if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
@@ -312,20 +312,10 @@
     }
 
     function resetMailTemplate() {
-      var deferred = $q.defer();
-      mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
-            deferred.resolve();
-          });
-        } else {
-          messenger.error(res.error);
-          deferred.reject();
-        }
-      });
 
-      return deferred.promise;
+      refreshTemplateList(function() {
+        vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
+      });
     }
 
     function previewMailTemplate() {

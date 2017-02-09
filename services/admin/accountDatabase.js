@@ -98,13 +98,13 @@ function addAdmin({accountId, email}, _accountUserId) {
                   inviteService.createInvite(inviteParams, transaction).then(() => {
                       resolve(adminAccountUser);
                     }, (error) => {
-                      reject(error);
+                      transaction.rollback().then(() => reject(error));
                   });
                 }, (error) => {
-                  reject(error);
+                  transaction.rollback().then(() => reject(error));
                 });
               }, (error) => {
-                reject(error);
+                transaction.rollback().then(() => reject(error));
               });
             })
           }
