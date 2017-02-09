@@ -28,6 +28,7 @@
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',
+      sessionFull: 'Session Full'
     };
     vm.maxCommentLength = 100;
 

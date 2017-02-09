@@ -465,7 +465,7 @@ function checSession(invite, user, params, transaction) {
       });
     }
     else {
-      models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
+      models.Session.find({ where: { id: invite.sessionId }, include: Account, transaction: transaction }).then(function(session) {
         models.SessionMember.count(where).then(function(count) {
           // TODO: Need to move to session member service or session service
           const allowedCount = {
@@ -475,14 +475,59 @@ function checSession(invite, user, params, transaction) {
 
           if(count < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
             resolve();
-          }
-          else {
-            reject(MessagesUtil.invite.sessionIsFull);
+          } else {
+            sessionOverQuota(session, invite).then(() => {
+              reject(MessagesUtil.invite.sessionIsFull);
+            }, (error) => {
+              reject(error);
+            });
           }
         });
       });
     }
   })
+}
+
+function sessionOverQuota(session, invite) {
+  return new Bluebird((resolve, reject) => {
+    invite.update({ status: 'sessionFull' }).then(() => {
+      resolve();
+      sendSessionOverQuotaEmail(session, invite);
+    }, (error) => {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function sendSessionOverQuotaEmail(session, invite) {
+  models.SessionMember.find({
+    where: {
+      sessionId: invite.sessionId,
+      role: 'facilitator'
+    },
+    include: AccountUser
+  }).then(function (facilitator) {
+    let params = overQuotaParams(session, invite, facilitator);
+    mailerHelpers.sendParticipantOverquota(params, (error, resp) => {
+      if (error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+function overQuotaParams(session, invite, facilitator) {
+  return {
+    firstName: facilitator.AccountUser.firstName,
+    lastName: facilitator.AccountUser.lastName,
+    accountName: session.Account.name,
+    sessionName: session.name,
+    guestFirstName: invite.AccountUser.firstName,
+    guestLastName: invite.AccountUser.lastName,
+    email: facilitator.AccountUser.email,
+    role: invite.role,
+    logInUrl: mailUrlHelper.getUrl('', null, '')
+  };
 }
 
 function createUser(invite, params, transaction) {
