@@ -95,7 +95,7 @@
         dbg.log2('#topicsAndSessions > createNewTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error.message)
+          ? deferred.reject(res.error)
           : deferred.resolve(res);
       }
 
