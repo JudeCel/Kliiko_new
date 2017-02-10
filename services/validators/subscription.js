@@ -49,7 +49,8 @@ const DEPENDENCIES = {
     model: models.Topic,
     params: function(accountId) {
       return { where: { accountId: accountId, default: false } };
-    }
+    },
+    countMessage: countMessage
   },
   countMessage: countMessage
 };
@@ -135,7 +136,7 @@ function planAllowsToDoIt(accountId, keys) {
         if (keyError) {
           reject(prepareErrorMessage(keyError, subscription));
         } else {
-          resolve();
+          resolve(subscription);
         }
       }
       else {

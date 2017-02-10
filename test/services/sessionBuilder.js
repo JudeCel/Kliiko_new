@@ -54,7 +54,14 @@ describe('SERVICE - SessionBuilder', function() {
       startTime: (new Date()).toISOString(),
       endTime: getNextDate().toISOString(),
       timeZone: 'Europe/Riga',
-      snapshot: data.sessionBuilder.snapshot
+      snapshot: data.sessionBuilder.snapshot,
+      isVisited: {    
+        setUp: false, 
+        facilitatiorAndTopics: false, 
+        manageSessionEmails: false,
+        manageSessionParticipants: false,
+        inviteSessionObservers: false
+      }
     };
   };
 
@@ -93,6 +100,10 @@ describe('SERVICE - SessionBuilder', function() {
             assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
             assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
             assert.isObject(result.sessionBuilder.snapshot);
+
+            for (var i = 1; i <= 5; i++) {
+              assert.equal(result.sessionBuilder.steps['step' + i].isVisited, false);
+            }
             done();
           } catch (e) {
             done(e);
@@ -260,10 +271,11 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             let nextStepIndex = 2;
             params.name = 'My first session';
-           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+            sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+                  assert.equal(result.sessionBuilder.steps.step1.isVisited, true);
                   done();
                 }, function(error) {
                   done(error);
@@ -316,6 +328,7 @@ describe('SERVICE - SessionBuilder', function() {
 
             sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               assert.equal(result.sessionBuilder.currentStep, 'facilitatiorAndTopics');
+              assert.equal(result.sessionBuilder.steps.step2.isVisited, true);
               done();
             }, function(error) {
               done(error);
@@ -524,6 +537,7 @@ describe('SERVICE - SessionBuilder', function() {
                 sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                     assert.equal(session.step, 'facilitatiorAndTopics');
+                    assert.equal(result.sessionBuilder.steps.step2.isVisited, true);
                     done();
                   }, function(error) {
                     done(error);
@@ -625,6 +639,7 @@ describe('SERVICE - SessionBuilder', function() {
                   sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                     sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                       assert.equal(session.step, 'manageSessionEmails');
+                      assert.equal(result.sessionBuilder.steps.step3.isVisited, true);
                       done();
                     }, function(error) {
                       done(error);
@@ -654,6 +669,7 @@ describe('SERVICE - SessionBuilder', function() {
               sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                 try {
                   assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                  assert.equal(result.sessionBuilder.steps.step3.isVisited, false);
                   done();
                 } catch (error) {
                   done(error);
@@ -694,6 +710,7 @@ describe('SERVICE - SessionBuilder', function() {
                   sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                     sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                       assert.equal(session.step, 'manageSessionParticipants');
+                      assert.equal(result.sessionBuilder.steps.step4.isVisited, true);
                       done();
                     }, function(error) {
                       done(error);
@@ -724,6 +741,7 @@ describe('SERVICE - SessionBuilder', function() {
             sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               let error = result.sessionBuilder.steps.step3.error.emailTemplates;
               assert.equal(error, sessionBuilderServices.messages.errors.thirdStep.emailTemplates);
+              assert.equal(result.sessionBuilder.steps.step4.isVisited, false);
               done();
             });
           }, function(error) {
@@ -757,6 +775,7 @@ describe('SERVICE - SessionBuilder', function() {
               sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                   assert.equal(session.step, 'inviteSessionObservers');
+                  assert.equal(result.sessionBuilder.steps.step5.isVisited, true);
                   done();
                 }, function(error) {
                   done(error);
@@ -785,6 +804,7 @@ describe('SERVICE - SessionBuilder', function() {
             sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               let error = result.sessionBuilder.steps.step4.error.participants;
               assert.equal(error, sessionBuilderServices.messages.errors.fourthStep.participants);
+              assert.equal(result.sessionBuilder.steps.step5.isVisited, false);
               done();
             });
           }, function(error) {

@@ -35,7 +35,10 @@ function multipleDraggingZone() {
     function toggleSelectedForDragItems(scope, element){
       var items = element.children();
       for (var i = 0; i < items.length; i++) {
-        angular.element(items[i]).scope().isSelectedForDragging = scope.dragAll;
+        var angularElement = angular.element(items[i]);
+        var elementScope = angularElement.scope();
+        var canBeDragged = elementScope.$eval(angularElement.attr('ng-drag'));
+        elementScope.isSelectedForDragging = scope.dragAll && canBeDragged;
       }
     }
 

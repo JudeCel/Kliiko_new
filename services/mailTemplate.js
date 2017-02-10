@@ -89,7 +89,12 @@ function create(params, callback) {
       });
     }).catch(function(error) {
       transaction.rollback().then(function() {
-        callback(filters.errors(error));
+        if (error.name == 'SequelizeUniqueConstraintError') {
+          callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+        } else {
+          callback(filters.errors(error));
+        }
+        ;
       });
     });
   });
@@ -362,12 +367,34 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
       raw: true,
       order: "id ASC"
   }).then(function(result) {
-    sortMailTemplates(result);
-    callback(null, result);
+    getTemplatesSessionNames(result).then(function(templates) {
+      sortMailTemplates(result);
+      callback(null, result);
+    }, function(error) {
+      callback(error);
+    });
   }).catch(function(error) {
     callback(error);
   });
 };
+
+function getTemplatesSessionNames(templates) {
+  return new Bluebird((resolve, reject) => {
+    Bluebird.each(templates, (template) => {
+      if (template.sessionId) {
+        return Session.find({ where: { id: template.sessionId } }).then((session) => {
+          template.sessionName = session.name;
+        }, (error) => {
+          reject(error)
+        });
+      }
+    }).then(() => {
+      resolve(templates);
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
 
 function sortMailTemplates(result) {
   let templateOrder = {"firstInvitation": 1, "confirmation": 2, "notThisTime": 3, "notAtAll": 4, "closeSession": 5, "generic": 6};
@@ -487,7 +514,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (template.properties.templateName) {
       result = true;
-      template.name = template.name + " " + template.properties.templateName;
     }
   }
 
@@ -670,6 +696,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
     validateTemplate(template).then(function() {
 
       let templateObject = buildTemplate(template);
+      assignTemplateName(templateObject.template);
       let shouldCreateTemplateCopy = shouldCreateCopy(templateObject.template, createCopy, accountId);
 
       validateTemplateSnapshot(shouldCreateTemplateCopy, template.snapshot, templateObject, function(validationError, validationResult) {
@@ -723,6 +750,12 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
     });
   } else {
     callback(MessagesUtil.mailTemplate.error.notProvided);
+  }
+
+  function assignTemplateName(template) {
+    if (template.properties && template.properties.templateName) {
+      template.name = template.properties.templateName;
+    }
   }
 }
 
@@ -886,7 +919,6 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
-
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
@@ -981,6 +1013,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
       callback({ error: result.error });
     } else {
       result.content = result.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      result.content = result.content.replace(/href="\{Calendar\}"/ig, "");
       callback(result);
     }
   }

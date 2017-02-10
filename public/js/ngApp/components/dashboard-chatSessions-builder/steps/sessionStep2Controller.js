@@ -63,6 +63,10 @@
     function canDragElement(topic) {
       var can = false, selected = getSelectedTopics();
 
+      if (topic.stock) {
+        return false;
+      } 
+
       if(!selected.length) {
         return true;
       }
@@ -195,11 +199,10 @@
           found = index;
           deletedLanding = topic.sessionTopic.landing;
           delete vm.sessionTopicsObject[topic.id];
+          vm.sessionTopicsArray.splice(found, 1);
+          reOrderTopics();
         }
       });
-
-      vm.sessionTopicsArray.splice(found, 1);
-      reOrderTopics();
 
       if(deletedLanding && vm.sessionTopicsArray[0]) {
         changeLandingState(vm.sessionTopicsArray[0]);

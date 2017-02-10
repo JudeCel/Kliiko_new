@@ -30,10 +30,6 @@
 
     vm.getPreparedMailTemplateList();
 
-    vm.templateName = function(baseName) {
-      return baseName;
-    }
-
     vm.isCreated = function(template) {
       var className = 'glyphicon';
       var typeClass = ' glyphicon-remove';
@@ -62,12 +58,15 @@
       });
     }
 
+    vm.openApplyModal = function() {
+      vm.templateNameAdd = null;
+      domServices.modal('applyTemplateModal');
+    }
+
     vm.modifyAndSave = function(createCopy, addSessionInfo) {
       //null - will pickup current template
-      if(vm.templateNameAdd) {
-        domServices.modal('templateNameModal', true);
-      }
-      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd).then(function() {
+      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd, true).then(function() {
+        domServices.modal('applyTemplateModal', 'close');
         vm.getPreparedMailTemplateList();
       }, function() {
         //failure is handled in mail template controller. This is a wrapper
