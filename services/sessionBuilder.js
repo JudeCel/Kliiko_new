@@ -182,7 +182,8 @@ function setTimeZone(params) {
 function mapUpdateParametersToPermissions(params) {
   let permissionsToCheck = [];
   let permissionsMap = {
-    'brandProjectPreferenceId': 'brandLogoAndCustomColors'
+    'brandProjectPreferenceId': 'brandLogoAndCustomColors',
+    'resourceId': 'brandLogoAndCustomColors'
   }
 
   if (params) {

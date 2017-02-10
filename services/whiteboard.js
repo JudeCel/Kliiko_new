@@ -13,6 +13,7 @@ function defaultTopicImageParams(sessionTopic, sessionMember) {
     sessionMemberId: sessionMember.id,
     sessionTopicId: sessionTopic.id,
     uid: "defaultImage" + sessionTopic.id,
+    eventType: "image",
     event: {
       id: "defaultImage" + sessionTopic.id,
       action: "draw",

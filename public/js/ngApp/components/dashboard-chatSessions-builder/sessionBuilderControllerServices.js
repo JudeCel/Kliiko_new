@@ -106,12 +106,12 @@
       return null;
     }
 
-    function findSelectedMembers(vm, skipInvited, onlyWithMobile) {
+    function findSelectedMembers(vm, skipInvited, canInviteSessionFullStatus, onlyWithMobile) {
       var array = [];
       var members = currentMemberList(vm);
       for (var i in members) {
         var member = members[i];
-        if (member.isSelected && (validStatusForInvitation(member) || !skipInvited) && (!onlyWithMobile || member.mobile) && vm.canSelectMember(member)) {
+        if (member.isSelected && (validStatusForInvitation(member, canInviteSessionFullStatus) || !skipInvited) && (!onlyWithMobile || member.mobile) && vm.canSelectMember(member)) {
           array.push(member);
         }
       }
@@ -119,8 +119,11 @@
       return array;
     }
 
-    function validStatusForInvitation(member) {
-      var validStatuses = ["notInvited", "failed"]
+    function validStatusForInvitation(member, canInviteSessionFullStatus) {
+      var validStatuses = ["notInvited", "failed"];
+      if (canInviteSessionFullStatus) {
+        validStatuses.push("sessionFull");
+      }
       return validStatuses.indexOf(member.inviteStatus) > -1
     }
 

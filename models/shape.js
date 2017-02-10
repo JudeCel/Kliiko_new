@@ -6,12 +6,14 @@ module.exports = (Sequelize, DataTypes) => {
     sessionMemberId: { type: DataTypes.INTEGER, allowNull: false },
     sessionTopicId: { type: DataTypes.INTEGER, allowNull: false },
     uid: { type: DataTypes.STRING, allowNull: true },
-    event: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} }
+    event: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
+    eventType: { type: DataTypes.STRING, allowNull: true }
   }, {
     timestamps: true,
     indexes: [
       { fields: ['sessionMemberId'] },
       { fields: ['sessionTopicId'] },
+      { fields: ['eventType'] },
       { fields: ['uid'] },
     ],
     classMethods: {
