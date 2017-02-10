@@ -5,26 +5,26 @@
  module.exports = {
   up: (queryInterface, Sequelize) => {
     return new Bluebird((resolve, reject) => {
-      queryInterface.addIndex(
-        'MailTemplates',
-        {
-          name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
-          unique: true,
-          fields: ['name', 'AccountId', 'MailTemplateBaseId']
-        }).then(() => {
+      // queryInterface.addIndex(
+      //   'MailTemplates',
+      //   {
+      //     name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
+      //     unique: true,
+      //     fields: ['name', 'AccountId', 'MailTemplateBaseId']
+      //   }).then(() => {
          resolve();
-       }, (error) => {
-         validateError(error, resolve, reject);
-       });
+      //  }, (error) => {
+      //    validateError(error, resolve, reject);
+      //  });
     });
    },
-   down: (queryInterface, Sequelize) => {
-    return queryInterface.removeIndex(
-        'MailTemplates', 
-        {
-            name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
-            unique: true,
-            fields: ['name', 'AccountId', 'MailTemplateBaseId']
-        });
-   }
+  //  down: (queryInterface, Sequelize) => {
+  //   // return queryInterface.removeIndex(
+  //   //     'MailTemplates', 
+  //   //     // {
+  //   //         name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
+  //   //         unique: true,
+  //   //         fields: ['name', 'AccountId', 'MailTemplateBaseId']
+  //   //     });
+  //  }
  };
