@@ -6,6 +6,7 @@ let Bluebird = require('bluebird');
 let queue = null;
 const invitesJobs = require('./backgroundJobs/invites/index.js');
 const emailNotificationsJobs = require('./backgroundJobs/emailNotifications/index.js');
+const sessionOverQuotaJobs = require('./backgroundJobs/sessionOverQuota/index.js');
 
 const jobs = {
   "invite": {
@@ -16,6 +17,11 @@ const jobs = {
   "emailNotifications": {
     perform: (accountUserId, sessionId, callback) => {
       emailNotificationsJobs.sendNotification(accountUserId, sessionId, callback);
+    },
+  },
+  "sessionOverQuota": {
+    perform: (sessionId, inviteId, callback) => {
+      sessionOverQuotaJobs.sendEmail(sessionId, inviteId, callback);
     },
   },
 }
