@@ -116,10 +116,15 @@ function prepareUrlParams(parameters, query) {
       parameters.showProgressBar = true;
     }
 
-    if (query.package) {
+    if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
-      parameters.selectedPlanOnRegistration = query.package;
+      if (query.package) {
+        parameters.selectedPlanOnRegistration = query.package;
+      } else {
+        parameters.page = "junior_monthly";
+      }
     }
+
   }
 }
 
