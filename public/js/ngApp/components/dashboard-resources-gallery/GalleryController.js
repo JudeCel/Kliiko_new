@@ -358,7 +358,7 @@
     }
 
     function handleUploadPermission() {
-      planService.checkPlanFeatures('uploadToGallery').then(function(response) {
+      planService.checkPlanFeatures('brandLogoAndCustomColors').then(function(response) {
         if(response.error) {
           errorMessenger.showError(response.error);
         }
