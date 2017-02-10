@@ -475,9 +475,17 @@ function checSession(invite, user, params, transaction) {
 
           if(count < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
             resolve();
-          }
-          else {
-            reject(MessagesUtil.invite.sessionIsFull);
+          } else {
+            //Session is full
+            invite.update({ status: 'sessionFull' }).then(() => {
+              enqueue(backgroundQueues.queues.sessionOverQuota, "sessionOverQuota", [invite.sessionId, invite.id]).then(() => {
+                reject(MessagesUtil.invite.sessionIsFull);
+              }, (error) => {
+                reject(error);
+              });
+            }, (error) => {
+              reject(error);
+            });
           }
         });
       });

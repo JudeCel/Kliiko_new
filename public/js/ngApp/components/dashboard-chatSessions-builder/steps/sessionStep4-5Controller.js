@@ -28,6 +28,7 @@
       notThisTime: 'Not This Time',
       notAtAll: 'Not At All',
       pending: 'No Response',
+      sessionFull: 'Session Full'
     };
     vm.maxCommentLength = 100;
 
@@ -306,19 +307,19 @@
     }
 
     function findSelectedMembersGenericEmail() {
-      return builderServices.findSelectedMembers(vm, false, false);
+      return builderServices.findSelectedMembers(vm, false, false, false);
     }
 
     function findSelectedMembersSMS() {
-      return builderServices.findSelectedMembers(vm, false, true);
+      return builderServices.findSelectedMembers(vm, false, false, true);
     }
 
     function findSelectedMembersInvite() {
-      return builderServices.findSelectedMembers(vm, true, false);
+      return builderServices.findSelectedMembers(vm, true, !activeMembersLimitReached(), false);
     }
 
     function findSelectedMembersClose() {
-      return builderServices.findSelectedMembers(vm, false, false);
+      return builderServices.findSelectedMembers(vm, false, false, false);
     }
 
     function removeInvite() {
@@ -429,8 +430,28 @@
       return returnMemberCloseEmailSentStatus(member)
     }
 
+    function activeMembersLimitReached() {
+      if (vm.session.steps.step1.type == 'focus' && vm.isParticipantPage()) {
+        var count = 0;
+        for (var i=0; i<vm.stepMembers.length; i++) {
+          var member = vm.stepMembers[i];
+          if (member.inviteStatus == "confirmed" || member.inviteStatus == "inProgress") {
+            count++;
+            if (count == 8) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    vm.disableSessionFullMember = function(member) {
+      return member.inviteStatus == "sessionFull" && activeMembersLimitReached();
+    }
+
     vm.memberDisabled = function(member) {
-      return vm.session.sessionData.status == "closed" && member.closeEmailSentStatus == "Sent";
+      return vm.session.sessionData.status == "closed" && member.closeEmailSentStatus == "Sent"
     }
 
     function returnMemberCloseEmailSentStatus(member) {
