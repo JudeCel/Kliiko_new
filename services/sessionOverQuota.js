@@ -13,7 +13,7 @@ function sessionOverQuota( sessionId, inviteId) {
         id: inviteId
       },
       include: [AccountUser]
-    }).then(function (invite) {
+    }).then((invite) => {
 
       SessionMember.find({
         where: {
@@ -21,7 +21,7 @@ function sessionOverQuota( sessionId, inviteId) {
           role: 'facilitator'
         },
         include: [AccountUser, {model: Session, include: Account}]
-      }).then(function (facilitator) {
+      }).then((facilitator) => {
 
         let params = overQuotaParams(invite, facilitator);
         mailerHelpers.sendParticipantOverquota(params, (error, resp) => {
@@ -32,11 +32,11 @@ function sessionOverQuota( sessionId, inviteId) {
           }
         });
 
-      }, function (error) {
+      }, (error) => {
         reject(error);
       });
 
-    }, function (error) {
+    }, (error) => {
       reject(error);
     });
   });
