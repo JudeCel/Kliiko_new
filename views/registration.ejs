@@ -9,7 +9,7 @@
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
-          <% if(showProgressBar) { %>
+          <% if((firstName || email) && selectedPlanOnRegistration) { %>
             <div class="progress registration-progress-bar">
               <div class="progress-bar background-green" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
               <div class="progress-status">50% COMPLETE</div>
@@ -27,6 +27,7 @@
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
                 <% } %>
+                <input type="hidden" name="selectedPlanOnRegistration" value="<%=selectedPlanOnRegistration%>">
                 <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
                     <td>
