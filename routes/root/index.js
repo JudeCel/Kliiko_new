@@ -105,12 +105,15 @@ router.get('/', function (req, res, next) {
 
 
 function prepareUrlParams(parameters, query) {
+  parameters.showProgressBar = false;
   if (query) {
     if (query.name) {
       parameters.lastName = query.name;
+      parameters.showProgressBar = true;
     }
     if (query.email) {
       parameters.email = query.email;
+      parameters.showProgressBar = true;
     }
 
     if (query.package) {
