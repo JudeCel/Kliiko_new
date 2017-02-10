@@ -9,7 +9,7 @@
 
     var vm = this;
     vm.SocketChannel = null;
-    vm.beforeEditInviteStatus = '';
+    vm.beforeEditInvite = null;
     vm.accordions = {};
     vm.participants = [];
     vm.observers = [];
@@ -379,7 +379,7 @@
     }
 
     function openEditContactModal(object) {
-      vm.beforeEditInviteStatus = object.inviteStatus;
+      vm.beforeEditInvite = object.invite;
 
       vm.editContactIndex = vm.stepMembers.indexOf(object);
       angular.copy(object, vm.contactData);
@@ -391,6 +391,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         angular.copy(mapCorrectData(res.data), vm.stepMembers[vm.editContactIndex]);
+        vm.stepMembers[vm.editContactIndex].invite = vm.beforeEditInvite;
         messenger.ok(res.message);
         closeEditContactForm();
       }, function (error) {
@@ -420,6 +421,7 @@
     function closeEditContactForm() {
       domServices.modal('editContactForm', 'close');
       vm.contactData = {};
+      vm.beforeEditInvite = null;
     }
 
     vm.getMembersStatusTranscription = function(member) {
@@ -469,9 +471,7 @@
     }
 
     function returnMemberInviteStatus(member) {
-      if (vm.beforeEditInviteStatus) {
-        member.inviteStatus = vm.beforeEditInviteStatus;
-      } else if (member.invite) {
+      if (member.invite) {
         switch (member.invite.emailStatus) {
           case 'sent':
             if (member.invite.status == "inProgress" ) {
