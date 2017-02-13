@@ -51,7 +51,11 @@ app.use(setUpQueue);
 app.use(flash());
 app.use(expressWinston.logger({
   meta: true,
-  colorize: true,
+  ignoreRoute: (req, res) => 
+  { 
+    let skipList = ["/favicon.ico"]
+    return(skipList.indexOf(req.path) > -1); 
+  },
   dynamicMeta: (req, res) => {
     return {
       currentResources: req.currentResources ||  {}
@@ -59,13 +63,12 @@ app.use(expressWinston.logger({
   },
   transports: [
     new winston.transports.Console({
-      json: true,
-      colorize: true
+      json: true
     }),
     new winston.transports.Http({
       host: "localhost", 
       port: "3000",
-      path: "logger"
+      path: "connection-logs"
     })
   ]
 }));
@@ -93,13 +96,12 @@ app.use('/', routes);
 app.use(expressWinston.errorLogger({
   transports: [
     new winston.transports.Console({
-      json: true,
-      colorize: true
+      json: true
     }),
     new winston.transports.Http({
       host: "localhost", 
       port: "3000",
-      path: "logger"
+      path: "connection-logs"
     })
   ]
 }));
