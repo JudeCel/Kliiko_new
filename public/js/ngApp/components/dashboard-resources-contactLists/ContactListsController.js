@@ -103,7 +103,6 @@
       },
       function(error) {
         domServices.modal('reachedLimitToggleSatusModal');
-        console.log(error);
       });
     }
 
@@ -329,7 +328,6 @@
 
     function deleteContactList(listItem, index){
       vm.modalWindowAttrs = {item: listItem,  index: index}
-      console.log(listItem)
       domServices.modal('deleteConfirmationModal');
 
     }

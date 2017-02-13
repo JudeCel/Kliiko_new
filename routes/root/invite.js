@@ -21,7 +21,6 @@ function index(req, res, next) {
       }
     });
   }, (error) => {
-    console.log(error, "invite.js:24");
     res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }

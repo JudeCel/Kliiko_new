@@ -24,7 +24,6 @@ function socket($rootScope, globalSettings, $window) {
 
       if (!channel) {
         scope.$on("$destroy", function handleDestroyEvent() {
-          console.log("$destroy")
           channel = null;
         });
         channel = socket.channel("sessionsBuilder:" + sessionId);
