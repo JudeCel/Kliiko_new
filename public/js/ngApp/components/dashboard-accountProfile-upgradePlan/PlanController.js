@@ -89,6 +89,11 @@
     vm.finishedRenderingPlans = finishedRenderingPlans;
 
     init();
+    vm.setup = function() {
+      if ($stateParams.step && $stateParams.plan) {
+        vm.currentStep = parseInt($stateParams.step);
+      }
+    };
 
     function init() {
       errorWhileCretingSubscription()
@@ -130,6 +135,10 @@
 
             if (canPush('year', subPlan)) {
               vm.annualPlans.push(subPlan);
+            }
+
+            if (subPlan.plan.id == $stateParams.plan) {
+              vm.selectedPlan = subPlan;
             }
           });
 

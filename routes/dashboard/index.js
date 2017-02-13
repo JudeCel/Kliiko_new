@@ -20,7 +20,7 @@ function views_path(action) {
 router.use(function (req, res, next) {
   if (req.user) {
     res.locals.appData = appData;
-    res.locals.currentResources = req.currentResources
+    res.locals.currentResources = req.currentResources;
     middlewareFilters.planSelectPage(req, res, next);
   } else {
     res.redirect(subdomains.url(req, subdomains.base, '/'));
