@@ -49,7 +49,7 @@
             createdAt: Sequelize.DATE
           }
         ).then(() => {
-          queryInterface.addIndex('ConnectionLogs', ['userId', 'accountUserId', 'accountId']).then(() => {
+          queryInterface.addIndex('ConnectionLogs', ['userId', 'accountUserId', 'accountId', 'level']).then(() => {
             resolve();
           }, (error) => {
             validateError(error, resolve, reject);
