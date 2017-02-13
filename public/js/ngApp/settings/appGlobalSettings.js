@@ -32,21 +32,8 @@ function globalSettingsFactory() {
 
     this[mode].mode = mode;
 
-    this[mode].logAndDebugSettings = getLogAndDebugSettings();
-
     window.appData.settings = angular.merge(this[mode], coreAppSettings);
 
     return this[mode];
-
-    function getLogAndDebugSettings() {
-        return {
-            dbgModule: {
-                enable: true,
-                logLevel: 'trace'
-            }
-
-        };
-    }
-
 
 }

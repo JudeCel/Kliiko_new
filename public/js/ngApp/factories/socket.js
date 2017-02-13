@@ -24,12 +24,11 @@ function socket($rootScope, globalSettings, $window) {
 
       if (!channel) {
         scope.$on("$destroy", function handleDestroyEvent() {
-          console.log("$destroy")
           channel = null;
         });
         channel = socket.channel("sessionsBuilder:" + sessionId);
       }
-      if (channel.state != 'joined') {
+      if (channel.state != 'joined' && channel.state !='joining') {
         channel.join();
       }
       callback(channel);

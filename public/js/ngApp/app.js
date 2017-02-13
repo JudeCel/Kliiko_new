@@ -143,8 +143,7 @@
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
   function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
-    //$rootScopeProvider.digestTtl(20);
-    dbgProvider.enable(1);
+    dbgProvider.enable(window.appData.mode != 'production');
     dbgProvider.debugLevel('trace');
 
     $httpProvider.interceptors.push('myInterceptor');

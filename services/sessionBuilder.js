@@ -745,7 +745,7 @@ function findCurrentStep(steps, currentStepName) {
     }
   });
 
-  return output || { stepName: 'done' };
+  return output || { stepName: 'setUp' };
 }
 
 function findNewStep(step, previous) {
