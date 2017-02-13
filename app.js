@@ -95,6 +95,11 @@ app.use(expressWinston.errorLogger({
     new winston.transports.Console({
       json: true,
       colorize: true
+    }),
+    new winston.transports.Http({
+      host: "localhost", 
+      port: "3000",
+      path: "logger"
     })
   ]
 }));
