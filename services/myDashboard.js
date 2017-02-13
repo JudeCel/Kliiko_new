@@ -25,7 +25,10 @@ function getAllData(userId, protocol, provider) {
   let deferred = q.defer();
 
   AccountUser.findAll({
-    where: { UserId: userId },
+    where: { 
+      UserId: userId,
+      isRemoved: false
+     },
     include: [{
       model: SessionMember,
       required: false,
