@@ -200,6 +200,10 @@
       nextStep();
     }
 
+    vm.dropdownSelectedPlan = function(planItem) {
+      vm.selectedPlan = planItem;
+    };
+
     function checkRadioButton(currentPlan, checkPlan) {
       if(currentPlan && checkPlan) {
         return currentPlan.plan.id == checkPlan.plan.id;
