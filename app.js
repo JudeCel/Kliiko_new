@@ -4,7 +4,9 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+var winston = require('winston');
+var expressWinston = require('express-winston');
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
@@ -47,7 +49,27 @@ app.use(session({
 
 app.use(setUpQueue);
 app.use(flash());
-app.use(logger('dev'));
+app.use(expressWinston.logger({
+  meta: true,
+  colorize: true,
+  dynamicMeta: (req, res) => {
+    return {
+      currentResources: req.currentResources ||  {}
+    }
+  },
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    }),
+    new winston.transports.Http({
+      host: "localhost", 
+      port: "3000",
+      path: "logger"
+    })
+  ]
+}));
+
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
 app.use('/api',  apiPublic);
@@ -68,6 +90,15 @@ app.use('/resources', sessionMiddleware.extendUserSession, resources);
 app.use('/', routes);
 // Added socket.io routes
 // catch 404 and forward to error handler
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    })
+  ]
+}));
+
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
