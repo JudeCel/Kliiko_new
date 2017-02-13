@@ -265,9 +265,9 @@
       opacity: .8;
       z-index: 100;
       > .label {
-        position: absolute;
-        top:320px;
-        margin: 0 -130px;
+        display: block;
+        position: relative;
+        top: 320px;
         color: #E51D39;
         font-size: calc(100vw/45);
         font-weight: bold;
