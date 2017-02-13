@@ -46,6 +46,8 @@ let params = {
   notThisTimeButton: '#4CBFE9',
   participantFirstName: 'Name',
   participantLastName: 'Last',
+  guestFirstName: 'Name',
+  guestLastName: 'Last',
   timeZone: momentTimeZone.tz.names()[0]
 };
 
@@ -83,25 +85,7 @@ describe('send MailTemplates',  () => {
       }).catch((err) => {
         done(err);
       });
-    })
-
-    it('#Create copy of mail template for session', (done) =>  {
-      models.MailTemplate.find({
-        include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
-        attributes: constants.mailTemplateFields,
-        raw: true
-      }).then(function (result) {
-        result.properties = {sessionId: 0};
-        mailTemplateService.saveMailTemplate(result, false, accountId, false, function(error, saveResult) {
-          assert.isNull(error);
-          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
-          done();
-        });
-
-      }).catch(function (err) {
-        assert.isNull(err);
-      });
-    })
+    });
   });
 
   describe('#Send mail templates', function() {
