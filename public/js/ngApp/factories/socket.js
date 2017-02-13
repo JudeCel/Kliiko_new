@@ -28,7 +28,7 @@ function socket($rootScope, globalSettings, $window) {
         });
         channel = socket.channel("sessionsBuilder:" + sessionId);
       }
-      if (channel.state != 'joined') {
+      if (channel.state != 'joined' && channel.state !='joining') {
         channel.join();
       }
       callback(channel);
