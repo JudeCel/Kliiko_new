@@ -19,26 +19,29 @@ var validAttributes = [
 ];
 
 function findAllAccounts(callback) {
-  let accountUserAttrs = constants.safeAccountUserParams.concat('createdAt').concat('role').concat('owner');
-
   Account.findAll({
     attributes: ['id','admin', 'name'],
     where: {admin: false},
-    include: [
-      { model: AccountUser,
-        where: {role: {$in: ['accountManager', 'admin']}},
-        order: 'createdAt ASC',
-        attributes: accountUserAttrs,
-        include: [
-          { model: User, attributes: ['id'] } ] },
-          {model: Subscription, attributes: ['planId']}
-        ]
+    include: accountInclude()
   }).then((accounts) => {
     callback(null, mapData(accounts));
   }, (error) => {
       callback(filters.errors(error));
   });
 };
+
+
+function accountInclude() {
+  const accountUserAttrs = constants.safeAccountUserParams.concat('createdAt').concat('role').concat('owner');
+  return [{
+    model: AccountUser,
+    where: { role: { $in: ['accountManager', 'admin'] } },
+    order: 'createdAt ASC',
+    attributes: accountUserAttrs,
+    include: [{ model: User, attributes: ['id'] }]
+  },
+  { model: Subscription, attributes: ['planId'] }];
+}
 
 function mapData(accounts) {
   return accounts.map((account) => {
@@ -119,7 +122,7 @@ function removeAdmin({ accountId }) {
     AccountUser.find({ where: { AccountId: accountId, role: 'admin' }, include: [{ model: Account, include: [AccountUser] }] }).then((accountUser) => {
       if(!accountUser) return reject('Not found');
       accountUserService.deleteOrRecalculate(accountUser.id, null, 'admin')
-        .then(() => Account.find({ where: { id: accountId }, include: [AccountUser] }))
+        .then(() => Account.find({ where: { id: accountId }, include: accountInclude() }))
         .then((account) => resolve(mapData([account])[0]))
         .catch((error) => reject(error));
     });

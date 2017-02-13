@@ -577,13 +577,11 @@
       if (!vm.importData.file) return;
 
       vm.lists.parseImportFile(vm.importData.file).then(function(res) {
-        domServices.modal('contactList-addContactManual', 'close');
         vm.lists.generateImportPreview(res.data);
-        domServices.modal('modals-import-preview');
         processImportData(res);
-        setTimeout(function() {
-          jQuery('body').addClass('modal-open');
-        }, 1000);
+        domServices.modal('contactList-addContactManual', function() {
+          domServices.modal('modals-import-preview');
+        });
       }, function(err) {
         messenger.error(messagesUtil.contactList.import.failed);
         vm.importErrorMessage = messagesUtil.contactList.import.corrupted;
