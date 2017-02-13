@@ -42,7 +42,6 @@ function deleteOrRecalculate(id, addRole, removeRole, transaction) {
     AccountUser.find(query).then((accountUser) => {
       if (accountUser) {
         recalculateRole(accountUser, addRole, removeRole).then((params) => {
-          setIsRemoved(addRole, removeRole, params);
           accountUser.update(params, {transaction: transaction}).then((updatedAccountUser) => {
             resolve(updatedAccountUser);
           }, (error) => {
@@ -56,17 +55,6 @@ function deleteOrRecalculate(id, addRole, removeRole, transaction) {
       }
     });
   })
-
-  function setIsRemoved(addRole, removeRole, params) {
-    const adminRole = 'admin';
-    if(removeRole == adminRole) {
-      params.isRemoved = true;
-    }
-
-    if(addRole == adminRole) {
-      params.isRemoved = false;
-    }
-  }
 }
 
 function recalculateRole(accountUser, newRole, removeRole) {
@@ -113,8 +101,19 @@ function recalculateRole(accountUser, newRole, removeRole) {
     if(destinationRoll) {
       params.role = destinationRoll;
     }
+
+    setRemoveStatus(destinationRoll, removeRole, params);
+
     resolve(params);
   })
+}
+
+function setRemoveStatus(destinationRole, removeRole, params) {
+    if (!destinationRole && removeRole == 'admin') {
+      params.isRemoved = true;
+    } else {
+      params.isRemoved = false;
+    }
 }
 
 function createAccountManager(object, callback) {
