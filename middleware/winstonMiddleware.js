@@ -13,7 +13,8 @@ const logger = () => {
     },
     dynamicMeta: (req, res) => {
       return {
-        currentResources: req.currentResources ||  {}
+        currentResources: (req.currentResources ||  {}),
+        application: 'klzii-dashboard'
       }
     },
     transports: [
@@ -31,17 +32,23 @@ const logger = () => {
 
 const errorLogger = () => {
   return expressWinston.errorLogger({
-  transports: [
-    new winston.transports.Console({
-      json: true
-    }),
-    new winston.transports.Http({
-      host: process.env.SERVER_CHAT_DOMAIN_URL, 
-      port: process.env.SERVER_CHAT_DOMAIN_PORT,
-      path: "connection-logs"
-    })
-  ]
-});
+    dynamicMeta: (req, res) => {
+      return {
+        currentResources: (req.currentResources ||  {}),
+        application: 'klzii-dashboard'
+      }
+    },
+    transports: [
+      new winston.transports.Console({
+        json: true
+      }),
+      new winston.transports.Http({
+        host: process.env.SERVER_CHAT_DOMAIN_URL, 
+        port: process.env.SERVER_CHAT_DOMAIN_PORT,
+        path: "connection-logs"
+      })
+    ]
+  });
 }
 
 module.exports = {

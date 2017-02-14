@@ -31,6 +31,10 @@
               type: Sequelize.STRING,
               allowNull: false
             },
+            application: {
+              type: Sequelize.STRING,
+              allowNull: false
+            },
             meta: {
               type: Sequelize.JSONB,
               allowNull: true,

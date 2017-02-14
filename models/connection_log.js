@@ -10,6 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: true },
     responseTime: { type: DataTypes.INTEGER, allowNull: false },
     level: { type: DataTypes.STRING, allowNull: false},
+    application: { type: DataTypes.STRING, allowNull: false},
     meta: { type: DataTypes.JSONB, allowNull: true, defaultValue: {} },
     req: { type: DataTypes.JSONB, allowNull: true, defaultValue: {} },
     res: { type: DataTypes.JSONB, allowNull: true, defaultValue: {} },
