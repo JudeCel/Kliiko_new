@@ -1,6 +1,6 @@
 
 <button ng-if='upload.modal.upload' class='btn btn-standart btn-green btn-large btn-margin dropdown-toggle' id='uploadResourceDropdown'
-data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' ng-click='gc.handleUploadPermission()'>
+data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' ng-click='gc.handleUploadPermission(upload.validation)'>
 <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
 <span>{{ uploadText.headerText || 'Add New Resource' }}</span>
 </button>

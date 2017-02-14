@@ -10,7 +10,7 @@
       </uib-accordion>
 
       <div ng-init='ec.initGallery(gc)'>
-        {{ upload = ec.galleryDropdownData(gc.currentDependency); "" }}
+        {{ upload = ec.galleryDropdownData(gc.currentDependency, "uploadToGallery"); "" }}
         <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
       </div>
 
