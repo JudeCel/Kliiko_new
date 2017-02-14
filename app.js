@@ -4,8 +4,6 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var favicon = require('serve-favicon');
-var winston = require('winston');
-var expressWinston = require('express-winston');
 
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -73,19 +71,6 @@ app.use('/', routes);
 // Added socket.io routes
 // catch 404 and forward to error handler
 app.use(winstonMiddleware.errorLogger())
-app.use(expressWinston.errorLogger({
-  transports: [
-    new winston.transports.Console({
-      json: true
-    }),
-    new winston.transports.Http({
-      host: "localhost", 
-      port: "3000",
-      path: "connection-logs"
-    })
-  ]
-}));
-
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
