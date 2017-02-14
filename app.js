@@ -19,6 +19,7 @@ var flash = require('connect-flash');
 var _ = require('lodash');
 var airbrake = require('./lib/airbrake').instance;
 var cors = require('./middleware/cors');
+var winstonMiddleware = require('./middleware/winstonMiddleware');
 app.use(airbrake.expressHandler());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -49,29 +50,7 @@ app.use(session({
 
 app.use(setUpQueue);
 app.use(flash());
-app.use(expressWinston.logger({
-  meta: true,
-  ignoreRoute: (req, res) => 
-  { 
-    let skipList = ["/favicon.ico"]
-    return(skipList.indexOf(req.path) > -1); 
-  },
-  dynamicMeta: (req, res) => {
-    return {
-      currentResources: req.currentResources ||  {}
-    }
-  },
-  transports: [
-    new winston.transports.Console({
-      json: true
-    }),
-    new winston.transports.Http({
-      host: "localhost", 
-      port: "3000",
-      path: "connection-logs"
-    })
-  ]
-}));
+app.use(winstonMiddleware.logger())
 
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
@@ -93,6 +72,7 @@ app.use('/resources', sessionMiddleware.extendUserSession, resources);
 app.use('/', routes);
 // Added socket.io routes
 // catch 404 and forward to error handler
+app.use(winstonMiddleware.errorLogger())
 app.use(expressWinston.errorLogger({
   transports: [
     new winston.transports.Console({
