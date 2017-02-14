@@ -131,7 +131,7 @@
       if (templateId) {
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
-          
+
           if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
@@ -475,6 +475,7 @@
 
     function galleryDropdownData(dependency) {
       return {
+        validation: 'uploadToGallery',
         types: vm.uploadTypes[vm.currentUpload],
         modal: { upload: true },
         dependency: dependency

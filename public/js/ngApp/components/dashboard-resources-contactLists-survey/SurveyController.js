@@ -364,6 +364,7 @@
 
     function galleryDropdownData(type, dependency) {
       return {
+        validation: 'uploadToGallery',
         types: vm.uploadTypes[type],
         modal: { upload: true, select: true, set: type },
         dependency: dependency

@@ -368,8 +368,9 @@
       gc.preloadResources({ type: ['image'], scope: ['brandLogo'], stock: true });
     }
 
-    function galleryDropdownData(dependency) {
+    function galleryDropdownData(dependency, validation) {
       return {
+        validation: validation || 'brandLogoAndCustomColors',
         types: vm.uploadTypes,
         modal: { upload: true, select: true },
         dependency: dependency
