@@ -357,8 +357,8 @@
       }
     }
 
-    function handleUploadPermission() {
-      planService.checkPlanFeatures('brandLogoAndCustomColors').then(function(response) {
+    function handleUploadPermission(validation) {
+      planService.checkPlanFeatures(validation || 'uploadToGallery').then(function(response) {
         if(response.error) {
           errorMessenger.showError(response.error);
         }

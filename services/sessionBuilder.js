@@ -127,6 +127,13 @@ function initializeBuilder(params) {
     params.step = 'setUp';
     params.startTime = params.date;
     params.endTime = params.date;
+    params.isVisited = { 
+      setUp: true,
+      facilitatiorAndTopics: false,
+      manageSessionEmails: false,
+      manageSessionParticipants: false,
+      inviteSessionObservers: false
+    };
 
     Session.create(params).then(function(session) {
       createNewSessionDefaultItems(session, params.userId).then(function() {

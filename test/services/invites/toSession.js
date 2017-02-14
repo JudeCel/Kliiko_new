@@ -321,7 +321,8 @@ describe('SERVICE - Invite to Session', function() {
                 AccountUser.find({where: findInvite.accountUserId, include: [SessionMember]}).then((accountUser) => {
                   try {
                     assert.isUndefined(accountUser.SessionMembers[0]);
-                    assert.equal(accountUser.role, "observer");
+                    assert.equal(accountUser.role, "participant");
+                    assert.equal(accountUser.active, false);
                     done();
                   } catch (e) {
                     done(e);

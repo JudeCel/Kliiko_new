@@ -240,7 +240,7 @@
     }
 
     function isNotActiveStep(step) {
-      return  vm.currentStep !== step;
+      return vm.currentStep && vm.currentStep !== step;
     }
 
     function goToChat(session) {

@@ -39,6 +39,7 @@
       <uib-accordion-heading>
         <div class="panel-label">
           Anonymous Name
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.anonymous, 'glyphicon-chevron-right': !step1Controller.accordions.anonymous}"></i>
         </div>
       </uib-accordion-heading>
       <input type="radio" id="sessionBuilder-session-anonymous" name="anonymous" value="true" ng-model="step1Controller.anonymous" ng-click="step1Controller.confirmAnonymous();">
@@ -142,7 +143,7 @@
       <uib-accordion-heading>
         <div class="panel-label">
           {{ step1Controller.selectedFacilitator ? 'Replace Host' : 'Select Host' }}
-          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionName, 'glyphicon-chevron-right': !step1Controller.accordions.sessionName}"></i>
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.facilitators, 'glyphicon-chevron-right': !step1Controller.accordions.facilitators}"></i>
           <span class="panel-value pull-right">
             {{ step1Controller.session.steps.step1.facilitator.firstName + ' ' + step1Controller.session.steps.step1.facilitator.lastName }}
           </span>
