@@ -17,6 +17,10 @@ module.exports = {
   myDashboardPage: myDashboardPage
 }
 
+function createPlanSelectRedirectUrl(req, plan) {
+  return subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/account-profile/upgrade-plan?step=2&plan=' + plan);
+}
+
 function planSelectPage(req, res, next) {
   let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub/landing');
   if(req.currentResources.accountUser.role ==  'accountManager') {
@@ -32,7 +36,7 @@ function planSelectPage(req, res, next) {
           }
           else {
             if(req.session.landed) {
-              let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/account-profile/upgrade-plan?step=2&plan=' + response.selectedPlanOnRegistration);
+              let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
               res.redirect(redirectUrl);
             }
             else {
