@@ -119,7 +119,7 @@ function prepareUrlParams(parameters, query) {
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {
-        parameters.page = "junior_monthly";
+        parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
 
