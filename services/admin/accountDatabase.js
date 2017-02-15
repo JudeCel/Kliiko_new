@@ -45,11 +45,7 @@ function accountInclude() {
 
 function mapData(accounts) {
   return accounts.map((account) => {
-    let adminUsers = account.AccountUsers.filter((au) => { 
-      if(au.role == 'admin' && !au.isRemoved) {
-        return au;
-      } 
-    });
+    let adminUsers = account.AccountUsers.filter((au) => au.role == 'admin' && !au.isRemoved);
     if(_.isEmpty(adminUsers)){
       account.dataValues.hasActiveAdmin = false;
     }else{
