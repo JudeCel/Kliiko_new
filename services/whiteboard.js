@@ -8,7 +8,7 @@ module.exports = {
 };
 
 function defaultTopicImageParams(sessionTopic, sessionMember) {
-  let link = "\"/images/default-topic-image.gif?" + sessionTopic.id +"\"";
+  let link = process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/images/default-topic-image.gif?" + sessionTopic.id;
   return {
     sessionMemberId: sessionMember.id,
     sessionTopicId: sessionTopic.id,
