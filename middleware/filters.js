@@ -36,8 +36,12 @@ function planSelectPage(req, res, next) {
           }
           else {
             if(req.session.landed) {
-              let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
-              res.redirect(redirectUrl);
+              if (response.selectedPlanOnRegistration) {
+                let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
+                res.redirect(redirectUrl);
+              } else {
+                next();
+              }
             }
             else {
               res.redirect(redirectUrl);
