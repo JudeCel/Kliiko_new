@@ -9,8 +9,16 @@
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
-          <h2 class="text-center text-gray-dark">Welcome!</h2>
-          <h5 class="text-center text-gray-light">Sign up to klzii and host your own Chat Sessions.</h5>
+          <% if((firstName || email) && selectedPlanOnRegistration) { %>
+            <div class="progress registration-progress-bar">
+              <div class="progress-bar background-green" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="progress-status">50% COMPLETE</div>
+            </div>
+            <h5 class="text-center text-gray-light">Almost done! Complete the form below to activate your Free Trial.</h5>
+          <% } else { %>
+              <h2 class="text-center text-gray-dark">Welcome!</h2>
+              <h5 class="text-center text-gray-light">Sign up to klzii and host your own Chat Sessions.</h5>
+          <% } %>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -19,6 +27,7 @@
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
                 <% } %>
+                <input type="hidden" name="selectedPlanOnRegistration" value="<%=selectedPlanOnRegistration%>">
                 <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
                     <td>

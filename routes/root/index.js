@@ -103,10 +103,36 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
+function prepareUrlParams(parameters, query) {
+  parameters.selectedPlanOnRegistration = "";
+  if (query) {
+    if (query.name) {
+      parameters.firstName = query.name;
+    }
+    if (query.email) {
+      parameters.email = query.email;
+    }
+
+    if (_.hasIn(query, 'package')) {
+      parameters.page = "paidPlanRegistration";
+      if (query.package) {
+        parameters.selectedPlanOnRegistration = query.package;
+      } else {
+        parameters.selectedPlanOnRegistration = "junior_monthly";
+      }
+    }
+
+  }
+}
+
 router.get('/registration', function (req, res, next) {
   let params = getParams(req);
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
+
+  prepareUrlParams(params, req.query);
+
   res.render('registration', params);
 });
 

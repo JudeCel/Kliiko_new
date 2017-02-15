@@ -120,7 +120,7 @@ function getAllPlans(accountId) {
 
       if (accountId) {
         findAndProcessSubscription(accountId).then(function(currentSub) {
-          if(currentSub.active){
+          if(currentSub && currentSub.active){
             currentPlan = currentSub.SubscriptionPlan;
           }
           addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
@@ -328,7 +328,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
   }).then(function(account) {
     if (!account) { return deferred.reject(MessagesUtil.subscription.notFound.account)}
     let plan = account.selectedPlanOnRegistration && (account.selectedPlanOnRegistration == "free_trial" || account.selectedPlanOnRegistration == "free_account") ?
-      account.selectedPlanOnRegistration : null;
+      account.selectedPlanOnRegistration : "free_trial";
     createSubscription(accountId, userId, null, plan).then(function(response) {
       if(account.selectedPlanOnRegistration && !plan) {
         updateSubscription({
@@ -341,6 +341,7 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
           deferred.reject(error);
         });
       }else{
+        response.selectedPlanOnRegistration = account.selectedPlanOnRegistration;
         deferred.resolve(response);
       }
     }, function(error) {

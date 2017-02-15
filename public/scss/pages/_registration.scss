@@ -86,6 +86,29 @@
       padding-bottom: 0;
     }
   }
+
+  .registration-progress-bar {
+    margin: 25px auto 0 auto;
+    background-image: none;
+    width: 60%;
+    background-color: #c1c1c1;
+    height: 40px;
+    border-radius: 0;
+
+    .progress-status {
+      line-height: 40px;
+      color: #ffffff;
+      text-align: center;
+      width: 100%;
+      float: none !important;
+      position: absolute;
+      left: 0;
+    }
+    .progress-bar {
+      width: 50%;
+      background-image: none;
+    }
+  }
 }
 
 /*Blue checkbox could be outside registration/login scope*/
