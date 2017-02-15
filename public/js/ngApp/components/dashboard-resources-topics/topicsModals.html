@@ -15,7 +15,7 @@
           <div class='form-group'>
             <label for='topicBoard'>Host Billboard</label>
             <span emoji-picker="topics.topicData.boardMessage" placement="right" title="Emoji" recent-limit="10" output-format="unicode" emoji-picker-helper close-emoji-popup-in-modal='topicModalWindow' emoji-focus-to="topicBoard"></span>
-            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Host Billboard' ng-paste="topics.trimClipboardText($event, topics.validations.boardMessage)" alt-maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Host Billboard' alt-maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
             <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
 
