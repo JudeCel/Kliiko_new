@@ -460,7 +460,7 @@
     }
 
     function normalVideoServiceUrl(url, source) {
-      return GalleryServices.prepareVideoServiceUrl;
+      return GalleryServices.prepareVideoServiceUrl(url, source);
     }
 
     function videoServiceUrl(url, source) {

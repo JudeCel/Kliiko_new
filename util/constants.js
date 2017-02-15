@@ -28,7 +28,8 @@ module.exports = {
     'comment',
     'phoneCountryData',
     'landlineNumberCountryData',
-    'reveiveNewsLetters'
+    'reveiveNewsLetters',
+    'isRemoved'
   ],
   safeUserParams: [
     'id',

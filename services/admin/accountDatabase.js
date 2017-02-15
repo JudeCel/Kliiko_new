@@ -45,7 +45,7 @@ function accountInclude() {
 
 function mapData(accounts) {
   return accounts.map((account) => {
-    let adminUsers = account.AccountUsers.filter((au) => { if(au.role == 'admin' && au.active) {return au} })
+    let adminUsers = account.AccountUsers.filter((au) => au.role == 'admin' && !au.isRemoved);
     if(_.isEmpty(adminUsers)){
       account.dataValues.hasActiveAdmin = false;
     }else{
@@ -72,12 +72,24 @@ function addAdmin({accountId, email}, _accountUserId) {
       } else {
         AccountUser.find({ where: { AccountId: accountId, role: 'admin', email: email,  active: false } }).then((accountUser) => {
           if(accountUser) {
-            accountUserService.deleteOrRecalculate(accountUser.id, 'admin')
-              .then((accountUser) => resolve(accountUser))
-              .catch((error) => reject(error));
+            accountUser.update({ isRemoved: false }).then((updatedAccountUser) => {
+              let inviteParams = {
+                accountUserId: updatedAccountUser.id,
+                accountId: accountId,
+                role: accountUsers[0].role
+              };
+
+              inviteService.createInvite(inviteParams).then(() => {
+                resolve(updatedAccountUser);
+              }, (error) => {
+                reject(error);
+              });
+            }, (error) => {
+              reject(error);
+            });
           }
           else {
-            let adminAccountUser = accountUsers[0]
+            let adminAccountUser = accountUsers[0];
             models.sequelize.transaction().then((transaction) => {
               ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
               let contactListUserParams = {
@@ -123,8 +135,29 @@ function removeAdmin({ accountId }) {
       if(!accountUser) return reject('Not found');
       accountUserService.deleteOrRecalculate(accountUser.id, null, 'admin')
         .then(() => Account.find({ where: { id: accountId }, include: accountInclude() }))
-        .then((account) => resolve(mapData([account])[0]))
-        .catch((error) => reject(error));
+        .then((account) => {
+          let query = { where: {
+            accountUserId: accountUser.id,
+            status: 'pending'
+            },
+            include: [{
+              model: models.AccountUser,
+              required: true
+            }]
+          };
+
+          models.Invite.find(query).then((invite) => { 
+            if (invite) {
+              inviteService.removeInvite(invite).then((message) => {
+                resolve(mapData([account])[0]);
+              }, (error) => {
+                reject(error);
+              });
+            } else {
+              resolve(mapData([account])[0]);
+            }  
+          });
+        }).catch((error) => reject(error));
     });
   });
 }

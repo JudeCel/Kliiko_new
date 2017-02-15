@@ -92,12 +92,14 @@ describe('SERVICE - AccountDatabase', () => {
           assert.equal(account.dataValues.hasActiveAdmin, false);
           account.AccountUsers.map((accountUser) => {
             assert.equal(accountUser.active, accountUser.role !== 'admin');
+            assert.equal(accountUser.isRemoved, accountUser.role === "admin");
           });
 
           return accountDatabaseService.addAdmin(params, account.dataValues.id);
         }).then((accountUser) => {
           assert.equal(accountUser.role, 'admin');
-          assert.equal(accountUser.active, true);
+          assert.equal(accountUser.isRemoved, false)
+          assert.equal(accountUser.active, false);
           done();
         }).catch((error) => done(error));
       })

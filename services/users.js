@@ -222,7 +222,8 @@ function prepareParams(req, errors) {
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
     errors: (errors || {}),
-    socialProfile: null
+    socialProfile: null,
+    selectedPlanOnRegistration: null
   }, req.body);
 }
 
