@@ -8,7 +8,7 @@ module.exports = {
 };
 
 function defaultTopicImageParams(sessionTopic, sessionMember) {
-  let link = "/images/default-topic-image.gif?" + sessionTopic.id;
+  let link = "\"/images/default-topic-image.gif?" + sessionTopic.id +"\"";
   return {
     sessionMemberId: sessionMember.id,
     sessionTopicId: sessionTopic.id,
@@ -17,7 +17,7 @@ function defaultTopicImageParams(sessionTopic, sessionMember) {
     event: {
       id: "defaultImage" + sessionTopic.id,
       action: "draw",
-      element: "<image id=defaultImage"+sessionTopic.id+" xmlns:xlink="+link+" xlink:href="+link+" width='395' height='304' x='10' y='76' fill='none'></image>"
+      element: "<image id=\"defaultImage"+sessionTopic.id+"\" xmlns:xlink="+link+" xlink:href="+link+" width='395' height='304' x='10' y='76' fill='none'></image>"
     }
   };
 }
