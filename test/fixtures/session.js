@@ -27,6 +27,7 @@ module.exports = {
 
 var functionList = [
   function(callback) { createMainAccount(callback) },
+  createSessionTypes,
   createSessionWithFacilitator,
   createSubAccountsAndSessionMembers,
   createTopics
@@ -60,6 +61,17 @@ function createMainAccount(callback) {
       callback(error);
     });
   }, function(error) {
+    callback(error);
+  });
+}
+
+function createSessionTypes(callback) {
+  //todo: change implementation
+  models.SessionType.create({name: "forum", properties: {}}).then(function(result) {
+    models.SessionType.create({name: "focus", properties: {}}).then(function(result) {
+      callback()
+    });
+  }).catch(function(error) {
     callback(error);
   });
 }

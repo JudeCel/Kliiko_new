@@ -8,20 +8,20 @@ module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true },
-    accountId: { type: DataTypes.INTEGER, allowNull: false  },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
     participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: '', validate: {
       isLength: validations.length('name', { max: 40 })
     } },
     startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
-    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
+    endTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate() },
     timeZone: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
-    type: { type: DataTypes.ENUM, values: ['focus', 'forum'] },
+    type: { type: DataTypes.STRING },
     anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     isInactive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     isVisited: { type: DataTypes.JSON, allowNull: false, defaultValue: { 
@@ -52,6 +52,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Session.belongsToMany(models.Resource, { through: {model: models.SessionResource}, foreignKey: 'sessionId' });
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId' });
+        Session.belongsTo(models.SessionType, { foreignKey: 'type' });
       }
     }
   });

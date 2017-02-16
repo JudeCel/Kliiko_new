@@ -98,11 +98,6 @@ module.exports = {
   validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy', 'contactlist', 'close_session', 'system_requirements'],
   maxSessionsAmount: 1000,
   maxAccountsAmount: 100,
-  membersAllowedCount: {
-    observers: -1,
-    participantsFocus: 8,
-    participantsForum: -1,
-  },
   defaultTopic: {
     billboardText: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.',
     video: {
