@@ -27,8 +27,7 @@
   },
   "engineStrict": true,
   "engine": {
-    "node": "~ 6.9.*",
-    "npm": "3.10.x"
+    "node": "~ 6.9.*"
   },
   "repository": {
     "type": "git",

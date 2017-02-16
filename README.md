@@ -3,11 +3,11 @@
 ## Dependencies
 
   * Node.js 6.9.x LTS
-  * NPM 3.10.x
+  * Install yarn `yarn` [yarn](https://yarnpkg.com/en/docs/install)
+  * Install JS dependencies `yarn install`
   * PostgreSQL 9.5.x
   * Redis 3.x.x
   * Python 2.7.x
-  * [ImageMagick](http://www.imagemagick.org/)
 
 ## Set up Project
 
@@ -15,10 +15,10 @@
 
 2) Change database variables in ``` .env ``` and change with necessary database credentials.
 
-3) Run ``` npm install ``` in project directory to install packages.
+3) Run ``` yarn install ``` in project directory to install packages.
 
-4) Run ``` npm run reset ``` in project directory to reset database.
-Use ``` npm run migrations ``` to run migrations.
+4) Run ``` yarn run reset ``` in project directory to reset database.
+Use ``` yarn run migrations ``` to run migrations.
 
 ### Windows
 
@@ -63,7 +63,7 @@ In the project we use ORM [Sequelize](http://docs.sequelizejs.com/en/latest/)
 Also we use code-first migrations [Sequelize Migrations](http://docs.sequelizejs.com/en/latest/docs/migrations/)
 
 To restart DB, delete and recreate all tables based on the models, run this command from root directory of the project:
-``` npm run reset ```
+``` yarn run reset ```
 
 To run seeds for user run this command: ``` node seeders/users.js ```
 To run seeds for chat session run this command: ``` node seeders/chatSession.js ```
@@ -73,7 +73,7 @@ Default user credentials email ``` admin@insider.com ``` or ``` user@insider.com
 
 ## Run project
 
-1) Run GULP ``` npm run gulp ```
+1) Run GULP ``` yarn run gulp ```
 
 2) Open browser: ``` http://insider.focus.com:8080/ ```
 
@@ -85,15 +85,7 @@ Run
 
  ``` mocha test```
 or
- ``` npm test ```
-
-### Debugging
-If need uses debugger the gulp should be installed globally ``` npm install gulp -g```
-
- 1) Run Gulp with --debug argument ```gulp --debug ```
-
- 2) Open browser and go to http://127.0.0.1:8085/?ws=127.0.0.1:8085&port=5858
-
+ ``` yarn test ```
 
 ## Migrations
 

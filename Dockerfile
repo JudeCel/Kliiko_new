@@ -13,4 +13,4 @@ EXPOSE 8080
 
 RUN yarn install
 
-RUN npm run build_prod
+RUN yarn run build_prod
