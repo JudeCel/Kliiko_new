@@ -22,7 +22,7 @@ const logger = () => {
         json: true
       }),
       new winston.transports.Http({
-        host: process.env.SERVER_CHAT_DOMAIN_URL, 
+        host: process.env.LOG_SERVER_URL, 
         port: process.env.SERVER_CHAT_DOMAIN_PORT,
         path: "connection-logs"
       })
@@ -43,7 +43,7 @@ const errorLogger = () => {
         json: true
       }),
       new winston.transports.Http({
-        host: process.env.SERVER_CHAT_DOMAIN_URL, 
+        host: process.env.LOG_SERVER_URL, 
         port: process.env.SERVER_CHAT_DOMAIN_PORT,
         path: "connection-logs"
       })

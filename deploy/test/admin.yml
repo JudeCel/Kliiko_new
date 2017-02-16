@@ -42,6 +42,8 @@ spec:
           value: "redis-master"
         - name: NODE_ENV
           value: "production"
+        - name: LOG_SERVER_URL
+          value: "chat.test.klzii.com"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "http://chat.test.klzii.com"
         - name: EVENT_SOCKET_SERVER_URL
