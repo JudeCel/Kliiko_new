@@ -94,8 +94,9 @@ function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: freeTrial ? 'free_trial' : 'free_account',
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null,
   };
+
   if (isAdmin) {
     res.role = 'admin';
     res.selectedPlanOnRegistration = null;
@@ -107,9 +108,9 @@ function create(object, callback) {
   object.account = {};
   object.errors = object.errors || {};
 
-  Account.create({ 
-    name: object.params.accountName, 
-    selectedPlanOnRegistration: object.params.selectedPlanOnRegistration, 
+  Account.create({
+    name: object.params.accountName,
+    selectedPlanOnRegistration: object.params.selectedPlanOnRegistration,
     admin: object.params.role == "admin"
   }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
