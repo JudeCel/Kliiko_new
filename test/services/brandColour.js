@@ -9,12 +9,13 @@ var brandProjectConstants = require('./../../util/brandProjectConstants');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('SERVICE - BrandColour', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       sessionFixture.createChat().then(function(result) {
         testData.user = result.user;
         testData.account = result.account;

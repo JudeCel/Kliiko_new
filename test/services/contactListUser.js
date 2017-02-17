@@ -5,6 +5,7 @@ var subscriptionFixture = require('./../fixtures/subscriptionPlans');
 var ContactListUserService  = require('./../../services/contactListUser');
 var UserService  = require('./../../services/users');
 var subscriptionServices = require('./../../services/subscription');
+var testDatabase = require("../database");
 var validAttrs = {
   accountName: "DainisL",
   firstName: "Dainis",
@@ -21,7 +22,7 @@ describe('SERVICE - ContactListUser', () => {
   let TestAccountUser = null;
 
   beforeEach((done)=> {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       UserService.create(validAttrs, function(errors, user) {
         user.getOwnerAccount().then(function(results) {
           TestAccount = results[0]

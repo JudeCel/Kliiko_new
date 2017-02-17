@@ -2,7 +2,7 @@
 
 var models = require('./../../models');
 var Subscription = models.Subscription;
-
+var testDatabase = require("../database");
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
@@ -18,7 +18,7 @@ describe('SERVICE - Subscription', function() {
   var currentSubPlanId;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         return subscriptionFixture.createPlans();

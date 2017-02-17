@@ -23,6 +23,7 @@ var sessionMemberService = require('./sessionMember');
 var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -859,7 +860,8 @@ function sessionBuilderObject(session, steps) {
       id: session.id,
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
-      snapshot: sessionBuilderObjectSnapshot(result, session.step)
+      snapshot: sessionBuilderObjectSnapshot(result, session.step),
+      properties: sessionTypesConstants[session.type] 
     };
 
     sessionValidator.addShowStatus(sessionBuilder);

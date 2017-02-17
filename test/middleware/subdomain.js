@@ -4,6 +4,7 @@ var expect = require("chai").expect;
 var subdomain = require('./../../middleware/subdomain.js');
 var UserServices  = require('./../../services/users');
 var models  = require('./../../models');
+var testDatabase = require("../database");
 
 var validAttrs = {
   accountName: "DainisL",
@@ -21,7 +22,7 @@ describe('Middleware subdomain', () => {
   let res = { locals: {} };
 
   beforeEach((done) => {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       UserServices.create(validAttrs, function(errors, user) {
         req.user.id = user.id
         done();

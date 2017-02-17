@@ -3,13 +3,14 @@ var assert = require('assert');
 var models  = require('./../../../models');
 var uniqueValidation  = require('./../../../models/validations/unique');
 var Account  = models.Account;
+var testDatabase = require("../../database");
 
 describe('uniqueValidation', () => {
   describe('unique', () =>  {
     describe("account name variants", () =>  {
       var sql = uniqueValidation.unique(models.sequelize, 'Account', 'name', { lower: true })
       before((done) => {
-        models.sequelize.sync({ force: true }).then(() => {
+        testDatabase.prepareDatabaseForTests().then(() => {
           Account.create({name: "DainisL"})
             .then(function() {
               done();

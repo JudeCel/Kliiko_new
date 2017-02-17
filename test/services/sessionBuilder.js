@@ -6,7 +6,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var mailFixture = require('./../fixtures/mailTemplates');
 var constants = require('../../util/constants');
 var models = require('./../../models');
-
+var testDatabase = require("../database");
 var sessionBuilderServices = require('./../../services/sessionBuilder');
 var sessionMemberService = require('./../../services/sessionMember');
 var inviteService = require('./../../services/invite');
@@ -16,7 +16,7 @@ var _ = require('lodash');
 describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser, subscriptionId;
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testUser = result.user;
         testAccount = result.account;

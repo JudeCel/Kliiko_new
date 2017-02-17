@@ -8,6 +8,7 @@ var accountManagerService = require('../../../services/accountManager');
 var backgroundQueue = require('../../../services/backgroundQueue');
 var inviteRoutes = require('../../../routes/root/invite.js');
 var assert = require('chai').assert;
+var testDatabase = require("../../database");
 
 describe('ROUTE - Invite',() => {
   var testUser1, accountUser1, testUser2, session,
@@ -33,7 +34,7 @@ describe('ROUTE - Invite',() => {
   }
 
   beforeEach((done) => {
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(user1Attrs, (err, user1) =>  {
         testUser1 = user1;
         user1.getOwnerAccount().then((accounts) =>  {

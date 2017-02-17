@@ -2,7 +2,7 @@
 
 var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
-var { Subscription, Session, Invite, SessionMember, AccountUser, Account } = require('./../models');
+var { Subscription, Session, Invite, SessionMember, AccountUser, Account, SessionType } = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
@@ -17,6 +17,7 @@ var MailTemplateService = require('./mailTemplate');
 var sessionMemberServices = require('./../services/sessionMember');
 var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 
 const VALID_ATTRIBUTES = {
@@ -431,6 +432,9 @@ function findAllSessionsAsManager(accountId, provider) {
         model: AccountUser,
         attributes: ['firstName', 'lastName', 'email']
       }]
+    }, { 
+      model: SessionType,
+      attributes: ['name', 'properties']
     }]
   }).then(function(sessions) {
     modifySessions(sessions, accountId, provider).then(function(result) {

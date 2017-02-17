@@ -8,6 +8,7 @@ var userFixture = require('./user');
 var subscriptionFixture = require('./subscription');
 var models = require('../../models');
 var SessionMemberService = require('./../../services/sessionMember');
+var sessionTypeService = require('./../../services/sessionType');
 
 var mainData;
 var manualDependencies = {};
@@ -66,12 +67,9 @@ function createMainAccount(callback) {
 }
 
 function createSessionTypes(callback) {
-  //todo: change implementation
-  models.SessionType.create({name: "forum", properties: {}}).then(function(result) {
-    models.SessionType.create({name: "focus", properties: {}}).then(function(result) {
-      callback()
-    });
-  }).catch(function(error) {
+  sessionTypeService.updateSessionTypes().then(function() {
+    callback();
+  }, function(error) {
     callback(error);
   });
 }
