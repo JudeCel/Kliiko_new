@@ -71,6 +71,10 @@
       });
     };
 
+    $scope.getActivateDeactivateButtonText = function(isActive) {
+      return isActive ? "Deactivate" : "Activate";
+    };
+
     $scope.submitAddAdminForm = function() {
       var params = {email: $scope.modalObject.addAdminForm.email, accountId: $scope.modalObject.account.id}
       AccountDatabaseServices.addAdmin(params).then(function(res) {
@@ -94,7 +98,7 @@
 
       $scope.changeAccountStatusSending = true;
       var accountUser = $scope.findRightAccountUser(account, user);
-      var params = { accountId: account.id, userId: user.UserId, active: !accountUser.active };
+      var params = { accountId: account.id, userId: user.id, accountUserId: accountUser.id, active: !accountUser.active };
       dbg.log2('#AccountDatabaseController > changeAccountStatus', params);
 
       AccountDatabaseServices.updateAccountUser(params).then(function(res) {
