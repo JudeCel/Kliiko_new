@@ -32,7 +32,7 @@ function removeAdmin(req, res, next) {
 };
 
 function update(req, res, next) {
-  accountDatabaseService.updateAccountUser(req.body, req.currentResources.user, function(error, account) {
+  accountDatabaseService.updateAccountUser(req.body, req.currentResources.accountUser, function(error, account) {
     if(error) {
       res.send({ error: error });
     }
