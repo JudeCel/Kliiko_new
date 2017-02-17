@@ -1,5 +1,6 @@
 'use strict';
 module.exports = {
+
   focus: {
     steps: {
       setUp: {
@@ -12,30 +13,28 @@ module.exports = {
         enabled: true
       },
       manageSessionParticipants: {
-        enabled: true
+        enabled: true,
+        sendGroupSms: true
       }, 
       inviteSessionObservers: {
-        enabled: true
+        enabled: true,
+        sendGroupSms: false
       }
     },
     fields: {
       //here are only fields that can have different logic
     },
     features: {
-      prizeDrawSurvay: {
-        enabled: false
-      },
-      contactListSurvay: {
-        enabled: false
+      survay: {
+        prizeDraw: {
+          enabled: false
+        },
+        contactList: {
+          enabled: false
+        },
       },
       unidentifiedParticipants: {
         enabled: false
-      },
-      participants: {
-        enabled: true
-      },
-      observers: {
-        enabled: true
       },
       whiteboard: {
         enabled: true,
@@ -43,23 +42,27 @@ module.exports = {
       },
       pinboard: {
         enabled: true
+      },
+      sendSms: {
+        enabled: true
       }
     },
     validations: {
-      participants: {
+      participant: {
         min: 1,
         max: 8
       },
-      observers: {
+      observer: {
         min: 0,
         max: -1
       },
-      topics: {
+      topic: {
         min: 1,
         max: -1
       }
     }
   },
+
   forum: {
     steps: {
       setUp: {
@@ -72,30 +75,28 @@ module.exports = {
         enabled: true
       },
       manageSessionParticipants: {
-        enabled: true
+        enabled: true,
+        sendGroupSms: false
       }, 
       inviteSessionObservers: {
-        enabled: true
+        enabled: true,
+        sendGroupSms: false
       }
     },
     fields: {
       //here are only fields that can have different logic
     },
     features: {
-      prizeDrawSurvay: {
-        enabled: false
-      },
-      contactListSurvay: {
-        enabled: false
+      survay: {
+        prizeDraw: {
+          enabled: false
+        },
+        contactList: {
+          enabled: false
+        },
       },
       unidentifiedParticipants: {
         enabled: false
-      },
-      participants: {
-        enabled: true
-      },
-      observers: {
-        enabled: true
       },
       whiteboard: {
         enabled: true,
@@ -103,23 +104,27 @@ module.exports = {
       },
       pinboard: {
         enabled: false
+      },
+      sendSms: {
+        enabled: false
       }
     },
     validations: {
-      participants: {
+      participant: {
         min: 1,
         max: -1
       },
-      observers: {
+      observer: {
         min: 0,
         max: -1
       },
-      topics: {
+      topic: {
         min: 1,
         max: -1
       }
     }
   },
+
   socialForum: {
     steps: {
       setUp: {
@@ -142,20 +147,16 @@ module.exports = {
       //here are only fields that can have different logic
     },
     features: {
-      prizeDrawSurvay: {
-        enabled: true
-      },
-      contactListSurvay: {
-        enabled: true
+      survay: {
+        prizeDraw: {
+          enabled: true
+        },
+        contactList: {
+          enabled: true
+        },
       },
       unidentifiedParticipants: {
         enabled: true
-      },
-      participants: {
-        enabled: false
-      },
-      observers: {
-        enabled: false
       },
       whiteboard: {
         enabled: true,
@@ -163,21 +164,25 @@ module.exports = {
       },
       pinboard: {
         enabled: false
+      },
+      sendSms: {
+        enabled: false
       }
     },
     validations: {
-      participants: {
+      participant: {
         min: 0,
         max: 0
       },
-      observers: {
+      observer: {
         min: 0,
         max: 0
       },
-      topics: {
+      topic: {
         min: 1,
         max: -1
       }
     }
   }
+
 }

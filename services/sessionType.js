@@ -5,7 +5,7 @@ let { SessionType } = models;
 let Bluebird = require('bluebird');
 let sessionTypesConstants = require('./../util/sessionTypesConstants');
 
-//for tasks, migrations and in fixtures
+//for tests, tasks, migrations and in fixtures
 function updateSessionTypes() {
   return new Bluebird((resolve, reject) => {
     var types = Object.keys(sessionTypesConstants);
