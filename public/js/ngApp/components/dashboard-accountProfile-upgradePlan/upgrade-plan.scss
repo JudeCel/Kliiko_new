@@ -43,7 +43,7 @@
     color: #fff;
   }
 
-  .contact-us{
+  .contact-us, .fast-track{
     text-align: left;
     border: solid 2px #e51d39;
     padding: 10px 20px;
@@ -59,6 +59,11 @@
       margin-top: 20px;
       font-size: 15px;
     }
+  }
+
+  .enterprise-plans{
+    h3{ color: #e51d39; }
+
   }
 
   .align-vertical-parent {
@@ -347,10 +352,22 @@
       margin-bottom: 3px;
     }
 
-    .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
-    .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
-    .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
+    .enterprise_1_header, .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
+    .enterprise_2_header, .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
+    .enterprise_3_header, .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
     .free_account_header {background-color: #f5f072;}
+
+    .enterprise_1_body{background-color: #cae8c8;}
+    .enterprise_2_body{background-color: #afe3f6;}
+    .enterprise_3_body{background-color: #cae8c8;}
+
+    .enterprise_1_body, .enterprise_2_body, .enterprise_3_body{
+      font-size: 15px;
+      color: #58595b;
+      span{
+        margin: 45px 20px 20px 20px;
+      }
+    }
 
     .junior_monthly_btn, .junior_yearly_btn {
       border-color: #6ebc95;
@@ -372,16 +389,21 @@
       @include setupPlanBtn(#bdb795, #bdb795);
     }
 
-    .core_monthly_btn, .core_yearly_btn{
+    .enterprise_2_btn, .core_monthly_btn, .core_yearly_btn{
       @include setupPlanBtn(#4CC0E9, #40b0df);
     }
 
-    .senior_monthly_btn, .senior_yearly_btn{
+    .enterprise_1_btn, .enterprise_3_btn, .senior_monthly_btn, .senior_yearly_btn{
       @include setupPlanBtn(#82cc81, #96d393);
+    }
+
+    .enterprise_1_btn, .enterprise_2_btn, .enterprise_3_btn{
+      margin-top: 45px;
     }
 
     .senior_monthly_btn:hover, .senior_yearly_btn:hover,
     .core_monthly_btn:hover, .core_yearly_btn:hover, .free_account_btn:hover,
+    .enterprise_1_btn:hover, .enterprise_2_btn:hover, .enterprise_3_btn:hover,
     .junior_monthly_btn:hover, .junior_yearly_btn:hover {
       background-color: rgba(10, 10, 10, 0.3);
       -webkit-transition: all 0.2s ease-in-out;

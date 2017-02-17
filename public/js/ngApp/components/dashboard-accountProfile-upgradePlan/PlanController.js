@@ -88,6 +88,64 @@
     vm.displayFeatureValue = displayFeatureValue;
     vm.finishedRenderingPlans = finishedRenderingPlans;
 
+    vm.enterprisePlans = [
+      { plan:
+        {
+          id: 'enterprise_1',
+          name: 'Enterprise 1',
+          invoice_name: 'Enterprise 1',
+          price: 43500,
+          period: 1,
+          period_unit: 'month',
+          charge_model: 'flat_fee',
+          free_quantity: 0,
+          status: 'active',
+          enabled_in_hosted_pages: true,
+          enabled_in_portal: true,
+          object: 'plan',
+          taxable: true,
+          temporary_desc: "Gives you all the features of Senior SENIOR a total of 10 Chat Sessions, 5 Recruiter/Contact Lists, 5 Account Managers & 100 SMS Credits/mth"
+        }
+      },
+      { plan:
+        {
+          id: 'enterprise_2',
+          name: 'Enterprise 2',
+          invoice_name: 'Enterprise 2',
+          price: 52000,
+          period: 1,
+          period_unit: 'month',
+          charge_model: 'flat_fee',
+          free_quantity: 0,
+          status: 'active',
+          enabled_in_hosted_pages: true,
+          enabled_in_portal: true,
+          object: 'plan',
+          taxable: true,
+          temporary_desc: "Gives you all the features of Senior PLUS a total of 12 Chat Sessions, 6 Recruiter/Contact Lists, 6 Account Managers & 125 SMS Credits/mth"
+        }
+      },
+      { plan:
+        {
+          id: 'enterprise_3',
+          name: 'Enterprise 3',
+          invoice_name: 'Enterprise 3',
+          price: 61000,
+          period: 1,
+          period_unit: 'month',
+          charge_model: 'flat_fee',
+          free_quantity: 0,
+          status: 'active',
+          enabled_in_hosted_pages: true,
+          enabled_in_portal: true,
+          object: 'plan',
+          taxable: true,
+          temporary_desc: "Gives you all the features of Senior PLUS Unlimited Chat Sessions, Recruiter/Contact Lists, Account Managers & 200 SMS Credits/mth"
+        }
+      }
+    ]
+
+
     init();
     vm.setup = function() {
       if ($stateParams.step && $stateParams.plan) {
