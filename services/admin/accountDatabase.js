@@ -191,7 +191,8 @@ function updateAccountUser(params, byAccountUser, callback) {
     if (params.userId) {
       AccountUser.update(updateParams, {
         where: {
-          AccountId: params.accountId
+          AccountId: params.accountId,
+          isRemoved: false
         },
         returning: true
       }).then(function(result) {
