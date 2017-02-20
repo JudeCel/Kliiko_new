@@ -163,7 +163,7 @@
                 Search:
               </label>
               <div class='col-md-4'>
-                <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
+                <input ng-model="step1Controller.q" id="search" class="form-control" placeholder="Filter text">
               </div>
             </div>
 
@@ -190,7 +190,7 @@
                   <tbody>
                     <form>
                       <tr class="member-row"
-                          dir-paginate="member in step1Controller.allContacts | filter:q | itemsPerPage: step1Controller.pageSize"
+                          dir-paginate="member in step1Controller.allContacts | filter:step1Controller.filterContacts() | itemsPerPage: step1Controller.pageSize"
                           current-page="step1Controller.currentPage"
                           ng-class="{'selected':member._selected}">
 
