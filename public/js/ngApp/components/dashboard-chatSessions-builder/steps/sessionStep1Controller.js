@@ -11,6 +11,7 @@
     var colorSchemeId, brandLogoId;
     vm.editedContactIndex = null;
     vm.step1 = {};
+    vm.q = "";
     vm.$state = $state;
 
     vm.selectedFacilitator = {};
@@ -38,6 +39,7 @@
     vm.openFacilitatorForm = openFacilitatorForm;
     vm.closeFacilitatorForm = closeFacilitatorForm;
     vm.deleteContact = deleteContact;
+    vm.filterContacts = filterContacts;
     vm.editContact = editContact;
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
@@ -168,6 +170,17 @@
       vm.userData = {};
     }
 
+    function filterContacts() {
+      if(vm.q) {
+        return vm.q;
+      }
+      else {
+        return function(item) {
+          return ['facilitator', 'accountManager'].indexOf(item.role) > -1;
+        };
+      }
+    }
+
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
         results.map(function(result) {
@@ -175,6 +188,7 @@
             vm.facilitatorContactListId = result.id;
           }
           result.members.map(function(member) {
+            member.role = result.role;
             member.listName = result.name;
             vm.allContacts.push(member);
           });
