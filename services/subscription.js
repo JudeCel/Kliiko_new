@@ -813,9 +813,11 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
-      if(newPlan.sessionCount < c){
-        cb(null, {session: MessagesUtil.subscription.validation.session});
-      }else{
+      if (newPlan.sessionCount == -1) {
+        cb(null, {});
+      } else if (newPlan.sessionCount < c){
+        cb(null, {sesssion: MessagesUtil.subscription.validation.session});
+      } else {
         cb(null, {});
       }
     }, function(error) {
@@ -831,11 +833,13 @@ function validateSurveyCount(accountId, newPlan) {
         accountId: accountId
       }
     }).then(function(c) {
-      errors = errors || {};
-      if(newPlan.surveyCount < c){
-        errors.survey = MessagesUtil.subscription.validation.survey;
+      if (newPlan.sessionCount == -1) {
+        cb(null, {});
+      } else if (newPlan.sessionCount < c){
+        cb(null, {sesssion: MessagesUtil.subscription.validation.survey});
+      } else {
+        cb(null, {});
       }
-
       cb(null, errors);
     }, function(error) {
       cb(error);
@@ -850,14 +854,18 @@ function validateContactListCount(accountId, newPlan) {
         accountId: accountId
       }
     }).then(function(c) {
-      errors = errors || {};
-      // TODO WTF!!!
-      let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Hosts, Spectators and Guests
-      if((defaultListCount + newPlan.contactListCount) < c){
-        errors.contactList = MessagesUtil.subscription.validation.contactList;
-      }
+      if (newPlan.sessionCount == -1) {
+        cb(null, {});
+      } else {
+        errors = errors || {};
+        // TODO WTF!!!
+        let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Hosts, Spectators and Guests
+        if((defaultListCount + newPlan.contactListCount) < c){
+          errors.contactList = MessagesUtil.subscription.validation.contactList;
+        }
 
-      cb(null, errors);
+        cb(null, errors);
+      }
     }, function(error) {
       cb(error);
     });

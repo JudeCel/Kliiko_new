@@ -165,7 +165,9 @@ function canAddAccountUsers(accountId) {
           }
         }]
       }).then(function(count) {
-        if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
+        if (subscription.SubscriptionPreference.data.accountUserCount == -1) {
+          deferred.resolve();
+        } else if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
           deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount, title: 'Sorry'});
         }else{
           deferred.resolve();
