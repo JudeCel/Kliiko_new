@@ -69,7 +69,7 @@ module.exports = {
   senior_monthly: {
     sessionCount: -1,
     contactListCount: -1,
-    recruiterContactListCount: 4,
+    recruiterContactListCount: -1,
     importDatabase: true,
     brandLogoAndCustomColors: true,
     contactListMemberCount: -1,
@@ -103,7 +103,7 @@ module.exports = {
   senior_yearly: {
     sessionCount: -1,
     contactListCount: -1,
-    recruiterContactListCount: 4,
+    recruiterContactListCount: -1,
     importDatabase: true,
     brandLogoAndCustomColors: true,
     contactListMemberCount: -1,
