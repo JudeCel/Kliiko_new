@@ -201,7 +201,9 @@
     }
 
     vm.dropdownSelectedPlan = function(planItem) {
-      vm.selectedPlan = planItem;
+      if (!vm.isCurrentPlan(planItem)) {
+        vm.selectedPlan = planItem;
+      }
     };
 
     function checkRadioButton(currentPlan, checkPlan) {
