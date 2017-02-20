@@ -165,12 +165,10 @@ function canAddAccountUsers(accountId) {
           }
         }]
       }).then(function(count) {
-        if(subscription.SubscriptionPreference.data.accountUserCount == -1) {
+        if(canAddManager(subscription.SubscriptionPreference.data.accountUserCount, count)) {
           deferred.resolve();
-        } else if(subscription.SubscriptionPreference.data.accountUserCount <= count) {
-          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount, title: 'Sorry'});
         }else{
-          deferred.resolve();
+          deferred.reject({dialog: MessagesUtil.validators.subscription.error.accountUserCount, title: 'Sorry'});
         }
       }).catch(function(error) {
         deferred.reject(error);
@@ -184,6 +182,10 @@ function canAddAccountUsers(accountId) {
   });
 
   return deferred.promise;
+}
+
+function canAddManager(allowedBySubscription, currentManagerCount) {
+  return allowedBySubscription == -1 || allowedBySubscription >= currentManagerCount;
 }
 
 function countMessage(type, maxCount) {
