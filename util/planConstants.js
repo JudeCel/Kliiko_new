@@ -67,13 +67,13 @@ module.exports = {
     secureSsl: true
   },
   senior_monthly: {
-    sessionCount: 8,
-    contactListCount: 4,
+    sessionCount: -1,
+    contactListCount: -1,
     recruiterContactListCount: 4,
     importDatabase: true,
     brandLogoAndCustomColors: true,
     contactListMemberCount: -1,
-    accountUserCount: 5,
+    accountUserCount: -1,
     exportContactListAndParticipantHistory: true,
     exportRecruiterStats: true,
     exportRecruiterSurveyData: true,
@@ -97,17 +97,17 @@ module.exports = {
     topicCount: -1,
     priority: 2,
     related: 'senior_yearly',
-    surveyCount: 4,
+    surveyCount: -1,
     secureSsl: true
   },
   senior_yearly: {
-    sessionCount: 8,
-    contactListCount: 4,
+    sessionCount: -1,
+    contactListCount: -1,
     recruiterContactListCount: 4,
     importDatabase: true,
     brandLogoAndCustomColors: true,
     contactListMemberCount: -1,
-    accountUserCount: 5,
+    accountUserCount: -1,
     exportContactListAndParticipantHistory: true,
     exportRecruiterStats: true,
     exportRecruiterSurveyData: true,
@@ -130,7 +130,7 @@ module.exports = {
     customEmailInvitationAndReminderMessages: true,
     topicCount: -1,
     priority: 2,
-    surveyCount: 4,
+    surveyCount: -1,
     secureSsl: true
   },
   core_monthly: {

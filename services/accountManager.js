@@ -77,7 +77,8 @@ function findAccountManagers(accountId) {
   AccountUser.findAll({
     where: {
       AccountId: accountId,
-      role: {$in: ['accountManager', 'admin']}
+      role: {$in: ['accountManager', 'admin']},
+      isRemoved: false
     }
   }).then((result) => {
     deferred.resolve(parseAccuntManagers(result) );

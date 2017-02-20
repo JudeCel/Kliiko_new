@@ -56,10 +56,10 @@ function mapData(accounts) {
   });
 }
 
-function shouldUpdateUser(params, byUser) {
+function shouldUpdateUser(params, byAccountUser) {
   //is active field being updated
   if (_.indexOf(_.keys(params), "active") > 0) {
-    return !(params.userId == byUser.accountUserId);
+    return params.accountUserId != byAccountUser.id;
   }
   return true;
 }
@@ -183,16 +183,16 @@ function updateAccountUserComment(params) {
   return deferred.promise;
 }
 
-function updateAccountUser(params, byUser, callback) {
-  byUser = byUser || {};
+function updateAccountUser(params, byAccountUser, callback) {
+  byAccountUser = byAccountUser || {};
   let updateParams = validateParams(params);
 
-  if (shouldUpdateUser(params, byUser)) {
+  if (shouldUpdateUser(params, byAccountUser)) {
     if (params.userId) {
       AccountUser.update(updateParams, {
         where: {
-          UserId: params.userId,
-          AccountId: params.accountId
+          AccountId: params.accountId,
+          isRemoved: false
         },
         returning: true
       }).then(function(result) {
