@@ -813,9 +813,11 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
-      if(newPlan.sessionCount < c){
-        cb(null, {session: MessagesUtil.subscription.validation.session});
-      }else{
+      if (isUnlimited(newPlan.sessionCount)) {
+        cb(null, {});
+      } else if (newPlan.sessionCount < c){
+        cb(null, {sesssion: MessagesUtil.subscription.validation.session});
+      } else {
         cb(null, {});
       }
     }, function(error) {
@@ -831,12 +833,13 @@ function validateSurveyCount(accountId, newPlan) {
         accountId: accountId
       }
     }).then(function(c) {
-      errors = errors || {};
-      if(newPlan.surveyCount < c){
-        errors.survey = MessagesUtil.subscription.validation.survey;
+      if (isUnlimited(newPlan.sessionCount)) {
+        cb(null, {});
+      } else if (newPlan.sessionCount < c){
+        cb(null, {sesssion: MessagesUtil.subscription.validation.survey});
+      } else {
+        cb(null, {});
       }
-
-      cb(null, errors);
     }, function(error) {
       cb(error);
     });
@@ -862,4 +865,7 @@ function validateContactListCount(accountId, newPlan) {
       cb(error);
     });
   }
+}
+function isUnlimited(planSessionCount) {
+  return planSessionCount == -1;
 }
