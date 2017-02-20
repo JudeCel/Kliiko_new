@@ -840,7 +840,6 @@ function validateSurveyCount(accountId, newPlan) {
       } else {
         cb(null, {});
       }
-      cb(null, errors);
     }, function(error) {
       cb(error);
     });
