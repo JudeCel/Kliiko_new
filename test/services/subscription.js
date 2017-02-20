@@ -329,7 +329,7 @@ describe('SERVICE - Subscription', function() {
                   assert.equal(result.subscription.planId, testData.lowerPlan.chargebeePlanId);
                   done();
                 }, function(error) {
-                  done("should not get here");
+                  done(error);
                 });
               }
             });

@@ -270,6 +270,7 @@
           vm.type = vm.session.steps.step1.type;
         } else {
           vm.session.steps.step1.type = vm.type;
+          vm.session.properties = res.sessionBuilder.properties;
         }
         initCanSelectFacilitator();
       }, function(err) {

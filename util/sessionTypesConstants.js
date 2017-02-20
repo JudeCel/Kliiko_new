@@ -21,9 +21,6 @@ module.exports = {
         sendGroupSms: false
       }
     },
-    fields: {
-      //here are only fields that can have different logic
-    },
     features: {
       survay: {
         prizeDraw: {
@@ -45,6 +42,17 @@ module.exports = {
       },
       sendSms: {
         enabled: true
+      },
+      socialMediaGraphics: {
+        enabled: false,
+        show: false
+      },
+      closeSession: {
+        enabled: true
+      },
+      dateAndTime: {
+        enabled: true,
+        show: true
       }
     },
     validations: {
@@ -77,9 +85,6 @@ module.exports = {
         sendGroupSms: false
       }
     },
-    fields: {
-      //here are only fields that can have different logic
-    },
     features: {
       survay: {
         prizeDraw: {
@@ -101,6 +106,17 @@ module.exports = {
       },
       sendSms: {
         enabled: false
+      },
+      socialMediaGraphics: {
+        enabled: false,
+        show: false
+      },
+      closeSession: {
+        enabled: true
+      },
+      dateAndTime: {
+        enabled: true,
+        show: true
       }
     },
     validations: {
@@ -131,9 +147,6 @@ module.exports = {
         enabled: false
       }
     },
-    fields: {
-      //here are only fields that can have different logic
-    },
     features: {
       survay: {
         prizeDraw: {
@@ -155,6 +168,21 @@ module.exports = {
       },
       sendSms: {
         enabled: false
+      },
+      socialMediaGraphics: {
+        enabled: false,
+        show: true,
+        //message will be updated with TA1560
+        message: "Not avaliable yet"
+      },
+      closeSession: {
+        enabled: false
+      },
+      dateAndTime: {
+        enabled: false,
+        show: true,
+        //message will be updated with TA1560
+        message: "Not avaliable"
       }
     },
     validations: {
