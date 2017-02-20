@@ -1206,10 +1206,9 @@ function validateStepTwo(params) {
   findSession(params.id, params.accountId).then(function(session) {
     let object = {};
     async.parallel(step2Queries(session, object), function(error, _result) {
-      if(error) {
+      if (error) {
         deferred.reject(error);
-      }
-      else {
+      } else {
         let errors = {};
 
         if(_.isEmpty(object.topics)) {

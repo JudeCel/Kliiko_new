@@ -427,17 +427,18 @@
     }
 
     vm.getMembersCloseEmailSentTranscription = function(member) {
-      return returnMemberCloseEmailSentStatus(member)
+      return returnMemberCloseEmailSentStatus(member);
     }
 
     function activeMembersLimitReached() {
-      if (vm.session.steps.step1.type == 'focus' && vm.isParticipantPage()) {
+      var limit = vm.isParticipantPage() ? vm.session.properties.validations.participant.max : vm.session.properties.validations.observer.max;
+      if (limit > -1) {
         var count = 0;
         for (var i=0; i<vm.stepMembers.length; i++) {
           var member = vm.stepMembers[i];
           if (member.inviteStatus == "confirmed" || member.inviteStatus == "inProgress") {
             count++;
-            if (count == 8) {
+            if (count == limit) {
               return true;
             }
           }

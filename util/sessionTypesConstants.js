@@ -49,15 +49,9 @@ module.exports = {
     },
     validations: {
       participant: {
-        min: 1,
         max: 8
       },
       observer: {
-        min: 0,
-        max: -1
-      },
-      topic: {
-        min: 1,
         max: -1
       }
     }
@@ -111,15 +105,9 @@ module.exports = {
     },
     validations: {
       participant: {
-        min: 1,
         max: -1
       },
       observer: {
-        min: 0,
-        max: -1
-      },
-      topic: {
-        min: 1,
         max: -1
       }
     }
@@ -171,16 +159,10 @@ module.exports = {
     },
     validations: {
       participant: {
-        min: 0,
         max: 0
       },
       observer: {
-        min: 0,
         max: 0
-      },
-      topic: {
-        min: 1,
-        max: -1
       }
     }
   }
