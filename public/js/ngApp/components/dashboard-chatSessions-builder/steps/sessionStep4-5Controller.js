@@ -16,6 +16,7 @@
     vm.editContactIndex = null;
     vm.contactData = {};
     vm.canSendSMS = false;
+    vm.canSendGroupSms = false;
 
     vm.currentFilter = 'all';
     vm.filterTypes = {
@@ -67,10 +68,6 @@
       return vm.session.currentStep == "inviteSessionObservers";
     }
 
-    vm.canSendSMSOnThisPage = function() {
-      return vm.isParticipantPage() && vm.canSendSMS;
-    }
-
     vm.getCurrentFilter = function(canSendCloseEmail) {
       if (canSendCloseEmail) {
         var res = !vm.filterInited ? undefined : { inviteStatus: 'confirmed' };
@@ -110,7 +107,8 @@
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
-      vm.canSendSMS = vm.session.steps.step1.type != 'forum';
+      vm.canSendSMS = vm.session.properties.features.sendSms.enabled;
+      vm.canSendGroupSms = vm.canSendSMS && vm.session.properties.steps[vm.session.currentStep].sendGroupSms;
       vm.mouseOveringMember = [];
 
       if (vm.isParticipantPage()) {

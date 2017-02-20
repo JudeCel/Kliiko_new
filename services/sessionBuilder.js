@@ -503,8 +503,17 @@ function destroy(id, accountId) {
 
 function sendSms(accountId, data, provider) {
   let deferred = q.defer();
-  smsService.send(accountId, data, provider).then((result) => {
-    deferred.resolve(result);
+
+  findSession(data.sessionId, accountId).then(function(session) {
+    if (sessionTypesConstants[session.type].features.sendSms.enabled) {
+      smsService.send(accountId, data, provider).then((result) => {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    } else {
+      deferred.reject(MessagesUtil.session.cantSendSMS);
+    }
   }, function(error) {
     deferred.reject(error);
   });

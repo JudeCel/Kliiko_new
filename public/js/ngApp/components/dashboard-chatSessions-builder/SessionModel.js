@@ -273,7 +273,7 @@
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message }, function(res) {
+      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message, sessionId: self.id }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         }
