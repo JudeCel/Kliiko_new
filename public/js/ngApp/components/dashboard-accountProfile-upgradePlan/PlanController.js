@@ -363,7 +363,9 @@
     }
 
     function finishedRenderingPlans() {
-      updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      });
     }
   }
 })();
