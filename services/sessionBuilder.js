@@ -870,6 +870,7 @@ function sessionBuilderObject(session, steps) {
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
+    inviteMembersCheck(sessionBuilder);
     deferred.resolve({
       sessionBuilder: sessionBuilder
     });
@@ -970,6 +971,15 @@ function stepsDefinition(session, steps) {
   });
 
   return deferred.promise;
+}
+
+function inviteMembersCheck(object) {
+  if (object.showStatus != 'Open') {
+    object.steps.step4.canInviteMembers = false;
+    object.steps.step5.canInviteMembers = false;
+    object.steps.step4.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedGuestsInvite;
+    object.steps.step5.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedObserversInvite;
+  }
 }
 
 function canEditSessionTime(session, object) {
