@@ -175,9 +175,9 @@
         return vm.q;
       }
       else {
-        var facilitator = vm.session.sessionData.facilitator;
+        var facilitator = vm.session.steps.step1.facilitator;
         return function(item) {
-          return ['facilitator', 'accountManager'].indexOf(item.role) > -1 || facilitator && facilitator.AccountUser.email === item.email;
+          return ['facilitator', 'accountManager'].indexOf(item.role) > -1 || facilitator && facilitator.email === item.email;
         };
       }
     }
