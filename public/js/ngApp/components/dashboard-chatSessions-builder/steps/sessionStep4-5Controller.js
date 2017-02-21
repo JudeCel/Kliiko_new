@@ -164,7 +164,7 @@
             }
             item.isSelected = false;
             updateInviteItem(resp);
-            
+
             return false;
           }
         });
@@ -246,7 +246,7 @@
           }
           messenger.ok(res.message);
         }, function(error) {
-          messenger.error(error);
+          $confirm({ text: error, title: 'Sorry', closeOnly: true, showAsError: true });
         });
       } else {
         var someMembersWereSelected = builderServices.someMembersWereSelected(vm);

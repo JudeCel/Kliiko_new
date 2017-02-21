@@ -109,6 +109,8 @@ module.exports = {
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
     sessionClosed: "You can't send invites because session has been closed",
+    sessionClosedGuestsInvite: "Sorry, but you cannot yet Invite Guests in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Guests, when you have Closed a Session, or Upgraded your Plan.",
+    sessionClosedObserversInvite: "Sorry, but you cannot yet Invite Spectators in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Spectators, when you have Closed a Session, or Upgraded your Plan.",
     cantRemoveInvite: {
       messages: "Is posted messages"
     },

@@ -514,14 +514,21 @@ function sendSms(accountId, data, provider) {
 // Untested
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
-
   findSession(sessionId, accountId).then(function(session) {
-    if(session.status == 'closed') {
-      deferred.reject(MessagesUtil.sessionBuilder.sessionClosed);
-    }
-    else {
-      return validators.hasValidSubscription(accountId);
-    }
+    sessionBuilderObject(session).then(function(sessionObj) {
+      if(sessionObj.sessionBuilder.showStatus != 'Open') {
+        if (data.role == 'observer') {
+          deferred.reject(MessagesUtil.sessionBuilder.sessionClosedObserversInvite);
+        } else {
+          deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
+        }
+      }
+      else {
+        return validators.hasValidSubscription(accountId);
+      }
+    }, function(error) {
+      reject(error);
+    });
   }).then(function() {
     return inviteParams(sessionId, data);
   }).then(function(params) {
