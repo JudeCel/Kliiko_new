@@ -160,7 +160,7 @@ function addAccountUser(params, accountId) {
     createAccountUser(params, accountId).then((data) => {
       resolve(data);
     }, (error) => {
-      reject(filters.errors(error));
+      reject(error);
     });
   })
 }
@@ -191,7 +191,7 @@ function createAccountUser(params, accountId) {
             reject(filters.errors(error));
           });
         }, (error) => {
-          reject(error);
+          reject(filters.errors(error));
         })
       } else {
         AccountUser.create(params).then((newAccountUser) =>{

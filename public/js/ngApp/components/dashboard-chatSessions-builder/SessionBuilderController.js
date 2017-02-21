@@ -399,13 +399,9 @@
 
     function mapToAccountUser(list){
       return list.map(function(i) {
-        return {
-          id: i.accountUserId,
-          firstName: i.firstName,
-          lastName: i.lastName,
-          email: i.email,
-          invite: null,
-        }
+        var copy = angular.copy(i);
+        copy.id = i.accountUserId;
+        return copy;
       })
     }
 

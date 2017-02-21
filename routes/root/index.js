@@ -24,6 +24,7 @@ var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
+var exec = require('child_process').exec;
 
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
@@ -87,6 +88,19 @@ function foundPaths(path, valid) {
   });
 }
 /* GET root page. */
+
+router.get('/updatePackages', function(req, res, next) {
+  if(req.query.token !== 'securityToken123') return res.status(404).send({ error: "Invalid token" });
+
+  exec('yarn outdated --color', (error, stdout, stderr) =>{
+    if(error) {
+      res.status(404).send({ error: error });
+    }
+    else {
+      res.send({ status: 'ok', data: stdout });
+    }
+  });
+});
 
 router.get('/ping', function(req, res, next) {
   res.send({ status: 'ok' });
