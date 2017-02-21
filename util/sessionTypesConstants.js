@@ -4,10 +4,12 @@ module.exports = {
   focus: {
     steps: {
       setUp: {
-        enabled: true
+        enabled: true,
+        socialMediaGraphics: false
       }, 
       facilitatiorAndTopics: {
-        enabled: true
+        enabled: true,
+        survays: false
       }, 
       manageSessionEmails: {
         enabled: true
@@ -43,16 +45,17 @@ module.exports = {
       sendSms: {
         enabled: true
       },
-      socialMediaGraphics: {
-        enabled: false,
-        show: false
-      },
       closeSession: {
         enabled: true
       },
       dateAndTime: {
-        enabled: true,
-        show: true
+        enabled: true
+      },
+      anonymous: {
+        enabled: true
+      },
+      colorScheme: {
+        type: "focus"
       }
     },
     validations: {
@@ -68,10 +71,12 @@ module.exports = {
   forum: {
     steps: {
       setUp: {
-        enabled: true
+        enabled: true,
+        socialMediaGraphics: false
       }, 
       facilitatiorAndTopics: {
-        enabled: true
+        enabled: true,
+        survays: false
       }, 
       manageSessionEmails: {
         enabled: true
@@ -107,16 +112,17 @@ module.exports = {
       sendSms: {
         enabled: false
       },
-      socialMediaGraphics: {
-        enabled: false,
-        show: false
-      },
       closeSession: {
         enabled: true
       },
       dateAndTime: {
-        enabled: true,
-        show: true
+        enabled: true
+      },
+      anonymous: {
+        enabled: true
+      },
+      colorScheme: {
+        type: "forum"
       }
     },
     validations: {
@@ -132,10 +138,12 @@ module.exports = {
   socialForum: {
     steps: {
       setUp: {
-        enabled: true
+        enabled: true,
+        socialMediaGraphics: true
       }, 
       facilitatiorAndTopics: {
-        enabled: true
+        enabled: true,
+        survays: true
       }, 
       manageSessionEmails: {
         enabled: false
@@ -169,20 +177,21 @@ module.exports = {
       sendSms: {
         enabled: false
       },
-      socialMediaGraphics: {
-        enabled: false,
-        show: true,
-        //message will be updated with TA1560
-        message: "Not avaliable yet"
-      },
       closeSession: {
         enabled: false
       },
       dateAndTime: {
         enabled: false,
-        show: true,
         //message will be updated with TA1560
         message: "Not avaliable"
+      },
+      anonymous: {
+        enabled: false,
+        //message will be updated with TA1560
+        message: "Not avaliable"
+      },
+      colorScheme: {
+        type: "forum"
       }
     },
     validations: {
