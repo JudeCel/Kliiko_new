@@ -156,7 +156,8 @@ function canAddAccountUsers(accountId) {
     if(subscription) {
       models.AccountUser.count({
         where: {
-          role: 'accountManager'
+          role: 'accountManager',
+          isRemoved: false
         },
         include: [{
           model: models.Account,
