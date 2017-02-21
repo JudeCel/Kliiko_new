@@ -118,6 +118,7 @@
 
       step1Service.createNewFcilitator(params).then(function(result) {
         result.user.listName = "Hosts";
+        result.user.role = 'facilitator';
         vm.allContacts.push(result.user);
         messenger.ok(result.facMessage);
         closeFacilitatorForm();
