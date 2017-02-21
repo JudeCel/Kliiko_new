@@ -164,7 +164,7 @@
             }
             item.isSelected = false;
             updateInviteItem(resp);
-            
+
             return false;
           }
         });
@@ -391,6 +391,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         angular.copy(mapCorrectData(res.data), vm.stepMembers[vm.editContactIndex]);
+        vm.stepMembers[vm.editContactIndex].id = res.data.accountUserId;
         vm.stepMembers[vm.editContactIndex].invite = vm.beforeEditInvite;
         messenger.ok(res.message);
         closeEditContactForm();
