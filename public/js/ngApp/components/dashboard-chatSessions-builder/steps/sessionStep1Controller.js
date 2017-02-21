@@ -11,6 +11,7 @@
     var colorSchemeId, brandLogoId;
     vm.editedContactIndex = null;
     vm.step1 = {};
+    vm.q = "";
     vm.$state = $state;
 
     vm.selectedFacilitator = {};
@@ -38,6 +39,7 @@
     vm.openFacilitatorForm = openFacilitatorForm;
     vm.closeFacilitatorForm = closeFacilitatorForm;
     vm.deleteContact = deleteContact;
+    vm.filterContacts = filterContacts;
     vm.editContact = editContact;
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
@@ -116,6 +118,8 @@
 
       step1Service.createNewFcilitator(params).then(function(result) {
         result.user.listName = "Hosts";
+        result.user.role = 'facilitator';
+        result.user.id = result.user.accountUserId;
         vm.allContacts.push(result.user);
         messenger.ok(result.facMessage);
         closeFacilitatorForm();
@@ -140,6 +144,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         res.data.listName = vm.editedContactListName;
+        res.data.role = vm.allContacts[vm.editedContactIndex].role;
         angular.copy(res.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
         messenger.ok(res.message);
@@ -168,6 +173,18 @@
       vm.userData = {};
     }
 
+    function filterContacts() {
+      if(vm.q) {
+        return vm.q;
+      }
+      else {
+        var facilitator = vm.session.steps.step1.facilitator;
+        return function(item) {
+          return ['facilitator', 'accountManager'].indexOf(item.role) > -1 || facilitator && facilitator.email === item.email;
+        };
+      }
+    }
+
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
         results.map(function(result) {
@@ -175,6 +192,8 @@
             vm.facilitatorContactListId = result.id;
           }
           result.members.map(function(member) {
+            member.id = member.accountUserId;
+            member.role = result.role;
             member.listName = result.name;
             vm.allContacts.push(member);
           });

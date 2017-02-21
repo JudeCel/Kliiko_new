@@ -103,13 +103,12 @@ function recalculateRole(accountUser, newRole, removeRole) {
     }
 
     setRemoveStatus(destinationRoll, removeRole, params);
-
     resolve(params);
   })
 }
 
 function setRemoveStatus(destinationRole, removeRole, params) {
-  params.isRemoved = !destinationRole && removeRole == 'admin';
+  return params.isRemoved = !destinationRole && removeRole == 'admin' || removeRole == 'accountManager';
 }
 
 function createAccountManager(object, callback) {

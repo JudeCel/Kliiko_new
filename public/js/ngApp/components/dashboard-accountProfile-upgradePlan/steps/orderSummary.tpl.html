@@ -21,9 +21,20 @@
             <span class="caret"><span>
           </div>
           <ul class="dropdown-menu" aria-labelledby="plansDropdownMenu">
-              <li ng-repeat="planItem in up.monthlyPlans">
+              <li class="dropdown-header">Monthly</li>
+              <li ng-repeat="planItem in up.monthlyPlans" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
                 <a ng-click="up.dropdownSelectedPlan(planItem)">
                   {{planItem.plan.name}}
+                  <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
+                </a>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Annual</li>
+
+              <li ng-repeat="planItem in up.annualPlans" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
+                <a ng-click="up.dropdownSelectedPlan(planItem)">
+                  {{planItem.plan.name}}
+                  <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
                 </a>
               </li>
           <ul>
