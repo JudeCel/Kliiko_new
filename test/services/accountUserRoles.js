@@ -44,7 +44,7 @@ describe('SERVICE - AccountUser without DB', function() {
         })
       })
 
-      it.only("return highest role participant, current role chenges", (done) => {
+      it("return highest role participant, current role chenges", (done) => {
         let accountUser = {
           role: "accountManager",
           SessionMembers: [
@@ -65,7 +65,7 @@ describe('SERVICE - AccountUser without DB', function() {
         })
       })
 
-      it("return highest role admin, current role not chenges", (done) => {
+      it.only("return highest role admin, current role not chenges", (done) => {
         let accountUser = {
           role: "admin",
           SessionMembers: [
@@ -78,7 +78,7 @@ describe('SERVICE - AccountUser without DB', function() {
 
         accountUserService.recalculateRole(accountUser, null, 'accountManager').then((result) => {
           try {
-            assert.deepEqual(result, { role: "admin", active: true, isRemoved: false });
+            assert.deepEqual(result, { role: "admin", active: true, isRemoved: true });
             done();
           } catch (e) {
             done(e);
