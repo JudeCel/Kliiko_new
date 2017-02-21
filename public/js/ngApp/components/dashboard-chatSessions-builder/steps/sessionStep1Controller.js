@@ -45,6 +45,7 @@
     vm.inviteFacilitator = inviteFacilitator;
     vm.cleanColorScheme = cleanColorScheme;
     vm.updateOrCleanColorScheme = updateOrCleanColorScheme;
+    vm.showTimeBlockedMessage = showTimeBlockedMessage;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -168,6 +169,12 @@
     function closeFacilitatorForm() {
       domServices.modal('facilitatorForm', 'close');
       vm.userData = {};
+    }
+
+    function showTimeBlockedMessage() {
+      if (vm.session.steps.step1.canEditTime == false) {
+        $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
+      }
     }
 
     function filterContacts() {
