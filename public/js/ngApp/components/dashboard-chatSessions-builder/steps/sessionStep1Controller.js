@@ -119,6 +119,7 @@
       step1Service.createNewFcilitator(params).then(function(result) {
         result.user.listName = "Hosts";
         result.user.role = 'facilitator';
+        result.user.id = result.user.accountUserId;
         vm.allContacts.push(result.user);
         messenger.ok(result.facMessage);
         closeFacilitatorForm();
@@ -143,6 +144,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         res.data.listName = vm.editedContactListName;
+        res.data.role = vm.allContacts[vm.editedContactIndex].role;
         angular.copy(res.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
         messenger.ok(res.message);
@@ -190,6 +192,7 @@
             vm.facilitatorContactListId = result.id;
           }
           result.members.map(function(member) {
+            member.id = member.accountUserId;
             member.role = result.role;
             member.listName = result.name;
             vm.allContacts.push(member);
