@@ -1,205 +1,208 @@
 'use strict';
+
+//Make sure you copied changes you do here to chat project tests file !!!
+
 module.exports = {
 
-  focus: {
-    steps: {
-      setUp: {
-        enabled: true,
-        socialMediaGraphics: false
+  "focus": {
+    "steps": {
+      "setUp": {
+        "enabled": true,
+        "socialMediaGraphics": false
       }, 
-      facilitatiorAndTopics: {
-        enabled: true,
-        survays: false
+      "facilitatiorAndTopics": {
+        "enabled": true,
+        "survays": false
       }, 
-      manageSessionEmails: {
-        enabled: true
+      "manageSessionEmails": {
+        "enabled": true
       },
-      manageSessionParticipants: {
-        enabled: true,
-        sendGroupSms: true
+      "manageSessionParticipants": {
+        "enabled": true,
+        "sendGroupSms": true
       }, 
-      inviteSessionObservers: {
-        enabled: true,
-        sendGroupSms: false
+      "inviteSessionObservers": {
+        "enabled": true,
+        "sendGroupSms": false
       }
     },
-    features: {
-      survay: {
-        prizeDraw: {
-          enabled: false
+    "features": {
+      "survay": {
+        "prizeDraw": {
+          "enabled": false
         },
-        contactList: {
-          enabled: false
+        "contactList": {
+          "enabled": false
         },
       },
-      unidentifiedParticipants: {
-        enabled: false
+      "unidentifiedParticipants": {
+        "enabled": false
       },
-      whiteboard: {
-        enabled: true,
-        canWrite: ['facilitator', 'participant']
+      "whiteboard": {
+        "enabled": true,
+        "canWrite": ["facilitator", "participant"]
       },
-      pinboard: {
-        enabled: true
+      "pinboard": {
+        "enabled": true
       },
-      sendSms: {
-        enabled: true
+      "sendSms": {
+        "enabled": true
       },
-      closeSession: {
-        enabled: true
+      "closeSession": {
+        "enabled": true
       },
-      dateAndTime: {
-        enabled: true
+      "dateAndTime": {
+        "enabled": true
       },
-      anonymous: {
-        enabled: true
+      "anonymous": {
+        "enabled": true
       },
-      colorScheme: {
-        type: "focus"
+      "colorScheme": {
+        "type": "focus"
       }
     },
-    validations: {
-      participant: {
-        max: 8
+    "validations": {
+      "participant": {
+        "max": 8
       },
-      observer: {
-        max: -1
+      "observer": {
+        "max": -1
       }
     }
   },
 
-  forum: {
-    steps: {
-      setUp: {
-        enabled: true,
-        socialMediaGraphics: false
+  "forum": {
+    "steps": {
+      "setUp": {
+        "enabled": true,
+        "socialMediaGraphics": false
       }, 
-      facilitatiorAndTopics: {
-        enabled: true,
-        survays: false
+      "facilitatiorAndTopics": {
+        "enabled": true,
+        "survays": false
       }, 
-      manageSessionEmails: {
-        enabled: true
+      "manageSessionEmails": {
+        "enabled": true
       },
-      manageSessionParticipants: {
-        enabled: true,
-        sendGroupSms: false
+      "manageSessionParticipants": {
+        "enabled": true,
+        "sendGroupSms": false
       }, 
-      inviteSessionObservers: {
-        enabled: true,
-        sendGroupSms: false
+      "inviteSessionObservers": {
+        "enabled": true,
+        "sendGroupSms": false
       }
     },
-    features: {
-      survay: {
-        prizeDraw: {
-          enabled: false
+    "features": {
+      "survay": {
+        "prizeDraw": {
+          "enabled": false
         },
-        contactList: {
-          enabled: false
+        "contactList": {
+          "enabled": false
         },
       },
-      unidentifiedParticipants: {
-        enabled: false
+      "unidentifiedParticipants": {
+        "enabled": false
       },
-      whiteboard: {
-        enabled: true,
-        canWrite: ['facilitator']
+      "whiteboard": {
+        "enabled": true,
+        "canWrite": ["facilitator"]
       },
-      pinboard: {
-        enabled: false
+      "pinboard": {
+        "enabled": false
       },
-      sendSms: {
-        enabled: false
+      "sendSms": {
+        "enabled": false
       },
-      closeSession: {
-        enabled: true
+      "closeSession": {
+        "enabled": true
       },
-      dateAndTime: {
-        enabled: true
+      "dateAndTime": {
+        "enabled": true
       },
-      anonymous: {
-        enabled: true
+      "anonymous": {
+        "enabled": true
       },
-      colorScheme: {
-        type: "forum"
+      "colorScheme": {
+        "type": "forum"
       }
     },
-    validations: {
-      participant: {
-        max: -1
+    "validations": {
+      "participant": {
+        "max": -1
       },
-      observer: {
-        max: -1
+      "observer": {
+        "max": -1
       }
     }
   },
 
-  socialForum: {
-    steps: {
-      setUp: {
-        enabled: true,
-        socialMediaGraphics: true
+  "socialForum": {
+    "steps": {
+      "setUp": {
+        "enabled": true,
+        "socialMediaGraphics": true
       }, 
-      facilitatiorAndTopics: {
-        enabled: true,
-        survays: true
+      "facilitatiorAndTopics": {
+        "enabled": true,
+        "survays": true
       }, 
-      manageSessionEmails: {
-        enabled: false
+      "manageSessionEmails": {
+        "enabled": false
       },
-      manageSessionParticipants: {
-        enabled: false
+      "manageSessionParticipants": {
+        "enabled": false
       }, 
-      inviteSessionObservers: {
-        enabled: false
+      "inviteSessionObservers": {
+        "enabled": false
       }
     },
-    features: {
-      survay: {
-        prizeDraw: {
-          enabled: true
+    "features": {
+      "survay": {
+        "prizeDraw": {
+          "enabled": true
         },
-        contactList: {
-          enabled: true
+        "contactList": {
+          "enabled": true
         },
       },
-      unidentifiedParticipants: {
-        enabled: true
+      "unidentifiedParticipants": {
+        "enabled": true
       },
-      whiteboard: {
-        enabled: true,
-        canWrite: ['facilitator']
+      "whiteboard": {
+        "enabled": true,
+        "canWrite": ["facilitator"]
       },
-      pinboard: {
-        enabled: false
+      "pinboard": {
+        "enabled": false
       },
-      sendSms: {
-        enabled: false
+      "sendSms": {
+        "enabled": false
       },
-      closeSession: {
-        enabled: false
+      "closeSession": {
+        "enabled": false
       },
-      dateAndTime: {
-        enabled: false,
+      "dateAndTime": {
+        "enabled": false,
         //message will be updated with TA1560
-        message: "Not avaliable"
+        "message": "Not avaliable"
       },
-      anonymous: {
-        enabled: false,
+      "anonymous": {
+        "enabled": false,
         //message will be updated with TA1560
-        message: "Not avaliable"
+        "message": "Not avaliable"
       },
-      colorScheme: {
-        type: "forum"
+      "colorScheme": {
+        "type": "forum"
       }
     },
-    validations: {
-      participant: {
-        max: 0
+    "validations": {
+      "participant": {
+        "max": 0
       },
-      observer: {
-        max: 0
+      "observer": {
+        "max": 0
       }
     }
   }
