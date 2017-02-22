@@ -527,8 +527,6 @@ function inviteMembers(sessionId, data, accountId, accountName) {
     else {
       return validators.hasValidSubscription(accountId);
     }
-  }, function(error) {
-      deferred.reject(error);
   }).then(function() {
     return inviteParams(sessionId, data);
   }).then(function(params) {
