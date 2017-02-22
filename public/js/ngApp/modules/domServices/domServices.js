@@ -28,11 +28,15 @@
         return
       }
 
+      var modal = $('#' + modalId);
       if(close) {
         if(typeof close === 'function') {
-          jQuery('#' + modalId).on('hidden.bs.modal', close);
+          modal.on('hidden.bs.modal', function() {
+            modal.off('hidden.bs.modal');
+            close();
+          });
         }
-        jQuery('#' + modalId).modal('hide');
+        modal.modal('hide');
       } else {
         var id, modals = $('body .modal.fade:visible');
         if(modals.length) {
@@ -43,7 +47,6 @@
         }
 
         if(modalId != id) {
-          var modal = jQuery('#' + modalId);
           if (modal.length) {
             modal.modal('show');
           }else{
