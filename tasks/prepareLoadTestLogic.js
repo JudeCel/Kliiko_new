@@ -4,8 +4,6 @@ require('dotenv-extended').load({
   errorOnMissing: true
 });
 
-let async = require('async');
-let _ = require('lodash');
 let models = require("../models");
 let Bluebird = require('bluebird');
 var usersServices  = require('./../services/users');
@@ -16,7 +14,7 @@ const USERS_COUNT = 50;
 const USERS_PLAN = 'senior_yearly';
 const USERS_EMAIL = 'loadTesting@insider.com';
 const USERS_PASSWORD = 'Qwerty123';
-const SYMBOLS = 'abcdefghij';
+const SYMBOLS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 
 function getUserEmail(index) {
   if (index == 0) {
@@ -27,10 +25,9 @@ function getUserEmail(index) {
 }
 
 function getUserName(index) {
-  let res = index.toString();
-  for (var i = 0; i <= 9; i++) {
-    res = res.replace(new RegExp(i.toString(), 'g'), SYMBOLS[i]);
-  }
+  let res = SYMBOLS.reduce(function(previousValue, currentValue, index, array) {
+    return previousValue.replace(new RegExp(index.toString(), 'g'), currentValue);
+  }, index.toString());
   while (res.length < 4) {
     res = SYMBOLS[0] + res;
   }
@@ -61,12 +58,10 @@ function createUsers() {
 function createUser(index) {
   return new Bluebird((resolve, reject) => {
     createUserByParams(getUserParams(index)).then((data) => {
-      createSubscription(data.account.id, data.user.id).then(() => {
-        resolve();
-      }, (error) => {
-        reject(error);
-      });
-    }, (error) => {
+      return createSubscription(data.account.id, data.user.id);
+    }).then(() => {
+      resolve();
+    }).catch(function(error) {
       reject(error);
     });
   });
@@ -135,13 +130,11 @@ function getSubscriptionProvider(uid) {
 
 function createSessions() {
   return new Bluebird((resolve, reject) => {
-    createSession("TestFocus", "focus", 0, 1, 8).then(() => {
-      createSession("TestForum", "forum", 0, 9, USERS_COUNT - 1).then(() => {
-        resolve();
-      }, (error) => {
-        reject(error);
-      });
-    }, (error) => {
+    createSession("TestFocus", "focus", 0, 1, 8).then((data) => {
+      return createSession("TestForum", "forum", 0, 9, USERS_COUNT - 1);
+    }).then(() => {
+      resolve();
+    }).catch(function(error) {
       reject(error);
     });
   });
@@ -150,29 +143,25 @@ function createSessions() {
 function createSession(name, type, ownerIndex, firstParticipantIndex, lastParticipantIndex) {
   return new Bluebird((resolve, reject) => {
     console.log("Session: " + name);
-    models.AccountUser.find({ where: { email: getUserEmail(ownerIndex)} }).then((accountUser) => {
+    let session = null;
+    let accountUser = null;
+    models.AccountUser.find({ where: { email: getUserEmail(ownerIndex)} }).then((owner) => {
+      accountUser = owner;
       let sessionParams = getSessionParams(name, type, accountUser.AccountId);
-      models.Session.create(sessionParams).then((session) => {
-        createTopic(session).then(() => {
-          createSessionMember(accountUser, session.id, 'facilitator').then(() =>  {
-            let indexes = generateIndexesArray(firstParticipantIndex, lastParticipantIndex);
-            Bluebird.each(indexes, (index) => {
-              return createSessionMemberByIndex(index, session.id, "participant");
-            }).then(() => {
-              resolve();
-            }, (error) => {
-              reject(error);
-            });
-          }, (error) => {
-            reject(error);
-          });
-        }, (error) => {
-          reject(error);
-        });
-      }, (error) => {
-        reject(error);
+      return models.Session.create(sessionParams);
+    }).then((newSession) => {
+      session = newSession;
+      return createTopic(session);
+    }).then(() => {
+      return createSessionMember(accountUser, session.id, 'facilitator');
+    }).then(() => {
+      let indexes = generateIndexesArray(firstParticipantIndex, lastParticipantIndex);
+      return Bluebird.each(indexes, (index) => {
+        return createSessionMemberByIndex(index, session.id, "participant");
       });
-    }, (error) => {
+    }).then(() => {
+      resolve();
+    }).catch(function(error) {
       reject(error);
     });
   });
@@ -193,12 +182,10 @@ function createTopic(session) {
 function createSessionMemberByIndex(index, sessionId, role) {
   return new Bluebird((resolve, reject) => {
     models.AccountUser.find({ where: { email: getUserEmail(index)} }).then((accountUser) => {
-      createSessionMember(accountUser, sessionId, role).then(() => {
-        resolve();
-      }, (error) => {
-        reject(error);
-      });
-    }, (error) => {
+      return createSessionMember(accountUser, sessionId, role);
+    }).then(() => {
+      resolve();
+    }).catch(function(error) {
       reject(error);
     });
   });
