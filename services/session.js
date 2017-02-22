@@ -296,7 +296,7 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
 function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
-  validators.subscription(accountId, 'session', 1).then(function() {
+  validators.subscription(accountId, 'session', 0).then(function() {
     findSession(sessionId, accountId, provider).then(function(result) {
       let facilitator = result.data.dataValues.facilitator;
       delete result.data.dataValues.id;

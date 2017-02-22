@@ -65,7 +65,7 @@ describe('SERVICE - AccountUser without DB', function() {
         })
       })
 
-      it.only("return highest role admin, current role not chenges", (done) => {
+      it("return highest role admin, current role not chenges", (done) => {
         let accountUser = {
           role: "admin",
           SessionMembers: [

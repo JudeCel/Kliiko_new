@@ -24,7 +24,8 @@
     "createDefaultTopics": "node ./tasks/createDefaultTopics.js",
     "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js",
     "addMailTemplate": "node ./tasks/addMailTemplate.js",
-    "updateSessionTypes": "node ./tasks/updateSessionTypes.js"
+    "updateSessionTypes": "node ./tasks/updateSessionTypes.js",
+    "prepareLoadTest": "node ./tasks/prepareLoadTest.js"
   },
   "engineStrict": true,
   "engine": {
