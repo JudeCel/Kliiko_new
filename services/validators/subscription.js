@@ -26,7 +26,7 @@ const DEPENDENCIES = {
         }
       };
     },
-    countMessage: sessionCountMessage
+    countMessage: countMessage
   },
   contactList: {
     key: 'contactListCount',
@@ -186,10 +186,6 @@ function canAddAccountUsers(accountId) {
 
 function canAddManager(allowedBySubscription, currentManagerCount) {
   return allowedBySubscription == -1 || allowedBySubscription >= currentManagerCount;
-}
-
-function sessionCountMessage(type, maxCount) {
-  return MessagesUtil.validators.subscription.sessionsCountLimit;
 }
 
 function countMessage(type, maxCount) {

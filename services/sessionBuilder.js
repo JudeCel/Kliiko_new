@@ -996,8 +996,7 @@ function canEditSessionTime(session, object) {
         resolve();
       }).catch(function(error) {
         object.step1.canEditTime = false;
-        object.step1.canEditTimeMessage = error;
-
+        object.step1.canEditTimeMessage = MessagesUtil.validators.subscription.sessionsTimeInputDisabledMessage;
         reject(error);
       });
     }

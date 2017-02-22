@@ -248,7 +248,7 @@ module.exports = {
       recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter on the ',
       recruiterCountLimitCore: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
       recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.',
-      sessionsCountLimit: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
+      sessionsTimeInputDisabledMessage: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
     }
   },
   models: {
