@@ -54,7 +54,7 @@
     vm.rateMember = rateMember;
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
-    vm.showSpinner = showSpinner;;
+    vm.showSpinner = showSpinner;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -82,6 +82,7 @@
     }
 
     vm.prepareData = function(sbc) {
+
       if(vm.previousStep != vm.session.sessionData.step) {
         vm.previousStep = vm.session.sessionData.step;
         vm.currentFilter = 'all';
@@ -93,16 +94,19 @@
         }else{
           vm.stepMembers = sbc.participants;
         }
+        vm.inviteEnabled = sbc.session.steps.step4.canInviteMembers;
+        vm.inviteMembersError = sbc.session.steps.step4.inviteMembersError;
       } else if (vm.isObserverPage()) {
         if(sbc.isSessionClosed()){
           vm.stepMembers = sbc.session.steps.step5.observers;
         }else{
           vm.stepMembers = sbc.observers;
         }
+        vm.inviteEnabled = sbc.session.steps.step5.canInviteMembers;
+        vm.inviteMembersError = sbc.session.steps.step5.inviteMembersError;
       } else {
         vm.stepMembers = [];
       }
-
       return vm.stepMembers;
     }
 
@@ -220,8 +224,8 @@
       }
     }
 
-    function inviteMembers() {
-     var data = findSelectedMembersInvite();
+    function performInvite() {
+      var data = findSelectedMembersInvite();
 
       if(data.length > 0) {
         var promise;
@@ -246,11 +250,19 @@
           }
           messenger.ok(res.message);
         }, function(error) {
-          messenger.error(error);
+          $confirm({ text: error, title: 'Sorry', closeOnly: true, showAsError: true });
         });
       } else {
         var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
         messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToInvite : messagesUtil.sessionBuilder.noContacts);
+      }
+    }
+
+    function inviteMembers() {
+      if (vm.inviteEnabled) {
+        performInvite();
+      } else {
+        $confirm({ text: vm.inviteMembersError, title: 'Sorry', closeOnly: true, showAsError: true });
       }
     }
 
