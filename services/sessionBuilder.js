@@ -515,20 +515,20 @@ function sendSms(accountId, data, provider) {
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
   findSession(sessionId, accountId).then(function(session) {
-    sessionBuilderObject(session).then(function(sessionObj) {
-      if(sessionObj.sessionBuilder.showStatus != 'Open') {
-        if (data.role == 'observer') {
-          deferred.reject(MessagesUtil.sessionBuilder.sessionClosedObserversInvite);
-        } else {
-          deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
-        }
+    return sessionBuilderObject(session);
+  }).then(function(sessionObj) {
+    if(sessionObj.sessionBuilder.showStatus != 'Open') {
+      if (data.role == 'observer') {
+        deferred.reject(MessagesUtil.sessionBuilder.sessionClosedObserversInvite);
+      } else {
+        deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
       }
-      else {
-        return validators.hasValidSubscription(accountId);
-      }
-    }, function(error) {
-      reject(error);
-    });
+    }
+    else {
+      return validators.hasValidSubscription(accountId);
+    }
+  }, function(error) {
+      deferred.reject(error);
   }).then(function() {
     return inviteParams(sessionId, data);
   }).then(function(params) {
@@ -974,14 +974,13 @@ function stepsDefinition(session, steps) {
 }
 
 function inviteMembersCheck(object) {
-  if (object.showStatus != 'Open') {
-    object.steps.step4.canInviteMembers = false;
-    object.steps.step5.canInviteMembers = false;
+  let can = object.showStatus == 'Open';
+  object.steps.step4.canInviteMembers = can;
+  object.steps.step5.canInviteMembers = can;
+
+  if (!can) {
     object.steps.step4.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedGuestsInvite;
     object.steps.step5.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedObserversInvite;
-  } else {
-    object.steps.step4.canInviteMembers = true;
-    object.steps.step5.canInviteMembers = true;
   }
 }
 
