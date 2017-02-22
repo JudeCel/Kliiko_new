@@ -496,11 +496,15 @@
     }
 
     function activateSession() {
-      vm.session.activateSession().then(function(res) {
+      if (vm.session.sessionData.isInactive) {
+        vm.session.activateSession().then(function(res) {
+          finishSessionBuilder();
+        }, function(error) {
+          messenger.error(error);
+        });
+      } else {
         finishSessionBuilder();
-      }, function(error) {
-        messenger.error(error);
-      });
+      }
     }
 
   }
