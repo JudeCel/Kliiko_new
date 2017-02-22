@@ -979,6 +979,9 @@ function inviteMembersCheck(object) {
     object.steps.step5.canInviteMembers = false;
     object.steps.step4.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedGuestsInvite;
     object.steps.step5.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedObserversInvite;
+  } else {
+    object.steps.step4.canInviteMembers = true;
+    object.steps.step5.canInviteMembers = true;
   }
 }
 
