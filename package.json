@@ -23,7 +23,8 @@
     "updateContactLists": "node ./tasks/updateContactLists.js",
     "createDefaultTopics": "node ./tasks/createDefaultTopics.js",
     "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js",
-    "addMailTemplate": "node ./tasks/addMailTemplate.js"
+    "addMailTemplate": "node ./tasks/addMailTemplate.js",
+    "prepareLoadTest": "node ./tasks/prepareLoadTest.js"
   },
   "engineStrict": true,
   "engine": {
