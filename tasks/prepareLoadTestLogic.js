@@ -35,11 +35,7 @@ function getUserName(index) {
 }
 
 function generateIndexesArray(first, last) {
-  let arr = [];
-  for (var i = first; i <= last; i++) {
-    arr.push(i);
-  }
-  return arr;
+  return new Array(last - first).fill(0).map((item, index) => first + index);
 }
 
 function createUsers() {
