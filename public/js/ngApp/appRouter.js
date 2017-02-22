@@ -152,15 +152,16 @@
           dbg.rs('account-hub.resources.topics is on');
         }]
       })
-      .state('account-hub.smsCredits', {
-        url: "/smsCredits",
-        views: {
-          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
-        },
-        onEnter: ['dbg', function(dbg) {
-          dbg.rs('account-hub.smsCredits is on');
-        }]
-      })
+      // NOTE: Right now we need to disable this, while Judy is deciding what we will do with SMS credit purchasing.
+      // .state('account-hub.smsCredits', {
+      //   url: "/smsCredits",
+      //   views: {
+      //     'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
+      //   },
+      //   onEnter: ['dbg', function(dbg) {
+      //     dbg.rs('account-hub.smsCredits is on');
+      //   }]
+      // })
       .state('account-hub.resources.emailTemplates', {
         url: "/email-templates",
         views: {

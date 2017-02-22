@@ -127,7 +127,7 @@ function initializeBuilder(params) {
     params.step = 'setUp';
     params.startTime = params.date;
     params.endTime = params.date;
-    params.isVisited = { 
+    params.isVisited = {
       setUp: true,
       facilitatiorAndTopics: false,
       manageSessionEmails: false,
@@ -514,10 +514,15 @@ function sendSms(accountId, data, provider) {
 // Untested
 function inviteMembers(sessionId, data, accountId, accountName) {
   let deferred = q.defer();
-
   findSession(sessionId, accountId).then(function(session) {
-    if(session.status == 'closed') {
-      deferred.reject(MessagesUtil.sessionBuilder.sessionClosed);
+    return sessionBuilderObject(session);
+  }).then(function(sessionObj) {
+    if(sessionObj.sessionBuilder.showStatus != 'Open') {
+      if (data.role == 'observer') {
+        deferred.reject(MessagesUtil.sessionBuilder.sessionClosedObserversInvite);
+      } else {
+        deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
+      }
     }
     else {
       return validators.hasValidSubscription(accountId);
@@ -863,6 +868,7 @@ function sessionBuilderObject(session, steps) {
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
+    inviteMembersCheck(sessionBuilder);
     deferred.resolve({
       sessionBuilder: sessionBuilder
     });
@@ -949,12 +955,49 @@ function stepsDefinition(session, steps) {
           cb();
         }
       });
+    },
+    function(cb) {
+      //both callbacks can return cb() as we set only 1 parameter inside this function
+      canEditSessionTime(session, object).then(function() {
+        cb();
+      }).catch(function(error) {
+        cb();
+      });
     }
   ], function(error, _result) {
     error ? deferred.reject(error) : deferred.resolve(object);
   });
 
   return deferred.promise;
+}
+
+function inviteMembersCheck(object) {
+  let can = object.showStatus == 'Open';
+  object.steps.step4.canInviteMembers = can;
+  object.steps.step5.canInviteMembers = can;
+
+  if (!can) {
+    object.steps.step4.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedGuestsInvite;
+    object.steps.step5.inviteMembersError = MessagesUtil.sessionBuilder.sessionClosedObserversInvite;
+  }
+}
+
+function canEditSessionTime(session, object) {
+  return new Bluebird(function (resolve, reject) {
+    if (object.status == 'open') {
+      object.step1.canEditTime = true;
+      resolve();
+    } else {
+      validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function(subscription) {
+        object.step1.canEditTime = true;
+        resolve();
+      }).catch(function(error) {
+        object.step1.canEditTime = false;
+        object.step1.canEditTimeMessage = MessagesUtil.validators.subscription.sessionsTimeInputDisabledMessage;
+        reject(error);
+      });
+    }
+  });
 }
 
 function getStepError(steps, stepPropertyName) {
@@ -1143,7 +1186,6 @@ function findValidation(step, params) {
 
 function validateStepOne(params) {
   let deferred = q.defer();
-
   findSession(params.id, params.accountId).then(function(session) {
     let object = {};
     async.parallel(step1Queries(session, object), function(error, _result) {

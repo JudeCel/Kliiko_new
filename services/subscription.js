@@ -813,7 +813,9 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
-      if(newPlan.sessionCount < c){
+      if(newPlan.sessionCount == -1) {
+        cb(null, {});
+      } else if(newPlan.sessionCount < c){
         cb(null, {session: MessagesUtil.subscription.validation.session});
       }else{
         cb(null, {});
@@ -832,11 +834,15 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      if(newPlan.surveyCount < c){
-        errors.survey = MessagesUtil.subscription.validation.survey;
-      }
 
-      cb(null, errors);
+      if(newPlan.sessionCount == -1) {
+        cb(null, errors);
+      } else if(newPlan.sessionCount < c){
+        errors.survey = MessagesUtil.subscription.validation.survey;
+        cb(null, errors);
+      }else{
+        cb(null, errors);
+      }
     }, function(error) {
       cb(error);
     });
