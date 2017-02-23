@@ -36,7 +36,7 @@ module.exports = {
   },
   down: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
-      reject("Should newer do this");
+      reject("Should newer do this!");
     });
   }
 };

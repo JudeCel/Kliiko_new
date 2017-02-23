@@ -71,10 +71,9 @@ function setAnonymous(sessionId, accountId) {
             deferred.resolve(updatedSession);
           });
         })
-      }else{
+      } else {
         deferred.reject(MessagesUtil.session.cannotBeChanged);
       }
-
     } else {
       deferred.reject(MessagesUtil.session.notFound);
     }
@@ -86,8 +85,7 @@ function setAnonymous(sessionId, accountId) {
 }
 
 function canChangeAnonymous(session) {
-  if (session.anonymous == true) { return false };
-  return true;
+  return !session.anonymous && sessionTypesConstants[session.type].features.anonymous.enabled;
 }
 
 function getSessionByInvite(token) {
