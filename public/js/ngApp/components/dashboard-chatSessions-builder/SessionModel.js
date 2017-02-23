@@ -120,17 +120,11 @@
       return deferred.promise;
     }
 
-    function initializeDate() {
-      var date = new Date();
-      date.setHours(0, 0, 0, 0);
-      return date;
-    }
-
     function createNew() {
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{ date: initializeDate().toString(), timeZone: jstz.determine().name() },function(res) {
+      sessionBuilderRestApi.post({},{ timeZone: jstz.determine().name() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }

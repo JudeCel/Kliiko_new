@@ -8,11 +8,9 @@ module.exports = {
     "steps": {
       "setUp": {
         "enabled": true,
-        "socialMediaGraphics": false
       }, 
       "facilitatiorAndTopics": {
-        "enabled": true,
-        "survays": false
+        "enabled": true
       }, 
       "manageSessionEmails": {
         "enabled": true
@@ -28,12 +26,7 @@ module.exports = {
     },
     "features": {
       "survay": {
-        "prizeDraw": {
-          "enabled": false
-        },
-        "contactList": {
-          "enabled": false
-        },
+        "enabled": false
       },
       "unidentifiedParticipants": {
         "enabled": false
@@ -52,13 +45,16 @@ module.exports = {
         "enabled": true
       },
       "dateAndTime": {
-        "enabled": true
+        "enabled": false
       },
       "anonymous": {
         "enabled": true
       },
       "colorScheme": {
         "type": "focus"
+      },
+      "socialMediaGraphics": {
+        "enabled": false
       }
     },
     "validations": {
@@ -74,12 +70,10 @@ module.exports = {
   "forum": {
     "steps": {
       "setUp": {
-        "enabled": true,
-        "socialMediaGraphics": false
+        "enabled": true
       }, 
       "facilitatiorAndTopics": {
-        "enabled": true,
-        "survays": false
+        "enabled": true
       }, 
       "manageSessionEmails": {
         "enabled": true
@@ -95,12 +89,7 @@ module.exports = {
     },
     "features": {
       "survay": {
-        "prizeDraw": {
-          "enabled": false
-        },
-        "contactList": {
-          "enabled": false
-        },
+        "enabled": false
       },
       "unidentifiedParticipants": {
         "enabled": false
@@ -126,6 +115,9 @@ module.exports = {
       },
       "colorScheme": {
         "type": "forum"
+      },
+      "socialMediaGraphics": {
+        "enabled": false
       }
     },
     "validations": {
@@ -141,12 +133,10 @@ module.exports = {
   "socialForum": {
     "steps": {
       "setUp": {
-        "enabled": true,
-        "socialMediaGraphics": true
+        "enabled": true
       }, 
       "facilitatiorAndTopics": {
-        "enabled": true,
-        "survays": true
+        "enabled": true
       }, 
       "manageSessionEmails": {
         "enabled": false
@@ -160,12 +150,7 @@ module.exports = {
     },
     "features": {
       "survay": {
-        "prizeDraw": {
-          "enabled": true
-        },
-        "contactList": {
-          "enabled": true
-        },
+        "enabled": true
       },
       "unidentifiedParticipants": {
         "enabled": true
@@ -185,16 +170,17 @@ module.exports = {
       },
       "dateAndTime": {
         "enabled": false,
-        //message will be updated with TA1560
-        "message": "Not avaliable"
+        "message": "Yay! One less thing you have to do. Start & End Date isn't required with Social Forum"
       },
       "anonymous": {
-        "enabled": false,
-        //message will be updated with TA1560
-        "message": "Not avaliable"
+        "enabled": false
       },
       "colorScheme": {
         "type": "forum"
+      },
+      "socialMediaGraphics": {
+        "enabled": true,
+        "message": "We're currently building an exciting tool for you to customize your social media posts and help your Chat Session stand out. We'll keep you updated on progress ☺"
       }
     },
     "validations": {

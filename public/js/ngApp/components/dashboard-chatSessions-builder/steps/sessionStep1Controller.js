@@ -46,6 +46,7 @@
     vm.cleanColorScheme = cleanColorScheme;
     vm.updateOrCleanColorScheme = updateOrCleanColorScheme;
     vm.showTimeBlockedMessage = showTimeBlockedMessage;
+    vm.showSocialMediaGraphicsMessage = showSocialMediaGraphicsMessage;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -59,7 +60,7 @@
 
     function initCanSelectFacilitator() {
       vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
-        && vm.type != null && new Date(vm.step1.endTime) > new Date(vm.step1.startTime);
+        && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
     }
 
     function inviteFacilitator(facilitator) {
@@ -175,9 +176,15 @@
     }
 
     function showTimeBlockedMessage() {
-      if (vm.session.steps.step1.canEditTime == false) {
+      if (vm.session.steps.step1.type && !vm.session.properties.features.dateAndTime.enabled) {
+        $confirm({ text: vm.session.properties.features.dateAndTime.message, title: null, closeOnly: true, showAsError: false });
+      } else if (vm.session.steps.step1.canEditTime == false) {
         $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
       }
+    }
+
+    function showSocialMediaGraphicsMessage() {
+      $confirm({ text: vm.session.properties.features.socialMediaGraphics.message, title: null, closeOnly: true, showAsError: false });
     }
 
     function filterContacts() {
@@ -297,6 +304,8 @@
         } else {
           vm.session.steps.step1.type = vm.type;
           vm.session.properties = res.sessionBuilder.properties;
+          vm.session.startTime = vm.step1.startTime = res.sessionBuilder.steps.step1.startTime;
+          vm.session.endTime = vm.step1.endTime = res.sessionBuilder.steps.step1.endTime;
         }
         initCanSelectFacilitator();
       }, function(err) {

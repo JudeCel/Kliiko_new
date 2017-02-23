@@ -126,8 +126,6 @@ function initializeBuilder(params) {
   validators.subscription(params.accountId, 'session', 0).then(function() {
 
     params.step = 'setUp';
-    params.startTime = params.date;
-    params.endTime = params.date;
     params.isVisited = {
       setUp: true,
       facilitatiorAndTopics: false,
@@ -177,9 +175,10 @@ function findSession(id, accountId) {
   return deferred.promise;
 }
 
-function changeTimzone(time, from, to ){
-  return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to)
+function changeTimzone(time, from, to) {
+  return time ? moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to) : null;
 }
+
 function setTimeZone(params) {
   if (params.startTime && params.endTime && params.timeZone) {
     params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone)
@@ -213,20 +212,42 @@ function update(sessionId, accountId, params) {
 
   return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
-      if (validationRes.isValid) {
-        doUpdate(originalSession, params).then(function(res) {
-          resolve(res);
-        }, function(error) {
-          reject(error);
-        });
+      if (isUpdateAllowed(originalSession, params)) {
+        updateParams(originalSession, params);
+        let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+        if (validationRes.isValid) {
+          doUpdate(originalSession, params).then(function(res) {
+            resolve(res);
+          }, function(error) {
+            reject(error);
+          });
+        } else {
+          resolve({ validation: validationRes });
+        }
       } else {
-        resolve({ validation: validationRes });
+        reject(filters.errors(MessagesUtil.session.actionNotAllowed));  
       }
     }, function(error) {
       reject(filters.errors(error));
     });
   });
+}
+
+function initializeDate() {
+  let date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function updateParams(session, params) {
+  if (!session.type && params["type"] && sessionTypesConstants[params["type"]].features.dateAndTime.enabled) {
+    params["startTime"] = params["endTime"] = initializeDate();
+  }
+}
+
+function isUpdateAllowed(session, params) {
+  let statusChanged = params["status"] && params["status"] != session.status;
+  return  !statusChanged || sessionTypesConstants[session.type].features.closeSession.enabled;
 }
 
 function isSessionChangedToActive(params) {
@@ -429,12 +450,12 @@ function goToStep(id, accountId, destinationStep) {
 function getDestinationStep(session, destinationStep) {
   let destinationStepIndex = destinationStep - 1;
   let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
-
-  if (destinationStepIndex > MAX_STEP_INDEX || destinationStepIndex < FIRST_STEP_INDEX) {
-    destinationStepIndex = currentStepIndex;
-  }
-
   let step = constants.sessionBuilderSteps[destinationStepIndex];
+
+  if (destinationStepIndex > MAX_STEP_INDEX || destinationStepIndex < FIRST_STEP_INDEX || !session.properties || !session.properties.steps[step].enabled) {
+    destinationStepIndex = currentStepIndex;
+    step = session.currentStep;
+  }
 
   if (isValidatedWithErrors(currentStepIndex, destinationStepIndex, session.steps)) {
     step = session.currentStep;
@@ -798,8 +819,8 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
   }
   setTimeZone(params);
   let sessionData = {
-    startTime: new Date(params.startTime),
-    endTime: new Date(params.endTime),
+    startTime: params.startTime ? new Date(params.startTime) : null,
+    endTime: params.endTime ? new Date(params.endTime) : null,
     timeZone: params.timeZone,
     name: stepData.name,
     type: stepData.type,
@@ -1207,22 +1228,22 @@ function validateStepOne(params) {
 
       if (!params.type) {
         errors.type = MessagesUtil.sessionBuilder.errors.firstStep.typeRequired;
-      }
+      } else if (sessionTypesConstants[params.type].features.dateAndTime.enabled) {
+        if(!params.startTime) {
+          errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.startTimeRequired;
+        }
 
-      if(!params.startTime) {
-        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.startTimeRequired;
-      }
+        if(!params.endTime) {
+          errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.endTimeRequired;
+        }
 
-      if(!params.endTime) {
-        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.endTimeRequired;
-      }
+        if(params.startTime > params.endTime) {
+          errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
+        }
 
-      if(params.startTime > params.endTime) {
-        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
-      }
-
-      if(params.startTime == params.endTime) {
-        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
+        if(params.startTime == params.endTime) {
+          errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
+        }
       }
 
       if(!object.facilitator) {

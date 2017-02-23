@@ -2,6 +2,7 @@
 
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var validations = require('./validations');
 
 module.exports = (Sequelize, DataTypes) => {
@@ -14,8 +15,9 @@ module.exports = (Sequelize, DataTypes) => {
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: '', validate: {
       isLength: validations.length('name', { max: 40 })
     } },
-    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
-    endTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate() },
+    //todo: create migration
+    startTime: { type: DataTypes.DATE, allowNull: true, /*defaultValue: initializeDate(),*/ validate: { isValid: validateDate } },
+    endTime: { type: DataTypes.DATE, allowNull: true, /*defaultValue: initializeDate()*/ },
     timeZone: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
@@ -61,16 +63,9 @@ module.exports = (Sequelize, DataTypes) => {
 };
 
 function validateDate(value, next) {
-  if(this.startTime > this.endTime) {
+  if (this.type && sessionTypesConstants[this.type].features.dateAndTime.enabled && this.startTime > this.endTime) {
     next(MessagesUtil.models.session.date);
-  }
-  else {
+  } else {
     next();
   }
-}
-
-function initializeDate() {
-  let date = new Date();
-  date.setHours(0, 0, 0, 0);
-  return date;
 }
