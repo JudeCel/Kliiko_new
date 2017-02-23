@@ -1,20 +1,33 @@
 "use strict";
 const Channel = require('./channel');
-class Repo {
-  constructor(adapter) {
-    this.validateAdapter(adapter)
-    this.adapter = adapter 
+const { EventEmitter } = require('events');
+class Repo extends EventEmitter{
+  constructor(adapterModule, url, options) {
+    super()
+    this.messageBuffer = [];
+    this.url = url,
+    this.options = options;
+    this.adapterModule = adapterModule;
     this.channels = {};
-    this.subscribeAdapterEvents();
+    this.startAdapter();
+    this.bindEvents();
   }
+  bindEvents( ) {
+      this.on("processMessage", () => {
+          console.log(this.adapter.readyState === this.adapterModule.OPEN)
+          if(this.adapter.readyState === this.adapterModule.OPEN){
+            let payload = this.messageBuffer.shift();
 
-  validateAdapter(adapter){
-    if(typeof adapter.on !== "function"){
-        throw Error("Adapter should respond ro 'on' function");
-    }
-    if(typeof adapter.send !== "function"){
-        throw Error("Adapter should respond on 'send' function");
-    }
+            if(payload){
+                this.send(payload);
+                this.emit("newMessage");
+            }
+          }
+      });
+  }
+  startAdapter(){
+    this.adapter = new this.adapterModule(this.url);
+    this.subscribeAdapterEvents()
   }
 
   subscribeAdapterEvents(){
@@ -23,10 +36,22 @@ class Repo {
     });
 
     this.adapter.on('error', (err) => {
-        console.log(err);
+         setTimeout(() => {
+            this.startAdapter();
+         }, 2000);
     })
 
-    this.adapter.on('close', () => {
+    this.adapter.on('close', (code) => {
+        switch (code){
+            case 1000:  // CLOSE_NORMAL
+                console.log("WebSocket: closed");
+                break;
+            default:    // Abnormal closure
+                setTimeout(() => {
+                    this.startAdapter();
+                }, 2000);
+                break;
+        }
         console.log('disconnected');
     });
 
@@ -40,6 +65,7 @@ class Repo {
         let channel = this.channels[item];
         channel.join();
     });
+    this.emit("processMessage");
     return this.channels;
   }
 
@@ -48,15 +74,19 @@ class Repo {
             let channel = new Channel(name, joinPayload);
             
             channel.on("outgoingMessage", (payload) => {
-                this.adapter.send(JSON.stringify(payload));
+                this.messageBuffer.push(payload);
+                this.emit("processMessage");
             })
 
             this.channels[name]  = channel;
+            return channel;
         }else{
             throw Error("Channel already exists with name: name");
         }
   }
-
+  send(payload){
+    this.adapter.send(JSON.stringify(payload));
+  }
   _messageBroke(messageString) {
     let message = JSON.parse(messageString);
     let channel = this.channels[message.topic];

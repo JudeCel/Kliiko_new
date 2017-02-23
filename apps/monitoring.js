@@ -1,16 +1,29 @@
 "use strict";
-const util = require('util');
+ require('dotenv-extended').load({
+     errorOnMissing: true
+ });
+
 const WebSocket = require('ws');
 const Repo = require('./monitoring/repo');
-const ws = new WebSocket(process.env.MONITORING_SERVER_URL);
-const repo = new Repo(ws);
+const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {});
 
-repo.addChannel("logger:nodeApp");
-repo.addChannel("server-monitor:nodeApp");
+const infoChannel = repo.addChannel("info:kliiko");
+const errorChannel = repo.addChannel("error:kliiko");
+const logsChannel = repo.addChannel("logs:kliiko");
 
-
+infoChannel.on("deps", () => {
+    exec('yarn outdated --color', (error, stdout, stderr) => {
+      if(error) {
+        infoChannel.push("deps", {status: 'error', data: error})
+      } else {
+        infoChannel.push("deps", { status: 'ok', data: stdout })
+      }
+    });
+})
 
 process.on('message', function (data) {
+  // errorChannel
+  // logsChannel
    console.log(data);
   //  console.log('your actual data object', data.data);
 });

@@ -18,7 +18,7 @@ const cluster = require('cluster');
   } else {
     switch (process.env.ROLE) {
       case "monitoring":
-        console.log("start web server");
+        console.log("start monitoring server");
         try {
           require("../apps/monitoring.js");
         } catch (e) {

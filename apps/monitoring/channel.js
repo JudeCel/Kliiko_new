@@ -115,28 +115,44 @@ class Channel extends EventEmitter {
       if (reply.payload.status == "ok") {
         this.changeState('joined');
         if(message){
-          message.promise.resolve(reply.payload);
+          this.resolveMessage(message, reply);
         }
       }else{
         this.changeState('errored');
-        if(message){ message.promise.reject(reply.payload) }
+        this.rejectMessage(message, reply);
       }
     }
     incomingError(message, reply){
       this.changeState('errored');
-      if(message){ message.promise.reject(reply.payload)}
+      this.rejectMessage(message, reply)
     }
     incomingReply(message, reply){
-      message.emit(reply.payload.status, reply.payload);
-      if(message){ message.defer.resolve(reply.payload)}
+      this.resolveMessage(message, reply);
     }
     incomingClose(message, reply){
       this.changeState('closed');
-      if(message){ message.promise.resolve(reply.payload)}
+      this.resolveMessage(message, reply)
     }
     incomingLeave(message, reply){ 
       this.changeState('closed');
-     if(message){ message.promise.resolve(reply.payload) }
+      this.resolveMessage(message, reply);
+    }
+
+    resolveMessage(message, reply){
+      if(message && message.promise){
+        if(message.promise){
+          message.promise.resolve(reply.payload);
+        }
+        message.emit(reply.payload.status, reply.payload);
+      }
+    }
+    rejectMessage(message, reply){
+      if(message && message.promise){
+        if(message.promise){
+          message.promise.reject(reply.payload);
+        }
+        message.emit(reply.payload.status, reply.payload);
+      }
     }
 }
 

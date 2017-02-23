@@ -5,7 +5,7 @@ const { EventEmitter } = require('events');
 const Repo = require('../../../apps/monitoring/repo');
 
 class DummyAdapter extends  EventEmitter{
-    constructor(){
+    constructor(url, options){
         super();
     }
     send(data) {
@@ -13,7 +13,7 @@ class DummyAdapter extends  EventEmitter{
     }
 }
 
-describe('MONITORING - REPO', () => {
+describe.only('MONITORING - REPO', () => {
     it("can't build with invalid adapter", (done) => {
         let adapter = {};
         try {
@@ -25,10 +25,9 @@ describe('MONITORING - REPO', () => {
     });
 
     it("can build with valid new", (done) => {
-        let adapter = new DummyAdapter();
 
         try {
-            let repo = new Repo(adapter);
+            let repo = new Repo(DummyAdapter, "pff");
             done();
         } catch (error) {
             done(error);
@@ -37,10 +36,9 @@ describe('MONITORING - REPO', () => {
 
 
     it("can add channel ", (done) => {
-        let adapter = new DummyAdapter();
 
         try {
-            let repo = new Repo(adapter);
+            let repo = new Repo(DummyAdapter, "pff");
             repo.addChannel("channel:name1");
             assert.lengthOf(Object.keys(repo.channels), 1);
             done();
@@ -50,10 +48,9 @@ describe('MONITORING - REPO', () => {
     });
 
     it("can't register a channel with an already registered name", (done) => {
-        let adapter = new DummyAdapter();
 
         try {
-            let repo = new Repo(adapter);
+            let repo = new Repo(DummyAdapter, "pff");
             repo.addChannel("channel:name1");
             repo.addChannel("channel:name1");
             done("Should not get here!!");
@@ -63,11 +60,9 @@ describe('MONITORING - REPO', () => {
     });
 
     it("can join multiple channels ", (done) => {
-        let adapter = new DummyAdapter();
 
         try {
-            assert.equal(adapter._eventsCount, 0);
-            let repo = new Repo(adapter);
+            let repo = new Repo(DummyAdapter, "pff");
             repo.addChannel("channel:name1");
             repo.addChannel("channel:name2");
             repo.joinChannels();

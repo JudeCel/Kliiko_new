@@ -1,8 +1,7 @@
 "use strict";
 class Store {
-  constructor(options = {}){
+  constructor(){
     this.map = new Map();
-    this.sizeLimit = options.sizeLimit || 100;
     this.index = [];
   }
 

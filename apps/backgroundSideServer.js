@@ -1,4 +1,8 @@
 "use strict";
+ require('dotenv-extended').load({
+     errorOnMissing: true
+ });
+
 const NR = require("node-resque");
 const _ = require('lodash')
 const connectionDetails = require('../config/backgroudServer.js');

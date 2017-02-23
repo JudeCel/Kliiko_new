@@ -4,7 +4,7 @@ const { EventEmitter } = require('events');
 
 const Channel = require('../../../apps/monitoring/channel');
 
-describe.only('MONITORING - Channel', () => {
+describe('MONITORING - Channel', () => {
     it("can build new", (done) => {
         try {
             let channel = new Channel("name:1");

@@ -12,7 +12,7 @@ var config = {
     "timezone": "UTC",
     maxConcurrentQueries: 100,
     benchmark: true,
-    logging: true
+    logging: false
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,
