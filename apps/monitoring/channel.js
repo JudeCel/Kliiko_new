@@ -132,7 +132,7 @@ class Channel extends EventEmitter {
             this.incomingLeave(eventMessage, message);
             break;
           default:
-            console.warn("Message not found:", eventMessage);
+            this.emit(message.event, message.payload);
             break;
         }
     }

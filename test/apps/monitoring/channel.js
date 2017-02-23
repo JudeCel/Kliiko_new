@@ -48,7 +48,7 @@ describe.only('MONITORING - Channel', () => {
         }
     });
 
-    it.only("can push message", (done) => {
+    it("can push message", (done) => {
         try {
             let channel = new Channel("name:1");
             channel.join();
@@ -63,6 +63,23 @@ describe.only('MONITORING - Channel', () => {
             }, (error) => {
                 done(error);
             });
+        } catch (error) {
+            done(error);
+        }
+    });
+
+    it("can lisen chanell", (done) => {
+        try {
+            let channel = new Channel("name:1");
+            channel.join();
+
+            channel.on("newEntry", (payload) => {
+                done();
+            });
+
+            let resp = {event: "newEntry", payload: {status: "ok", data: {}} }
+            channel.emit("incomingMessage", resp)
+
         } catch (error) {
             done(error);
         }
