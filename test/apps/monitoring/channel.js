@@ -58,13 +58,11 @@ describe.only('MONITORING - Channel', () => {
                 channel.emit("incomingMessage", resp)
             });
 
-            // V1
-            let message = channel.push("newEntry", {});
-
-            message.on("ok", (payload) => {
+            channel.push("newEntry", {}).then(() => {
                 done();
+            }, (error) => {
+                done(error);
             });
-
         } catch (error) {
             done(error);
         }

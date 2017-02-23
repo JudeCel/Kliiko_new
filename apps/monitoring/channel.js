@@ -5,13 +5,12 @@ const MessagesStore = require('./messagesStore');
 class Message extends EventEmitter {
   constructor(topic, payload, event, ref){
     super()
-    
     this.ref = ref;
-    this.topic = topic
-    this.payload = payload
+    this.topic = topic;
+    this.payload = payload;
+    this.promise = Promise.defer();
     this.event = event;
     this.state =  'build'
-    this.on("processMsg", (message) => {this.processMessage(message)})
   }
   toParams(){
     return {
@@ -22,8 +21,11 @@ class Message extends EventEmitter {
       state: this.state
     }
   }
-  processMessage(message) {
-    this.emit("ok", {});
+  getPromise(){
+    return this.promise.promise
+  }
+  setSent(){
+    this.state = 'sent'
   }
 }
 
@@ -55,9 +57,9 @@ class Channel extends EventEmitter {
     }
     push(event, payload){
       let message = this.buildMessage(payload, event);
-      message.state = 'sent'
+      message.setSent();
       this.emit("outgoingMessage", message.toParams());
-      return message;
+      return message.getPromise();
     }
     getMsgRef(){ 
       return this.ref ++ 
@@ -76,7 +78,7 @@ class Channel extends EventEmitter {
       if(this.canJoin()){
         let message = this.buildMessage({}, CHANNEL_EVENTS.join);
         this.changeState('joining');
-        message.state = 'sent'
+        message.setSent();
         this.emit("outgoingMessage", message.toParams());
       }
       return this;
@@ -86,7 +88,7 @@ class Channel extends EventEmitter {
       if(this.canLeave()){
         let message = this.buildMessage({}, CHANNEL_EVENTS.leave);
         this.changeState('leaving');
-        message.state = 'sent'
+        message.setSent()
         this.emit("outgoingMessage", message.toParams());
       }
       return this;
@@ -112,15 +114,13 @@ class Channel extends EventEmitter {
 
     incomingMessage(message){
         let eventMessage = this.messages.get(message.ref);
-        if(eventMessage) {
-          eventMessage.emit("processMsg", message)
-        }
+        
         switch (message.event) {
           case CHANNEL_EVENTS.join:
             this.incomingJoin(eventMessage, message);
             break;
           case CHANNEL_EVENTS.error:
-            this.replyError(messeventMessage, messageage);
+            this.replyError(eventMessage, messageage);
             break;
           case CHANNEL_EVENTS.reply:
             this.incomingReply(eventMessage, message);
@@ -138,24 +138,30 @@ class Channel extends EventEmitter {
     }
 
     incomingJoin(message, reply){
-      if (message.payload.status == "ok") {
+      if (reply.payload.status == "ok") {
         this.changeState('joined');
+        if(message){
+          message.promise.resolve(reply.payload);
+        }
       }else{
         this.changeState('errored');
+        if(message){ message.promise.reject(reply.payload) }
       }
     }
     incomingError(message, reply){
       this.changeState('errored');
+      if(message){ message.promise.reject(reply.payload)}
     }
     incomingReply(message, reply){
-      // console.log(message)
-      // // message.emit("ok", {});
+      if(message){ message.promise.resolve(reply.payload)}
     }
     incomingClose(message, reply){
-      this.changeState('closed'); 
+      this.changeState('closed');
+      if(message){ message.promise.resolve(reply.payload)}
     }
     incomingLeave(message, reply){ 
       this.changeState('closed');
+     if(message){ message.promise.resolve(reply.payload) }
     }
 }
 

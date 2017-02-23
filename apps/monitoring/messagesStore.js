@@ -1,7 +1,7 @@
 "use strict";
 class MessagesStore {
   constructor(options = {}){
-    this.map = { };
+    this.map = new Map();
     this.sizeLimit = options.sizeLimit || 100;
     this.index = [];
   }
@@ -12,14 +12,14 @@ class MessagesStore {
     }
     
     this.index.push(message.ref);
-    return this.map[message.ref] =  message;
+    return this.map.set(message.ref, message);
    }
   remove(ref){
     this.index = this.index.filter((ref) => { return i != ref})
-    return delete this.map[ref];
+    return this.map.delete(message.ref);
   }
   get(ref){
-    return this.map[ref];
+    return this.map.get(ref);
   }
 }
 module.exports = MessagesStore;
