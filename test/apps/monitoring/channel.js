@@ -48,21 +48,43 @@ describe.only('MONITORING - Channel', () => {
         }
     });
 
-    it("can push message", (done) => {
+    it("can push message and listne event", (done) => {
         try {
             let channel = new Channel("name:1");
             channel.join();
 
             channel.on("outgoingMessage", (payload) => {
                 let resp = {ref: payload.ref, event: "phx_reply", payload: {status: "ok"} }
-                channel.emit("incomingMessage", resp)
+                setInterval(() => {
+                    channel.emit("incomingMessage", resp);
+                })
             });
 
-            channel.push("newEntry", {}).then(() => {
+            let messageResp = channel.push("newEntry", {});
+            messageResp.once("ok", (resp) => {
                 done();
-            }, (error) => {
-                done(error);
+            })
+        
+        } catch (error) {
+            done(error);
+        }
+    });
+
+    it("can push message and listne promise", (done) => {
+        try {
+            let channel = new Channel("name:2");
+            channel.join();
+
+            channel.on("outgoingMessage", (payload) => {
+                let resp = {ref: payload.ref, event: "phx_reply", payload: {status: "ok"} }
+                setInterval(() => {
+                    channel.emit("incomingMessage", resp);
+                })
             });
+
+            channel.push("newEntry", {}).getPromise().then((payload) => {
+                done();
+            }, done);
         } catch (error) {
             done(error);
         }
@@ -73,12 +95,12 @@ describe.only('MONITORING - Channel', () => {
             let channel = new Channel("name:1");
             channel.join();
 
-            channel.on("newEntry", (payload) => {
+            channel.on("newEntry", (_payload) => {
                 done();
             });
 
             let resp = {event: "newEntry", payload: {status: "ok", data: {}} }
-            channel.emit("incomingMessage", resp)
+            channel.emit("incomingMessage", resp);
 
         } catch (error) {
             done(error);

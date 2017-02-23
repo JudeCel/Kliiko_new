@@ -1,33 +1,7 @@
 "use strict";
 const { EventEmitter } = require('events');
-const MessagesStore = require('./messagesStore');
-
-class Message extends EventEmitter {
-  constructor(topic, payload, event, ref){
-    super()
-    this.ref = ref;
-    this.topic = topic;
-    this.payload = payload;
-    this.promise = Promise.defer();
-    this.event = event;
-    this.state =  'build'
-  }
-  toParams(){
-    return {
-      topic: this.topic,
-      ref: this.ref,
-      payload: this.payload,
-      event: this.event,
-      state: this.state
-    }
-  }
-  getPromise(){
-    return this.promise.promise
-  }
-  setSent(){
-    this.state = 'sent'
-  }
-}
+const Store = require('./store');
+const Message = require('./message');
 
 const CHANNEL_EVENTS = {
   close: "phx_close",
@@ -52,14 +26,14 @@ class Channel extends EventEmitter {
       this.ref = 0;
       this.topic =  name;
       this.state =  CHANNEL_STATES.set;
-      this.messages =  new MessagesStore();
+      this.messages =  new Store();
       this.on('incomingMessage', (message) => { this.incomingMessage(message)});
     }
     push(event, payload){
       let message = this.buildMessage(payload, event);
       message.setSent();
       this.emit("outgoingMessage", message.toParams());
-      return message.getPromise();
+      return message;
     }
     getMsgRef(){ 
       return this.ref ++ 
@@ -153,7 +127,8 @@ class Channel extends EventEmitter {
       if(message){ message.promise.reject(reply.payload)}
     }
     incomingReply(message, reply){
-      if(message){ message.promise.resolve(reply.payload)}
+      message.emit(reply.payload.status, reply.payload);
+      if(message){ message.defer.resolve(reply.payload)}
     }
     incomingClose(message, reply){
       this.changeState('closed');

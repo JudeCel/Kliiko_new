@@ -10,7 +10,9 @@ var config = {
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
     "timezone": "UTC",
-    logging: false
+    maxConcurrentQueries: 100,
+    benchmark: true,
+    logging: true
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,

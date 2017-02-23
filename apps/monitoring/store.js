@@ -1,5 +1,5 @@
 "use strict";
-class MessagesStore {
+class Store {
   constructor(options = {}){
     this.map = new Map();
     this.sizeLimit = options.sizeLimit || 100;
@@ -22,4 +22,4 @@ class MessagesStore {
     return this.map.get(ref);
   }
 }
-module.exports = MessagesStore;
+module.exports = Store;
