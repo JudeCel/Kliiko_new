@@ -583,21 +583,6 @@ describe('SERVICE - SessionBuilder', function() {
         });
       });
     });
-
-    describe('sad path', function(done) {
-      it('should fail on #update', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-
-          sessionBuilderServices.update(params.id, params.accountId, { endTime: null }).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error.endTime, "End Time can't be empty");
-            done();
-          });
-        });
-      });
-    });
   });
 
   describe('#secondStep', function(done) {
