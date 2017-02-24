@@ -554,8 +554,7 @@ function inviteMembers(sessionId, data, accountId, accountName) {
       } else {
         deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
       }
-    }
-    else {
+    } else {
       return validators.hasValidSubscription(accountId);
     }
   }).then(function() {

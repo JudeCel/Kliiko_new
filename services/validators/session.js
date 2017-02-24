@@ -15,11 +15,12 @@ function addShowStatus(session, chargebeeSub) {
 
   let settings = session.dataValues || session;
   settings.expireDate = endDate;
+  let type = session.steps ? session.steps.step1.type : session.type;
 
   if (session.status == "open") {
-    if (!session.type) {
+    if (!type) {
       settings.showStatus = 'Expired';
-    } else if (sessionTypesConstants[session.type].features.dateAndTime.enabled) {
+    } else if (sessionTypesConstants[type].features.dateAndTime.enabled) {
       var date = new Date();
       if (date < new Date(session.startTime) || session.isInactive) {
         settings.showStatus = 'Pending';
