@@ -25,6 +25,7 @@ var q = require('q');
 let Bluebird = require('bluebird');
 
 var mailUrlHelper = require('../mailers/helpers');
+let sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 const EXPIRE_AFTER_DAYS = 5;
 
@@ -254,7 +255,8 @@ function sendInvite(inviteId, deferred) {
           facilitatorLastName: facilitator.lastName,
           facilitatorMail: facilitator.email,
           facilitatorMobileNumber: facilitator.mobile,
-          unsubscribeMailUrl: invite.unsubscribeMailUrl
+          unsubscribeMailUrl: invite.unsubscribeMailUrl,
+          removeTimeBlock: !sessionTypesConstants[session.type].features.dateAndTime.enabled
         }
 
         populateMailParamsWithColors(inviteParams, session).then(function (params) {
@@ -454,7 +456,7 @@ function checSession(invite, user, params, transaction) {
     if (!invite.sessionId) { return resolve()}
 
     let where = { where: { sessionId: invite.sessionId, role: invite.role }, transaction: transaction };
-    if(invite.role == 'facilitator') {
+    if (invite.role == 'facilitator') {
       models.SessionMember.find(where).then(function(sessionMember) {
         if(invite.accountUserId == sessionMember.accountUserId) {
           resolve();
@@ -463,17 +465,12 @@ function checSession(invite, user, params, transaction) {
           reject(MessagesUtil.invite.inviteExpired);
         }
       });
-    }
-    else {
+    } else {
       models.Session.find({ where: { id: invite.sessionId }, transaction: transaction }).then(function(session) {
         models.SessionMember.count(where).then(function(count) {
-          // TODO: Need to move to session member service or session service
-          const allowedCount = {
-            participant: session.type == 'forum' ? -1 : 8,
-            observer: -1
-          };
+          const allowedCount = sessionTypesConstants[session.type].validations[invite.role].max;
 
-          if(count < allowedCount[invite.role] || allowedCount[invite.role] == -1) {
+          if (count < allowedCount || allowedCount == -1) {
             resolve();
           } else {
             //Session is full
@@ -734,14 +731,6 @@ function sendEmail(status, invite) {
         break;
       case 'notThisTime':
         doSendEmail = mailerHelpers.sendInvitationNotThisTime;
-        break;
-      case 'inviteConfirmation':
-        if(invite.role == 'participant') {
-          doSendEmail = mailerHelpers.sendInviteConfirmation;
-        }
-        else if(invite.role == 'facilitator') {
-          doSendEmail = mailerHelpers.sendFacilitatorEmailConfirmation;
-        }
         break;
       default:
         return deferred.resolve();

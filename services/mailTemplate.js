@@ -813,6 +813,9 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
+    if (params.removeTimeBlock) {
+      template.content = removeTimeBlock(template.content);
+    }
     template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
@@ -822,6 +825,20 @@ function composeMailFromTemplate(template, params) {
   } catch (error) {
     return {error: error};
   }
+}
+
+function removeTimeBlock(content) {
+  const blockStart = "<div class=timeInfoPanelTitle>";
+  const blockEnd = "<div class=timeInfoPanelEnd>";
+
+  let blockStartIndex = content.indexOf(blockStart);
+  if (blockStartIndex >= 0) {
+    let blockEndIndex = content.indexOf(blockEnd, blockStartIndex);
+    if (blockEndIndex >= 0) {
+      return content.substr(0, blockStartIndex) + content.substr(blockEndIndex + blockEnd.length);
+    }
+  }
+  return content;
 }
 
 function sendMailFromTemplate(id, params, callback) {

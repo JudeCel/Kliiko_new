@@ -7,6 +7,7 @@ var userFixture = require('./../fixtures/user');
 var constants = require('../../util/constants');
 var mailTemplateService = require('./../../services/mailTemplate');
 var momentTimeZone = require('moment-timezone');
+var testDatabase = require("../database");
 
 let accountId;
 let params = {
@@ -53,7 +54,7 @@ let params = {
 
 describe('send MailTemplates',  () => {
   before((done) => {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         accountId = result.account.id;
         params.accountId = result.account.id;

@@ -12,6 +12,7 @@ var path = './seeders/mailTemplateFiles/';
 var templatesCount = 22;
 var constants = require('./../../util/constants');
 var Minimize = require('minimize');
+var testDatabase = require("../database");
 
 var minimize = new Minimize();
 
@@ -19,7 +20,7 @@ describe('Mail Template Task', () => {
 
   describe("success", function () {
     beforeEach((done) => {
-      models.sequelize.sync({ force: true }).done((error, result) => {
+      testDatabase.prepareDatabaseForTests().done((error, result) => {
         mailTemplates.createMailTemplate().then(function() {
           done();
         });

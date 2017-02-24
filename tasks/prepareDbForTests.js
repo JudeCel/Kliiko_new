@@ -4,8 +4,9 @@ require('dotenv-extended').load({
 
 process.env.TEST_ENV =  process.env.NODE_ENV;
 
-var models = require("../models");
-models.sequelize.sync({ force: true }).then(function() {
+var testDatabase = require("../test/database");
+
+testDatabase.prepareDatabaseForTests().then(function() {
   console.log("TEST DB is restarted");
   process.exit();
 });

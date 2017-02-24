@@ -9,6 +9,7 @@ var sessionServices = require('./../../services/session');
 var sessionFixture = require('./../fixtures/session');
 var subscriptionFixture = require('./../fixtures/subscription');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var testDatabase = require("../database");
 
 var assert = require('chai').assert;
 describe('SERVICE - Session', function() {
@@ -28,7 +29,7 @@ describe('SERVICE - Session', function() {
     var testData = {};
 
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(() => {
+      testDatabase.prepareDatabaseForTests().then(() => {
         sessionFixture.createChat({ participants: 2 }).then(function(result) {
           testData = result;
           testData.session = result.session

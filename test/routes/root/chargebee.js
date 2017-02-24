@@ -7,6 +7,7 @@ var chargebeeRoutes = require('./../../../routes/root/chargebee.js');
 var userFixture = require('./../../fixtures/user');
 var subscriptionPlansFixture = require('./../../fixtures/subscriptionPlans');
 var subscriptionServices = require('./../../../services/subscription');
+var testDatabase = require("../../database");
 
 var _ = require('lodash');
 var assert = require('chai').assert;
@@ -15,7 +16,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
   var testData, testSubscription;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         return subscriptionPlansFixture.createPlans();

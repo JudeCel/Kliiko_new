@@ -8,6 +8,7 @@ var inviteService = require('../../services/invite');
 var accountUserService = require('../../services/accountUser');
 var assert = require('chai').assert;
 var async = require('async');
+var testDatabase = require("../database");
 
 
 describe('SERVICE - AccountUser with DB', function() {
@@ -32,7 +33,7 @@ describe('SERVICE - AccountUser with DB', function() {
   }
 
   beforeEach(function(done) {
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(user1Attrs, (err, user1) =>  {
         user1.getOwnerAccount().then((accounts) =>  {
           accountUser1 = accounts[0].AccountUser

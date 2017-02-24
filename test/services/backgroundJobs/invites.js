@@ -7,6 +7,7 @@ var inviteService = require('../../../services/invite');
 var backgroundJobsInvite = require('../../../services/backgroundJobs/invites');
 var assert = require('chai').assert;
 var async = require('async');
+var testDatabase = require("../../database");
 
 
 describe('Background Jobs - Invites', function() {
@@ -30,8 +31,7 @@ describe('Background Jobs - Invites', function() {
   }
 
   beforeEach(function(done) {
-
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(user1Attrs, (err, user1) =>  {
         testUser = user1;
         user1.getOwnerAccount().then((accounts) =>  {

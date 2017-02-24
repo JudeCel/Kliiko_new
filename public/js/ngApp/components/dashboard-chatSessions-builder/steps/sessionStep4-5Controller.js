@@ -16,6 +16,7 @@
     vm.editContactIndex = null;
     vm.contactData = {};
     vm.canSendSMS = false;
+    vm.canSendGroupSms = false;
 
     vm.currentFilter = 'all';
     vm.filterTypes = {
@@ -67,10 +68,6 @@
       return vm.session.currentStep == "inviteSessionObservers";
     }
 
-    vm.canSendSMSOnThisPage = function() {
-      return vm.isParticipantPage() && vm.canSendSMS;
-    }
-
     vm.getCurrentFilter = function(canSendCloseEmail) {
       if (canSendCloseEmail) {
         var res = !vm.filterInited ? undefined : { inviteStatus: 'confirmed' };
@@ -114,7 +111,8 @@
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
-      vm.canSendSMS = vm.session.steps.step1.type != 'forum';
+      vm.canSendSMS = vm.session.properties.features.sendSms.enabled;
+      vm.canSendGroupSms = vm.canSendSMS && vm.session.properties.steps[vm.session.currentStep].sendGroupSms;
       vm.mouseOveringMember = [];
 
       if (vm.isParticipantPage()) {
@@ -442,17 +440,18 @@
     }
 
     vm.getMembersCloseEmailSentTranscription = function(member) {
-      return returnMemberCloseEmailSentStatus(member)
+      return returnMemberCloseEmailSentStatus(member);
     }
 
     function activeMembersLimitReached() {
-      if (vm.session.steps.step1.type == 'focus' && vm.isParticipantPage()) {
+      var limit = vm.isParticipantPage() ? vm.session.properties.validations.participant.max : vm.session.properties.validations.observer.max;
+      if (limit > -1) {
         var count = 0;
         for (var i=0; i<vm.stepMembers.length; i++) {
           var member = vm.stepMembers[i];
           if (member.inviteStatus == "confirmed" || member.inviteStatus == "inProgress") {
             count++;
-            if (count == 8) {
+            if (count == limit) {
               return true;
             }
           }
