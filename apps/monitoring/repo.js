@@ -14,13 +14,12 @@ class Repo extends EventEmitter{
   }
   bindEvents( ) {
       this.on("processMessage", () => {
-          console.log(this.adapter.readyState === this.adapterModule.OPEN)
           if(this.adapter.readyState === this.adapterModule.OPEN){
             let payload = this.messageBuffer.shift();
 
             if(payload){
                 this.send(payload);
-                this.emit("newMessage");
+                this.emit("processMessage");
             }
           }
       });

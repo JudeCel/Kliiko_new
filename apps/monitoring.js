@@ -11,7 +11,7 @@ const infoChannel = repo.addChannel("info:kliiko");
 const errorChannel = repo.addChannel("error:kliiko");
 const logsChannel = repo.addChannel("logs:kliiko");
 
-infoChannel.on("deps", () => {
+infoChannel.on("get_deps", () => {
     exec('yarn outdated --color', (error, stdout, stderr) => {
       if(error) {
         infoChannel.push("deps", {status: 'error', data: error})
