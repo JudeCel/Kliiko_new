@@ -92,37 +92,43 @@ function update(req, callback){
 
 function createUser(params, callback) {
   parsePhoneParams(params);
-
-  let createNewUserFunctionList = [
-    function (cb) {
-      models.sequelize.transaction().then(function(t) {
-        User.create(params, { transaction: t } ).then(function (result) {
-          cb(null, { params: params, user: result, transaction: t, errors: {} });
-        }, function(error) {
-          cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+  let tiket = models.sequelize.transactionPool.getTiket();
+  models.sequelize.transactionPool.on(tiket, () => {
+    let createNewUserFunctionList = [
+      function (cb) {
+        models.sequelize.transaction().then(function(t) {
+          User.create(params, { transaction: t } ).then(function (result) {
+            cb(null, { params: params, user: result, transaction: t, errors: {} });
+          }, function(error) {
+            cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+          });
         });
-      });
-    },
-    accountService.create,
-    accountUserService.createAccountManager,
-  ]
+      },
+      accountService.create,
+      accountUserService.createAccountManager,
+    ]
 
-  if (params.socialProfile) {
-    createNewUserFunctionList.push(socialProfileService.create);
-  }
+    if (params.socialProfile) {
+      createNewUserFunctionList.push(socialProfileService.create);
+    }
+    async.waterfall(createNewUserFunctionList, function(_error, object) {
 
-  async.waterfall(createNewUserFunctionList, function(_error, object) {
-    if(_.isEmpty(object.errors)) {
-      object.transaction.commit().then(function() {
-        callback(null, object.user);
-      });
-    }
-    else {
-      object.transaction.rollback().then(function() {
-        callback(object.errors, object.user);
-      });
-    }
+      if(_.isEmpty(object.errors)) {
+        object.transaction.commit().then(function() {
+          models.sequelize.transactionPool.emit("endTransaction", tiket);
+          callback(null, object.user);
+        });
+      }
+      else {
+        object.transaction.rollback().then(function() {
+          models.sequelize.transactionPool.emit("endTransaction", tiket);
+          callback(object.errors, object.user);
+        });
+      }
+    })
   });
+  
+  models.sequelize.transactionPool.emit("nextTick")
 }
 
 function parsePhoneParams(params) {

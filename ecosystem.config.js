@@ -5,7 +5,8 @@ module.exports = {
     "log_file": "./logs/webServer/webServer.log",
     "out_file": "./logs/webServer/out.log",
     "error_file": "./logs/webServer/err.log",
-    "exec_mode" : "cluster"
+    "exec_mode" : "cluster",
+     "instances" : "max"
   },{
     "name": "backgroundSideServer",
     "script": "./apps/backgroundSideServer.js",
