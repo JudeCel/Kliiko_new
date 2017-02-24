@@ -45,7 +45,7 @@ module.exports = {
         "enabled": true
       },
       "dateAndTime": {
-        "enabled": false
+        "enabled": true
       },
       "anonymous": {
         "enabled": true

@@ -255,7 +255,8 @@ function sendInvite(inviteId, deferred) {
           facilitatorLastName: facilitator.lastName,
           facilitatorMail: facilitator.email,
           facilitatorMobileNumber: facilitator.mobile,
-          unsubscribeMailUrl: invite.unsubscribeMailUrl
+          unsubscribeMailUrl: invite.unsubscribeMailUrl,
+          removeTimeBlock: !sessionTypesConstants[session.type].features.dateAndTime.enabled
         }
 
         populateMailParamsWithColors(inviteParams, session).then(function (params) {
@@ -730,14 +731,6 @@ function sendEmail(status, invite) {
         break;
       case 'notThisTime':
         doSendEmail = mailerHelpers.sendInvitationNotThisTime;
-        break;
-      case 'inviteConfirmation':
-        if(invite.role == 'participant') {
-          doSendEmail = mailerHelpers.sendInviteConfirmation;
-        }
-        else if(invite.role == 'facilitator') {
-          doSendEmail = mailerHelpers.sendFacilitatorEmailConfirmation;
-        }
         break;
       default:
         return deferred.resolve();
