@@ -14,6 +14,7 @@
     vm.removeSession = removeSession;
     vm.copySession = copySession;
     vm.openCopySessionDialog = openCopySessionDialog;
+    vm.currentSelectedSessionName = "Untitled";
 
     vm.changePage = changePage;
     vm.rowClass = rowClass;
@@ -128,13 +129,20 @@
 
     function openCopySessionDialog(session) {
       vm.currentSelectedSession = session;
+      if (vm.currentSelectedSession.name) {
+        vm.currentSelectedSessionName = vm.currentSelectedSession.name
+      }
       domServices.modal(confirmCopySessionDialog);
+    }
+
+    function showName(name) {
+      return name || "Untitled";
     }
 
     function copySession(session) {
       if(!vm.inAction) {
         vm.inAction = true;
-      
+
         chatSessionsServices.copySession({ id: session.id }).then(function(res) {
           vm.inAction = false;
           if(res.error) {
@@ -163,10 +171,10 @@
         session.SessionMembers.map(function(member) {
           member.accountUserId == accountUserId;
           canAccess = true;
-          return false; 
+          return false;
         });
       };
-      
+
       return canAccess;
     };
 

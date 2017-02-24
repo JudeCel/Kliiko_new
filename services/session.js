@@ -318,12 +318,14 @@ function copySession(sessionId, accountId, provider) {
                 //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                 callback();
               });
-            },
-            function(callback) {
-              MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
-                callback();
-              });
             }
+            //  NOTE: right now we need to disable this functionality.
+            //  When client will want to copy email templates we will jsut need to add this code back.
+            // function(callback) {
+            //   MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+            //     callback();
+            //   });
+            // }
         ], function (error) {
           //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
           prepareModifiedSessions(session, accountId, provider, deferred);
