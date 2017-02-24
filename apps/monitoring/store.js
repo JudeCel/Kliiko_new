@@ -14,7 +14,7 @@ class Store {
     return this.map.set(message.ref, message);
    }
   remove(ref){
-    this.index = this.index.filter((ref) => { return i != ref})
+    this.index = this.index.filter((i) => { return i != ref})
     return this.map.delete(message.ref);
   }
   get(ref){

@@ -46,7 +46,8 @@ pm2.connect((err, resp) => {
         "log_file": "./logs/webServer/webServer.log",
         "out_file": "./logs/webServer/out.log",
         "error_file": "./logs/webServer/err.log",
-        "exec_mode" : "cluster"
+        "exec_mode" : "cluster",
+        "instances" : "max"
     }, (err, proc) => { });
 
     pm2.start({
@@ -55,6 +56,6 @@ pm2.connect((err, resp) => {
         "log_file": "./logs/backgroundSideServer/backgroundSideServer.log",
         "out_file": "./logs/backgroundSideServer/out.log",
         "error_file": "./logs/backgroundSideServer/err.log",
-        "exec_mode" : "cluster"
+        "exec_mode" : "fork"
     }, (err, proc) => { });
 });

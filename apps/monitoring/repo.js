@@ -14,7 +14,7 @@ class Repo extends EventEmitter{
   }
   bindEvents( ) {
       this.on("processMessage", () => {
-          if(this.adapter.readyState === this.adapterModule.OPEN){
+          if(this.adapter && this.adapter.readyState === this.adapterModule.OPEN){
             let payload = this.messageBuffer.shift();
 
             if(payload){
@@ -25,6 +25,7 @@ class Repo extends EventEmitter{
       });
   }
   startAdapter(){
+    this.adapter = null;
     this.adapter = new this.adapterModule(this.url);
     this.subscribeAdapterEvents()
   }
