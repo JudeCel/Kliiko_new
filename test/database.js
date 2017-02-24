@@ -6,13 +6,11 @@ var models = require("../models");
 
 function prepareDatabaseForTests() {
   return new Bluebird((resolve, reject) => {
-    models.sequelize.sync({ force: true }).then(function() {
-      sessionTypeService.updateSessionTypes().then(function() {
-        resolve();
-      }, function(error) {
-        reject(error);
-      });
-    }, function(error) {
+    models.sequelize.sync({ force: true }).then(() => {
+      return sessionTypeService.updateSessionTypes();
+    }).then(() => {
+      resolve();
+    }).catch(function(error) {
       reject(error);
     });
   });

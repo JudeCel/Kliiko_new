@@ -62,9 +62,13 @@ module.exports = (Sequelize, DataTypes) => {
 };
 
 function validateDate(value, next) {
-  if (this.type && sessionTypesConstants[this.type].features.dateAndTime.enabled && this.startTime > this.endTime) {
+  if (isDateEnabled() && this.startTime > this.endTime) {
     next(MessagesUtil.models.session.date);
   } else {
     next();
   }
+}
+
+function isDateEnabled() {
+  return this.type && sessionTypesConstants[this.type].features.dateAndTime.enabled;
 }

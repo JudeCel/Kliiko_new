@@ -176,7 +176,11 @@ function findSession(id, accountId) {
 }
 
 function changeTimzone(time, from, to) {
-  return time ? moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to) : null;
+  if (time) {
+    return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to);
+  } else {
+    return null;
+  }
 }
 
 function setTimeZone(params) {
@@ -523,6 +527,21 @@ function destroy(id, accountId) {
 }
 
 function sendSms(accountId, data, provider) {
+  return new Bluebird((resolve, reject) => {
+    findSession(data.sessionId, accountId).then((session) => {
+      if (sessionTypesConstants[session.type].features.sendSms.enabled) {
+        return smsService.send(accountId, data, provider);
+      } else {
+        throw MessagesUtil.session.cantSendSMS;
+      }
+    }).then((result) => {
+      resolve(result);
+    }).catch(function(error) {
+      reject(error);
+    });
+  });
+
+
   let deferred = q.defer();
 
   findSession(data.sessionId, accountId).then(function(session) {
