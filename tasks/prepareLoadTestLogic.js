@@ -9,12 +9,14 @@ let Bluebird = require('bluebird');
 var usersServices  = require('./../services/users');
 var subscriptionService = require('./../services/subscription');
 var sessionMemberService = require('./../services/sessionMember');
+var constants = require('./../util/constants');
 
 const USERS_COUNT = 50;
 const USERS_PLAN = 'senior_yearly';
 const USERS_EMAIL = 'loadTesting@insider.com';
 const USERS_PASSWORD = 'Qwerty123';
 const SYMBOLS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+const SUBSCRIPTION_ID = constants.loadTestSubscriptionId;
 
 function getUserEmail(index) {
   if (index == 0) {
@@ -35,7 +37,7 @@ function getUserName(index) {
 }
 
 function generateIndexesArray(first, last) {
-  return new Array(last - first).fill(0).map((item, index) => first + index);
+  return new Array(last - first + 1).fill(0).map((item, index) => first + index);
 }
 
 function createUsers() {
@@ -101,8 +103,7 @@ function getUserParams(index) {
 
 function createSubscription(accountId, userId) {
   return new Bluebird((resolve, reject) => {
-    let uid = "LoadTest_" + accountId + "_" + userId;
-    let provider = getSubscriptionProvider(uid);
+    let provider = getSubscriptionProvider(SUBSCRIPTION_ID);
     subscriptionService.createSubscription(accountId, userId, provider).then(() => {
       resolve();
     }, (error) => {
@@ -119,7 +120,8 @@ function getSubscriptionProvider(uid) {
           subscription: { id: uid, plan_id: USERS_PLAN },
           customer: { id: uid }
         });
-      }
+      },
+      ignoreDuplicatedSubscriptionId: true
     }
   }
 }

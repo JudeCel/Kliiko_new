@@ -129,5 +129,6 @@ module.exports = {
     declinedParticipationMessage: "Thanks, we\'ll make sure your\'re not asked again.",
     emailNotSent: "No close session emails sent."
   },
-  emailNotifications: ['none', 'privateMessages', 'all']
+  emailNotifications: ['none', 'privateMessages', 'all'],
+  loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
 }
