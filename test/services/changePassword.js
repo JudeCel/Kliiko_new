@@ -4,6 +4,7 @@ var User  = models.User;
 var usersRepo  = require('./../../services/users');
 var changePassword  = require('./../../services/changePassword');
 var assert = require('assert');
+var testDatabase = require("../database");
 
 describe('Change Password', function() {
 
@@ -18,7 +19,7 @@ describe('Change Password', function() {
       email: "bligzna.lauris@gmail.com",
       gender: "male"
     }
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       User.build(attrs).save()
         .then(function(user) {
           testUser = user;

@@ -106,7 +106,7 @@
         Send Generic Email
         ({{ lastStepsController.findSelectedMembersGenericEmail().length }})
       </div>
-      <div ng-show="lastStepsController.canSendSMSOnThisPage()" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
+      <div ng-show="lastStepsController.canSendGroupSms" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
         Send SMS
         ({{ lastStepsController.findSelectedMembersSMS().length }})
       </div>

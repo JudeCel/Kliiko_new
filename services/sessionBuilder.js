@@ -23,6 +23,7 @@ var sessionMemberService = require('./sessionMember');
 var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -125,8 +126,6 @@ function initializeBuilder(params) {
   validators.subscription(params.accountId, 'session', 0).then(function() {
 
     params.step = 'setUp';
-    params.startTime = params.date;
-    params.endTime = params.date;
     params.isVisited = {
       setUp: true,
       facilitatiorAndTopics: false,
@@ -176,9 +175,14 @@ function findSession(id, accountId) {
   return deferred.promise;
 }
 
-function changeTimzone(time, from, to ){
-  return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to)
+function changeTimzone(time, from, to) {
+  if (time) {
+    return moment.tz(moment.tz(time, from).format('YYYY-MM-DD HH:mm:ss'), to);
+  } else {
+    return null;
+  }
 }
+
 function setTimeZone(params) {
   if (params.startTime && params.endTime && params.timeZone) {
     params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone)
@@ -212,20 +216,42 @@ function update(sessionId, accountId, params) {
 
   return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
-      if (validationRes.isValid) {
-        doUpdate(originalSession, params).then(function(res) {
-          resolve(res);
-        }, function(error) {
-          reject(error);
-        });
+      if (isUpdateAllowed(originalSession, params)) {
+        updateParams(originalSession, params);
+        let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+        if (validationRes.isValid) {
+          doUpdate(originalSession, params).then(function(res) {
+            resolve(res);
+          }, function(error) {
+            reject(error);
+          });
+        } else {
+          resolve({ validation: validationRes });
+        }
       } else {
-        resolve({ validation: validationRes });
+        reject(filters.errors(MessagesUtil.session.actionNotAllowed));  
       }
     }, function(error) {
       reject(filters.errors(error));
     });
   });
+}
+
+function initializeDate() {
+  let date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function updateParams(session, params) {
+  if (!session.type && params["type"] && sessionTypesConstants[params["type"]].features.dateAndTime.enabled) {
+    params["startTime"] = params["endTime"] = initializeDate();
+  }
+}
+
+function isUpdateAllowed(session, params) {
+  let statusChanged = params["status"] && params["status"] != session.status;
+  return  !statusChanged || sessionTypesConstants[session.type].features.closeSession.enabled;
 }
 
 function isSessionChangedToActive(params) {
@@ -428,12 +454,12 @@ function goToStep(id, accountId, destinationStep) {
 function getDestinationStep(session, destinationStep) {
   let destinationStepIndex = destinationStep - 1;
   let currentStepIndex = constants.sessionBuilderSteps.indexOf(session.currentStep);
-
-  if (destinationStepIndex > MAX_STEP_INDEX || destinationStepIndex < FIRST_STEP_INDEX) {
-    destinationStepIndex = currentStepIndex;
-  }
-
   let step = constants.sessionBuilderSteps[destinationStepIndex];
+
+  if (destinationStepIndex > MAX_STEP_INDEX || destinationStepIndex < FIRST_STEP_INDEX || !session.properties || !session.properties.steps[step].enabled) {
+    destinationStepIndex = currentStepIndex;
+    step = session.currentStep;
+  }
 
   if (isValidatedWithErrors(currentStepIndex, destinationStepIndex, session.steps)) {
     step = session.currentStep;
@@ -501,14 +527,19 @@ function destroy(id, accountId) {
 }
 
 function sendSms(accountId, data, provider) {
-  let deferred = q.defer();
-  smsService.send(accountId, data, provider).then((result) => {
-    deferred.resolve(result);
-  }, function(error) {
-    deferred.reject(error);
+  return new Bluebird((resolve, reject) => {
+    findSession(data.sessionId, accountId).then((session) => {
+      if (sessionTypesConstants[session.type].features.sendSms.enabled) {
+        return smsService.send(accountId, data, provider);
+      } else {
+        throw MessagesUtil.session.cantSendSMS;
+      }
+    }).then((result) => {
+      resolve(result);
+    }).catch(function(error) {
+      reject(error);
+    });
   });
-
-  return deferred.promise;
 }
 
 // Untested
@@ -523,8 +554,7 @@ function inviteMembers(sessionId, data, accountId, accountName) {
       } else {
         deferred.reject(MessagesUtil.sessionBuilder.sessionClosedGuestsInvite);
       }
-    }
-    else {
+    } else {
       return validators.hasValidSubscription(accountId);
     }
   }).then(function() {
@@ -788,8 +818,8 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
   }
   setTimeZone(params);
   let sessionData = {
-    startTime: new Date(params.startTime),
-    endTime: new Date(params.endTime),
+    startTime: params.startTime ? new Date(params.startTime) : null,
+    endTime: params.endTime ? new Date(params.endTime) : null,
     timeZone: params.timeZone,
     name: stepData.name,
     type: stepData.type,
@@ -864,7 +894,8 @@ function sessionBuilderObject(session, steps) {
       id: session.id,
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
-      snapshot: sessionBuilderObjectSnapshot(result, session.step)
+      snapshot: sessionBuilderObjectSnapshot(result, session.step),
+      properties: session.type ? sessionTypesConstants[session.type] : null
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
@@ -1196,22 +1227,22 @@ function validateStepOne(params) {
 
       if (!params.type) {
         errors.type = MessagesUtil.sessionBuilder.errors.firstStep.typeRequired;
-      }
+      } else if (sessionTypesConstants[params.type].features.dateAndTime.enabled) {
+        if(!params.startTime) {
+          errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.startTimeRequired;
+        }
 
-      if(!params.startTime) {
-        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.startTimeRequired;
-      }
+        if(!params.endTime) {
+          errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.endTimeRequired;
+        }
 
-      if(!params.endTime) {
-        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.endTimeRequired;
-      }
+        if(params.startTime > params.endTime) {
+          errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
+        }
 
-      if(params.startTime > params.endTime) {
-        errors.startTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidDateRange;
-      }
-
-      if(params.startTime == params.endTime) {
-        errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
+        if(params.startTime == params.endTime) {
+          errors.endTime = MessagesUtil.sessionBuilder.errors.firstStep.invalidEndTime;
+        }
       }
 
       if(!object.facilitator) {
@@ -1237,10 +1268,9 @@ function validateStepTwo(params) {
   findSession(params.id, params.accountId).then(function(session) {
     let object = {};
     async.parallel(step2Queries(session, object), function(error, _result) {
-      if(error) {
+      if (error) {
         deferred.reject(error);
-      }
-      else {
+      } else {
         let errors = {};
 
         if(_.isEmpty(object.topics)) {

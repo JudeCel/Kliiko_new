@@ -6,7 +6,7 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
-
+var testDatabase = require("../database");
 var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var subscriptionFixture = require('./../fixtures/subscription');
@@ -19,7 +19,7 @@ describe('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {

@@ -12,7 +12,7 @@
           <h1>Chat Session Builder</h1>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3" ng-if="sbc.session.properties.features.closeSession.enabled">
           <div ng-show="sbc.session.sessionData.status == 'open'" ng-disabled="sbc.session.sessionData.showStatus == 'Pending'" class="btn btn-standart btn-red btn-large" ng-click="sbc.closeSession()">
             Close Chat Session
             <span class='fa fa-lock'></span>

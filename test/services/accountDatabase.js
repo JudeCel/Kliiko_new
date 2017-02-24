@@ -9,12 +9,13 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('SERVICE - AccountDatabase', () => {
   var testUser, testAccount, testAccountUser;
 
   beforeEach((done) => {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then((result) => {
         testUser = result.user;
         testAccount = result.account;

@@ -1,12 +1,14 @@
 "use strict";
 var assert = require('assert');
 var models  = require('./../../models');
+var testDatabase = require("../database");
 var User  = models.User;
-var encryptedPasswordLength = 60
+var encryptedPasswordLength = 60;
+
 describe('User', () => {
   describe('set encrypte password',  ()=>  {
     beforeEach((done) => {
-      models.sequelize.sync({ force: true }).then(() => {
+      testDatabase.prepareDatabaseForTests().then(() => {
         done();
       });
     });
@@ -45,7 +47,7 @@ describe('User', () => {
     let firstName = 'newName';
     let email = 'dainis@gmail.com';
     beforeEach((done) => {
-      models.sequelize.sync({ force: true }).then(() => {
+      testDatabase.prepareDatabaseForTests().then(() => {
         User.build(attrs).save()
           .then(function(user) {
             testUser = user;

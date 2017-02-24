@@ -8,6 +8,7 @@ var accountManagerService = require('../../../services/accountManager');
 var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
+var testDatabase = require("../../database");
 
 describe('SERVICE - Invite basic logic', function() {
   var testUser, accountUser, testUser2, testAccount, accountUser2 = null;
@@ -30,8 +31,7 @@ describe('SERVICE - Invite basic logic', function() {
   }
 
   beforeEach(function(done) {
-
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(user1Attrs, (err, user1) =>  {
         testUser = user1;
         user1.getOwnerAccount().then((accounts) =>  {
