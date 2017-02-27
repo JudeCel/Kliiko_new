@@ -9,6 +9,7 @@
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
+      <% showOptionalFields %>
           <% if((firstName || email) && selectedPlanOnRegistration) { %>
             <div class="progress registration-progress-bar">
               <div class="progress-bar background-green" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
@@ -199,7 +200,7 @@
                 <% googleActionText='Sign up with Google' %>
                 <% facebookActionText='Sign up with Facebook' %>
                 <% include socialMedia %>
-
+                <input type="hidden" name="showOptionalFields" value="<%=showOptionalFields%>">
               </form>
             </div>
           </div>

@@ -144,7 +144,10 @@ function prepareUrlParams(parameters, query) {
         parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
+  }
 
+  if (typeof(parameters.showOptionalFields) != "boolean") {
+    parameters.showOptionalFields = (parameters.showOptionalFields == "true");
   }
 }
 
@@ -321,6 +324,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
       let params = usersRepo.prepareParams(req, error);
+      prepareUrlParams(params, req.query);
 
       if (renderInfo.failed == "registration") {
         params.facebookUrl = facebookUrl;
@@ -364,6 +368,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
+  prepareUrlParams(userParams, req.query);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
