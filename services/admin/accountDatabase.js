@@ -90,38 +90,56 @@ function addAdmin({accountId, email}, _accountUserId) {
           }
           else {
             let adminAccountUser = accountUsers[0];
-            models.sequelize.transaction().then((transaction) => {
-              ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
-              let contactListUserParams = {
-                accountId: accountId,
-                contactListId: contactList.id,
-                role: adminAccountUser.role,
-                defaultFields: {
-                  firstName: adminAccountUser.firstName,
-                  lastName: adminAccountUser.lastName,
-                  email: adminAccountUser.email,
-                  gender: adminAccountUser.gender
-                }}
+            let transactionPool = models.sequelize.transactionPool;
+            let tiket = transactionPool.getTiket();
+            transactionPool.once(tiket, () => {
+              models.sequelize.transaction().then((transaction) => {
+                ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
+                let contactListUserParams = {
+                  accountId: accountId,
+                  contactListId: contactList.id,
+                  role: adminAccountUser.role,
+                  defaultFields: {
+                    firstName: adminAccountUser.firstName,
+                    lastName: adminAccountUser.lastName,
+                    email: adminAccountUser.email,
+                    gender: adminAccountUser.gender
+                  }}
 
-                ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
-                  let inviteParams = {
-                    accountUserId: contactListUser.accountUserId,
-                    accountId: accountId,
-                    role: adminAccountUser.role
-                  }
+                  ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
+                    let inviteParams = {
+                      accountUserId: contactListUser.accountUserId,
+                      accountId: accountId,
+                      role: adminAccountUser.role
+                    }
 
-                  inviteService.createInvite(inviteParams, transaction).then(() => {
-                      resolve(adminAccountUser);
-                    }, (error) => {
-                      transaction.rollback().then(() => reject(error));
+                    inviteService.createInvite(inviteParams, transaction).then(() => {
+                        resolve(adminAccountUser);
+                      }, (error) => {
+                        transaction.rollback().then(() => {
+                          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                          reject(error);
+                        });
+                    });
+                  }, (error) => {
+                    transaction.rollback().then(() => {
+                      transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                      reject(error)
+                    });
                   });
                 }, (error) => {
-                  transaction.rollback().then(() => reject(error));
+                  transaction.rollback().then(() => {
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                    reject(error)
+                  });
                 });
-              }, (error) => {
-                transaction.rollback().then(() => reject(error));
-              });
+              })
             })
+          transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+            reject("Server Timeoute");
+          });
+
+          transactionPool.emit(transactionPool.CONSTANTS.nextTick);
           }
         });
       }

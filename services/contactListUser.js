@@ -140,20 +140,31 @@ function assignErrorWithRowNr(errors, error, attrs) {
 function bulkCreate(list, accountId) {
   let errors = {required: false};
   let deferred = q.defer();
-
-  models.sequelize.transaction().then(function(t) {
-    async.map(list, transactionFun(t, accountId, errors), function(err, results) {
-      if (errors.required) {
-        t.rollback().then(function() {
-          deferred.reject(errors);
-        });
-      }else {
-        t.commit().then(function() {
-          deferred.resolve(results);
-        });
-      }
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(t) {
+      async.map(list, transactionFun(t, accountId, errors), function(err, results) {
+        if (errors.required) {
+          t.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.reject(errors);
+          });
+        }else {
+          t.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.resolve(results);
+          });
+        }
+      });
     });
   });
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    deferred.reject("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   return deferred.promise;
 }

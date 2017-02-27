@@ -1,8 +1,9 @@
 'use strict';
 
 var models = require('./../../models');
+const TransactionPool = require('./../../lib/transactionPool');
 var BrandProjectPreference = models.BrandProjectPreference;
-
+models.sequelize.transactionPool = new TransactionPool();
 var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');

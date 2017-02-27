@@ -76,28 +76,39 @@ function createBaseMailTemplate(params, callback) {
 }
 
 function create(params, callback) {
-  models.sequelize.transaction().then(function(transaction) {
-    MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
-        transaction.commit().then(function() {
-          callback(null, result);
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.create(params, { transaction: transaction }).then(function(result) {
+        setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          });
         });
-      }, function(error) {
+      }).catch(function(error) {
         transaction.rollback().then(function() {
-          callback(filters.errors(error));
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          if (error.name == 'SequelizeUniqueConstraintError') {
+            callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+          } else {
+            callback(filters.errors(error));
+          }
+          ;
         });
-      });
-    }).catch(function(error) {
-      transaction.rollback().then(function() {
-        if (error.name == 'SequelizeUniqueConstraintError') {
-          callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
-        } else {
-          callback(filters.errors(error));
-        }
-        ;
       });
     });
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function update(id, parameters, callback){

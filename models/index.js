@@ -6,6 +6,7 @@ delete pg.native;
 var fs        = require('fs');
 var path      = require('path');
 var Sequelize = require('sequelize');
+const TransactionPool = require('../lib/transactionPool');
 var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
 var db        = {};
@@ -32,6 +33,8 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 db.sequelize = sequelize;
+db.sequelize.transactionPool = new TransactionPool();
+
 db.Sequelize = Sequelize;
 
 module.exports = db;

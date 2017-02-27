@@ -9,8 +9,7 @@ var config = {
     "database": process.env.DATABASE_NAME_DEV,
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
-    "timezone": "UTC",
-    logging: false
+    "timezone": "UTC"
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,

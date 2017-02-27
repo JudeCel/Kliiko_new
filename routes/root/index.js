@@ -25,7 +25,6 @@ var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
 var exec = require('child_process').exec;
-
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 

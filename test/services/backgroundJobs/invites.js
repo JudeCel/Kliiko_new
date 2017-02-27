@@ -1,7 +1,7 @@
 'use strict';
-
+const TransactionPool = require('../../../lib/transactionPool');
 var {Invite, sequelize} = require('../../../models');
-
+sequelize.transactionPool = new TransactionPool();
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');
 var backgroundJobsInvite = require('../../../services/backgroundJobs/invites');
