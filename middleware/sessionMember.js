@@ -1,7 +1,9 @@
 'use strict';
 
 var _ = require('lodash');
+const TransactionPool = require('./../lib/transactionPool');
 var models = require('./../models');
+models.sequelize.transactionPool = new TransactionPool();
 var MessagesUtil = require('./../util/messages');
 var SessionMember = models.SessionMember;
 var AccountUser = models.AccountUser;

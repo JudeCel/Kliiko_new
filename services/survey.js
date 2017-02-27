@@ -292,7 +292,7 @@ function createSurveyWithQuestions(params, account) {
         });
       })
     transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
-      callback("Server Timeoute");
+      deferred.reject("Server Timeoute");
     });
 
     transactionPool.emit(transactionPool.CONSTANTS.nextTick);

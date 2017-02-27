@@ -9,15 +9,7 @@ var config = {
     "database": process.env.DATABASE_NAME_DEV,
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
-    "timezone": "UTC",
-    pool: {
-      max: 10,
-      min: 0,
-      idle: 2000,
-      handleDisconnects: true
-    },
-    benchmark: true,
-    logging: false
+    "timezone": "UTC"
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,

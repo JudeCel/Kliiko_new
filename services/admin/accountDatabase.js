@@ -136,7 +136,7 @@ function addAdmin({accountId, email}, _accountUserId) {
               })
             })
           transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
-            callback("Server Timeoute");
+            reject("Server Timeoute");
           });
 
           transactionPool.emit(transactionPool.CONSTANTS.nextTick);

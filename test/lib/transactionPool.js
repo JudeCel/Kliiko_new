@@ -10,7 +10,7 @@ describe("TransactionPool", () => {
         it('default options', () => {
             let transactionPool = new TransactionPool();
             assert.equal(transactionPool.concurrentCount, 5);
-            assert.equal(transactionPool.timeout, 10000);
+            assert.equal(transactionPool.timeout, 100000);
             assert.equal(transactionPool.tiket, 1);
         });
 

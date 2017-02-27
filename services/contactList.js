@@ -296,7 +296,7 @@ function update(params) {
         });
       })
       transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
-          callback("Server Timeoute");
+          reject("Server Timeoute");
       });
 
       transactionPool.emit(transactionPool.CONSTANTS.nextTick);
