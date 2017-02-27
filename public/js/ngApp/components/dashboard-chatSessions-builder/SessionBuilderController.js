@@ -188,17 +188,21 @@
     }
 
     function goToStep(step) {
-      vm.listIgnoring = null;
-      var routerProgressbar = ngProgressFactory.createInstance();
-      routerProgressbar.start();
+      if (vm.session.properties.steps[stepNames[step]].enabled) {
+        vm.listIgnoring = null;
+        var routerProgressbar = ngProgressFactory.createInstance();
+        routerProgressbar.start();
 
-      vm.session.goCertainStep(step).then(function(result) {
-        handleStepSwitch(result, step);
-        routerProgressbar.complete();
-      }, function(error) {
-        routerProgressbar.complete();
-        messenger.error(error);
-      });
+        vm.session.goCertainStep(step).then(function(result) {
+          handleStepSwitch(result, step);
+          routerProgressbar.complete();
+        }, function(error) {
+          routerProgressbar.complete();
+          messenger.error(error);
+        });
+      } else {
+        $confirm({ text: vm.session.properties.steps.message, title: null, closeOnly: true, showAsError: false });
+      }
     }
 
     function finishSessionBuilder() {
