@@ -272,23 +272,34 @@ function valiadteMaxPerAccount(accountId) {
 function update(params) {
   return new Bluebird((resolve, reject) => {
     validators.hasValidSubscription(params.accountId).then(() => {
-      models.sequelize.transaction((t) => {
-        return ContactList.find({where: {id: params.id}}, {transaction: t}).then((contactList) => {
-          return contactList.update(params, { transaction: t}).then((result) => {
-           return  models.Survey.update({name: result.name}, {where: {contactListId: contactList.id}, transaction: t}).then(() => {
-             return result
-           }, (error) => {
-             throw error;
-           })
-          }, (error) => {
-            throw error;
+      let transactionPool = models.sequelize.transactionPool;
+      let tiket = transactionPool.getTiket();
+      transactionPool.once(tiket, () => {
+        models.sequelize.transaction((t) => {
+          return ContactList.find({where: {id: params.id}}, {transaction: t}).then((contactList) => {
+            return contactList.update(params, { transaction: t}).then((result) => {
+            return  models.Survey.update({name: result.name}, {where: {contactListId: contactList.id}, transaction: t}).then(() => {
+              return result
+            }, (error) => {
+              throw error;
+            })
+            }, (error) => {
+              throw error;
+            });
           });
+        }).then((contactList) => {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            resolve(contactList);
+        }).catch((error) => {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          reject(filters.errors(error));
         });
-      }).then((contactList) => {
-          resolve(contactList);
-      }).catch((error) => {
-        reject(filters.errors(error));
+      })
+      transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+          callback("Server Timeoute");
       });
+
+      transactionPool.emit(transactionPool.CONSTANTS.nextTick);
     }, (error) => {
       reject(error);
     })

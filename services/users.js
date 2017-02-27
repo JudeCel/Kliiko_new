@@ -91,11 +91,11 @@ function update(req, callback){
 }
 
 function createUser(params, callback) {
-  let transactionPool = models.sequelize.transactionPool;
 
   parsePhoneParams(params);
-  let tiket = transactionPool.getTiket();
 
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
   transactionPool.once(tiket, () => {
     let createNewUserFunctionList = [
       function (cb) {
@@ -135,7 +135,7 @@ function createUser(params, callback) {
     callback("Server Timeoute");
   });
 
-  models.sequelize.transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function parsePhoneParams(params) {
