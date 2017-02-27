@@ -91,9 +91,12 @@ function update(req, callback){
 }
 
 function createUser(params, callback) {
+  let transactionPool = models.sequelize.transactionPool;
+
   parsePhoneParams(params);
-  let tiket = models.sequelize.transactionPool.getTiket();
-  models.sequelize.transactionPool.on(tiket, () => {
+  let tiket = transactionPool.getTiket();
+
+  transactionPool.once(tiket, () => {
     let createNewUserFunctionList = [
       function (cb) {
         models.sequelize.transaction().then(function(t) {
@@ -115,20 +118,24 @@ function createUser(params, callback) {
 
       if(_.isEmpty(object.errors)) {
         object.transaction.commit().then(function() {
-          models.sequelize.transactionPool.emit("endTransaction", tiket);
+         transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
           callback(null, object.user);
         });
       }
       else {
         object.transaction.rollback().then(function() {
-          models.sequelize.transactionPool.emit("endTransaction", tiket);
+         transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
           callback(object.errors, object.user);
         });
       }
     })
   });
   
-  models.sequelize.transactionPool.emit("nextTick")
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
+  });
+
+  models.sequelize.transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function parsePhoneParams(params) {
