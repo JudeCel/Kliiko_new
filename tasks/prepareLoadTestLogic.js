@@ -9,6 +9,7 @@ let Bluebird = require('bluebird');
 var usersServices  = require('./../services/users');
 var subscriptionService = require('./../services/subscription');
 var sessionMemberService = require('./../services/sessionMember');
+var contactListUserService = require('./../services/contactListUser');
 var constants = require('./../util/constants');
 
 const USERS_COUNT = 50;
@@ -17,19 +18,24 @@ const USERS_EMAIL = 'loadTesting@insider.com';
 const USERS_PASSWORD = 'Qwerty123';
 const SYMBOLS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const SUBSCRIPTION_ID = constants.loadTestSubscriptionId;
+const CONTACT_LIST_NAME = 'Spectators';
+const CONTACT_LIST_USER_EMAIL = 'loadTestingContact@insider.com';
+const CONTACT_LIST_USERS_COUNT = 6;
 
-function getUserEmail(index) {
+function getUserEmail(index, forContactList) {
+  let email = forContactList ? CONTACT_LIST_USER_EMAIL : USERS_EMAIL;
   if (index == 0) {
-    return USERS_EMAIL;
+    return email;
   } else {
-    return USERS_EMAIL.replace("@", "+" + index + "@");
+    return email.replace("@", "+" + index + "@");
   }
 }
 
-function getUserName(index) {
+function getUserName(index, forContactList) {
   let res = SYMBOLS.reduce(function(previousValue, currentValue, index, array) {
     return previousValue.replace(new RegExp(index.toString(), 'g'), currentValue);
   }, index.toString());
+  let length = forContactList ? 3 : 4;
   while (res.length < 4) {
     res = SYMBOLS[0] + res;
   }
@@ -225,7 +231,74 @@ function getSessionMemberParams(name, role, accountUserId, sessionId) {
   };
 }
 
+function populateContactLists() {
+  return new Bluebird((resolve, reject) => {
+    let listIndexes = generateIndexesArray(0, CONTACT_LIST_USERS_COUNT - 1);
+    let indexes = generateIndexesArray(0, USERS_COUNT - 1);
+    Bluebird.each(indexes, (index) => {
+      return populateContactListForUser(index, listIndexes);
+    }).then(() => {
+      resolve();
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+function populateContactListForUser(userIndex, listIndexes) {
+  return new Bluebird((resolve, reject) => {
+    models.AccountUser.find({ 
+      where: { 
+        email: getUserEmail(userIndex)
+      },
+      include: [{
+        model: models.Account, 
+        required: true,
+          include: [{ 
+            model: models.ContactList, 
+            where: { name: CONTACT_LIST_NAME },
+            required: true
+          }]
+      }]
+    }).then((owner) => {
+      return populateContactList(owner.Account.id, owner.Account.ContactLists[0].id, listIndexes);
+    }).then(() => {
+      resolve();
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+function populateContactList(accountId, contactListId, listIndexes) {
+  return new Bluebird((resolve, reject) => {
+    Bluebird.each(listIndexes, (index) => {
+      let params = getContactListUserParams(index, accountId, contactListId);
+      return contactListUserService.create(params);
+    }).then(() => {
+      resolve();
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+function getContactListUserParams(index, accountId, contactListId) {
+  let name = getUserName(index, true);
+  return { 
+    defaultFields: { 
+      firstName: name,
+      lastName: name,
+      email: getUserEmail(index, true),
+      gender: 'female'
+    },
+    contactListId: contactListId,
+    accountId: accountId 
+  }
+}
+
 module.exports = {
   createUsers: createUsers,
-  createSessions: createSessions
+  createSessions: createSessions,
+  populateContactLists: populateContactLists
 }

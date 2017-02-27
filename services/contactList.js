@@ -31,26 +31,26 @@ module.exports = {
   valiadteMaxPerAccount: valiadteMaxPerAccount
 };
 
-  function toggleListState(id, accountId) {
-    return new Bluebird((resolve, reject) => {
-      ContactList.find({where: {id: id, accountId: accountId, editable: true} }).then((contactList) => {
-        if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
-          let validCount = contactList.active ?  0 : 1
+function toggleListState(id, accountId) {
+  return new Bluebird((resolve, reject) => {
+    ContactList.find({where: {id: id, accountId: accountId, editable: true} }).then((contactList) => {
+      if(!contactList) {return reject(MessagesUtil.contactList.notFound)}
+        let validCount = contactList.active ?  0 : 1
 
-          validators.subscription(accountId, 'contactList', validCount).then(() => {
-            contactList.update({active: !contactList.active}).then((result) => {
-              resolve(result);
-            }, (error) => {
-              reject(filters.errors(error));
-            })
+        validators.subscription(accountId, 'contactList', validCount).then(() => {
+          contactList.update({active: !contactList.active}).then((result) => {
+            resolve(result);
           }, (error) => {
-            reject(error);
-          });
-      }, (error) => {
-        reject(filters.errors(error));
-      });
+            reject(filters.errors(error));
+          })
+        }, (error) => {
+          reject(error);
+        });
+    }, (error) => {
+      reject(filters.errors(error));
     });
-  }
+  });
+}
 
 function destroy(contacListId, accountId) {
   return new Bluebird((resolve, reject) => {
@@ -62,6 +62,7 @@ function destroy(contacListId, accountId) {
   })
 
 }
+
 function allByAccount(accountId, sessionId) {
     let selectFields =  constants.contactListDefaultFields.concat('id').concat("invitesInfo").concat("role");
     let deferred = q.defer();
