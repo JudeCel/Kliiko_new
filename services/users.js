@@ -223,7 +223,8 @@ function prepareParams(req, errors) {
     termsAndConditions: 'false',
     errors: (errors || {}),
     socialProfile: null,
-    selectedPlanOnRegistration: null
+    selectedPlanOnRegistration: null,
+    showOptionalFields: true
   }, req.body);
 }
 

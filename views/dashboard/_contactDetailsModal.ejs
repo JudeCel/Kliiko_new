@@ -115,21 +115,12 @@
             </div>
             </div>
           <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-3">
+              <div class="row margin-top-10">
+                <div class="col-md-3 pull-left">
                   <button type="button" ng-click="cdm.cancel()"
                           class="btn btn-standart btn-red btn-small">Cancel</button>&nbsp;&nbsp;
                 </div>
-                <div class="col-md-7 check no-side-padding">
-                  <div class="pull-right margin-top-10">
-                    <input ng-model='cdm.userData.reveiveNewsLetters' type='checkbox' class='checkbox-login inline-block' style="vertical-align: sub;"
-                    name='reveiveNewsLetters' id='reveiveNewsLetters'/>
-                    <label class='checkbox-signup text-no-bold inline-block text-vertical-middle' for='reveiveNewsLetters'>
-                      Yes send me the klzii Newsletter which includes tips and updates.
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-2 pull-right">
                   <button type="submit" ng-if="cdm.userDetailsForm.$dirty"
                           class="btn btn-standart btn-green btn-small pull-right">Update</button>
                   <button type="button" ng-if="cdm.userDetailsForm.$pristine" ng-click="cdm.cancel()"

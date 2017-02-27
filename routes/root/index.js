@@ -117,19 +117,27 @@ router.get('/', function (req, res, next) {
   });
 });
 
+function randomNumberForAccountName(name) {
+  return _.uniqueId(name);
+}
 
 function prepareUrlParams(parameters, query) {
   parameters.selectedPlanOnRegistration = "";
   if (query) {
     if (query.name) {
       parameters.firstName = query.name;
+      query.showOptionalFields = false;
+      parameters.accountName = randomNumberForAccountName(query.name);
+      parameters.showOptionalFields = false;
     }
     if (query.email) {
       parameters.email = query.email;
+      parameters.showOptionalFields = false;
     }
 
     if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
+      parameters.showOptionalFields = false;
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {

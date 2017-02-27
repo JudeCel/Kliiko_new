@@ -131,43 +131,45 @@
                     </td>
                     <% } %>
                   </tr>
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="mobile">
-                        Mobile Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
-                    </td>
-                  </tr>
+                  <% if(showOptionalFields) { %>
+                      <tr>
+                        <td>
+                          <label class="text-no-bold text-login-page" for="mobile">
+                            Mobile Number
+                          </label>
+                        </td>
+                        <td>
+                          <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
+                          <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
-                    </td>
-                  </tr>
+                      <tr>
+                        <td></td>
+                        <td class="error-column">
+                          <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="landlineNumber">
-                        Landline Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
-                    </td>
-                  </tr>
+                      <tr>
+                        <td>
+                          <label class="text-no-bold text-login-page" for="landlineNumber">
+                            Landline Number
+                          </label>
+                        </td>
+                        <td>
+                          <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
+                          <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
-                    </td>
-                  </tr>
+                      <tr>
+                        <td></td>
+                        <td class="error-column">
+                          <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
+                        </td>
+                      </tr>
+                  <% } %>
                 </table>
 
                 <div class="form-group">
@@ -177,12 +179,13 @@
                     <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="/terms_of_use" target="_blank">Account Terms & Conditions</a>.</span>
                   </div>
                   <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
-
-                  <div class="check">
-                    <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
-                    <label for="reveiveNewsLetters"></label>
-                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
-                  </div>
+                  <% if(showOptionalFields) { %>
+                    <div class="check">
+                      <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
+                      <label for="reveiveNewsLetters"></label>
+                      <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
+                    </div>
+                  <% } %>
                 </div>
 
                 <div class="form-group text-right">
