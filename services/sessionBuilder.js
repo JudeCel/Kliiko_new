@@ -185,8 +185,8 @@ function changeTimzone(time, from, to) {
 
 function setTimeZone(params) {
   if (params.startTime && params.endTime && params.timeZone) {
-    params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone)
-    params.endTime = changeTimzone(params.endTime, "UTC", params.timeZone)
+    params.startTime = changeTimzone(params.startTime, "UTC", params.timeZone);
+    params.endTime = changeTimzone(params.endTime, "UTC", params.timeZone);
   }
 }
 
@@ -237,15 +237,15 @@ function update(sessionId, accountId, params) {
   });
 }
 
-function initializeDate() {
+function initializeDate(timeZone) {
   let date = new Date();
   date.setHours(0, 0, 0, 0);
-  return date;
+  return moment.tz(date.toUTCString('YYYY-MM-DD HH:mm:ss'), timeZone);
 }
 
 function updateParams(session, params) {
   if (!session.type && params["type"] && sessionTypesConstants[params["type"]].features.dateAndTime.enabled) {
-    params["startTime"] = params["endTime"] = initializeDate();
+    params["startTime"] = params["endTime"] = initializeDate(session.timeZone);
   }
 }
 
