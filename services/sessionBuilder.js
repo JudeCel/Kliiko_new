@@ -240,7 +240,7 @@ function update(sessionId, accountId, params) {
 function initializeDate(timeZone) {
   let date = new Date();
   date.setHours(0, 0, 0, 0);
-  return moment.tz(date.toUTCString('YYYY-MM-DD HH:mm:ss'), timeZone);
+  return changeTimzone(date, moment.tz.guess(), timeZone);
 }
 
 function updateParams(session, params) {
