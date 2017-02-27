@@ -188,7 +188,7 @@
     }
 
     function goToStep(step) {
-      if (vm.session.properties.steps[stepNames[step]].enabled) {
+      if (vm.session.properties.steps[stepNames[step - 1]].enabled) {
         vm.listIgnoring = null;
         var routerProgressbar = ngProgressFactory.createInstance();
         routerProgressbar.start();
