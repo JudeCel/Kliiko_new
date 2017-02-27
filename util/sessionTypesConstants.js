@@ -136,7 +136,8 @@ module.exports = {
         "enabled": true
       }, 
       "facilitatiorAndTopics": {
-        "enabled": true
+        "enabled": true,
+        "hideNext": true
       }, 
       "manageSessionEmails": {
         "enabled": false
@@ -146,7 +147,8 @@ module.exports = {
       }, 
       "inviteSessionObservers": {
         "enabled": false
-      }
+      },
+      "message": "It's even easier to build Social Forum, so you don't need steps 3 to 5."
     },
     "features": {
       "survay": {

@@ -2,16 +2,16 @@
 
 var prepareLoadTestLogic = require('./prepareLoadTestLogic');
 
-prepareLoadTestLogic.createUsers().then(function() {
+prepareLoadTestLogic.createUsers().then(() => {
   console.log("Users created");
-  prepareLoadTestLogic.createSessions().then(function() {
-    console.log("Sessions created");
-    process.exit();
-  }, function(error){
-    console.log(error);
-    process.exit();
-  });
-}, function(error){
+  return prepareLoadTestLogic.createSessions();
+}).then(() => {
+  console.log("Sessions created");
+  return prepareLoadTestLogic.populateContactLists();
+}).then(() => {
+  console.log("Contact lists populated");
+  process.exit();
+}).catch(function(error) {
   console.log(error);
   process.exit();
 });
