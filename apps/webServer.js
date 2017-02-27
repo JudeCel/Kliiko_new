@@ -43,7 +43,6 @@ switch (environment) {
   * Listen on provided port, on all network interfaces.
   */
   server.listen({port: port, backlog: 1000});
-  http.globalAgent.maxSockets = 100;
   server.on('error', onError);
   server.on('listening', onListening);
 
