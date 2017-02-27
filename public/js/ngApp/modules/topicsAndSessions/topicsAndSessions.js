@@ -42,6 +42,7 @@
         } else {
           if (result.snapshot) {
             session.snapshot = result.snapshot;
+            params.snapshot = null;
           }
           deferred.resolve(result.data);
         }
