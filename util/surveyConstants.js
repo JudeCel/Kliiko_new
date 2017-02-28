@@ -180,7 +180,8 @@ module.exports = {
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 7
+      maxAnswers: 7,
+      expandable: true
     },
     {
       order: 4,
@@ -196,7 +197,8 @@ module.exports = {
       input: true,
       audioVideo: true,
       minAnswers: 2,
-      maxAnswers: 7
+      maxAnswers: 7,
+      expandable: true
     },
     {
       order: 5,
@@ -210,7 +212,8 @@ module.exports = {
       ],
       input: true,
       minAnswers: 2,
-      maxAnswers: 7
+      maxAnswers: 7,
+      expandable: true
     },
     {
       order: 6,
@@ -239,5 +242,32 @@ module.exports = {
       maxAnswers: 0,
       handleTag: 'InterestYesTag'
     }
+  ],
+  tableOfContents: [
+    {
+      order: 0,
+      questions: true,
+      interval: [0, 3]
+    },
+    {
+      order: 1,
+      userTemplate: true,
+      tag: "1"
+    },
+    {
+      order: 2,
+      questions: true,
+      interval: [3, 6]
+    },
+    {
+      order: 3,
+      userTemplate: true,
+      tag: "2"
+    },
+    {
+      order: 4,
+      questions: true,
+      interval: [6, 10]
+    },
   ]
 }

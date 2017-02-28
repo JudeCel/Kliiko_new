@@ -1,3 +1,13 @@
+{{sc.tableOfContents}}
+
+<div ng-repeat='section in sc.tableOfContents track by $index'>
+  <div ng-if="section.questions">
+    <div ng-repeat='object in sc.sectionQuestions(section) track by $index'>
+      <ng-include src="sc.questionTemplate(object)"></ng-include>
+    </div>
+  </div>
+</div>
+<!--
 <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index'>
   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html'"></ng-include>
 </div>
@@ -20,7 +30,4 @@
 <div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index'>
   <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html'"></ng-include>
 </div>
-
-<div class='col-sm-12'>
-  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyFooter.html'"></ng-include>
-</div>
+-->

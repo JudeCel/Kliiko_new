@@ -55,6 +55,8 @@
     vm.galleryDropdownData = galleryDropdownData;
     vm.checkTag = surveyServices.checkTag;
     vm.canDelete = canDelete;
+    vm.sectionQuestions = sectionQuestions;
+    vm.questionTemplate = questionTemplate;
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -91,6 +93,7 @@
         vm.validationErrors = vm.constantErrors.field;
         vm.minsMaxs = res.data.minsMaxs;
         vm.minQuestions = res.data.minQuestions;
+        vm.tableOfContents = res.data.tableOfContents;
       });
     };
 
@@ -514,5 +517,17 @@
     function contactDetailDisabled(cd) {
       return (vm.currentContacts[cd.model] ? false : cd.disabled);
     };
+
+    function sectionQuestions(section) {
+      return vm.defaultQuestions.slice(section.interval[0], section.interval[1]);
+    }
+
+    function questionTemplate(question) {
+      if (question.expandable) {
+        return "/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/expandable-section.html";
+      } else {
+        return "/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html";
+      }
+    }
   };
 })();
