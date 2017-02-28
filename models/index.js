@@ -33,7 +33,13 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 db.sequelize = sequelize;
-db.sequelize.transactionPool = new TransactionPool();
+let pullConfig = {}
+
+if(config.pool){
+  pullConfig = {concurrentCount: config.pool.max, timeout: config.pool.idle}
+}
+
+db.sequelize.transactionPool = new TransactionPool(pullConfig);
 
 db.Sequelize = Sequelize;
 

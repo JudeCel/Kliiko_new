@@ -129,7 +129,7 @@ function createInvite(params, transaction) {
       role: params.role
     }
     
-    buildTransaction(transaction).then((transaction) => {
+    buildTransaction(transaction).then((transaction, transactionPool) => {
       Invite.build(buildAttrs).validate().done(() => {
         sql.transaction = transaction;
         Invite.destroy(sql).then(() => {
@@ -137,9 +137,15 @@ function createInvite(params, transaction) {
             enqueue(backgroundQueues.queues.invites, "invite", [result.id]).then(() => {
               Invite.find({where: {id: result.id}, include: { model: AccountUser, attributes: constants.safeAccountUserParams }, transaction: transaction}).then((invite)=> {
                 transaction.commit().then(() => {
+                  if(transactionPool){
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  }
                   resolve(invite);
                 });
               }, (error) => {
+                   if(transactionPool){
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  }
                 resolve(result);
               });
             }, (error) => {
@@ -147,6 +153,9 @@ function createInvite(params, transaction) {
             });
           }).catch((error) => {
             transaction.rollback().then(() => {
+              if(transactionPool){
+                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              }
               if(error.name == 'SequelizeUniqueConstraintError') {
                 reject({ email: 'User has already been invited' });
               }else {
@@ -156,6 +165,9 @@ function createInvite(params, transaction) {
           });
         });
       }, (error) => {
+        if(transactionPool){
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+        }
         reject(filters.errors(error));
       });
     });
@@ -167,7 +179,19 @@ function buildTransaction(transaction) {
     if (transaction) {
       resolve(transaction);
     }else{
-      resolve(models.sequelize.transaction())
+      let transactionPool = models.sequelize.transactionPool;
+      let tiket = transactionPool.getTiket();
+
+      transactionPool.once(tiket, () => {
+        resolve(models.sequelize.transaction())
+
+      });
+
+      transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+        callback("Server Timeoute");
+      });
+
+      transactionPool.emit(transactionPool.CONSTANTS.nextTick);
     }
   })
 }
