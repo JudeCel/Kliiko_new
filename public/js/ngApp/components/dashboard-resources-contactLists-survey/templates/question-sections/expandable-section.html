@@ -1,0 +1,20 @@
+<div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
+  <uib-accordion close-others='false'>
+    <uib-accordion-group is-open='object.open' id='panel-{{ object.order }}' class='border-radius-none'>
+      <uib-accordion-heading>
+        <div>
+          <strong>{{ object.name }}</strong>
+          <i class='pull-right glyphicon' ng-class="{'glyphicon-chevron-down': object.open, 'glyphicon-chevron-right': !object.open}"></i>
+        </div>
+      </uib-accordion-heading>
+
+      <ng-form name='{{ object.order }}'>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
+        <div ng-if='!sc.survey.confirmedAt && !question.required'>
+          <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
+        </div>
+      </ng-form>
+    </uib-accordion-group>
+  </uib-accordion>
+</div>

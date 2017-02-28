@@ -1,0 +1,26 @@
+<div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(0, 3) track by $index'>
+  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html'"></ng-include>
+</div>
+
+<div class='col-sm-12'>
+  <hr class='survey-hr' />
+  <h4><strong>Advanced Recruiter</strong></h4>
+  <h5>
+    Select up to 3 further questions of different question types.<br />
+    Video and audio files can be added to the first 2 of those types.
+  </h5>
+</div>
+<div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(3, 6) track by $index'>
+  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/expandable-section.html'"></ng-include>
+</div>
+<div class='col-sm-12'>
+  <hr class='survey-hr' />
+</div>
+
+<div class='col-sm-12' ng-repeat='object in sc.defaultQuestions.slice(6, 10) track by $index'>
+  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html'"></ng-include>
+</div>
+
+<div class='col-sm-12'>
+  <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyFooter.html'"></ng-include>
+</div>
