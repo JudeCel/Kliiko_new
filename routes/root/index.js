@@ -116,26 +116,37 @@ router.get('/', function (req, res, next) {
   });
 });
 
+function randomNumberForAccountName(name) {
+  return _.uniqueId(name);
+}
 
 function prepareUrlParams(parameters, query) {
   parameters.selectedPlanOnRegistration = "";
   if (query) {
     if (query.name) {
       parameters.firstName = query.name;
+      query.showOptionalFields = false;
+      parameters.accountName = randomNumberForAccountName(query.name);
+      parameters.showOptionalFields = false;
     }
     if (query.email) {
       parameters.email = query.email;
+      parameters.showOptionalFields = false;
     }
 
     if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
+      parameters.showOptionalFields = false;
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {
         parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
+  }
 
+  if (typeof(parameters.showOptionalFields) != "boolean") {
+    parameters.showOptionalFields = (parameters.showOptionalFields == "true");
   }
 }
 
@@ -312,6 +323,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
       let params = usersRepo.prepareParams(req, error);
+      prepareUrlParams(params, req.query);
 
       if (renderInfo.failed == "registration") {
         params.facebookUrl = facebookUrl;
@@ -355,6 +367,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
+  prepareUrlParams(userParams, req.query);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 
