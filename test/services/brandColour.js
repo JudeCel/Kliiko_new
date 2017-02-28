@@ -186,8 +186,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error, brandColourServices.messages.notFound);
-          done();
+          try {
+            assert.equal(error, brandColourServices.messages.notFound);
+            done();  
+          } catch (error) {
+            done(error);
+          }
         });
       });
 
@@ -273,8 +277,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.copyScheme({ id: testData.preference.id + 100 }, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
+          try {
           assert.equal(error, brandColourServices.messages.notFound);
           done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
     });

@@ -1,6 +1,5 @@
 "use strict";
-var models  = require('./../../models');
-var User  = models.User;
+var {User}  = require('./../../models');
 var usersRepo  = require('./../../services/users');
 var changePassword  = require('./../../services/changePassword');
 var assert = require('assert');

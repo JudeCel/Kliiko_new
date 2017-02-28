@@ -83,6 +83,7 @@ function create(params, callback) {
       MailTemplate.create(params, { transaction: transaction }).then(function(result) {
         setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
           transaction.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
             callback(null, result);
           });
         }, function(error) {
@@ -97,6 +98,7 @@ function create(params, callback) {
           if (error.name == 'SequelizeUniqueConstraintError') {
             callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
           } else {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
             callback(filters.errors(error));
           }
           ;
