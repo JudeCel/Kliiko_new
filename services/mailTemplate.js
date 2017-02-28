@@ -76,28 +76,41 @@ function createBaseMailTemplate(params, callback) {
 }
 
 function create(params, callback) {
-  models.sequelize.transaction().then(function(transaction) {
-    MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
-        transaction.commit().then(function() {
-          callback(null, result);
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.create(params, { transaction: transaction }).then(function(result) {
+        setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          });
         });
-      }, function(error) {
+      }).catch(function(error) {
         transaction.rollback().then(function() {
-          callback(filters.errors(error));
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          if (error.name == 'SequelizeUniqueConstraintError') {
+            callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+          } else {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          }
+          ;
         });
-      });
-    }).catch(function(error) {
-      transaction.rollback().then(function() {
-        if (error.name == 'SequelizeUniqueConstraintError') {
-          callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
-        } else {
-          callback(filters.errors(error));
-        }
-        ;
       });
     });
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function update(id, parameters, callback){
@@ -813,6 +826,9 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
+    if (params.removeTimeBlock) {
+      template.content = removeTimeBlock(template.content);
+    }
     template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
@@ -822,6 +838,20 @@ function composeMailFromTemplate(template, params) {
   } catch (error) {
     return {error: error};
   }
+}
+
+function removeTimeBlock(content) {
+  const blockStart = "<div class=timeInfoPanelTitle>";
+  const blockEnd = "<div class=timeInfoPanelEnd>";
+
+  let blockStartIndex = content.indexOf(blockStart);
+  if (blockStartIndex >= 0) {
+    let blockEndIndex = content.indexOf(blockEnd, blockStartIndex);
+    if (blockEndIndex >= 0) {
+      return content.substr(0, blockStartIndex) + content.substr(blockEndIndex + blockEnd.length);
+    }
+  }
+  return content;
 }
 
 function sendMailFromTemplate(id, params, callback) {

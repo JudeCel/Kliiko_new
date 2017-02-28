@@ -1,7 +1,7 @@
 <section ng-if="app.hasPermissions('canAccountProfile')">
   <div class="row">
     <div class='col-xs-12'>
-      <div class='text-center remove-link-line tabs-links'>
+      <div id='account-profile-links' class='text-center remove-link-line tabs-links'>
         <div ui-sref-active='active' ui-sref='account-hub.accountProfile.upgradePlan' class='btn btn-standart btn-dashboard-menu btn-blue btn-large'
         ng-show="app.hasPermissions('canUpgradePlan')">
           <span class='pull-left'>Upgrade Plan</span>

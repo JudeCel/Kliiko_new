@@ -12,7 +12,7 @@ var _ = require('lodash');
 var async = require('async');
 let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
-var planConstants = require('./../util/planConstants');
+const PLAN_CONSTANTS = require('./../util/planConstants');
 var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
@@ -146,12 +146,12 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
     async.each(plans, function(plan, callback) {
       // TODO Refacture to one function
       if(notNeedEstimatePrice(plan, accountSubscription)){
-        plan.additionalParams = planConstants[plan.plan.id];
+        plan.additionalParams = PLAN_CONSTANTS[plan.plan.id];
         plansWithAllInfo.push(plan);
         callback();
       }else if(needEstimatePrice(plan, accountSubscription)){
         getEstimateCharge(plan, accountSubscription).then(function(planWithEstimate) {
-          planWithEstimate.additionalParams = planConstants[planWithEstimate.plan.id];
+          planWithEstimate.additionalParams = PLAN_CONSTANTS[planWithEstimate.plan.id];
           plansWithAllInfo.push(planWithEstimate);
           callback();
         }, function(error) {
@@ -275,6 +275,7 @@ function findSubscriptionByChargebeeId(subscriptionId) {
 function createSubscription(accountId, userId, provider, plan) {
   let deferred = q.defer();
 
+  // TODO need refacture!!!
   findSubscription(accountId).then(function(subscription) {
     if(subscription) {
       deferred.reject(MessagesUtil.subscription.alreadyExists);
@@ -296,16 +297,35 @@ function createSubscription(accountId, userId, provider, plan) {
       }
     }).then(function(plan) {
       if(plan){
-        return models.sequelize.transaction(function (t) {
-          return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-            return SubscriptionPreference.create({subscriptionId: subscription.id, data: planConstants[plan.chargebeePlanId]}, {transaction: t}).then(function() {
-              return subscription;
-            }, function(error) {
-              // TODO Take a look!!!
-              throw error;
+          let transactionPool = models.sequelize.transactionPool;
+          let tiket = transactionPool.getTiket();
+          let deferredTransactionPool = q.defer();
+
+          transactionPool.once(tiket, () => {
+            models.sequelize.transaction(function (t) {
+              return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
+                return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.chargebeePlanId]}, {transaction: t}).then(function() {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  deferredTransactionPool.resolve(subscription);
+                }, function(error) {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  // TODO Take a look!!!
+                  throw error;
+                });
+              });
+            }).catch(function(error) {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              deferredTransactionPool.reject(error);
             });
           });
+
+        transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+            throw("Server Timeoute");
         });
+
+        transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+        return deferredTransactionPool.promise;
+
       }else{
         deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
@@ -480,7 +500,7 @@ function updateSubscriptionData(passThruContent){
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
 
-      let params = _.cloneDeep(planConstants[passThruContent.planId]);
+      let params = _.cloneDeep(PLAN_CONSTANTS[passThruContent.planId]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
@@ -813,7 +833,9 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
-      if(newPlan.sessionCount < c){
+      if(newPlan.sessionCount == -1) {
+        cb(null, {});
+      } else if(newPlan.sessionCount < c){
         cb(null, {session: MessagesUtil.subscription.validation.session});
       }else{
         cb(null, {});
@@ -832,11 +854,15 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      if(newPlan.surveyCount < c){
-        errors.survey = MessagesUtil.subscription.validation.survey;
-      }
 
-      cb(null, errors);
+      if(newPlan.sessionCount == -1) {
+        cb(null, errors);
+      } else if(newPlan.sessionCount < c){
+        errors.survey = MessagesUtil.subscription.validation.survey;
+        cb(null, errors);
+      }else{
+        cb(null, errors);
+      }
     }, function(error) {
       cb(error);
     });

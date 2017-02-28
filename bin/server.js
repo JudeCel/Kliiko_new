@@ -13,6 +13,9 @@ const cluster = require('cluster');
     cluster.fork({ROLE: "monitoring"});
 
     cluster.on('exit', (worker, code, signal) => {
+      console.log(worker)
+      console.log(code)
+      console.log(signal)
       console.log(`worker ${worker.process.pid} died`);
     });
   } else {

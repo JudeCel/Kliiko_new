@@ -3,10 +3,11 @@ var assert = require("chai").assert;
 var models  = require('./../../models');
 
 var usersMailer = require('./../../mailers/users.js');
+var testDatabase = require("../database");
 
 describe('Mailer Users', () => {
   before((done) => {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       done();
     });
   });

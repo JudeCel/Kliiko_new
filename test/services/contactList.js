@@ -8,11 +8,12 @@ var constants = require('./../../util/constants');
 var subscriptionFixture = require('./../fixtures/subscription');
 var MessagesUtil = require('./../../util/messages');
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('Services -> ContactList', () => {
   var testData;
   beforeEach(function(done) {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       subscriptionFixture.createSubscription().then(function(result) {
         testData = result;
         done();

@@ -2,7 +2,7 @@
 
 var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
-var { Subscription, Session, Invite, SessionMember, AccountUser, Account } = require('./../models');
+var { Subscription, Session, Invite, SessionMember, AccountUser, Account, SessionType } = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
@@ -17,6 +17,7 @@ var MailTemplateService = require('./mailTemplate');
 var sessionMemberServices = require('./../services/sessionMember');
 var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 
 const VALID_ATTRIBUTES = {
@@ -70,10 +71,9 @@ function setAnonymous(sessionId, accountId) {
             deferred.resolve(updatedSession);
           });
         })
-      }else{
+      } else {
         deferred.reject(MessagesUtil.session.cannotBeChanged);
       }
-
     } else {
       deferred.reject(MessagesUtil.session.notFound);
     }
@@ -85,8 +85,7 @@ function setAnonymous(sessionId, accountId) {
 }
 
 function canChangeAnonymous(session) {
-  if (session.anonymous == true) { return false };
-  return true;
+  return !session.anonymous && sessionTypesConstants[session.type].features.anonymous.enabled;
 }
 
 function getSessionByInvite(token) {
@@ -295,7 +294,7 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
 function copySession(sessionId, accountId, provider) {
   let deferred = q.defer();
 
-  validators.subscription(accountId, 'session', 1).then(function() {
+  validators.subscription(accountId, 'session', 0).then(function() {
     findSession(sessionId, accountId, provider).then(function(result) {
       let facilitator = result.data.dataValues.facilitator;
       delete result.data.dataValues.id;
@@ -319,12 +318,14 @@ function copySession(sessionId, accountId, provider) {
                 //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                 callback();
               });
-            },
-            function(callback) {
-              MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
-                callback();
-              });
             }
+            //  NOTE: right now we need to disable this functionality.
+            //  When client will want to copy email templates we will jsut need to add this code back.
+            // function(callback) {
+            //   MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+            //     callback();
+            //   });
+            // }
         ], function (error) {
           //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
           prepareModifiedSessions(session, accountId, provider, deferred);
@@ -431,6 +432,9 @@ function findAllSessionsAsManager(accountId, provider) {
         model: AccountUser,
         attributes: ['firstName', 'lastName', 'email']
       }]
+    }, { 
+      model: SessionType,
+      attributes: ['name', 'properties']
     }]
   }).then(function(sessions) {
     modifySessions(sessions, accountId, provider).then(function(result) {

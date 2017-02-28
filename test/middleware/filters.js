@@ -8,13 +8,14 @@ var filtersMiddleware = require('./../../middleware/filters');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
+var testDatabase = require("../database");
 
 describe('MIDDLEWARE - Filters', function() {
   var testData;
 
   describe('#myDashboardPage', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         userFixture.createUserAndOwnerAccount().then(function(result) {
           testData = result;
           AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {
@@ -67,7 +68,7 @@ describe('MIDDLEWARE - Filters', function() {
 
   describe('#planSelectPage', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         subscriptionFixture.createSubscription().then(function(result) {
           testData = result;
             AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {

@@ -12,7 +12,7 @@
           <h1>Chat Session Builder</h1>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3" ng-if="sbc.session.properties.features.closeSession.enabled">
           <div ng-show="sbc.session.sessionData.status == 'open'" ng-disabled="sbc.session.sessionData.showStatus == 'Pending'" class="btn btn-standart btn-red btn-large" ng-click="sbc.closeSession()">
             Close Chat Session
             <span class='fa fa-lock'></span>
@@ -98,15 +98,12 @@
             <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToPreviousStep()"  ng-hide="sbc.stepsClassIsActive(1)" messages-directive='clear'>
               Previous step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep" messages-directive='clear'>
+            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep || sbc.session.properties.steps[sbc.session.sessionData.step].hideNext" messages-directive='clear'>
               Next step
             </div>
             <div ng-show="sbc.lastStep">
-              <div ng-if="!sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.finishSessionBuilder()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
+              <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
                 Finish with builder
-              </div>
-              <div ng-if="sbc.session.sessionData.isInactive" class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
-                Activate Session
               </div>
             </div>
             <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
