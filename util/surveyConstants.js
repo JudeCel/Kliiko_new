@@ -251,8 +251,8 @@ module.exports = {
     },
     {
       order: 1,
-      userTemplate: true,
-      tag: "1"
+      customTemplate: true,
+      tag: "0"
     },
     {
       order: 2,
@@ -261,8 +261,8 @@ module.exports = {
     },
     {
       order: 3,
-      userTemplate: true,
-      tag: "2"
+      customTemplate: true,
+      tag: "1"
     },
     {
       order: 4,

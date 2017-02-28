@@ -58,6 +58,16 @@
     vm.sectionQuestions = sectionQuestions;
     vm.questionTemplate = questionTemplate;
 
+    vm.customSurveyTemplate = function(object) {
+      let template = vm.userTemplates[object.tag];
+      return template ? template : "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html";
+    }
+
+    vm.userTemplates = {
+      "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
+      "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
+    }
+
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
       var question = vm.survey.SurveyQuestions[data.questionOrder].answers;
