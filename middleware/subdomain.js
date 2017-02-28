@@ -1,7 +1,5 @@
 'use strict';
-const TransactionPool = require('./../lib/transactionPool');
 var models  = require('./../models');
-models.sequelize.transactionPool = new TransactionPool();
 var Sequelize = models.sequelize;
 var policy = require('./policy');
 var Account  = models.Account;
