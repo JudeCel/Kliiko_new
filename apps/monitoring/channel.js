@@ -1,5 +1,5 @@
 "use strict";
-const { EventEmitter } = require('events');
+const { EventEmitter2 } = require('eventemitter2');
 const Store = require('./store');
 const Message = require('./message');
 
@@ -20,9 +20,9 @@ const CHANNEL_STATES = {
   leaving: "leaving"
 }
 
-class Channel extends EventEmitter {
+class Channel extends EventEmitter2 {
     constructor(name){
-      super();
+      super({verboseMemoryLeak: true});
       this.ref = 0;
       this.topic =  name;
       this.state =  CHANNEL_STATES.set;
@@ -45,7 +45,7 @@ class Channel extends EventEmitter {
       this.state = _to;
 
       this.emit("stateChange", {from, to: _to});
-      this.emit(to, {});
+      this.emit(to);
     }
 
     join(){
@@ -139,20 +139,10 @@ class Channel extends EventEmitter {
     }
 
     resolveMessage(message, reply){
-      if(message && message.promise){
-        if(message.promise){
-          message.promise.resolve(reply.payload);
-        }
-        message.emit(reply.payload.status, reply.payload);
-      }
+      message.processReply('resolve', reply);
     }
     rejectMessage(message, reply){
-      if(message && message.promise){
-        if(message.promise){
-          message.promise.reject(reply.payload);
-        }
-        message.emit(reply.payload.status, reply.payload);
-      }
+      message.processReply('reject', reply);
     }
 }
 

@@ -9,7 +9,6 @@ const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {});
 
 const infoChannel = repo.addChannel("info:kliiko");
 const errorChannel = repo.addChannel("error:kliiko");
-const logsChannel = repo.addChannel("logs:kliiko");
 
 infoChannel.on("get_deps", () => {
     exec('yarn outdated --color', (error, stdout, stderr) => {
@@ -19,6 +18,14 @@ infoChannel.on("get_deps", () => {
         infoChannel.push("deps", { status: 'ok', data: stdout })
       }
     });
+})
+
+infoChannel.on("ping", () => {
+  infoChannel.push("pong", { status: 'ok'})
+})
+
+infoChannel.on("system_metrics", () => {
+  infoChannel.push("system_metrics", { metrics: process.memoryUsage()})
 })
 
 process.on('message', function (data) {

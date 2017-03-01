@@ -1,5 +1,6 @@
-const { EventEmitter } = require('events');
-class Message extends EventEmitter {
+const { EventEmitter2 } = require('eventemitter2');
+
+class Message extends EventEmitter2 {
   constructor(topic, payload, event, ref){
     super()
     this.ref = ref;
@@ -23,6 +24,10 @@ class Message extends EventEmitter {
   }
   setSent(){
     this.state = 'sent'
+  }
+  processReply(staus, reply){
+    this.defer[staus](reply.payload);
+    this.emit(reply.payload.status, reply.payload);
   }
 }
 

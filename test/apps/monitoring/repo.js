@@ -1,10 +1,10 @@
 'use strict';
 const { assert } = require('chai');
-const { EventEmitter } = require('events');
+const { EventEmitter2 } = require('eventemitter2');
 
 const Repo = require('../../../apps/monitoring/repo');
 
-class DummyAdapter extends  EventEmitter{
+class DummyAdapter extends  EventEmitter2{
     constructor(url, options){
         super();
     }
@@ -13,7 +13,7 @@ class DummyAdapter extends  EventEmitter{
     }
 }
 
-describe.only('MONITORING - REPO', () => {
+describe('MONITORING - REPO', () => {
     it("can't build with invalid adapter", (done) => {
         let adapter = {};
         try {

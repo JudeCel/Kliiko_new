@@ -1,6 +1,5 @@
 'use strict';
 const { assert } = require('chai');
-const { EventEmitter } = require('events');
 
 const Channel = require('../../../apps/monitoring/channel');
 
@@ -55,7 +54,7 @@ describe('MONITORING - Channel', () => {
 
             channel.on("outgoingMessage", (payload) => {
                 let resp = {ref: payload.ref, event: "phx_reply", payload: {status: "ok"} }
-                setInterval(() => {
+                process.nextTick(() => {
                     channel.emit("incomingMessage", resp);
                 })
             });
@@ -77,7 +76,7 @@ describe('MONITORING - Channel', () => {
 
             channel.on("outgoingMessage", (payload) => {
                 let resp = {ref: payload.ref, event: "phx_reply", payload: {status: "ok"} }
-                setInterval(() => {
+                process.nextTick(() => {
                     channel.emit("incomingMessage", resp);
                 })
             });
@@ -90,7 +89,7 @@ describe('MONITORING - Channel', () => {
         }
     });
 
-    it("can lisen chanell", (done) => {
+    it("can lisen chanel", (done) => {
         try {
             let channel = new Channel("name:1");
             channel.join();

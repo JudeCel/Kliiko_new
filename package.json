@@ -105,6 +105,7 @@
     "debug": "^2.2.0",
     "dotenv-extended": "^1.0.4",
     "ejs": "^2.4.1",
+    "eventemitter2": "^3.0.1",
     "express": "^4.14.0",
     "express-jwt": "^5.1.0",
     "express-session": "^1.14.2",

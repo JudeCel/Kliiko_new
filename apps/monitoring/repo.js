@@ -1,7 +1,8 @@
 "use strict";
 const Channel = require('./channel');
-const { EventEmitter } = require('events');
-class Repo extends EventEmitter{
+const { EventEmitter2 } = require('eventemitter2');
+
+class Repo extends EventEmitter2 {
   constructor(adapterModule, url, options) {
     super()
     this.messageBuffer = [];
