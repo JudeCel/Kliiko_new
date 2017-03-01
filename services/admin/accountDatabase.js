@@ -70,76 +70,17 @@ function addAdmin({accountId, email}, _accountUserId) {
       if (_.isEmpty(accountUsers)) {
         reject((MessagesUtil.accountDatabase.adminNotFound  + email));
       } else {
-        AccountUser.find({ where: { AccountId: accountId, role: 'admin', email: email,  active: false } }).then((accountUser) => {
+        AccountUser.find({ where: { AccountId: accountId, role: 'admin', email: email,  active: false } }).then((accountUser) => {          
           if(accountUser) {
             accountUser.update({ isRemoved: false }).then((updatedAccountUser) => {
-              let inviteParams = {
-                accountUserId: updatedAccountUser.id,
-                accountId: accountId,
-                role: accountUsers[0].role
-              };
-
-              inviteService.createInvite(inviteParams).then(() => {
-                resolve(updatedAccountUser);
-              }, (error) => {
-                reject(error);
-              });
+              processAdminTransaction(accountId, updatedAccountUser, resolve, reject);
             }, (error) => {
               reject(error);
             });
           }
           else {
             let adminAccountUser = accountUsers[0];
-            let transactionPool = models.sequelize.transactionPool;
-            let tiket = transactionPool.getTiket();
-            transactionPool.once(tiket, () => {
-              models.sequelize.transaction().then((transaction) => {
-                ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
-                let contactListUserParams = {
-                  accountId: accountId,
-                  contactListId: contactList.id,
-                  role: adminAccountUser.role,
-                  defaultFields: {
-                    firstName: adminAccountUser.firstName,
-                    lastName: adminAccountUser.lastName,
-                    email: adminAccountUser.email,
-                    gender: adminAccountUser.gender
-                  }}
-
-                  ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
-                    let inviteParams = {
-                      accountUserId: contactListUser.accountUserId,
-                      accountId: accountId,
-                      role: adminAccountUser.role
-                    }
-
-                    inviteService.createInvite(inviteParams, transaction).then(() => {
-                        resolve(adminAccountUser);
-                      }, (error) => {
-                        transaction.rollback().then(() => {
-                          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                          reject(error);
-                        });
-                    });
-                  }, (error) => {
-                    transaction.rollback().then(() => {
-                      transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                      reject(error)
-                    });
-                  });
-                }, (error) => {
-                  transaction.rollback().then(() => {
-                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                    reject(error)
-                  });
-                });
-              })
-            })
-          transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
-            reject("Server Timeoute");
-          });
-
-          transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+            processAdminTransaction(accountId, adminAccountUser, resolve, reject);
           }
         });
       }
@@ -147,10 +88,66 @@ function addAdmin({accountId, email}, _accountUserId) {
   });
 }
 
+function processAdminTransaction(accountId, adminAccountUser, resolve, reject) {
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then((transaction) => {
+      ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
+        let contactListUserParams = {
+          accountId: accountId,
+          contactListId: contactList.id,
+          role: adminAccountUser.role,
+          defaultFields: {
+            firstName: adminAccountUser.firstName,
+            lastName: adminAccountUser.lastName,
+            email: adminAccountUser.email,
+            gender: adminAccountUser.gender
+          }}
+
+        ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
+          let inviteParams = {
+            accountUserId: contactListUser.accountUserId,
+            accountId: accountId,
+            role: adminAccountUser.role
+          }
+
+          inviteService.createInvite(inviteParams, transaction).then(() => {
+            resolve(adminAccountUser);
+          }, (error) => {
+            transaction.rollback().then(() => {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              reject(error);
+            });
+          });
+        }, (error) => {
+          transaction.rollback().then(() => {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              reject(error)
+            });
+          });
+      }, (error) => {
+        transaction.rollback().then(() => {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            reject(error)
+        });
+      });
+    });
+  });
+  
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    reject("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+}
+
 function removeAdmin({ accountId }) {
   return new Bluebird((resolve, reject) => {
     AccountUser.find({ where: { AccountId: accountId, role: 'admin' }, include: [{ model: Account, include: [AccountUser] }] }).then((accountUser) => {
       if(!accountUser) return reject('Not found');
+      
+      models.ContactListUser.destroy({where: {accountUserId: accountUser.id, accountId: accountId}}).then((contactListUser) => {
       accountUserService.deleteOrRecalculate(accountUser.id, null, 'admin')
         .then(() => Account.find({ where: { id: accountId }, include: accountInclude() }))
         .then((account) => {
@@ -176,6 +173,9 @@ function removeAdmin({ accountId }) {
             }  
           });
         }).catch((error) => reject(error));
+      }, (error) => {
+        reject(error);
+      });
     });
   });
 }
