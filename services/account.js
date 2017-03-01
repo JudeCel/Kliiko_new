@@ -129,22 +129,6 @@ function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
   return res;
 }
 
-function addFreeAccount(params) {
-
-  models.AccountUser.count({
-    where: {
-     email: params.email,
-     role: "accountManager",
-     owner: true
-    }
-  }).then(function(count) {
-    console.log("@#@%&^%^$%$^%#^%$&^%^$^%^%$^%^&$$&^%$&^%&^$&$&$");
-    console.log(count > 1);
-    console.log("@#@%&^%^$%$^%#^%$&^%^$^%^%$^%^&$$&^%$&^%&^$&$&$");
-    return count > 1;
-  });
-}
-
 function create(object, callback) {
   object.account = {};
   object.errors = object.errors || {};
