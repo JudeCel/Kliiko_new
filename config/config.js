@@ -9,7 +9,12 @@ var config = {
     "database": process.env.DATABASE_NAME_DEV,
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
-    "timezone": "UTC"
+    "timezone": "UTC",
+    pool: { 
+      max: 10, 
+      idle: 10000 
+    },
+    logging: false
   },
   "test": {
     "username": process.env.DATABASE_USER_TEST,
@@ -27,6 +32,10 @@ var config = {
     "host": process.env.DATABASE_HOST_PROD,
     "dialect": process.env.DATABASE_DIALECT_PROD,
     "timezone": "UTC",
+    pool: { 
+      max: 10, 
+      idle: 10000 
+    },
     logging: false
   }
 }
