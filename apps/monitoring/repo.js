@@ -12,17 +12,17 @@ class Repo extends EventEmitter{
     this.startAdapter();
     this.bindEvents();
   }
-  bindEvents( ) {
-      this.on("processMessage", () => {
-          if(this.adapter && this.adapter.readyState === this.adapterModule.OPEN){
-            let payload = this.messageBuffer.shift();
+  bindEvents() {
+    this.on("processMessage", () => {
+      if(this.adapter && this.adapter.readyState === this.adapterModule.OPEN){
+        let payload = this.messageBuffer.shift();
 
-            if(payload){
-                this.send(payload);
-                this.emit("processMessage");
-            }
-          }
-      });
+        if(payload){
+            this.send(payload);
+            this.emit("processMessage");
+        }
+       }
+    });
   }
   startAdapter(){
     this.adapter = null;
@@ -31,6 +31,12 @@ class Repo extends EventEmitter{
   }
 
   subscribeAdapterEvents(){
+      if(this.adapter){
+          this.adapter.removeAllListeners("message");
+          this.adapter.removeAllListeners("error");
+          this.adapter.removeAllListeners("close");
+          this.adapter.removeAllListeners("open");
+      }
     this.adapter.on("message", (resp) => { 
         this._messageBroke(resp);
     });
@@ -41,19 +47,19 @@ class Repo extends EventEmitter{
          }, 2000);
     })
 
-    this.adapter.on('close', (code) => {
-        switch (code){
-            case 1000:  // CLOSE_NORMAL
-                console.log("WebSocket: closed");
-                break;
-            default:    // Abnormal closure
-                setTimeout(() => {
-                    this.startAdapter();
-                }, 2000);
-                break;
-        }
-        console.log('disconnected');
-    });
+    // this.adapter.on('close', (code) => {
+    //     switch (code){
+    //       case 1000:  // CLOSE_NORMAL
+    //           console.log("WebSocket: closed");
+    //           break;
+    //       default:    // Abnormal closure
+    //         setTimeout(() => {
+    //             this.startAdapter();
+    //         }, 2000);
+    //         break;
+    //     }
+    //     console.log('disconnected');
+    // });
 
     this.adapter.on("open", (resp) => {
         this.joinChannels();
@@ -70,19 +76,19 @@ class Repo extends EventEmitter{
   }
 
   addChannel(name, joinPayload = {}){
-        if(!this.channels[name]){
-            let channel = new Channel(name, joinPayload);
-            
-            channel.on("outgoingMessage", (payload) => {
-                this.messageBuffer.push(payload);
-                this.emit("processMessage");
-            })
+    if(!this.channels[name]){
+        let channel = new Channel(name, joinPayload);
+        
+        channel.on("outgoingMessage", (payload) => {
+            this.messageBuffer.push(payload);
+            this.emit("processMessage");
+        })
 
-            this.channels[name]  = channel;
-            return channel;
-        }else{
-            throw Error("Channel already exists with name: name");
-        }
+        this.channels[name]  = channel;
+        return channel;
+    }else{
+        throw Error("Channel already exists with name: name");
+    }
   }
   send(payload){
     this.adapter.send(JSON.stringify(payload));
