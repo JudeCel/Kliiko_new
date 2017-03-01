@@ -28,6 +28,8 @@ infoChannel.on("system_metrics", () => {
   infoChannel.push("system_metrics", { metrics: process.memoryUsage()})
 })
 
+infoChannel.join();
+
 process.on('message', function (data) {
   // errorChannel
   // logsChannel
