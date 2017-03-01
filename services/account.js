@@ -57,13 +57,26 @@ function createNewAccount(params, userId, freeTrial, isAdmin) {
           }).then(function(result) {
 
             let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial, isAdmin);
-            if (result.AccountUsers[0]) {
-              createParams.firstName = result.AccountUsers[0].firstName;
-              createParams.lastName = result.AccountUsers[0].lastName;
-              createParams.gender = result.AccountUsers[0].gender;
-            }
-            cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
 
+            models.AccountUser.count({
+              where: {
+               email: result.email,
+               role: "accountManager",
+               owner: true
+              }
+            }).then(function(count) {
+              if(count > 0) {
+                createParams.selectedPlanOnRegistration = 'free_account';
+              }
+
+              if (result.AccountUsers[0]) {
+                createParams.firstName = result.AccountUsers[0].firstName;
+                createParams.lastName = result.AccountUsers[0].lastName;
+                createParams.gender = result.AccountUsers[0].gender;
+              }
+
+              cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+            });
           }, function(error) {
             cb(null, { params: params, transaction: t, errors: filters.errors(error) })
           });
@@ -86,7 +99,7 @@ function createNewAccount(params, userId, freeTrial, isAdmin) {
         });
       }
     });
-    
+
   })
   transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
     callback("Server Timeoute");
@@ -105,14 +118,31 @@ function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null,
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null
   };
 
   if (isAdmin) {
     res.role = 'admin';
     res.selectedPlanOnRegistration = null;
   }
+
   return res;
+}
+
+function addFreeAccount(params) {
+
+  models.AccountUser.count({
+    where: {
+     email: params.email,
+     role: "accountManager",
+     owner: true
+    }
+  }).then(function(count) {
+    console.log("@#@%&^%^$%$^%#^%$&^%^$^%^%$^%^&$$&^%$&^%&^$&$&$");
+    console.log(count > 1);
+    console.log("@#@%&^%^$%$^%#^%$&^%^$^%^%$^%^&$$&^%$&^%&^$&$&$");
+    return count > 1;
+  });
 }
 
 function create(object, callback) {
