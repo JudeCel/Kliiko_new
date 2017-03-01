@@ -21,7 +21,7 @@
       </div>
       <div class='form-group'>
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
-        <div class='col-xs-10 col-md-6'>
+        <div class='col-xs-10 col-md-8'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
           <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
           <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!resource'/></br>

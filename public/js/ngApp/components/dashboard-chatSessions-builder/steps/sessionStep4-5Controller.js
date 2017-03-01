@@ -16,6 +16,7 @@
     vm.editContactIndex = null;
     vm.contactData = {};
     vm.canSendSMS = false;
+    vm.canSendGroupSms = false;
 
     vm.currentFilter = 'all';
     vm.filterTypes = {
@@ -54,7 +55,7 @@
     vm.rateMember = rateMember;
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
-    vm.showSpinner = showSpinner;;
+    vm.showSpinner = showSpinner;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -65,10 +66,6 @@
 
     vm.isObserverPage = function() {
       return vm.session.currentStep == "inviteSessionObservers";
-    }
-
-    vm.canSendSMSOnThisPage = function() {
-      return vm.isParticipantPage() && vm.canSendSMS;
     }
 
     vm.getCurrentFilter = function(canSendCloseEmail) {
@@ -82,6 +79,7 @@
     }
 
     vm.prepareData = function(sbc) {
+
       if(vm.previousStep != vm.session.sessionData.step) {
         vm.previousStep = vm.session.sessionData.step;
         vm.currentFilter = 'all';
@@ -93,16 +91,19 @@
         }else{
           vm.stepMembers = sbc.participants;
         }
+        vm.inviteEnabled = sbc.session.steps.step4.canInviteMembers;
+        vm.inviteMembersError = sbc.session.steps.step4.inviteMembersError;
       } else if (vm.isObserverPage()) {
         if(sbc.isSessionClosed()){
           vm.stepMembers = sbc.session.steps.step5.observers;
         }else{
           vm.stepMembers = sbc.observers;
         }
+        vm.inviteEnabled = sbc.session.steps.step5.canInviteMembers;
+        vm.inviteMembersError = sbc.session.steps.step5.inviteMembersError;
       } else {
         vm.stepMembers = [];
       }
-
       return vm.stepMembers;
     }
 
@@ -110,7 +111,8 @@
       var deferred = $q.defer();
 
       vm.session = builderServices.session;
-      vm.canSendSMS = vm.session.steps.step1.type != 'forum';
+      vm.canSendSMS = vm.session.properties.features.sendSms.enabled;
+      vm.canSendGroupSms = vm.canSendSMS && vm.session.properties.steps[vm.session.currentStep].sendGroupSms;
       vm.mouseOveringMember = [];
 
       if (vm.isParticipantPage()) {
@@ -164,7 +166,7 @@
             }
             item.isSelected = false;
             updateInviteItem(resp);
-            
+
             return false;
           }
         });
@@ -220,8 +222,8 @@
       }
     }
 
-    function inviteMembers() {
-     var data = findSelectedMembersInvite();
+    function performInvite() {
+      var data = findSelectedMembersInvite();
 
       if(data.length > 0) {
         var promise;
@@ -246,11 +248,19 @@
           }
           messenger.ok(res.message);
         }, function(error) {
-          messenger.error(error);
+          $confirm({ text: error, title: 'Sorry', closeOnly: true, showAsError: true });
         });
       } else {
         var someMembersWereSelected = builderServices.someMembersWereSelected(vm);
         messenger.error(someMembersWereSelected ? messagesUtil.sessionBuilder.noContactsToInvite : messagesUtil.sessionBuilder.noContacts);
+      }
+    }
+
+    function inviteMembers() {
+      if (vm.inviteEnabled) {
+        performInvite();
+      } else {
+        $confirm({ text: vm.inviteMembersError, title: 'Sorry', closeOnly: true, showAsError: true });
       }
     }
 
@@ -391,6 +401,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         angular.copy(mapCorrectData(res.data), vm.stepMembers[vm.editContactIndex]);
+        vm.stepMembers[vm.editContactIndex].id = res.data.accountUserId;
         vm.stepMembers[vm.editContactIndex].invite = vm.beforeEditInvite;
         messenger.ok(res.message);
         closeEditContactForm();
@@ -429,17 +440,18 @@
     }
 
     vm.getMembersCloseEmailSentTranscription = function(member) {
-      return returnMemberCloseEmailSentStatus(member)
+      return returnMemberCloseEmailSentStatus(member);
     }
 
     function activeMembersLimitReached() {
-      if (vm.session.steps.step1.type == 'focus' && vm.isParticipantPage()) {
+      var limit = vm.isParticipantPage() ? vm.session.properties.validations.participant.max : vm.session.properties.validations.observer.max;
+      if (limit > -1) {
         var count = 0;
         for (var i=0; i<vm.stepMembers.length; i++) {
           var member = vm.stepMembers[i];
           if (member.inviteStatus == "confirmed" || member.inviteStatus == "inProgress") {
             count++;
-            if (count == 8) {
+            if (count == limit) {
               return true;
             }
           }

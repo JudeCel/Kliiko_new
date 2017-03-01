@@ -8,6 +8,7 @@ var userFixture = require('./user');
 var subscriptionFixture = require('./subscription');
 var models = require('../../models');
 var SessionMemberService = require('./../../services/sessionMember');
+var sessionTypeService = require('./../../services/sessionType');
 
 var mainData;
 var manualDependencies = {};
@@ -27,6 +28,7 @@ module.exports = {
 
 var functionList = [
   function(callback) { createMainAccount(callback) },
+  createSessionTypes,
   createSessionWithFacilitator,
   createSubAccountsAndSessionMembers,
   createTopics
@@ -59,6 +61,14 @@ function createMainAccount(callback) {
     }, function(error) {
       callback(error);
     });
+  }, function(error) {
+    callback(error);
+  });
+}
+
+function createSessionTypes(callback) {
+  sessionTypeService.updateSessionTypes().then(function() {
+    callback();
   }, function(error) {
     callback(error);
   });

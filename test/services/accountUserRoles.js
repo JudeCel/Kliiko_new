@@ -36,7 +36,7 @@ describe('SERVICE - AccountUser without DB', function() {
 
         accountUserService.recalculateRole(accountUser, null, accountUser.role).then((result) => {
           try {
-            assert.deepEqual(result, { role: "facilitator", active: true, isRemoved: false });
+            assert.deepEqual(result, { role: "facilitator", active: true, isRemoved: true });
             done();
           } catch (e) {
             done(e);
@@ -57,7 +57,7 @@ describe('SERVICE - AccountUser without DB', function() {
 
         accountUserService.recalculateRole(accountUser,null, accountUser.role).then((result) => {
           try {
-            assert.deepEqual(result, { role: "participant", active: true, isRemoved: false });
+            assert.deepEqual(result, { role: "participant", active: true, isRemoved: true });
             done();
           } catch (e) {
             done(e);
@@ -78,7 +78,7 @@ describe('SERVICE - AccountUser without DB', function() {
 
         accountUserService.recalculateRole(accountUser, null, 'accountManager').then((result) => {
           try {
-            assert.deepEqual(result, { role: "admin", active: true, isRemoved: false });
+            assert.deepEqual(result, { role: "admin", active: true, isRemoved: true });
             done();
           } catch (e) {
             done(e);

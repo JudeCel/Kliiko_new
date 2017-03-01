@@ -9,12 +9,13 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('SERVICE - AccountDatabase', () => {
   var testUser, testAccount, testAccountUser;
 
   beforeEach((done) => {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then((result) => {
         testUser = result.user;
         testAccount = result.account;
@@ -139,7 +140,13 @@ describe('SERVICE - AccountDatabase', () => {
 
   describe("Reactivates/Deactives", () => {
     it('user',  (done) => {
-      let params = { userId: testUser.id, accountId: testAccount.id, active: false };
+      let params = { 
+        userId: testUser.id, 
+        accountId: testAccount.id, 
+        accountUserId: testAccount.AccountUser.id, 
+        active: false 
+      };
+
       accountDatabaseService.updateAccountUser(params, {}, (error, account) => {
         assert.equal(error, null);
         assert.equal(account.AccountUsers[0].active, false);
@@ -154,7 +161,12 @@ describe('SERVICE - AccountDatabase', () => {
     });
 
     it('Returns error on user', (done) => {
-      let params = { userId: testUser.id + 1, accountId: testAccount.id + 1, active: false };
+      let params = { 
+        userId: testUser.id + 1, 
+        accountId: testAccount.id + 1, 
+        accountUserId: testAccount.AccountUser.id, 
+        active: false 
+      };
 
       accountDatabaseService.updateAccountUser(params, {}, (error, account) => {
         assert.equal(account, null);

@@ -11,6 +11,7 @@ var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
+var testDatabase = require("../database");
 
 var assert = require('chai').assert;
 var async = require('async');
@@ -19,7 +20,7 @@ var testData;
 
 describe('SERVICE - AccountManager', function() {
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         done();

@@ -85,8 +85,8 @@ module.exports = {
   accountNameRegExp: ["^[a-zA-Z0-9 ]+$",'i'],
   restrictedAccountNames: ['chat', 'www', 'focus', 'forum', 'social forum'],
   mobileRegExp: ["^[0-9]+$",'i'],
-  dateFormat: 'MM-dd-yyyy',
-  dateFormatWithTime: 'MM-dd-yyyy, HH:mm',
+  dateFormat: 'dd-MM-yyyy',
+  dateFormatWithTime: 'dd-MM-yyyy, HH:mm',
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
     'manageSessionParticipants', 'inviteSessionObservers'],
   inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired', 'inProgress', 'sessionFull'],
@@ -98,11 +98,6 @@ module.exports = {
   validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy', 'contactlist', 'close_session', 'system_requirements'],
   maxSessionsAmount: 1000,
   maxAccountsAmount: 100,
-  membersAllowedCount: {
-    observers: -1,
-    participantsFocus: 8,
-    participantsForum: -1,
-  },
   defaultTopic: {
     billboardText: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.',
     video: {
@@ -134,5 +129,6 @@ module.exports = {
     declinedParticipationMessage: "Thanks, we\'ll make sure your\'re not asked again.",
     emailNotSent: "No close session emails sent."
   },
-  emailNotifications: ['none', 'privateMessages', 'all']
+  emailNotifications: ['none', 'privateMessages', 'all'],
+  loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
 }

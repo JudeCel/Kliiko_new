@@ -1,5 +1,4 @@
 'use strict';
-
 var models  = require('./../models');
 var Sequelize = models.sequelize;
 var policy = require('./policy');

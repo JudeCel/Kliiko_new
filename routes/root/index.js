@@ -24,7 +24,7 @@ var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
-
+var exec = require('child_process').exec;
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 
@@ -88,6 +88,19 @@ function foundPaths(path, valid) {
 }
 /* GET root page. */
 
+router.get('/updatePackages', function(req, res, next) {
+  if(req.query.token !== 'securityToken123') return res.status(404).send({ error: "Invalid token" });
+
+  exec('yarn outdated --color', (error, stdout, stderr) =>{
+    if(error) {
+      res.status(404).send({ error: error });
+    }
+    else {
+      res.send({ status: 'ok', data: stdout });
+    }
+  });
+});
+
 router.get('/ping', function(req, res, next) {
   res.send({ status: 'ok' });
 });
@@ -103,26 +116,37 @@ router.get('/', function (req, res, next) {
   });
 });
 
+function randomNumberForAccountName(name) {
+  return _.uniqueId(name);
+}
 
 function prepareUrlParams(parameters, query) {
   parameters.selectedPlanOnRegistration = "";
   if (query) {
     if (query.name) {
       parameters.firstName = query.name;
+      query.showOptionalFields = false;
+      parameters.accountName = randomNumberForAccountName(query.name);
+      parameters.showOptionalFields = false;
     }
     if (query.email) {
       parameters.email = query.email;
+      parameters.showOptionalFields = false;
     }
 
     if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
+      parameters.showOptionalFields = false;
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {
         parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
+  }
 
+  if (typeof(parameters.showOptionalFields) != "boolean") {
+    parameters.showOptionalFields = (parameters.showOptionalFields == "true");
   }
 }
 
@@ -299,6 +323,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
       let params = usersRepo.prepareParams(req, error);
+      prepareUrlParams(params, req.query);
 
       if (renderInfo.failed == "registration") {
         params.facebookUrl = facebookUrl;
@@ -342,6 +367,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
+  prepareUrlParams(userParams, req.query);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 

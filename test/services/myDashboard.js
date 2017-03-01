@@ -5,6 +5,7 @@ var userFixture = require('./../fixtures/user');
 var fillDashboardFixture = require('./../fixtures/fillDashboard');
 var myDashboardServices = require('./../../services/myDashboard');
 var assert = require('chai').assert;
+var testDatabase = require("../database");
 
 describe('SERVICE - MyDashboard', function() {
   var testData;
@@ -18,7 +19,7 @@ describe('SERVICE - MyDashboard', function() {
 
   describe('#getAllData', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         userFixture.createUserAndOwnerAccount().then(function(result) {
           testData = result;
           done();

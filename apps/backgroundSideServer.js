@@ -9,7 +9,7 @@ const multiWorker = new NR.multiWorker({
   connection: connectionDetails,
   queues: _.values(backgroundQueues.queues),
   minTaskProcessors:   1,
-  maxTaskProcessors:   10,
+  maxTaskProcessors:   1,
   checkTimeout:        1000,
   maxEventLoopDelay:   10,
   toDisconnectProcessors: true,

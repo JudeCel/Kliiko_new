@@ -3,7 +3,7 @@
 var models = require('./../../models');
 var SessionMember = models.SessionMember;
 var AccountUser = models.AccountUser;
-
+var testDatabase = require("../database");
 var sessionFixture = require('./../fixtures/session');
 var sessionMemberServices = require('./../../services/sessionMember');
 
@@ -13,7 +13,7 @@ var _ = require('lodash');
 describe('SERVICE - SessionMember', function() {
   var testData = {};
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       sessionFixture.createChat({ participants: 2 }).then(function(result) {
         testData.user = result.user;
         testData.account = result.account;

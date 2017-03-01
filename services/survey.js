@@ -259,32 +259,43 @@ function createSurveyWithQuestions(params, account) {
   validators.hasValidSubscription(account.id).then(function() {
       let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
       validParams.accountId = account.id;
-
-      models.sequelize.transaction(function (t) {
-        return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
-          let fields = getContactListFields(survey.SurveyQuestions);
-          return createOrUpdateContactList(survey, fields, t).then((contactList) => {
-            if(contactList){
-              return updateContactList(contactList, survey, fields, t).then(() => {
+      let transactionPool = models.sequelize.transactionPool;
+      let tiket = transactionPool.getTiket();
+      transactionPool.once(tiket, () => {
+        models.sequelize.transaction(function (t) {
+          return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
+            let fields = getContactListFields(survey.SurveyQuestions);
+            return createOrUpdateContactList(survey, fields, t).then((contactList) => {
+              if(contactList){
+                return updateContactList(contactList, survey, fields, t).then(() => {
+                  return survey;
+                });
+              }else{
                 return survey;
-              });
-            }else{
-              return survey;
-            }
-          }, (error) => {
+              }
+            }, (error) => {
 
-            throw error;
+              throw error;
+            });
           });
+        }).then(function(survey) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          survey.update({ url: validUrl(survey) }).then(function(survey) {
+            deferred.resolve(simpleParams(survey, MessagesUtil.survey.created));
+          });
+        }).catch(Survey.sequelize.ValidationError, function(error) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(filters.errors(error));
+        }).catch(function(error) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(error);
         });
-      }).then(function(survey) {
-        survey.update({ url: validUrl(survey) }).then(function(survey) {
-          deferred.resolve(simpleParams(survey, MessagesUtil.survey.created));
-        });
-      }).catch(Survey.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
+      })
+    transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+      deferred.reject("Server Timeoute");
+    });
+
+    transactionPool.emit(transactionPool.CONSTANTS.nextTick);
   }, function(error) {
     deferred.reject(error);
   })

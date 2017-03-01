@@ -8,6 +8,7 @@ var subscriptionFixture = require('./../fixtures/subscription');
 var userFixture = require('./../fixtures/user');
 let q = require('q');
 var MessagesUtil = require('./../../util/messages');
+var testDatabase = require("../database");
 
 describe('Topic Service', function() {
   function createSession() {
@@ -43,7 +44,7 @@ describe('Topic Service', function() {
   var testUser, testAccount;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testUser = result.user;
         testAccount = result.account;

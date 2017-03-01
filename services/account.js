@@ -45,43 +45,67 @@ function createNewAccountIfNotExists(params, userId, isAdmin) {
 
 function createNewAccount(params, userId, freeTrial, isAdmin) {
   let deferred = q.defer();
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    let createNewAccountFunctionList = [
+      function (cb) {
+        models.sequelize.transaction().then(function(t) {
+          models.User.find({
+            where: { id: userId },
+            include: [models.AccountUser]
+          }).then(function(result) {
 
-  let createNewAccountFunctionList = [
-    function (cb) {
-      models.sequelize.transaction().then(function(t) {
-        models.User.find({
-          where: { id: userId },
-          include: [models.AccountUser]
-        }).then(function(result) {
+            let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial, isAdmin);
 
-          let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial, isAdmin);
-          if (result.AccountUsers[0]) {
-            createParams.firstName = result.AccountUsers[0].firstName;
-            createParams.lastName = result.AccountUsers[0].lastName;
-            createParams.gender = result.AccountUsers[0].gender;
-          }
-          cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+            models.AccountUser.count({
+              where: {
+               email: result.email,
+               role: "accountManager",
+               owner: true
+              }
+            }).then(function(count) {
+              if(count > 0) {
+                createParams.selectedPlanOnRegistration = 'free_account';
+              }
 
-        }, function(error) {
-          cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+              if (result.AccountUsers[0]) {
+                createParams.firstName = result.AccountUsers[0].firstName;
+                createParams.lastName = result.AccountUsers[0].lastName;
+                createParams.gender = result.AccountUsers[0].gender;
+              }
+
+              cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+            });
+          }, function(error) {
+            cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+          });
         });
-      });
-    },
-    create,
-    accountUserService.createAccountManager,
-  ];
+      },
+      create,
+      accountUserService.createAccountManager,
+    ];
 
-  async.waterfall(createNewAccountFunctionList, function(_error, object) {
-    if (_.isEmpty(object.errors)) {
-      object.transaction.commit().then(function() {
-        deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
-      });
-    } else {
-      object.transaction.rollback().then(function() {
-        deferred.reject(object.errors);
-      });
-    }
+    async.waterfall(createNewAccountFunctionList, function(_error, object) {
+      if (_.isEmpty(object.errors)) {
+        object.transaction.commit().then(function() {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
+        });
+      } else {
+        object.transaction.rollback().then(function() {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(object.errors);
+        });
+      }
+    });
+
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   return deferred.promise;
 }
@@ -94,13 +118,14 @@ function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null,
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null
   };
 
   if (isAdmin) {
     res.role = 'admin';
     res.selectedPlanOnRegistration = null;
   }
+
   return res;
 }
 

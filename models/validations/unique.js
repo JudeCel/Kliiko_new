@@ -2,10 +2,11 @@
 
 var _ = require('lodash');
 var MessagesUtil = require('./../../util/messages');
+var constants = require('./../../util/constants');
 
 function unique(sequelize, model, fieldName, otherValue) {
   return function(value, next) {
-    if(value) {
+    if(value && !shouldSkipValidation(model, fieldName, value)) {
       let where = {};
       if(otherValue) {
         if(otherValue.lower) {
@@ -49,6 +50,10 @@ function unique(sequelize, model, fieldName, otherValue) {
     }
   }
 };
+
+function shouldSkipValidation(model, fieldName, value) {
+  return model == "Subscription" && fieldName == "subscriptionId" && value == constants.loadTestSubscriptionId;
+}
 
 module.exports = {
   unique: unique
