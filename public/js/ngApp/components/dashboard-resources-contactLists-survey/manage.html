@@ -1,10 +1,11 @@
 <div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
   <div>
-    {{ upload = sc.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
+
     <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
   </div>
-  <div ng-controller='SurveyEditController as surveyEditor'>
-    <div class='dashboard-container' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); surveyEditor.init(sc.currentSurveyId)'>
+  <div ng-controller='SurveyEditController as sc'>
+    {{ upload = sc.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
+    <div class='dashboard-container' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(surveyListController.currentSurveyId)'>
       <form id='manageForm' name='sc.manageForm' novalidate>
         <input type="submit" name="noActionButton" value="" class="hidden" />
         <fieldset ng-disabled='sc.submitingForm'>
@@ -12,7 +13,7 @@
             <h2 class='text-center'>{{ sc.currentSurveyMode }} Survey</h2>
           </div>
           <div class='col-md-3 text-right'>
-            <button class='btn btn-standart btn-margin btn-green btn-small' ng-click="sc.showStartPage()">Back</button>
+            <button class='btn btn-standart btn-margin btn-green btn-small' ng-click="surveyListController.showStartPage()">Back</button>
           </div>
 
           <div class='col-sm-12'>

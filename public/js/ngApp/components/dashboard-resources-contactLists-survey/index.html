@@ -6,7 +6,7 @@
         <h2 class='text-center'>Recruiter</h2>
       </div>
       <div class='col-md-3 text-right'>
-        <button id='createNewSurvey' class='btn btn-standart btn-margin btn-green btn-large' ng-click="sc.showCreatePage()">Create New Survey</button>
+        <button id='createNewSurvey' class='btn btn-standart btn-margin btn-green btn-large' ng-click="surveyListController.showCreatePage()">Create New Survey</button>
       </div>
       <div class='col-md-12'>
         <p>
@@ -30,9 +30,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat='survey in sc.surveys'>
+        <tr ng-repeat='survey in surveyListController.surveys'>
           <td>{{ survey.name }}</td>
-          <td>{{ (survey.confirmedAt | date:sc.dateFormat) }}</td>
+          <td>{{ (survey.confirmedAt | date:surveyListController.dateFormat) }}</td>
           <td>
             <a ng-if="survey.confirmedAt" href='{{ survey.url }}' target="_blanks">{{ survey.url }}</a>
           </td>
@@ -41,7 +41,7 @@
             <div ng-if="survey.confirmedAt" ng-init="survey.switchValue = !survey.closed">
               <toggle-switch
                 ng-model="survey.switchValue"
-                ng-change="sc.changeStatus(survey)"
+                ng-change="surveyListController.changeStatus(survey)"
                 on-label="OPEN"
                 off-label="CLOSE"
                 >
@@ -49,11 +49,11 @@
             </div>
           </td>
           <td class='text-right dashboardElementsEditRemove dashboardActions'>
-            <span class="fa fa-copy" ng-click='sc.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.copy }}' ></span>
-            <span class="fa fa-edit" ng-click='sc.editSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.edit }}'></span>
-            <span class="fa fa-bar-chart" title='{{ sc.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='sc.showStats(survey)'></span>
-            <span class="fa fa-mail-forward" ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.export }}' ></span>
-            <span class="fa fa-remove" ng-if="sc.canDelete(survey)" ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}'></span>
+            <span class="fa fa-copy" ng-click='surveyListController.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.copy }}' ></span>
+            <span class="fa fa-edit" ng-click='surveyListController.editSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.edit }}'></span>
+            <span class="fa fa-bar-chart" title='{{ surveyListController.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='surveyListController.showStats(survey)'></span>
+            <span class="fa fa-mail-forward" ng-click='surveyListController.exportSurvey(survey.id)' ng-if='survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.export }}' ></span>
+            <span class="fa fa-remove" ng-if="surveyListController.canDelete(survey)" ng-click='surveyListController.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.remove }}'></span>
           </td>
         </tr>
       </tbody>

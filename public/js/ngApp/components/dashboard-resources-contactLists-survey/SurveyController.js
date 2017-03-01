@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').controller('SurveyController', SurveyController);
+  angular.module('KliikoApp').controller('SurveyListController', SurveyController);
   SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices'];
 
   function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices) {

@@ -86,7 +86,7 @@
     }
 
     function initConstants() {
-      surveyServices.getConstants().then(function(res) {
+      return surveyServices.getConstants().then(function(res) {
         vm.defaultQuestions = res.data.defaultQuestions;
         vm.contactDetails = res.data.contactDetails;
         vm.constantErrors = res.data.validationErrors;
@@ -99,10 +99,13 @@
 
     function init(surveyId, delegateMethods) {
       vm.delegateMethods = delegateMethods;
-      initConstants();
-      surveyServices.findSurvey( {id: surveyId, skipValidations: true} ).then(function(res) {
-        console.log("====", res.data);
-        startSurveyEdit(res.data);
+
+      initConstants().then(function() {
+        if (surveyId) {
+          return surveyServices.findSurvey( {id: surveyId, skipValidations: true} );
+        }
+      }).then(function(res) {
+        startSurveyEdit(res ? res.data : null);
       });
     };
 
@@ -347,7 +350,7 @@
     };
 
     function canChangeAnswers(value, question) {
-      if(vm.survey.confirmedAt)
+      if(vm.survey || vm.survey.confirmedAt)
         return false;
 
       if(value == 'add') {
@@ -359,7 +362,7 @@
     };
 
     function changeAnswers(value, question, index) {
-      if(vm.survey.confirmedAt)
+      if(vm.survey || vm.survey.confirmedAt)
         return false;
 
       if(value == 'add') {
