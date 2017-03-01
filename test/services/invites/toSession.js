@@ -1,6 +1,6 @@
 'use strict';
 
-var {Invite, sequelize, Session, AccountUser, Account, SessionMember} = require('../../../models');
+var {Invite, Session, AccountUser, Account, SessionMember} = require('../../../models');
 
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');

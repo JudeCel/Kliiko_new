@@ -1,9 +1,7 @@
 'use strict';
 
 var models = require('./../../models');
-const TransactionPool = require('./../../lib/transactionPool');
 var BrandProjectPreference = models.BrandProjectPreference;
-models.sequelize.transactionPool = new TransactionPool();
 var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');
@@ -188,8 +186,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error, brandColourServices.messages.notFound);
-          done();
+          try {
+            assert.equal(error, brandColourServices.messages.notFound);
+            done();  
+          } catch (error) {
+            done(error);
+          }
         });
       });
 
@@ -275,8 +277,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.copyScheme({ id: testData.preference.id + 100 }, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
+          try {
           assert.equal(error, brandColourServices.messages.notFound);
           done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
     });

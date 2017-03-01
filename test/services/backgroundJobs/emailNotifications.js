@@ -1,7 +1,5 @@
 'use strict';
-const TransactionPool = require('../../../lib/transactionPool');
 var {Session, sequelize} = require('../../../models');
-sequelize.transactionPool = new TransactionPool();
 var userService = require('../../../services/users');
 var backgroundJobsEmailNotifications = require('../../../services/backgroundJobs/emailNotifications');
 var assert = require('chai').assert;

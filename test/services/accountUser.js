@@ -1,7 +1,5 @@
 'use strict';
-const TransactionPool = require('../../lib/transactionPool');
-var {sequelize, Session, AccountUser, User} = require('../../models');
-sequelize.transactionPool = new TransactionPool();
+var {Session, AccountUser, User} = require('../../models');
 
 var userService = require('../../services/users');
 var sessionMemberService = require('../../services/sessionMember');
