@@ -23,7 +23,7 @@ function getSurveyStats(req, res, next) {
 }
 
 function find(req, res, next) {
-  surveyService.findSurvey(req.query).then(
+  surveyService.findSurvey(req.query, req.query.skipValidations).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

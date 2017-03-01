@@ -71,13 +71,8 @@ function findAllSurveys(account) {
     where: { accountId: account.id },
     attributes: VALID_ATTRIBUTES.survey,
     order: [
-      ['id', 'asc'],
-      [SurveyQuestion, 'order', 'ASC']
-    ],
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question,
-    }]
+      ['id', 'asc']
+    ]
   }).then(function(surveys) {
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
@@ -91,7 +86,6 @@ function findAllSurveys(account) {
 
 function findSurvey(params, skipValidations) {
   let deferred = q.defer();
-
   Survey.find({
     where: { id: params.id },
     attributes: VALID_ATTRIBUTES.survey,
@@ -207,11 +201,11 @@ function tryFindContactList(survey, t) {
    return new Bluebird((resolve, reject) => {
 
     ContactList.find({
-      where: {accountId: survey.accountId, 
+      where: {accountId: survey.accountId,
         $or: [{id: survey.contactListId}, {name: survey.name}]},
         transaction: t}
       ).then((contactList) => {
-        resolve(contactList); 
+        resolve(contactList);
     }, (error) => {
       reject(error);
     });
@@ -580,7 +574,7 @@ function getSurveyStats(id, account) {
   return new Bluebird(function (resolve, reject) {
     canExportSurveyStats(account).then(function() {
       getSurveyData(id, account.id).then(function(survey) {
-        let stats = createStats(survey); 
+        let stats = createStats(survey);
         resolve(simpleParams(stats));
       }, function(error) {
         reject(error);
@@ -755,7 +749,7 @@ function createStats(survey) {
     },
     questions: { }
   };
-  
+
   survey.SurveyQuestions.forEach(function(surveyQuestion) {
     populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
 
@@ -786,7 +780,7 @@ function createStats(survey) {
 
     });
   });
-  
+
   calculateStatsPercents(res.questions, res.survey.answers);
   return res;
 }
