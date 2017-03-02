@@ -47,6 +47,7 @@
     }
 
     vm.userTemplates = {
+      "intro": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/recruiter-intro.html",
       "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
       "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
     }
