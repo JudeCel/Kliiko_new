@@ -117,23 +117,31 @@ describe('SERVICE - AccountDatabase', () => {
         role: 'admin',
         password: "rrrrrrrrrrr"
       }
-      let id, params = {};
+      let id, userId, params = {};
 
       userFixture.createAdminUser(adminParams).then((adminUser) => {
         params = { email: adminUser.email, accountId: testAccount.id };
         return accountDatabaseService.addAdmin(params);
       }).then((adminAccoutUser) => {
         id = adminAccoutUser.id;
+        userId = adminAccoutUser.UserId;
         assert.equal(adminAccoutUser.role, 'admin');
 
         return accountDatabaseService.removeAdmin(params);
       }).then((account) => {
         assert.equal(account.dataValues.hasActiveAdmin, false);
-        account.AccountUsers.map((accountUser) => {
-          assert.equal(accountUser.active, accountUser.role !== 'admin');
-        });
 
-        done();
+        ContactListUser.find({where: {userId: userId, accountId: testAccount.id}}).then((contactListUser) => {
+          assert.isNull(contactListUser);
+          
+          account.AccountUsers.map((accountUser) => {
+            assert.equal(accountUser.active, accountUser.role !== 'admin');
+          });
+
+          done();
+        }, (error) => {
+          done(error);
+        });
       }).catch((error) => done(error));
     })
   });
