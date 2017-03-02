@@ -25,8 +25,20 @@ module.exports = {
   getSessionMembers: getSessionMembers,
   isCloseEmailSentToSessionMember: isCloseEmailSentToSessionMember,
   findOrCreate: findOrCreate,
-  addDefaultObserver: addDefaultObserver
+  addDefaultObserver: addDefaultObserver,
+  createGhost: createGhost
 };
+
+function createGhost(name, session) {
+  return new Bluebird((resolve, reject) => {
+    if (name) {
+      //todo:
+      resolve();
+    } else{
+      reject(MessagesUtil.sessionMember.nameEmpty);
+    }
+  });
+}
 
 function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
   return new Bluebird((resolve, reject) => {

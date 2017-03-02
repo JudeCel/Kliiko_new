@@ -7,6 +7,8 @@ var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
 var emailConfirmation = require('../../services/emailConfirmation');
+var sessionService = require('../../services/session');
+var sessionMemberService = require('../../services/sessionMember');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
@@ -32,7 +34,7 @@ router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/')) {
+    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/') || req.path.startsWith('/session/')) {
       return next();
     }
 
@@ -197,6 +199,23 @@ function replaceToString(value) {
 
 router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
+});
+
+router.route('/session/:uid').get(function(req, res, next) {
+  sessionService.checkSessionByUid(req.params.uid).then(function() {
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null });
+  }, function(error) {
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: error });
+  });
+}).post(function(req, res, next) {
+  sessionService.checkSessionByUid(req.params.uid).then(function(session) {
+    return sessionMemberService.createGhost(req.body.name, session);
+  }).then(function(result) {
+    //todo: redirect to chat
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: "OK" });
+  }).catch(function(error) {
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error });
+  });
 });
 
 let registrationState = JSON.stringify({type: 'registration'});

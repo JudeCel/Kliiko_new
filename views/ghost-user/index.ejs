@@ -1,0 +1,30 @@
+<% include ../header %>
+<div ng-app="KliikoApp.Root">
+  <div class='login-container login-ghost center-block'>
+    <% if (error) { %>
+      <center>
+        <h4><%= error %></h4>
+        <br/>
+        <h5><a href="//klzii.com" class="black">Why not start your own Chat Session?</a></h5>
+      </center>
+    <% } else { %>
+      <h4>Hi! Just before we chat we need to cover the formalities...</h4>
+      <form method="post" action="/session/<%= uid %>" novalidate="" id="signup">
+        <p>
+          <h4>Introducing...</h4>
+          <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="">
+        </p>
+        <p>
+          By clicking on the Accept button below, you agree with our <a href="/privacy_policy" target="_blank">Privacy Policy</a>
+        </p>
+        <div class="form-group text-right">
+          <button type="submit" value="Accept" class="btn btn-standart btn-green btn-small">Accept</button>
+        </div>
+      </form>
+    <% } %>
+  </div>  
+  <% if (message) { %>
+    <div ng-controller='MessengerController as mc' ng-init="mc.error('<%= message %>', true)"></div>
+  <% } %>
+</div>
+<% include ../footer %>
