@@ -1,6 +1,5 @@
 <div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
   <div>
-
     <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
   </div>
   {{ upload = surveyListController.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
@@ -15,35 +14,7 @@
     </div>
 
     <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(surveyListController.currentSurveyId)'>
-      <form id='manageForm' name='sc.manageForm' novalidate>
-        <input type="submit" name="noActionButton" value="" class="hidden" />
-        <fieldset ng-disabled='sc.submitingForm'>
-
-
-          <div class='col-sm-12'>
-            <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyHeader.html'"></ng-include>
-          </div>
-          <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyBody.html'"></ng-include>
-
-          <div class='col-sm-12'>
-            <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyFooter.html'"></ng-include>
-          </div>
-
-          <div class='col-sm-12'>
-            <hr class='survey-hr' />
-
-            <button id='showSurveyPreview' class='btn btn-standart btn-margin btn-green btn-small' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
-            <button id='saveSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, false)'>Save</button>
-            <button id='finishSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, true)'>Publish</button>
-
-            <span class='has-error'>
-              <span class='help-block'>{{ sc.submitError }}</span>
-            </span>
-          </div>
-
-          <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/previewModal.html'"></ng-include>
-        </fieldset>
-      </form>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
     </div>
   </div>  <!-- new here-->
 </div>
