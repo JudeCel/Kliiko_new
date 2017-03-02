@@ -5,10 +5,10 @@
 
 const WebSocket = require('ws');
 const Repo = require('./monitoring/repo');
-const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {});
+const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {token: "token", type: "server"});
 
-const infoChannel = repo.addChannel("info:server:kliiko", {token: "token"});
-const errorChannel = repo.addChannel("error:server:kliiko", {token: "token"});
+const infoChannel = repo.addChannel("info:server:kliiko");
+const errorChannel = repo.addChannel("error:server:kliiko");
 
 
 // infoChannel.on("get_deps", () => {

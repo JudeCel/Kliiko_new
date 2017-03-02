@@ -1,5 +1,6 @@
 "use strict";
 const Channel = require('./channel');
+const url = require('url');
 const { EventEmitter2 } = require('eventemitter2');
 
 const REPO_STATES = {
@@ -11,10 +12,10 @@ const REPO_STATES = {
 }
 
 class Repo extends EventEmitter2 {
-  constructor(wsModule, url, options) {
+  constructor(wsModule, url, connectionOptions) {
     super({verboseMemoryLeak: true});
     this.messageBuffer = [];
-    this.options = options;
+    this.connectionOptions = connectionOptions;
     this.url = url,
     this.adapter = null;
     this.state = REPO_STATES.build;
@@ -54,7 +55,9 @@ class Repo extends EventEmitter2 {
       });
     }
 
-    this.adapter = new this.wsModule(this.url);
+    let urlObject = url.parse(this.url)
+    urlObject.query = this.connectionOptions
+    this.adapter = new this.wsModule(urlObject.format());
     this.subscribeAdapterEvents();
   }
 
