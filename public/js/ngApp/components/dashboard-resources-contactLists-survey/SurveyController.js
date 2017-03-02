@@ -18,6 +18,7 @@
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
 
     vm.popOverMessages = {
+      create: 'Create',
       remove: 'Delete',
       edit: 'Edit',
       copy: 'Copy',
@@ -134,13 +135,14 @@
     };
 
     vm.showCreatePage = function() {
-      vm.currentSurveyMode = 'Create';
-      vm.currentPage = { page: 'manage', type: 'create' };
+      vm.currentSurveyMode = vm.popOverMessages.create;
+      vm.currentPage = { page: 'manage' };
     }
 
     vm.editSurvey = function(survey) {
+      vm.currentSurveyMode = vm.popOverMessages.edit;
       vm.currentSurveyId = survey.id;
-      vm.currentPage = { page: 'manage', type: 'edit' };
+      vm.currentPage = { page: 'manage' };
     }
 
     function defaultQuestionParams(question) {

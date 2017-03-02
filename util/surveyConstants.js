@@ -246,28 +246,36 @@ module.exports = {
   tableOfContents: [
     {
       order: 0,
+      header: true
+    },
+    {
+      order: 1,
       questions: true,
       interval: [0, 3]
     },
     {
-      order: 1,
+      order: 2,
       customTemplate: true,
       tag: "0"
     },
     {
-      order: 2,
+      order: 3,
       questions: true,
       interval: [3, 6]
     },
     {
-      order: 3,
+      order: 4,
       customTemplate: true,
       tag: "1"
     },
     {
-      order: 4,
+      order: 5,
       questions: true,
       interval: [6, 10]
     },
+    {
+      order: 6,
+      footer: true
+    }
   ]
 }

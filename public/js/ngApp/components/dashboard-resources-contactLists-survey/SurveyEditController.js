@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyEditController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices', '$scope'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices, $scope) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -144,47 +144,42 @@
 
     function saveSurvey(autoSave, publish) {
       vm.submitedForm = true;
-      vm.submitingForm = true;
-
-      $timeout(function() {
-        if(vm.manageForm.$valid) {
-          var selected = findSelected();
-          if(publish && selected.length < vm.minQuestions) {
-            vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
+      if(vm.manageForm.$valid) {
+        var selected = findSelected();
+        if(publish && selected.length < vm.minQuestions) {
+          vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
+        } else {
+          delete vm.submitError;
+          var object = JSON.parse(JSON.stringify(vm.survey));
+          object.SurveyQuestions = selected;
+          if (!object.id) {
+            finishCreate(object, autoSave, publish);
           } else {
-            delete vm.submitError;
-            var object = JSON.parse(JSON.stringify(vm.survey));
-            object.SurveyQuestions = selected;
-            if (!object.id) {
-              finishCreate(object, autoSave, publish);
-            } else {
-              finishEdit(object, autoSave, publish);
-            }
+            finishEdit(object, autoSave, publish);
           }
-        } else if (!autoSave) {
-          vm.submitError = vm.constantErrors.default;
-          $timeout(function() {
-            var form = angular.element('#manageForm');
-            var elem = form.find('.ng-invalid:first');
-            var panel = elem.children('.panel:first');
-            if(panel.length == 0) {
-              panel = elem.parents('.panel:first');
-            }
-
-            var panelParent = panel.scope().$parent;
-            if(panelParent.hasOwnProperty('accordion')) {
-              panelParent.object.open = true;
-            }
-            moveBrowserTo(panel[0].id);
-          });
+        }
+      } else if (!autoSave) {
+        vm.submitError = vm.constantErrors.default;
+        var form = angular.element('#manageForm');
+        var elem = form.find('.ng-invalid:first');
+        var panel = elem.children('.panel:first');
+        if(panel.length == 0) {
+          panel = elem.parents('.panel:first');
         }
 
-        vm.submitingForm = false;
-      }, 1000);
+        var panelParent = panel.scope().$parent;
+        if(panelParent.hasOwnProperty('accordion')) {
+          panelParent.object.open = true;
+        }
+        moveBrowserTo(panel[0].id);
+      }
+
     }
 
     function finishCreate(survey, autoSave, publish) {
+      vm.submitingForm = true;
       surveyServices.createSurvey(survey).then(function(res) {
+        vm.submitingForm = false;
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if (res.error) {
@@ -205,9 +200,10 @@
     };
 
     function finishEdit(survey, autoSave, publish) {
+      vm.submitingForm = true;
       surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
-
+        vm.submitingForm = false;
         if (res.error) {
           if (!autoSave) {
             messenger.error(res.error);
@@ -424,5 +420,16 @@
         return "/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question-sections/plain-section.html";
       }
     }
+
+    function stopAutosave() {
+      if (angular.isDefined(vm.autoSave)) {
+        $interval.cancel(vm.autoSave);
+        vm.autoSave = undefined;
+      }
+    }
+
+    $scope.$on("$destroy", function() {
+      stopAutosave();
+    });
   };
 })();

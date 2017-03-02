@@ -1,4 +1,8 @@
 <div ng-repeat='section in sc.tableOfContents track by $index'>
+  <div class='col-sm-12' ng-if="section.header">
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyHeader.html'"></ng-include>
+  </div>
+
   <div ng-if="section.questions">
     <div class='col-sm-12' ng-repeat='object in sc.sectionQuestions(section) track by $index'>
       <ng-include src="sc.questionTemplate(object)"></ng-include>
@@ -9,4 +13,9 @@
   <div class='col-sm-12' ng-if="section.customTemplate">
     <ng-include src="sc.customSurveyTemplate(section)"></ng-include>
   </div>
+
+  <div class='col-sm-12' ng-if="section.footer">
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyFooter.html'"></ng-include>
+  </div>
+
 </div>
