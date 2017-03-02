@@ -2,13 +2,25 @@ const { EventEmitter2 } = require('eventemitter2');
 
 class Message extends EventEmitter2 {
   constructor(topic, payload, event, ref){
-    super()
+    super({verboseMemoryLeak: true});
     this.ref = ref;
     this.topic = topic;
     this.payload = payload;
-    this.defer = Promise.defer();
+    this.promise = new Promise(this._defPromise());
     this.event = event;
     this.state =  'build'
+    this.bindPromise
+  }
+  _defPromise(){
+    return (resolve, reject) => {
+      this.on("resolve", (payload) => {
+        resolve(payload);
+      });
+
+      this.on("reject", (payload) => {
+        reject(payload);
+      });
+    }
   }
   toParams(){
     return {
@@ -20,13 +32,13 @@ class Message extends EventEmitter2 {
     }
   }
   getPromise(){
-    return this.defer.promise
+    return this.promise;
   }
   setSent(){
     this.state = 'sent'
   }
   processReply(staus, reply){
-    this.defer[staus](reply.payload);
+    this.emit(staus, reply.payload);
     this.emit(reply.payload.status, reply.payload);
   }
 }

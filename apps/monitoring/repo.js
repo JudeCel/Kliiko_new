@@ -2,91 +2,123 @@
 const Channel = require('./channel');
 const { EventEmitter2 } = require('eventemitter2');
 
+const REPO_STATES = {
+  build: 'build',
+  connecting: 'connecting',
+  open: 'open',
+  closed: 'closed',
+  reconnecting: 'reconnecting'
+}
+
 class Repo extends EventEmitter2 {
-  constructor(adapterModule, url, options) {
-    super()
+  constructor(wsModule, url, options) {
+    super({verboseMemoryLeak: true});
     this.messageBuffer = [];
-    this.url = url,
     this.options = options;
-    this.adapterModule = adapterModule;
+    this.url = url,
+    this.adapter = null;
+    this.state = REPO_STATES.build;
+    this.wsModule = wsModule;
     this.channels = {};
-    this.startAdapter();
     this.bindEvents();
+  }
+  changeState(to){
+    let from = this.state;
+    let _to = REPO_STATES[to];
+    this.state = _to;
+
+    this.emit("stateChange", {from, to: _to});
+    this.emit(to);
+  }
+
+  connect(){
+    this.startAdapter();
+    this.changeState('connecting');
   }
   bindEvents() {
     this.on("processMessage", () => {
-      if(this.adapter && this.adapter.readyState === this.adapterModule.OPEN){
+      if(this.state == REPO_STATES.open){
         let payload = this.messageBuffer.shift();
 
         if(payload){
-            this.send(payload);
-            this.emit("processMessage");
+          this.send(payload);
+          this.emit("processMessage");
         }
        }
     });
   }
   startAdapter(){
-    this.adapter = null;
-    this.adapter = new this.adapterModule(this.url);
-    this.subscribeAdapterEvents()
+    if(this.adapter){
+      ["message", "error","close","open"].forEach((listener) =>{
+        this.adapter.removeAllListeners(listener);
+      });
+    }
+
+    this.adapter = new this.wsModule(this.url);
+    this.subscribeAdapterEvents();
   }
 
+  closeAllChannel(){
+    Object.keys(this.channels).forEach((channel) =>{
+      this.channels[channel].changeState("closed");
+    });
+  }
+
+  reconnecting(){
+    this.changeState("reconnecting");
+    this.closeAllChannel();
+    setTimeout(() => {
+      this.startAdapter();
+    }, 2000);
+  }
   subscribeAdapterEvents(){
-      if(this.adapter){
-          this.adapter.removeAllListeners("message");
-          this.adapter.removeAllListeners("error");
-          this.adapter.removeAllListeners("close");
-          this.adapter.removeAllListeners("open");
-      }
-    this.adapter.on("message", (resp) => { 
-        this._messageBroke(resp);
+    this.adapter.on("message", (resp) => {
+      this._messageBroke(resp);
     });
 
     this.adapter.on('error', (err) => {
-         setTimeout(() => {
-            this.startAdapter();
-         }, 2000);
-    })
+      this.reconnecting();
+    });
 
-    // this.adapter.on('close', (code) => {
-    //     switch (code){
-    //       case 1000:  // CLOSE_NORMAL
-    //           console.log("WebSocket: closed");
-    //           break;
-    //       default:    // Abnormal closure
-    //         setTimeout(() => {
-    //             this.startAdapter();
-    //         }, 2000);
-    //         break;
-    //     }
-    //     console.log('disconnected');
-    // });
+    this.adapter.on('close', (code) => {
+      switch (code){
+        case 1000:  // CLOSE_NORMAL
+          this.closeAllChannel();
+          console.log("WebSocket: closed");
+          break;
+        default:    // Abnormal closure
+          this.reconnecting();
+          break;
+      }
+    });
 
     this.adapter.on("open", (resp) => {
-        this.joinChannels();
+      this.changeState("open");
+      this.joinChannels();
     });
   }
 
   joinChannels(){
     Object.keys(this.channels).forEach((item) => {
-        let channel = this.channels[item];
-        channel.join();
+      let channel = this.channels[item];
+      channel.join();
     });
+
     this.emit("processMessage");
     return this.channels;
   }
 
   addChannel(name, joinPayload = {}){
     if(!this.channels[name]){
-        let channel = new Channel(name, joinPayload);
-        
-        channel.on("outgoingMessage", (payload) => {
-            this.messageBuffer.push(payload);
-            this.emit("processMessage");
-        })
+      let channel = new Channel(name, joinPayload);
 
-        this.channels[name]  = channel;
-        return channel;
+      channel.on("outgoingMessage", (payload) => {
+        this.messageBuffer.push(payload);
+        this.emit("processMessage");
+      });
+
+      this.channels[name]  = channel;
+      return channel;
     }else{
         throw Error("Channel already exists with name: name");
     }
@@ -99,10 +131,10 @@ class Repo extends EventEmitter2 {
     let channel = this.channels[message.topic];
 
     if(channel){
-        channel.emit('incomingMessage', message);
+      channel.emit('incomingMessage', message);
     }else{
-        console.warn("Channel not found: ", message.topic)
-        console.log(message);
+      console.warn("Channel not found: ", message.topic)
+      console.log(message);
     }
   }
 }

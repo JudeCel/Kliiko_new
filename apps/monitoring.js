@@ -7,8 +7,8 @@ const WebSocket = require('ws');
 const Repo = require('./monitoring/repo');
 const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {});
 
-const infoChannel = repo.addChannel("info:kliiko");
-const errorChannel = repo.addChannel("error:kliiko");
+const infoChannel = repo.addChannel("info:server:kliiko");
+// const errorChannel = repo.addChannel("error:server:kliiko");
 
 infoChannel.on("get_deps", () => {
     exec('yarn outdated --color', (error, stdout, stderr) => {
@@ -21,14 +21,14 @@ infoChannel.on("get_deps", () => {
 })
 
 infoChannel.on("ping", () => {
-  infoChannel.push("pong", { status: 'ok'})
+  infoChannel.push("pong", { status: "ok"});
 })
 
 infoChannel.on("system_metrics", () => {
   infoChannel.push("system_metrics", { metrics: process.memoryUsage()})
 })
 
-infoChannel.join();
+repo.connect();
 
 process.on('message', function (data) {
   // errorChannel

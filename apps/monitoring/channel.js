@@ -1,3 +1,4 @@
+
 "use strict";
 const { EventEmitter2 } = require('eventemitter2');
 const Store = require('./store');
@@ -23,7 +24,6 @@ const CHANNEL_STATES = {
 class Channel extends EventEmitter2 {
     constructor(name){
       super({verboseMemoryLeak: true});
-      this.ref = 0;
       this.topic =  name;
       this.state =  CHANNEL_STATES.set;
       this.messages =  new Store();
@@ -35,10 +35,9 @@ class Channel extends EventEmitter2 {
       this.emit("outgoingMessage", message.toParams());
       return message;
     }
-    getMsgRef(){ 
-      return this.ref ++ 
+    clearStore(){
+      this.messages =  new Store();
     }
-
     changeState(to){
       let from = this.state;
       let _to = CHANNEL_STATES[to];
@@ -62,18 +61,18 @@ class Channel extends EventEmitter2 {
       if(this.canLeave()){
         let message = this.buildMessage({}, CHANNEL_EVENTS.leave);
         this.changeState('leaving');
-        message.setSent()
+        message.setSent();
         this.emit("outgoingMessage", message.toParams());
       }
       return this;
     }
 
-    canLeave(){ 
+    canLeave(){
       return(this.isState('joining') || this.isState('joined'))
     }
 
     canJoin(){
-      return(!this.isState('joining') || !this.isState('joined')) 
+      return(!this.isState('joining') || !this.isState('joined'))
     }
 
     isState(key){
@@ -81,34 +80,34 @@ class Channel extends EventEmitter2 {
     }
 
     buildMessage(payload, event){
-      let message = new Message(this.topic, payload, event, this.getMsgRef());
+      let message = new Message(this.topic, payload, event);
       this.messages.add(message);
       return message;
     }
 
     incomingMessage(message){
-        let eventMessage = this.messages.get(message.ref);
-        
-        switch (message.event) {
-          case CHANNEL_EVENTS.join:
-            this.incomingJoin(eventMessage, message);
-            break;
-          case CHANNEL_EVENTS.error:
-            this.replyError(eventMessage, messageage);
-            break;
-          case CHANNEL_EVENTS.reply:
-            this.incomingReply(eventMessage, message);
-            break;
-          case CHANNEL_EVENTS.close:
-            this.incomingClose(eventMessage, message);
-            break;
-          case CHANNEL_EVENTS.leave:
-            this.incomingLeave(eventMessage, message);
-            break;
-          default:
-            this.emit(message.event, message.payload);
-            break;
-        }
+      let eventMessage = this.messages.get(message.ref);
+
+      switch (message.event) {
+        case CHANNEL_EVENTS.join:
+          this.incomingJoin(eventMessage, message);
+          break;
+        case CHANNEL_EVENTS.error:
+          this.replyError(eventMessage, messageage);
+          break;
+        case CHANNEL_EVENTS.reply:
+          this.incomingReply(eventMessage, message);
+          break;
+        case CHANNEL_EVENTS.close:
+          this.incomingClose(eventMessage, message);
+          break;
+        case CHANNEL_EVENTS.leave:
+          this.incomingLeave(eventMessage, message);
+          break;
+        default:
+          this.emit(message.event, message.payload);
+          break;
+      }
     }
 
     incomingJoin(message, reply){
@@ -130,10 +129,12 @@ class Channel extends EventEmitter2 {
       this.resolveMessage(message, reply);
     }
     incomingClose(message, reply){
+      this.clearStore();
       this.changeState('closed');
       this.resolveMessage(message, reply)
     }
-    incomingLeave(message, reply){ 
+    incomingLeave(message, reply){
+      this.clearStore();
       this.changeState('closed');
       this.resolveMessage(message, reply);
     }
