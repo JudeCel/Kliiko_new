@@ -15,7 +15,7 @@ class Repo extends EventEmitter2 {
   constructor(wsModule, url, connectionOptions) {
     super({verboseMemoryLeak: true});
     this.messageBuffer = [];
-    this.connectionOptions = connectionOptions;
+    this.connectionOptions = connectionOptions || {};
     this.url = url,
     this.adapter = null;
     this.state = REPO_STATES.build;
