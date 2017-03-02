@@ -28,7 +28,7 @@ module.exports = {
       "survay": {
         "enabled": false
       },
-      "unidentifiedParticipants": {
+      "ghostParticipants": {
         "enabled": false
       },
       "whiteboard": {
@@ -91,7 +91,7 @@ module.exports = {
       "survay": {
         "enabled": false
       },
-      "unidentifiedParticipants": {
+      "ghostParticipants": {
         "enabled": false
       },
       "whiteboard": {
@@ -154,7 +154,7 @@ module.exports = {
       "survay": {
         "enabled": true
       },
-      "unidentifiedParticipants": {
+      "ghostParticipants": {
         "enabled": true
       },
       "whiteboard": {
