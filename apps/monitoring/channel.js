@@ -22,9 +22,10 @@ const CHANNEL_STATES = {
 }
 
 class Channel extends EventEmitter2 {
-    constructor(name){
+    constructor(name, options){
       super({verboseMemoryLeak: true});
       this.topic =  name;
+      this.options = options;
       this.state =  CHANNEL_STATES.set;
       this.messages =  new Store();
       this.on('incomingMessage', (message) => { this.incomingMessage(message)});
@@ -49,7 +50,7 @@ class Channel extends EventEmitter2 {
 
     join(){
       if(this.canJoin()){
-        let message = this.buildMessage({}, CHANNEL_EVENTS.join);
+        let message = this.buildMessage(this.options, CHANNEL_EVENTS.join);
         this.changeState('joining');
         message.setSent();
         this.emit("outgoingMessage", message.toParams());
@@ -93,7 +94,7 @@ class Channel extends EventEmitter2 {
           this.incomingJoin(eventMessage, message);
           break;
         case CHANNEL_EVENTS.error:
-          this.replyError(eventMessage, messageage);
+          this.replyError(eventMessage, message);
           break;
         case CHANNEL_EVENTS.reply:
           this.incomingReply(eventMessage, message);
