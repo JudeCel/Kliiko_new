@@ -61,9 +61,9 @@
             </td>
             <td class="capitalize">{{ session.type }}</td>
             <td>{{ session.facilitator.AccountUser.firstName }} {{ session.facilitator.AccountUser.lastName }}</td>
-            <td>{{ session.startTime | date:sc.dateFormat }}</td>
-            <td>{{ session.endTime | date:sc.dateFormat }}</td>
-            <td>{{ session.expireDate | date:sc.dateFormat }}</td>
+            <td>{{ session.startTime | date:csc.dateFormat }}</td>
+            <td>{{ session.endTime | date:csc.dateFormat }}</td>
+            <td>{{ session.expireDate | date:csc.dateFormat }}</td>
             <td>{{ session.showStatus }}</td>
             <td class='text-right col-xs-3'>
 
