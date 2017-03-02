@@ -253,39 +253,41 @@
     font-weight: 100;
   }
 
-  .panel {
-    border-radius: 0px;
-    color: $grey;
+  #step-2, #step-1, #step-3, #step-4-participants {
+
+    .panel {
+      border-radius: 0px;
+      color: $grey;
+    }
+
+    .panel-heading {
+      border: none;
+      background: #F6F8F7;
+      &:hover {
+        background: $lightGreen;
+
+        > .panel-title { color: $green; }
+
+      }
+
+      .panel-title {
+        font-size: 2rem;
+        text-align: left;
+        color: $grey;
+      }
+    }
+
+    .panel-value,
+     span.panel-value {
+      margin: 0 3rem;
+    }
   }
 
   a.accordion-toggle {
     text-decoration: none;
 
     &:hover { text-decoration: none }
-  }
-
-
-  .panel-heading {
-    border: none;
-    background: #F6F8F7;
-    &:hover {
-      background: $lightGreen;
-
-      > .panel-title { color: $green; }
-
-    }
-
-    .panel-title {
-      font-size: 2rem;
-      text-align: left;
-      color: $grey;
-    }
-  }
-
-  .panel-value,
-   span.panel-value {
-    margin: 0 3rem;
-  }
+  }  
 
   .accordion-heading-helper.active {
     background: yellow;

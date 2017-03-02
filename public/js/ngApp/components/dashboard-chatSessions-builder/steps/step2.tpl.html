@@ -73,5 +73,11 @@
         <ng-include ng-init="topics = tc" src="'/js/ngApp/components/dashboard-resources-topics/topicsModals.html'"></ng-include>
       </div>
     </section>
+
+    <div ng-controller="GalleryController as gc">
+      <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(surveyListController.currentSurveyId)'>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
+      </div>
+    </div>
   </section>
 </section>
