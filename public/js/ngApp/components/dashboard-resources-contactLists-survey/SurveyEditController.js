@@ -8,21 +8,12 @@
     dbg.log2('#SurveyController started');
 
     var vm = this;
-    vm.surveys = {};
     vm.uploadTypes = {};
     vm.autoSave = null;
     vm.stats = {};
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
-
-    vm.popOverMessages = {
-      remove: 'Delete',
-      edit: 'Edit',
-      copy: 'Copy',
-      export: 'Export',
-      report: 'Stats'
-    };
 
     // Uses services
     vm.saveSurvey = saveSurvey;
