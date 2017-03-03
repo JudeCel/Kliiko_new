@@ -603,6 +603,12 @@ input#reveiveNewsLetters{
       width: 100% !important;
     }
   }
+  @media (max-width: 338px) {
+    .g-recaptcha {
+      transform:scale(0.7);
+      transform-origin:0 0;
+    }
+  }
   padding: 20px;
 
   a.black {

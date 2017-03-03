@@ -15,6 +15,10 @@
           <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="">
         </p>
         <p>
+          <%- captcha %>
+          <br/>
+        </p>
+        <p>
           By clicking on the Accept button below, you agree with our <a href="/privacy_policy" target="_blank">Privacy Policy</a>
         </p>
         <div class="form-group text-right">
@@ -27,4 +31,5 @@
     <div ng-controller='MessengerController as mc' ng-init="mc.error('<%= message %>', true)"></div>
   <% } %>
 </div>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <% include ../footer %>

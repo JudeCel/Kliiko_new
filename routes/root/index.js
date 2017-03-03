@@ -7,12 +7,10 @@ var router = express.Router();
 var usersRepo = require('../../services/users');
 var resetPassword = require('../../services/resetPassword');
 var emailConfirmation = require('../../services/emailConfirmation');
-var sessionService = require('../../services/session');
-var sessionMemberService = require('../../services/sessionMember');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-
+var ghostUserRoutes = require('./ghostUser');
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var userRoutes = require('./user.js');
@@ -29,6 +27,7 @@ var accountUserService = require('../../services/accountUser');
 var exec = require('child_process').exec;
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
+
 
 router.route('/ics').get(ics.render);
 
@@ -201,22 +200,7 @@ router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
 
-router.route('/session/:uid').get(function(req, res, next) {
-  sessionService.checkSessionByUid(req.params.uid).then(function() {
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null });
-  }, function(error) {
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: error });
-  });
-}).post(function(req, res, next) {
-  sessionService.checkSessionByUid(req.params.uid).then(function(session) {
-    return sessionMemberService.createGhost(req.body.name, session);
-  }).then(function(sessionMember) {
-    let link = process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/?ghost_token=" + sessionMember.token;
-    res.redirect(link);
-  }).catch(function(error) {
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error });
-  });
-});
+router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
 
 let registrationState = JSON.stringify({type: 'registration'});
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
