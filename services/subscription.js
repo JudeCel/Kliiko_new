@@ -850,7 +850,9 @@ function validateSurveyCount(accountId, newPlan) {
   return function(errors, cb) {
     models.Survey.count({
       where: {
-        accountId: accountId
+        accountId: accountId,
+        closed: false,
+        confirmedAt: null
       }
     }).then(function(c) {
       errors = errors || {};
@@ -873,7 +875,8 @@ function validateContactListCount(accountId, newPlan) {
   return function(errors, cb) {
     models.ContactList.count({
       where: {
-        accountId: accountId
+        accountId: accountId,
+        active: true
       }
     }).then(function(c) {
       errors = errors || {};

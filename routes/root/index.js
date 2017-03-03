@@ -10,7 +10,7 @@ var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-
+var ghostUserRoutes = require('./ghostUser');
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var userRoutes = require('./user.js');
@@ -28,11 +28,12 @@ var exec = require('child_process').exec;
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 
+
 router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/')) {
+    if (isPublicPath(req.path)) {
       return next();
     }
 
@@ -59,6 +60,10 @@ router.use(function (req, res, next) {
       }
     }
 });
+
+function isPublicPath(path) {
+  return path == '/logout' || path.startsWith('/VerifyEmail/') || path.startsWith('/session/');
+}
 
 function filterRoutes(path) {
   let array = _.map(router.stack, function(layer) {
@@ -143,6 +148,9 @@ function prepareUrlParams(parameters, query) {
         parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
+    else if(query.selectedPlanOnRegistration) {
+      parameters.selectedPlanOnRegistration = query.selectedPlanOnRegistration;
+    }
   }
 
   if (typeof(parameters.showOptionalFields) != "boolean") {
@@ -198,6 +206,8 @@ function replaceToString(value) {
 router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
+
+router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
 
 let registrationState = JSON.stringify({type: 'registration'});
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
@@ -367,7 +377,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
-  prepareUrlParams(userParams, req.query);
+  prepareUrlParams(userParams, req.body);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 

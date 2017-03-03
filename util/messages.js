@@ -99,7 +99,8 @@ module.exports = {
     cantRateSelf: "You can't rate your self",
     sessionNotClosed: "You can't rate or comment participants because session in not closed",
     cantSendSMS: "You can't send SMS for this session",
-    actionNotAllowed: "Action not allowed"
+    actionNotAllowed: "Action not allowed",
+    closed: "Sorry, \"{sessionName}\", has now closed. Thank you for interest!"
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
@@ -146,7 +147,8 @@ module.exports = {
     }
   },
   sessionMember: {
-    notFound: 'Session Member not found'
+    notFound: 'Session Member not found',
+    nameEmpty: 'Sorry but we need your first name'
   },
   socialProfile: {
     verifyEmail: 'Please verify your email address'

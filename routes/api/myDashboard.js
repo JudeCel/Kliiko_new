@@ -69,7 +69,7 @@ function getResponses(req, res) {
 
       res.send({
         data: result,
-        dateFormat: constants.dateFormatWithTime,
+        dateFormat: constants.dateFormat,
         hasOwnAccount: ownAccounts > 0,
         hasRoles: Object.keys(result).length > 0,
         canCreateNewAccount: ownAccounts < constants.maxAccountsAmount,
