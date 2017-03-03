@@ -2,23 +2,16 @@
 
 var sessionService = require('../../services/session');
 var sessionMemberService = require('../../services/sessionMember');
-var recaptcha = require('recaptcha2')
+var recaptcha = require('../../lib/recaptcha');
 
 module.exports = {
   get: get,
   post: post
 };
 
-function getCaptcha() {
-  return new recaptcha({
-    siteKey: process.env.RECAPTCHA_SITE_KEY,
-    secretKey: process.env.RECAPTCHA_SECRET_KEY
-  });
-}
-
 function get(req, res, next) {
   sessionService.checkSessionByUid(req.params.uid).then(function() {
-    let captcha = getCaptcha();
+    let captcha = recaptcha.getCaptcha();
     res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null, captcha: captcha.formElement() });
   }, function(error) {
     res.render('ghost-user/index', { title: 'Chat Session Login', error: error, message: null });
@@ -26,7 +19,7 @@ function get(req, res, next) {
 }
 
 function post(req, res, next) {
-  let captcha = getCaptcha();
+  let captcha = recaptcha.getCaptcha();
   captcha.validateRequest(req).then(function() {
     sessionService.checkSessionByUid(req.params.uid).then(function(session) {
       return sessionMemberService.createGhost(req.body.name, session);
