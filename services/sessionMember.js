@@ -32,12 +32,38 @@ module.exports = {
 function createGhost(name, session) {
   return new Bluebird((resolve, reject) => {
     if (name) {
-      //todo:
-      resolve();
+      SessionMember.count({ where: { sessionId: session.id, role: 'participant'} }).then(function(count) {
+        let params = ghostUserParams(name, session.id, count);
+        SessionMember.create(params).then(function(sessionMember) {
+          resolve(sessionMember);
+        }, function(error) {
+          reject(error);
+        });
+      }, function(error) {
+        reject(error);
+      });
     } else{
       reject(MessagesUtil.sessionMember.nameEmpty);
     }
   });
+}
+
+function ghostUserParams(name, sessionId, count) {
+  let participantColors = brandProjectConstants.memberColours.participants;
+  let length = Object.keys(participantColors).length;
+  let colour = participantColors[(count % length) + 1];
+
+  return {
+    sessionId: sessionId,
+    accountUserId: null,
+    username: name,
+    role: 'participant',
+    typeOfCreation: 'system',
+    avatarData: constants.sessionMemberNoGender,
+    token: uuid.v1(),
+    colour: colour,
+    ghost: true
+  };
 }
 
 function addDefaultObserver({id}, session, defaultSystemMemberRoles) {

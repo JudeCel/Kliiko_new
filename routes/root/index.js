@@ -210,9 +210,9 @@ router.route('/session/:uid').get(function(req, res, next) {
 }).post(function(req, res, next) {
   sessionService.checkSessionByUid(req.params.uid).then(function(session) {
     return sessionMemberService.createGhost(req.body.name, session);
-  }).then(function(result) {
-    //todo: redirect to chat
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: "OK" });
+  }).then(function(sessionMember) {
+    let link = process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/?ghost_token=" + sessionMember.token;
+    res.redirect(link);
   }).catch(function(error) {
     res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error });
   });
