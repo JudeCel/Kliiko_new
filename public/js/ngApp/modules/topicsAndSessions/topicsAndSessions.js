@@ -10,7 +10,8 @@
       topics: $resource('/topics'),
       topic: $resource('/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       sessionTopic: $resource('/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
-      sessionByInvite: $resource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+      sessionByInvite: $resource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      defaultTopic: $resource('/topic/updateDefaultTopic/:id', {id:'@id'}, {put: {method: 'PUT'}}),
     };
 
     var topicsAndSessionsFactory = {};
@@ -30,8 +31,23 @@
         params.snapshot = session.snapshot;
       }
 
-      restApi.sessionTopic.put({}, params, function(result) {
-        if (result.error) {
+      params.isCurrentSessionTopic = true;
+
+      if(params.default) {
+        restApi.defaultTopic.put({id: params.topicId}, {topic: params}, function(result) {
+          processSessionTopicUpdateResponse(result, session, params, deferred);
+        });
+      } else {
+        restApi.sessionTopic.put({}, params, function(result) {
+          processSessionTopicUpdateResponse(result, session, params, deferred);
+        });
+      }
+
+      return deferred.promise;
+    }
+
+    function processSessionTopicUpdateResponse(result, session, params, deferred) {
+      if (result.error) {
           deferred.reject(result.error);
         } else if (result.validation && !result.validation.isValid) {
           changesValidation.validationConfirm(result, updateSessionTopic, params, session).then(function(newRes) {
@@ -46,9 +62,6 @@
           }
           deferred.resolve(result.data);
         }
-      });
-
-      return deferred.promise;
     }
 
     /**
@@ -112,7 +125,12 @@
 
       dbg.log2('#topicsAndSessions > updateTopic > call to API');
 
-      restApi.topic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      if(topicObj.default) {
+        restApi.defaultTopic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      } else {
+        restApi.topic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      }
+
 
       return deferred.promise;
 
