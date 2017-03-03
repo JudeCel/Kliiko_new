@@ -17,11 +17,9 @@ function getCaptcha() {
 }
 
 function get(req, res, next) {
-  let captcha = getCaptcha();
-  let captchaElement = captcha.formElement();
-
   sessionService.checkSessionByUid(req.params.uid).then(function() {
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null, captcha: captchaElement });
+    let captcha = getCaptcha();
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null, captcha: captcha.formElement() });
   }, function(error) {
     res.render('ghost-user/index', { title: 'Chat Session Login', error: error, message: null });
   });
@@ -29,8 +27,6 @@ function get(req, res, next) {
 
 function post(req, res, next) {
   let captcha = getCaptcha();
-  let captchaElement = captcha.formElement();
-
   captcha.validateRequest(req).then(function() {
     sessionService.checkSessionByUid(req.params.uid).then(function(session) {
       return sessionMemberService.createGhost(req.body.name, session);
@@ -38,9 +34,9 @@ function post(req, res, next) {
       let link = process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/?ghost_token=" + sessionMember.token;
       res.redirect(link);
     }).catch(function(error) {
-      res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error, captcha: captchaElement });
+      res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error, captcha: captcha.formElement() });
     });
   }).catch(function(errorCodes) {
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: captcha.translateErrors(errorCodes), captcha: captchaElement });
+    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: captcha.translateErrors(errorCodes), captcha: captcha.formElement() });
   });
 }
