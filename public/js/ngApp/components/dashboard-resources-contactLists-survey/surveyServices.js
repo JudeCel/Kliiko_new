@@ -36,11 +36,11 @@
     upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
     return upServices;
 
-    function getConstants() {
+    function getConstants(type) {
       var deferred = $q.defer();
 
       dbg.log2('#surveyServices > getConstants > make rest call');
-      surveyRestApi.constants({}, function(res) {
+      surveyRestApi.constants({type: type}, function(res) {
         dbg.log2('#surveyServices > getConstants > rest call responds');
         deferred.resolve(res);
       });

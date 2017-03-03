@@ -246,7 +246,7 @@ describe('SERVICE - Survey', function() {
           });
         });
       });
-      
+
       it("delete survey keep contact list", (done) =>{
         let params = surveyParams();
         surveyServices.createSurveyWithQuestions(params, testData.account).then((result) => {
@@ -260,7 +260,7 @@ describe('SERVICE - Survey', function() {
                     done();
                   } else {
                   done("Contact List is misssing");
-                  } 
+                  }
                 })
               })
             } catch (e) {
@@ -620,8 +620,8 @@ describe('SERVICE - Survey', function() {
                     done();
                   } else {
                   done("Contact List is misssing");
-                  } 
-                  
+                  }
+
                 } catch (error) {
                   done(error);
                 }
@@ -950,31 +950,31 @@ describe('SERVICE - Survey', function() {
 
           surveyServices.answerSurvey(answerParams).then(function(result) {
               surveyServices.getSurveyStats(survey.id, testData.account).then(function(result) {
-                let validResult = { 
-                  survey: { 
-                    name: params.name, 
-                    id: survey.id, 
-                    answers: 1 
+                let validResult = {
+                  survey: {
+                    name: params.name,
+                    id: survey.id,
+                    answers: 1
                   },
-                  questions: { 
-                    '1': { 
+                  questions: {
+                    '1': {
                       name: 'Some default name 0',
-                      answers: { 
-                        '0': { name: '0 answer 0', count: 1, percent: 100 }, 
-                        '1': { name: '1 answer 0', count: 0, percent: 0 }, 
-                        '2': { name: '2 answer 0', count: 0, percent: 0 }, 
-                        '3': { name: '3 answer 0', count: 0, percent: 0 } 
-                      } 
+                      answers: {
+                        '0': { name: '0 answer 0', count: 1, percent: 100 },
+                        '1': { name: '1 answer 0', count: 0, percent: 0 },
+                        '2': { name: '2 answer 0', count: 0, percent: 0 },
+                        '3': { name: '3 answer 0', count: 0, percent: 0 }
+                      }
                     },
-                    '2': { 
+                    '2': {
                       name: 'Some default name 1',
-                      answers: { 
-                        '0': { name: '0 answer 1', count: 1, percent: 100 }, 
-                        '1': { name: '1 answer 1', count: 0, percent: 0 }, 
-                        '2': { name: '2 answer 1', count: 0, percent: 0 }, 
+                      answers: {
+                        '0': { name: '0 answer 1', count: 1, percent: 100 },
+                        '1': { name: '1 answer 1', count: 0, percent: 0 },
+                        '2': { name: '2 answer 1', count: 0, percent: 0 },
                         '3': { name: '3 answer 1', count: 0, percent: 0 }
-                      } 
-                    } 
+                      }
+                    }
                   }
                 };
 
@@ -992,8 +992,8 @@ describe('SERVICE - Survey', function() {
   describe('#constantsSurvey', function() {
     describe('happy path', function() {
       it('should succeed returning default values', function (done) {
-        surveyServices.constantsSurvey().then(function(result) {
-          assert.deepEqual(result.data, surveyConstants);
+        surveyServices.constantsSurvey({type:'recruiter'}).then(function(result) {
+          assert.deepEqual(result.data, surveyConstants.getSurveyConstants('recruiter'));
           done();
         }, function(error) {
           done(error);

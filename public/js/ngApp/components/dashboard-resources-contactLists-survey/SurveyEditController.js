@@ -42,15 +42,14 @@
     vm.questionTemplate = questionTemplate;
 
     vm.customSurveyTemplate = function(object) {
-      let template = vm.userTemplates[object.tag];
+      let template;
+      if (vm.surveySettings.userTemplates) {
+        template = vm.surveySettings.userTemplates[object.tag];
+      }
       return template ? template : "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html";
     }
 
-    vm.userTemplates = {
-      "intro": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/recruiter-intro.html",
-      "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
-      "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
-    }
+    vm.userTemplates = {};
 
     function onDropComplete(index, data, evt) {
       var answer = data.answer;
@@ -78,7 +77,7 @@
     }
 
     function initConstants() {
-      return surveyServices.getConstants().then(function(res) {
+      return surveyServices.getConstants(vm.surveySettings.type).then(function(res) {
         vm.defaultQuestions = res.data.defaultQuestions;
         vm.contactDetails = res.data.contactDetails;
         vm.constantErrors = res.data.validationErrors;
@@ -89,8 +88,8 @@
       });
     };
 
-    function init(surveyId, delegateMethods) {
-      vm.delegateMethods = delegateMethods;
+    function init(surveyId, surveySettings) {
+      vm.surveySettings = surveySettings;
 
       initConstants().then(function() {
         if (surveyId) {
@@ -177,6 +176,12 @@
 
     }
 
+    function quitEditor() {
+      if (vm.surveySettings.onFinished) {
+        vm.surveySettings.onFinished()
+      }
+    }
+
     function finishCreate(survey, autoSave, publish) {
       vm.submitingForm = true;
       surveyServices.createSurvey(survey).then(function(res) {
@@ -194,7 +199,7 @@
             confirmSurvey(survey);
           } else if (!autoSave) {
             messenger.ok(res.message);
-            //changePage('index');
+            quitEditor();
           }
         }
       });
@@ -214,7 +219,7 @@
             confirmSurvey(survey);
           } else if (!autoSave) {
             messenger.ok(res.message);
-            //changePage('index');
+            quitEditor();
           }
         }
       });
@@ -229,7 +234,7 @@
         } else {
           survey.confirmedAt = res.data.confirmedAt;
           messenger.ok(res.message);
-          //changePage('index');
+          quitEditor();
         }
       });
     };

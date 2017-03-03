@@ -36,6 +36,11 @@
     vm.getTopicStockClass = getTopicStockClass;
     vm.getSessionTopicName = getSessionTopicName;
 
+    //Pass these to SurveyEditController
+    vm.surveySettings = {
+      type: 'session'
+    }
+
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
       vm.topics = vm.session.steps.step2.topics;
@@ -65,7 +70,7 @@
 
       if (topic.stock) {
         return false;
-      } 
+      }
 
       if(!selected.length) {
         return true;
@@ -90,9 +95,9 @@
 
     function getSessionTopicName(topic){
        if(topic.parentTopicId){
-        return ("Copy of " + topic.sessionTopic.name) 
+        return ("Copy of " + topic.sessionTopic.name)
       }else{
-        return (topic.sessionTopic.name) 
+        return (topic.sessionTopic.name)
       }
     }
 

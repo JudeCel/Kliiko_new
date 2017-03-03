@@ -26,6 +26,19 @@
       report: 'Stats'
     };
 
+    vm.userTemplates = {
+      "intro": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/recruiter-intro.html",
+      "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
+      "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
+    }
+    //Pass these to SurveyEditController
+    vm.surveySettings = {
+      type: 'recruiter',
+      onFinished: vm.showStartPage,
+      userTemplates: vm.userTemplates
+    }
+
+
     // Uses services
     vm.removeSurvey = removeSurvey;
     vm.changeStatus = changeStatus;
@@ -37,11 +50,6 @@
     // Helpers
     vm.checkTag = surveyServices.checkTag;
     vm.canDelete = canDelete;
-
-    vm.customSurveyTemplate = function(object) {
-      let template = vm.userTemplates[object.tag];
-      return template ? template : "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html";
-    }
 
     function init() {
       surveyServices.getAllSurveys().then(function(res) {
