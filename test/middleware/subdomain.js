@@ -39,9 +39,9 @@ describe('Middleware subdomain', () => {
       models.Account.findAll({include: [models.AccountUser]}).then((result) => {
         subdomain(req, res, () => {
           let currentResources = {
-            account: { id: result[0].id, name: result[0].name, subdomain: result[0].subdomain, admin: result[0].admin }, 
+            account: { id: result[0].id, name: result[0].name, subdomain: result[0].subdomain, admin: result[0].admin },
             accountUser: {id: result[0].AccountUsers[0].id, role: result[0].AccountUsers[0].role},
-            user: {id: result[0].AccountUsers[0].UserId, email: "dainis@gmail.com"}
+            user: {id: result[0].AccountUsers[0].UserId, email: "dainis@gmail.com", selectedPlanOnRegistration: null}
           }
 
           try {

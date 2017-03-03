@@ -36,7 +36,8 @@ module.exports = {
   changeComment: changeComment,
   getSessionByInvite: getSessionByInvite,
   setAnonymous: setAnonymous,
-  canChangeAnonymous: canChangeAnonymous
+  canChangeAnonymous: canChangeAnonymous,
+  checkSessionByPublicUid: checkSessionByPublicUid
 };
 
 function isInviteSessionInvalid(resp) {
@@ -544,5 +545,27 @@ function changeSessionData(sessions, chargebeeSub, provider) {
       session.SessionMembers.splice(facIndex, 1);
       session.dataValues.averageRating = total / session.SessionMembers.length;
     }
+  });
+}
+
+function checkSessionByPublicUid(uid) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        publicUid: uid
+      }
+    }).then(function(session) {
+      if (session && sessionTypesConstants[session.type].features.ghostParticipants.enabled) {
+        if (session.status == "open") {
+          resolve(session);
+        } else {
+          reject(MessagesUtil.session.closed.replace("sessionName", session.name));  
+        }
+      } else {
+        reject(MessagesUtil.session.notFound);  
+      }
+    }, function(error) {
+      reject(error);
+    });
   });
 }

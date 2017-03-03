@@ -62,6 +62,33 @@ describe('SERVICE - SessionMember', function() {
     });
   });
 
+  describe('createGhost', function() {
+    beforeEach(function(done) {
+      models.Session.update({uid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('should succeed', function (done) {
+      sessionMemberServices.createGhost("testName", testData.session).then(function(result) {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('should fail because empty name', function (done) {
+      sessionMemberServices.createGhost("", testData.session).then(function(result) {
+        done('Should not get here!');
+      }, function(error) {
+        assert.equal(error, sessionMemberServices.messages.nameEmpty);
+        done();
+      });
+    });
+  });
+
   describe('#removeByIds', function() {
     describe('happy path', function() {
       it('should succeed on removing session member by ids', function (done) {

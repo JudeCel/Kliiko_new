@@ -23,7 +23,8 @@ module.exports = (Sequelize, DataTypes) => {
     confirmedAt: { type : DataTypes.DATE, allowNull: true },
     currentSignInIp: { type : DataTypes.STRING, allowNull: true },
     signInCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    tipsAndUpdate: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
+    tipsAndUpdate: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    selectedPlanOnRegistration: { type: DataTypes.STRING, allowNull: true },
   }, {
     indexes: [{
         name: 'userUniqueEmail',
