@@ -8,12 +8,10 @@
     <div id="play-video">
       <div id="video-placeholder" class="box-shadow border-yellow">
         <div class="play-btn"></div>
-      </div>
-
-      <div id="video" style="display: none;">
-        <!-- <iframe width="100%" height="100%" src="https://www.youtube.com/embed/H8PC1_3fjvs?rel=0" frameborder="0" allowfullscreen></iframe> -->
-        <div id="player">
-
+        <div id="video" style="display: none;">
+          <div id="player">
+            <iframe src='http://player.vimeo.com/video/187617841' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+          </div>
         </div>
       </div>
     </div>
@@ -27,5 +25,14 @@
     </div>
   </div>
 </main>
+
+<script>
+  var holder = $('#video-placeholder');
+  holder.click(function() {
+    holder.find('.play-btn').css('display', 'none');
+    holder.find('#video').css('display', 'block');
+    holder.off('click');
+  });
+</script>
 
 <% include ../footer %>

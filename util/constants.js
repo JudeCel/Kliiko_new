@@ -33,7 +33,8 @@ module.exports = {
   ],
   safeUserParams: [
     'id',
-    'email'
+    'email',
+    'selectedPlanOnRegistration'
   ],
   contactListDefaultFields: [
     "firstName", "lastName", "gender", "email", 'postalAddress',
