@@ -7,7 +7,7 @@ let sessionTypeService = require('./../services/sessionType');
 module.exports = {
   up: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
-      queryInterface.addColumn('Sessions', 'uid', { type: Sequelize.STRING, allowNull: true }).then(function() {
+      queryInterface.addColumn('Sessions', 'publicUid', { type: Sequelize.STRING, allowNull: true }).then(function() {
         resolve();
       }, function(error) {
         validateError(error, resolve, reject);
@@ -16,7 +16,7 @@ module.exports = {
   },
   down: function (queryInterface, Sequelize) {
     return new Bluebird(function (resolve, reject) {
-      queryInterface.removeColumn('Sessions', 'uid').then(function() {
+      queryInterface.removeColumn('Sessions', 'publicUid').then(function() {
         resolve();
       }, (error) => {
         validateError(error, resolve, reject);

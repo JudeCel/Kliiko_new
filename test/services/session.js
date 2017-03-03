@@ -108,10 +108,10 @@ describe('SERVICE - Session', function() {
       });
     });
 
-    describe('#checkSessionByUid', function() {
+    describe('#checkSessionByPublicUid', function() {
       it('should succeed', function (done) {
-        models.Session.update({uid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
-          sessionServices.checkSessionByUid("test-uid").then(function(result) {
+        models.Session.update({publicUid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByPublicUid("test-uid").then(function(result) {
             done();
           }, function(error) {
             done(error);
@@ -122,7 +122,7 @@ describe('SERVICE - Session', function() {
       });
 
       it('should fail', function (done) {
-        sessionServices.checkSessionByUid("fake-uid").then(function(result) {
+        sessionServices.checkSessionByPublicUid("fake-uid").then(function(result) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, sessionServices.messages.notFound);
@@ -131,8 +131,8 @@ describe('SERVICE - Session', function() {
       });
 
       it('should fail because closed', function (done) {
-        models.Session.update({uid: "test-uid", type: "socialForum", status: "closed"}, { where: { id: testData.session.id } }).then(function() {
-          sessionServices.checkSessionByUid("test-uid").then(function(result) {
+        models.Session.update({publicUid: "test-uid", type: "socialForum", status: "closed"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByPublicUid("test-uid").then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, sessionServices.messages.closed.replace("sessionName", testData.session.name));

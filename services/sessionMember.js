@@ -34,7 +34,11 @@ function createGhost(name, session) {
     if (name) {
       SessionMember.count({ where: { sessionId: session.id, role: 'participant'} }).then(function(count) {
         let params = ghostUserParams(name, session.id, count);
-        return SessionMember.create(params);
+        SessionMember.create(params).then(function(sessionMember) {
+          resolve(sessionMember);
+        }, function(error) {
+          reject(error);
+        });
       }, function(error) {
         reject(error);
       });
@@ -44,11 +48,14 @@ function createGhost(name, session) {
   });
 }
 
-function ghostUserParams(name, sessionId, count) {
+function getColor(count) {
   let participantColors = brandProjectConstants.memberColours.participants;
   let length = Object.keys(participantColors).length;
   let colour = participantColors[(count % length) + 1];
+  return colour;
+}
 
+function ghostUserParams(name, sessionId, count) {
   return {
     sessionId: sessionId,
     accountUserId: null,
@@ -57,7 +64,7 @@ function ghostUserParams(name, sessionId, count) {
     typeOfCreation: 'system',
     avatarData: constants.sessionMemberNoGender,
     token: uuid.v1(),
-    colour: colour,
+    colour: getColor(count),
     ghost: true
   };
 }
@@ -174,10 +181,8 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
       correctFunction = createHelper;
 
       params.avatarData = getAvatarData(accountUser.gender);
-      if(sessionMemberParams.role == 'participant') {
-        let participants = brandProjectConstants.memberColours.participants;
-        let length = Object.keys(participants).length;
-        sessionMemberParams.colour = participants[(memberCount % length) + 1];
+      if (sessionMemberParams.role == 'participant') {
+        sessionMemberParams.colour = getColor(memberCount);
       } else {
         sessionMemberParams.colour = brandProjectConstants.memberColours.facilitator;
       }

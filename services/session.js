@@ -37,7 +37,7 @@ module.exports = {
   getSessionByInvite: getSessionByInvite,
   setAnonymous: setAnonymous,
   canChangeAnonymous: canChangeAnonymous,
-  checkSessionByUid: checkSessionByUid
+  checkSessionByPublicUid: checkSessionByPublicUid
 };
 
 function isInviteSessionInvalid(resp) {
@@ -548,11 +548,11 @@ function changeSessionData(sessions, chargebeeSub, provider) {
   });
 }
 
-function checkSessionByUid(uid) {
+function checkSessionByPublicUid(uid) {
   return new Bluebird((resolve, reject) => {
     Session.find({
       where: {
-        uid: uid
+        publicUid: uid
       }
     }).then(function(session) {
       if (session && sessionTypesConstants[session.type].features.ghostParticipants.enabled) {

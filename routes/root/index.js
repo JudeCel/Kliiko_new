@@ -33,7 +33,7 @@ router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/') || req.path.startsWith('/session/')) {
+    if (isPublicPath(req.path)) {
       return next();
     }
 
@@ -60,6 +60,10 @@ router.use(function (req, res, next) {
       }
     }
 });
+
+function isPublicPath(path) {
+  return path == '/logout' || path.startsWith('/VerifyEmail/') || path.startsWith('/session/');
+}
 
 function filterRoutes(path) {
   let array = _.map(router.stack, function(layer) {
