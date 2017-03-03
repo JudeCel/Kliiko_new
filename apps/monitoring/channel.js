@@ -126,6 +126,9 @@ class Channel extends EventEmitter2 {
       this.changeState('errored');
       this.rejectMessage(message, reply)
     }
+    replyError(message, reply){
+      this.rejectMessage(message, reply)
+    }
     incomingReply(message, reply){
       this.resolveMessage(message, reply);
     }
