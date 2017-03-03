@@ -28,7 +28,8 @@ const VALID_ATTRIBUTES = {
     'closedAt',
     'description',
     'thanks',
-    'SurveyQuestions'
+    'SurveyQuestions',
+    'type'
   ],
   survey: [
     'id',
@@ -40,7 +41,8 @@ const VALID_ATTRIBUTES = {
     'closed',
     'confirmedAt',
     'closedAt',
-    'url'
+    'url',
+    'type'
   ],
   question: [
     'id',
@@ -64,11 +66,11 @@ function simpleParams(data, message) {
 };
 
 // Exports
-function findAllSurveys(account) {
+function findAllSurveys(account, params) {
   let deferred = q.defer();
 
   Survey.findAll({
-    where: { accountId: account.id },
+    where: { accountId: account.id, type: params.type },
     attributes: VALID_ATTRIBUTES.survey,
     order: [
       ['id', 'asc']

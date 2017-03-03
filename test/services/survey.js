@@ -11,6 +11,7 @@ var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var subscriptionFixture = require('./../fixtures/subscription');
 var userFixture = require('./../fixtures/user');
+var constants = require('../../util/constants');
 
 var assert = require('chai').assert;
 var _ = require('lodash');
@@ -71,6 +72,7 @@ describe('SERVICE - Survey', function() {
       thanks: 'Survey thanks',
       accountId: testData.account.id,
       confirmedAt: new Date(),
+      type: constants.surveyTypes.recruiter,
       SurveyQuestions: [
         surveyQuestionParams(0),
         surveyQuestionParams(1)
@@ -381,7 +383,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#findAllSurveys', function() {
     it('should succeed on finding 0 surveys', function (done) {
-      surveyServices.findAllSurveys(testData.account).then(function(result) {
+      surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
         assert.deepEqual(result.data, []);
         done();
       }, function(error) {
@@ -395,7 +397,7 @@ describe('SERVICE - Survey', function() {
       surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
         let survey = result.data;
 
-        surveyServices.findAllSurveys(testData.account).then(function(result) {
+        surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
           assert.equal(result.data[0].id, survey.id);
           done();
         }, function(error) {

@@ -1,4 +1,6 @@
 'use strict';
+var constants = require('../util/constants');
+var _ = require('lodash')
 
 module.exports = (Sequelize, DataTypes) => {
   var Survey = Sequelize.define('Survey', {
@@ -12,7 +14,8 @@ module.exports = (Sequelize, DataTypes) => {
     closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     closedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
-    url: { type: DataTypes.STRING, allowNull: true }
+    url: { type: DataTypes.STRING, allowNull: true },
+    type: { type: DataTypes.ENUM, values: _.keys(constants.surveyTypes), allowNull: false }
   }, {
     timestamps: true,
     classMethods: {

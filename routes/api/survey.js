@@ -2,7 +2,7 @@ var constants = require('../../util/constants');
 var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
-  surveyService.findAllSurveys(req.currentResources.account).then(
+  surveyService.findAllSurveys(req.currentResources.account, req.query).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

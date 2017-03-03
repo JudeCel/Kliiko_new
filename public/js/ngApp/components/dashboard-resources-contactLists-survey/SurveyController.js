@@ -52,7 +52,7 @@
     vm.canDelete = canDelete;
 
     function init() {
-      surveyServices.getAllSurveys().then(function(res) {
+      surveyServices.getAllSurveys({type: vm.surveySettings.type}).then(function(res) {
         vm.surveys = res.data;
         vm.dateFormat = res.dateFormat;
         vm.currentSurveyId = null;

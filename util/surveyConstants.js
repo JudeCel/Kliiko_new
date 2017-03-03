@@ -3,14 +3,15 @@ var MessagesUtil = require('./messages');
 var recruiterSurvey = require('./surveyQuestions/recruiterSurvey');
 var sessionSurvey = require('./surveyQuestions/sessionSurvey');
 var _ = require('lodash');
+var constants = require('./constants');
 
 function getSurveyConstants(type) {
   let survey;
   switch (type) {
-    case 'recruiter':
+    case constants.surveyTypes.recruiter:
       survey = recruiterSurvey;
       break;
-    case 'session':
+    case constants.surveyTypes.session:
       survey = sessionSurvey;
       break;
     default:

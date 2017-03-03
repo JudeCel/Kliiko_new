@@ -88,7 +88,14 @@
       });
     };
 
+    function validateSurveySettings(surveySettings) {
+      if (!surveySettings || !surveySettings.type) {
+        throw "Survey editor must accept settings and type";
+      }
+    }
+
     function init(surveyId, surveySettings) {
+      validateSurveySettings(surveySettings);
       vm.surveySettings = surveySettings;
 
       initConstants().then(function() {
@@ -117,10 +124,11 @@
       }
     }
 
-    function setupSurveyName() {
+    function setupSurveyParameters() {
       if (!vm.survey.name && vm.surveySettings.defaultSurveyName) {
         vm.survey.name = vm.surveySettings.defaultSurveyName;
       }
+      vm.survey.type = vm.surveySettings.type;
     }
 
     function startSurveyEdit(survey) {
@@ -129,7 +137,7 @@
       vm.submitError = null;
       vm.currentContacts = null;
       vm.survey = survey || defaultSurveyData();
-      setupSurveyName();
+      setupSurveyParameters();
     }
 
     function findSelected() {

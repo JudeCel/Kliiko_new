@@ -79,11 +79,11 @@
       return deferred.promise;
     }
 
-    function getAllSurveys() {
+    function getAllSurveys(data) {
       var deferred = $q.defer();
 
       dbg.log2('#surveyServices > getAllSurveys > make rest call');
-      surveyRestApi.get({}, function(res) {
+      surveyRestApi.get(data, function(res) {
         dbg.log2('#surveyServices > getAllSurveys > rest call responds');
         deferred.resolve(res);
       });
