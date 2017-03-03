@@ -108,6 +108,42 @@ describe('SERVICE - Session', function() {
       });
     });
 
+    describe('#checkSessionByUid', function() {
+      it('should succeed', function (done) {
+        models.Session.update({uid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByUid("test-uid").then(function(result) {
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should fail', function (done) {
+        sessionServices.checkSessionByUid("fake-uid").then(function(result) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, sessionServices.messages.notFound);
+          done();
+        });
+      });
+
+      it('should fail because closed', function (done) {
+        models.Session.update({uid: "test-uid", type: "socialForum", status: "closed"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByUid("test-uid").then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, sessionServices.messages.closed.replace("sessionName", testData.session.name));
+            done();
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
     describe('#removeSession', function() {
       describe('happy path', function() {
         it('should succeed on deleting session', function (done) {
