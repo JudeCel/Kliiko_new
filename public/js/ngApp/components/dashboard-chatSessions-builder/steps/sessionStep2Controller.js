@@ -36,9 +36,12 @@
     vm.getTopicStockClass = getTopicStockClass;
     vm.getSessionTopicName = getSessionTopicName;
 
-    //Pass these to SurveyEditController
-    vm.surveySettings = {
-      type: 'session'
+    function setupSurveyEditorParameters() {
+      //Pass these to SurveyEditController
+      vm.surveySettings = {
+        type: 'session',
+        defaultSurveyName: vm.session.steps.step1.name
+      }
     }
 
     function init(topicController) {
@@ -52,6 +55,8 @@
         addSessionTopic(topic);
       });
       vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
+
+      setupSurveyEditorParameters();
     }
 
     function addSessionTopic(topic) {

@@ -117,12 +117,19 @@
       }
     }
 
+    function setupSurveyName() {
+      if (!vm.survey.name && vm.surveySettings.defaultSurveyName) {
+        vm.survey.name = vm.surveySettings.defaultSurveyName;
+      }
+    }
+
     function startSurveyEdit(survey) {
       processSurveyData(survey);
       vm.submitedForm = false;
       vm.submitError = null;
       vm.currentContacts = null;
       vm.survey = survey || defaultSurveyData();
+      setupSurveyName();
     }
 
     function findSelected() {

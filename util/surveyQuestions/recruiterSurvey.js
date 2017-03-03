@@ -1,4 +1,102 @@
+var ageOptions = require('./ageOptions')
 module.exports = {
+  contactDetails: [
+    {
+      model: 'firstName',
+      name: 'First Name',
+      input: true,
+      order: 0
+    },
+    {
+      model: 'lastName',
+      name: 'Last Name',
+      input: true,
+      order: 1
+    },
+    {
+      model: 'gender',
+      name: 'Gender',
+      select: true,
+      options: ['male', 'female'],
+      order: 2
+    },
+    {
+      model: 'age',
+      name: 'Age',
+      select: true,
+      options: ageOptions.ages,
+      order: 3
+    },
+    {
+      model: 'email',
+      name: 'Email',
+      input: true,
+      order: 4
+    },
+    {
+      model: 'mobile',
+      name: 'Mobile',
+      number: true,
+      canDisable: true,
+      order: 5
+    },
+    {
+      model: 'landlineNumber',
+      name: 'Landline Number',
+      number: true,
+      canDisable: true,
+      disabled: true,
+      order: 6
+    },
+    {
+      model: 'postalAddress',
+      name: 'Postal Address',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 7
+    },
+    {
+      model: 'city',
+      name: 'City',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 8
+    },
+    {
+      model: 'state',
+      name: 'State',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 9
+    },
+    {
+      model: 'postCode',
+      name: 'Postcode',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 10
+    },
+    {
+      model: 'country',
+      name: 'Country',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 11
+    },
+    {
+      model: 'companyName',
+      name: 'Company Name',
+      input: true,
+      canDisable: true,
+      disabled: true,
+      order: 12
+    },
+  ],
   defaultQuestions: [
     {
       order: 0,
