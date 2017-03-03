@@ -11,8 +11,8 @@ module.exports = {
 
 function getCaptcha() {
   return new recaptcha({
-    siteKey:'6LekfhcUAAAAAM6MfFRSud5fddd76HkrHpEo2sLF',
-    secretKey:'6LekfhcUAAAAAH-2NMv74uTJrYsqgcShWhdQCZEt'
+    siteKey: process.env.RECAPTCHA_SITE_KEY,
+    secretKey: process.env.RECAPTCHA_SECRET_KEY
   });
 }
 

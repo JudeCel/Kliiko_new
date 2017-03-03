@@ -34,11 +34,7 @@ function createGhost(name, session) {
     if (name) {
       SessionMember.count({ where: { sessionId: session.id, role: 'participant'} }).then(function(count) {
         let params = ghostUserParams(name, session.id, count);
-        SessionMember.create(params).then(function(sessionMember) {
-          resolve(sessionMember);
-        }, function(error) {
-          reject(error);
-        });
+        return SessionMember.create(params);
       }, function(error) {
         reject(error);
       });
