@@ -74,10 +74,20 @@
       </div>
     </section>
 
-    <div ng-controller="GalleryController as gc">
-      <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(step2Controller.currentSurveyId, step2Controller.surveySettings)'>
-        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
-      </div>
-    </div>
+    <uib-accordion close-others="false">
+      <uib-accordion-group is-open="step2Controller.contactlistQuestions" class="green-input session-type">
+        <uib-accordion-heading>
+          <div class="panel-label text-left">
+            Contact List Questions
+            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step2Controller.contactlistQuestions, 'glyphicon-chevron-right': !step2Controller.contactlistQuestions}"></i>
+          </div>
+        </uib-accordion-heading>
+        <div ng-controller="GalleryController as gc">
+          <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(step2Controller.currentSurveyId, step2Controller.surveySettings)'>
+            <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
+          </div>
+        </div>
+      </uib-accordion-group>
+    </uib-accordion>
   </section>
 </section>
