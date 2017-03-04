@@ -10,10 +10,13 @@ var config = {
     "host": process.env.DATABASE_HOST_DEV,
     "dialect": process.env.DATABASE_DIALECT_DEV,
     "timezone": "UTC",
-    pool: { 
-      max: 10, 
-      idle: 10000 
+    pool: {
+      max: 10,
+      min: 0,
+      idle: 2000,
+      handleDisconnects: true
     },
+    benchmark: false,
     logging: false
   },
   "test": {
@@ -23,6 +26,13 @@ var config = {
     "host": process.env.DATABASE_HOST_TEST,
     "dialect": process.env.DATABASE_DIALECT_TEST,
     "timezone": "UTC",
+    pool: {
+      max: 10,
+      min: 0,
+      idle: 2000,
+      handleDisconnects: true
+    },
+    benchmark: false,
     logging: false
   },
   "production": {
@@ -32,10 +42,13 @@ var config = {
     "host": process.env.DATABASE_HOST_PROD,
     "dialect": process.env.DATABASE_DIALECT_PROD,
     "timezone": "UTC",
-    pool: { 
-      max: 10, 
-      idle: 10000 
+    pool: {
+      max: 10,
+      min: 0,
+      idle: 2000,
+      handleDisconnects: true
     },
+    benchmark: false,
     logging: false
   }
 }

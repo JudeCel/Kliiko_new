@@ -210,6 +210,8 @@ function mapUpdateParametersToPermissions(params) {
 
 
 function update(sessionId, accountId, params) {
+  // test error stack trace for process!
+  params = null;
   setTimeZone(params);
   let snapshot = params.snapshot;
   delete params.snapshot;
