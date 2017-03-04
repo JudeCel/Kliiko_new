@@ -21,7 +21,7 @@ pm2.connect((err, resp) => {
         });
 
         bus.on('log:err', (packet) => {
-            console.log(packet.data);
+            // console.log(packet.data);
             pm2.sendDataToProcessId(monitoringPid, {
                 type: 'error',
                 topic : 'newEntry',
