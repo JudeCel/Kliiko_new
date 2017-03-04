@@ -15,7 +15,6 @@ const repo = new Repo(WebSocket, url, {type: "server"});
 
 const infoChannel = repo.addChannel(`info:${projectName}`, {token});
 const errorChannel = repo.addChannel(`error:${projectName}`, {token});
-repo.connect();
 
 // TODO need refactor and make more consistent
 pm2.connect((err, resp) => { 
@@ -34,6 +33,8 @@ pm2.connect((err, resp) => {
     });
   }, 5000);
 });
+
+repo.connect();
 
 process.on('message', function (data) {
   if(data.type == 'error'){
