@@ -29,12 +29,17 @@ class Channel extends EventEmitter2 {
       this.state =  CHANNEL_STATES.set;
       this.messages =  new Store();
       this.on('incomingMessage', (message) => { this.incomingMessage(message)});
+      this.on('closed', (message) => { 
+        this.clearStore();
+      });
     }
     push(event, payload){
-      let message = this.buildMessage(payload, event);
-      message.setSent();
-      this.emit("outgoingMessage", message.toParams());
-      return message;
+      if(this.state != CHANNEL_STATES.closed){
+        let message = this.buildMessage(payload, event);
+        message.setSent();
+        this.emit("outgoingMessage", message.toParams());
+        return message;
+      }
     }
     clearStore(){
       this.messages =  new Store();

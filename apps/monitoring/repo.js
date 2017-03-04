@@ -33,10 +33,16 @@ class Repo extends EventEmitter2 {
   }
 
   connect(){
-    this.startAdapter();
     this.changeState('connecting');
+    this.startAdapter();
   }
   bindEvents() {
+    this.on("reconnecting", () => {
+      this.closeAllChannel();
+        setTimeout(() => {
+          this.startAdapter();
+      }, 2000);
+    })
     this.on("processMessage", () => {
       if(this.state == REPO_STATES.open){
         let payload = this.messageBuffer.shift();
@@ -69,18 +75,22 @@ class Repo extends EventEmitter2 {
 
   reconnecting(){
     this.changeState("reconnecting");
-    this.closeAllChannel();
-    setTimeout(() => {
-      this.startAdapter();
-    }, 2000);
   }
+
   subscribeAdapterEvents(){
     this.adapter.on("message", (resp) => {
       this._messageBroke(resp);
     });
 
-    this.adapter.on('error', (err) => {
-      this.reconnecting();
+    this.adapter.on('error', (e) => {
+      switch (e.code){
+        case 'ECONNREFUSED':
+          this.reconnecting();
+          break;
+        default:
+          this.changeState("closed");
+          break;
+        }
     });
 
     this.adapter.on('close', (code) => {
@@ -90,12 +100,13 @@ class Repo extends EventEmitter2 {
           console.log("WebSocket: closed");
           break;
         default:    // Abnormal closure
-          this.reconnecting();
+          this.reconnecting()
           break;
       }
     });
 
     this.adapter.on("open", (resp) => {
+      console.log("open", "100")
       this.changeState("open");
       this.joinChannels();
     });
@@ -106,7 +117,6 @@ class Repo extends EventEmitter2 {
       let channel = this.channels[item];
       channel.join();
     });
-
     this.emit("processMessage");
     return this.channels;
   }
@@ -127,7 +137,13 @@ class Repo extends EventEmitter2 {
     }
   }
   send(payload){
-    this.adapter.send(JSON.stringify(payload));
+    if(this.adapter && this.state == REPO_STATES.open){
+      try {
+        this.adapter.send(JSON.stringify(payload));
+      } catch (error) {
+        this.adapter.emit('error', error)
+      }
+    }
   }
   _messageBroke(messageString) {
     let message = JSON.parse(messageString);

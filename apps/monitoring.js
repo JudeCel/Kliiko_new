@@ -2,6 +2,8 @@
  require('dotenv-extended').load({
      errorOnMissing: true
  });
+ process.on("uncaughtException", () => {}) //Hoot fix, Need to replace with normal solution !!!
+
 const pm2 = require('pm2');
 const WebSocket = require('ws');
 const si = require('systeminformation');
@@ -36,7 +38,7 @@ pm2.connect((err, resp) => {
 
 repo.connect();
 
-process.on('message', function (data) {
+process.on('message',  (data) => {
   if(data.type == 'error'){
     errorChannel.push("new_entry",  data.data);
   }
