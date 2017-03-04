@@ -9,10 +9,12 @@ class Message extends EventEmitter2 {
     this.promise = new Promise(this._defPromise());
     this.event = event;
     this.state =  'build'
+    this.date =  new Date();
     this.bindPromise
   }
   _defPromise(){
     return (resolve, reject) => {
+      this.state = "done";
       this.on("resolve", (payload) => {
         resolve(payload);
       });
@@ -39,7 +41,7 @@ class Message extends EventEmitter2 {
   }
   processReply(staus, reply){
     this.emit(staus, reply.payload);
-    // this.emit(reply.payload.status, reply.payload);
+    this.emit(reply.payload.status, reply.payload);
   }
 }
 

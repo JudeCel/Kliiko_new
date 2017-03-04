@@ -31,13 +31,13 @@ pm2.connect((err, resp) => {
         });
       });
     });
-  }, 5000);
+  }, 1000);
 });
 
 repo.connect();
 
 process.on('message', function (data) {
   if(data.type == 'error'){
-    errorChannel.push("new_entry",  data.data)
+    errorChannel.push("new_entry",  data.data);
   }
 });

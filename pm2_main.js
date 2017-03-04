@@ -11,7 +11,7 @@ pm2.connect((err, resp) => {
     pm2.launchBus((err, bus) => {
         console.log('[PM2] Log streaming started');
         bus.on('log:out', (packet) => {
-            // console.log('[App:%s] %s', packet.process.name, packet.data);
+            console.log('[App:%s] %s', packet.process.name, packet.data);
             pm2.sendDataToProcessId(monitoringPid, {
                 type: 'log',
                 topic : 'newEntry',
