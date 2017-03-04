@@ -15,27 +15,25 @@ const repo = new Repo(WebSocket, url, {type: "server"});
 
 const infoChannel = repo.addChannel(`info:${projectName}`, {token});
 const errorChannel = repo.addChannel(`error:${projectName}`, {token});
+repo.connect();
 
+// TODO need refactor and make more consistent
 pm2.connect((err, resp) => { 
   setInterval(() => {
     pm2.Client.executeRemote('getMonitorData', {}, function(err, list) {
-      let data = list.map((item) => { 
+      let metrics = list.map((item) => { 
         return {monit: item.monit, name: item.name }
-      })
-      infoChannel.push("system_metrics", { metrics: data })
-    })
-  }, 5000)
-})
+      });
 
-infoChannel.on("system_info", () => {
-  si.currentLoad().then((data) => {
-    si.mem().then((mem) => {
-      infoChannel.push("system_info", { load: data, mem: mem});
-    })
-  })
-})
-
-repo.connect();
+      si.currentLoad().then((load) => {
+        si.mem().then((mem) => {
+          infoChannel.push("system_info", { load, mem});
+          infoChannel.push("system_metrics", { metrics });
+        });
+      });
+    });
+  }, 5000);
+});
 
 process.on('message', function (data) {
   if(data.type == 'error'){

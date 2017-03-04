@@ -39,7 +39,7 @@ class Message extends EventEmitter2 {
   }
   processReply(staus, reply){
     this.emit(staus, reply.payload);
-    this.emit(reply.payload.status, reply.payload);
+    // this.emit(reply.payload.status, reply.payload);
   }
 }
 
