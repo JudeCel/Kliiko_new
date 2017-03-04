@@ -4,12 +4,17 @@
  });
 const pm2 = require('pm2');
 const WebSocket = require('ws');
+const si = require('systeminformation');
 const Repo = require('./monitoring/repo');
-const token = "a043793f-19ad-409e-bca1-b7c2774d34e9"
-const repo = new Repo(WebSocket, process.env.MONITORING_SERVER_URL, {type: "server"});
 
-const infoChannel = repo.addChannel("info:kliiko", {token});
-const errorChannel = repo.addChannel("error:kliiko", {token});
+const token =process.env.MONITORING_SERVER_TOKEN;
+const url = process.env.MONITORING_SERVER_URL;
+const projectName = process.env.MONITORING_SERVER_PROJECT_NAME;
+
+const repo = new Repo(WebSocket, url, {type: "server"});
+
+const infoChannel = repo.addChannel(`info:${projectName}`, {token});
+const errorChannel = repo.addChannel(`error:${projectName}`, {token});
 
 pm2.connect((err, resp) => { 
   setInterval(() => {
@@ -19,11 +24,15 @@ pm2.connect((err, resp) => {
       })
       infoChannel.push("system_metrics", { metrics: data })
     })
-  }, 2000)
+  }, 5000)
 })
 
-infoChannel.on("system_metrics", () => {
-  infoChannel.push("system_metrics", { metrics: process.memoryUsage()})
+infoChannel.on("system_info", () => {
+  si.currentLoad().then((data) => {
+    si.mem().then((mem) => {
+      infoChannel.push("system_info", { load: data, mem: mem});
+    })
+  })
 })
 
 repo.connect();
