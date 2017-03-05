@@ -25,12 +25,12 @@ module.exports = (Sequelize, DataTypes) => {
     type: { type: DataTypes.STRING },
     anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     isInactive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    isVisited: { type: DataTypes.JSON, allowNull: false, defaultValue: { 
-      setUp: false, 
-      facilitatiorAndTopics: false, 
+    isVisited: { type: DataTypes.JSON, allowNull: false, defaultValue: {
+      setUp: false,
+      facilitatiorAndTopics: false,
       manageSessionEmails: false,
       manageSessionParticipants: false,
-      inviteSessionObservers: false 
+      inviteSessionObservers: false
     } },
   }, {
     timestamps: true,
@@ -54,6 +54,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsToMany(models.Resource, { through: {model: models.SessionResource}, foreignKey: 'sessionId' });
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId' });
         Session.belongsTo(models.SessionType, { foreignKey: 'type' });
+        Session.hasMany(models.Survey, { foreignKey: 'sessionId' });
       }
     }
   });

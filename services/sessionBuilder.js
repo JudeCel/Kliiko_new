@@ -24,6 +24,7 @@ var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
+var sessionSurvey = require('./sessionSurvey');
 
 var async = require('async');
 var _ = require('lodash');
@@ -108,8 +109,8 @@ function addDefaultTopicVideo(session) {
 function createNewSessionDefaultItems(session, userId) {
   return new Bluebird((resolve, reject) => {
     sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
-      addDefaultTopic(session, sessionMember).then((sessionMember) => {
-        resolve();
+      addDefaultTopic(session, sessionMember).then(() => {
+        return sessionSurvey.addDefaultSessionSurveys(session);
       }, (error) => {
         resolve();
       }).catch((error) => {
@@ -133,7 +134,6 @@ function initializeBuilder(params) {
       manageSessionParticipants: false,
       inviteSessionObservers: false
     };
-
     Session.create(params).then(function(session) {
       createNewSessionDefaultItems(session, params.userId).then(function() {
         sessionBuilderObject(session).then(function(result) {
@@ -229,7 +229,7 @@ function update(sessionId, accountId, params) {
           resolve({ validation: validationRes });
         }
       } else {
-        reject(filters.errors(MessagesUtil.session.actionNotAllowed));  
+        reject(filters.errors(MessagesUtil.session.actionNotAllowed));
       }
     }, function(error) {
       reject(filters.errors(error));
