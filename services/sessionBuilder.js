@@ -204,6 +204,17 @@ function mapUpdateParametersToPermissions(params) {
         permissionsToCheck.push(permission);
       }
     });
+
+    if(params.type) {
+      const types = {
+        focus: 'accessKlzziFocus',
+        forum: 'accessKlzziForum',
+        socialForum: 'accessKlzziSocialForum',
+      };
+      if(types[params.type]) {
+        permissionsToCheck.push(types[params.type]);
+      }
+    }
   }
   return permissionsToCheck;
 }
@@ -224,8 +235,6 @@ function update(sessionId, accountId, params) {
         }, function(error) {
           reject(error);
         });
-      } else {
-        resolve({ validation: validationRes });
       }
     }, function(error) {
       reject(filters.errors(error));
