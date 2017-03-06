@@ -322,7 +322,6 @@
 
     function addSurveyToSession(surveyId) {
       var deferred = $q.defer();
-      console.log("adding survey to session", surveyId);
       sessionBuilderRestApi.addSurvey({id: this.id}, {surveyId: surveyId}, function(res) {
         if (res.error) {
           deferred.reject(res.error);

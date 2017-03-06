@@ -252,30 +252,23 @@ function getContactListFields(questions) {
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
   validators.hasValidSubscription(account.id).then(function() {
-    console.log("as100000000000");
       let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
       validParams.accountId = account.id;
       let transactionPool = models.sequelize.transactionPool;
       let tiket = transactionPool.getTiket();
       transactionPool.once(tiket, () => {
         models.sequelize.transaction(function (t) {
-          console.log("asdasd11111112222111----------here?", validParams);
           return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
-            console.log("asdasd11111112222111----------here1?");
             let fields = getContactListFields(survey.SurveyQuestions);
-            console.log("asdasd11111112222111----------here22?");
             return createOrUpdateContactList(survey, fields, t).then((contactList) => {
               if(contactList){
                 return updateContactList(contactList, survey, fields, t).then(() => {
-                  console.log("---+++++3333333+++++---");
                   return survey;
                 });
               }else{
-                console.log("---+++++111111+++++---");
                 return survey;
               }
             }, (error) => {
-              console.log("---++++++++++---", error);
               throw error;
             });
           });

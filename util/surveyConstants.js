@@ -12,10 +12,10 @@ function getSurveyConstants(type) {
     case constants.surveyTypes.recruiter:
       survey = recruiterSurvey;
       break;
-    case constants.surveyTypes.sessionContactListSurvey:
+    case constants.surveyTypes.sessionContactList:
       survey = sessionContactListSurvey;
       break;
-    case constants.surveyTypes.sessionPrizeDrawSurvey:
+    case constants.surveyTypes.sessionPrizeDraw:
       survey = sessionPrizeDrawSurvey;
       break;
     default:

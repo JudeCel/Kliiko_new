@@ -79,6 +79,7 @@
     function initSurveys() {
       var listSurvey = initContactListSurvey();
       var prizeSurvey = initPrizeDrawSurvey();
+      console.log("listSurvey==================", listSurvey);
       vm.surveyList = [listSurvey, prizeSurvey];
     }
 
