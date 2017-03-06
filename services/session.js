@@ -301,7 +301,6 @@ function copySession(sessionId, accountId, provider) {
       delete result.data.dataValues.id;
       delete result.data.dataValues.facilitator;
       delete result.data.dataValues.status;
-      delete result.data.dataValues.type;
       delete result.data.dataValues.anonymous;
       delete result.data.dataValues.resourceId;
       delete result.data.dataValues.brandProjectPreferenceId;
@@ -434,7 +433,7 @@ function findAllSessionsAsManager(accountId, provider) {
         model: AccountUser,
         attributes: ['firstName', 'lastName', 'email']
       }]
-    }, { 
+    }, {
       model: SessionType,
       attributes: ['name', 'properties']
     }]
@@ -559,10 +558,10 @@ function checkSessionByPublicUid(uid) {
         if (session.status == "open") {
           resolve(session);
         } else {
-          reject(MessagesUtil.session.closed.replace("sessionName", session.name));  
+          reject(MessagesUtil.session.closed.replace("sessionName", session.name));
         }
       } else {
-        reject(MessagesUtil.session.notFound);  
+        reject(MessagesUtil.session.notFound);
       }
     }, function(error) {
       reject(error);
