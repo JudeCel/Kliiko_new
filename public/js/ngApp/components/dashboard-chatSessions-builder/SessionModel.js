@@ -20,7 +20,8 @@
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-      certainStep: {method: 'POST', params: {path: 'step'} }
+      certainStep: {method: 'POST', params: {path: 'step'} },
+      addSurvey: {method: 'POST', params: {path: 'addSurvey'} },
     });
 
     var mailRestApi = {
@@ -58,6 +59,7 @@
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
     SessionModel.prototype.activateSession = activateSession;
+    SessionModel.prototype.addSurveyToSession = addSurveyToSession;
 
     return SessionModel;
 
@@ -315,6 +317,19 @@
         }
       });
 
+      return deferred.promise;
+    }
+
+    function addSurveyToSession(surveyId) {
+      var deferred = $q.defer();
+      console.log("adding survey to session", surveyId);
+      sessionBuilderRestApi.addSurvey({id: this.id}, {surveyId: surveyId}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
       return deferred.promise;
     }
 

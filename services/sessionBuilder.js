@@ -110,7 +110,7 @@ function createNewSessionDefaultItems(session, userId) {
   return new Bluebird((resolve, reject) => {
     sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
       addDefaultTopic(session, sessionMember).then(() => {
-        return sessionSurvey.addDefaultSessionSurveys(session);
+        resolve();
       }, (error) => {
         resolve();
       }).catch((error) => {
@@ -1088,7 +1088,15 @@ function step2Queries(session, step) {
         cb(filters.errors(error));
       });
     }
-  ];
+  , function(cb) {
+    sessionSurvey.sessionSurveys(session.id).then(function(result) {
+      step.surveys = result;
+      cb();
+    }, function(e) {
+      filters.errors(error)
+    });
+
+  }];
 }
 
 function step3Query(sessionId) {

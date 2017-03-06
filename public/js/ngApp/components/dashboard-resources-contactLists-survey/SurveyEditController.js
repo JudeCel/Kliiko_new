@@ -197,6 +197,12 @@
       }
     }
 
+    function onSaved() {
+      if (vm.surveySettings.onSaved) {
+        vm.surveySettings.onSaved(vm.survey.id);
+      }
+    }
+
     function finishCreate(survey, autoSave, publish) {
       vm.submitingForm = true;
       surveyServices.createSurvey(survey).then(function(res) {
@@ -216,6 +222,8 @@
             messenger.ok(res.message);
             quitEditor();
           }
+
+          onSaved();
         }
       });
     };
@@ -236,6 +244,8 @@
             messenger.ok(res.message);
             quitEditor();
           }
+
+          onSaved();
         }
       });
     };

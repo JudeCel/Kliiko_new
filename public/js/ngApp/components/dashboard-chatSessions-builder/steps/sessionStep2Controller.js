@@ -40,7 +40,27 @@
       //Pass these to SurveyEditController
       vm.surveySettings = {
         type: 'session',
-        defaultSurveyName: vm.session.steps.step1.name
+        defaultSurveyName: vm.session.steps.step1.name,
+        onSaved: vm.onSurveySaved
+      }
+    }
+
+    function surveyWithType(type) {
+      var survey;
+      if (vm.session.steps.step2.surveys && vm.session.steps.step2.surveys.length) {
+        survey = vm.session.steps.step2.surveys.find( function(survey) {
+          return survey.type == type;
+        });
+      }
+      return survey;
+    }
+
+    function initSurveys() {
+      var survey = surveyWithType('session');
+      console.log("asdasdasdas", survey);
+      vm.contactListSurvey = null;
+      if (survey) {
+        vm.contactListSurvey = survey.surveyId;
       }
     }
 
@@ -51,12 +71,18 @@
       vm.topicController.session = vm.session;
       vm.topicController.resetSessionTopics = vm.init;
 
+      initSurveys();
+
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
       });
       vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
 
       setupSurveyEditorParameters();
+    }
+
+    vm.onSurveySaved = function(surveyId) {
+      vm.session.addSurveyToSession(surveyId);
     }
 
     function addSessionTopic(topic) {
