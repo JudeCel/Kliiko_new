@@ -41,8 +41,11 @@ module.exports = {
       "sendSms": {
         "enabled": true
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": true
+      },
+      "closeSessionToggle": {
+        "enabled": false
       },
       "dateAndTime": {
         "enabled": true
@@ -104,8 +107,11 @@ module.exports = {
       "sendSms": {
         "enabled": false
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": true
+      },
+      "closeSessionToggle": {
+        "enabled": false
       },
       "dateAndTime": {
         "enabled": true
@@ -167,8 +173,11 @@ module.exports = {
       "sendSms": {
         "enabled": false
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": false
+      },
+      "closeSessionToggle": {
+        "enabled": true
       },
       "dateAndTime": {
         "enabled": false,

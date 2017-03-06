@@ -7,6 +7,7 @@ var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
+var urlHeplers = require('./urlHeplers');
 
 var q = require('q');
 var _ = require('lodash');
@@ -37,7 +38,8 @@ module.exports = {
   getSessionByInvite: getSessionByInvite,
   setAnonymous: setAnonymous,
   canChangeAnonymous: canChangeAnonymous,
-  checkSessionByPublicUid: checkSessionByPublicUid
+  checkSessionByPublicUid: checkSessionByPublicUid,
+  setOpen: setOpen
 };
 
 function isInviteSessionInvalid(resp) {
@@ -87,6 +89,31 @@ function setAnonymous(sessionId, accountId) {
 
 function canChangeAnonymous(session) {
   return !session.anonymous && sessionTypesConstants[session.type].features.anonymous.enabled;
+}
+
+function setOpen(sessionId, open, accountId) {
+  return new Bluebird((resolve, reject) => {
+
+    Session.find({
+      where: {
+        id: sessionId,
+        accountId: accountId
+      }
+    }).then(function(session) {
+      if (session) {
+        let status = open ? "open" : "closed";
+        session.update({ status: status }).then(function(updatedSession) {
+          sessionValidator.addShowStatus(updatedSession);
+          resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
+        });
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }).catch(function(error) {
+      reject(filters.errors(error));
+    });
+
+  });
 }
 
 function getSessionByInvite(token) {
@@ -494,7 +521,11 @@ function copySessionMember(session, facilitator, provider) {
 }
 
 function simpleParams(data, message) {
-  return { data: data, message: message };
+  return { 
+    data: data, 
+    message: message, 
+    baseUrl: urlHeplers.getBaseUrl() 
+  };
 };
 
 function modifySessions(sessions, accountId, provider) {

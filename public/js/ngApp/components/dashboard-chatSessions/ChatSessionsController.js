@@ -13,15 +13,23 @@
 
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.setOpen = setOpen;
     vm.openCopySessionDialog = openCopySessionDialog;
     vm.currentSelectedSessionName = "Untitled";
+    vm.currentSelectedSessionPublicUrl = "";
+    vm.baseUrl = null;
 
     vm.changePage = changePage;
-    vm.rowClass = rowClass;
+    vm.initRowClass = initRowClass;
     vm.hasAccess = hasAccess;
     vm.redirectToChatSession = redirectToChatSession;
     vm.changeOrder = changeOrder;
     vm.prepareSessionsPagination = prepareSessionsPagination;
+    vm.getSessionTypeName = getSessionTypeName;
+    vm.initIsOpen = initIsOpen;
+    vm.setOpen = setOpen;
+    vm.showStats = showStats;
+    vm.showPublicUrl = showPublicUrl;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
@@ -46,6 +54,7 @@
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.queriedForSessions = true;
         vm.sessions = res.data;
+        vm.baseUrl = res.baseUrl;
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
@@ -159,8 +168,8 @@
       }
     };
 
-    function rowClass(session, user) {
-      return 'session-' + session.showStatus.toLowerCase();
+    function initRowClass(session) {
+      session.rowClass = 'session-' + session.showStatus.toLowerCase();
     }
 
     function hasAccess(session, accountUserId) {
@@ -184,6 +193,45 @@
         vm.currentPage = { page: page };
       }
     };
+
+    function getSessionTypeName(session) {
+      if (session.type) {
+        var str = session.type.replace( /([A-Z])/g, " $1" );
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      } else {
+        return "";
+      }
+    }
+
+    function setOpen(session) {
+      chatSessionsServices.setOpen(session.id, session.isOpen).then(function(res) {
+        console.log(res);
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          session.status = res.data.status;
+          session.showStatus = res.data.showStatus;
+        }
+        initIsOpen(session);
+        initRowClass(session);
+      });
+    }
+
+    function initIsOpen(session) {
+      session.isOpen = session.status == "open";
+    }
+
+    function showStats(session) {
+      //todo:
+      //will be implemented in TA1592
+    }
+
+    function showPublicUrl(session) {
+      if (session.publicUid) {
+        vm.currentSelectedSessionPublicUrl = vm.baseUrl + "/session/" + session.publicUid;
+        domServices.modal("publicUrlModal");
+      }
+    }
 
   }
 })();

@@ -131,7 +131,7 @@ router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings)
 router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
-
+router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 
 
 // Session Member

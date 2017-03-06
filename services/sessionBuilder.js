@@ -216,20 +216,16 @@ function update(sessionId, accountId, params) {
 
   return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      if (isUpdateAllowed(originalSession, params)) {
-        updateParams(originalSession, params);
-        let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
-        if (validationRes.isValid) {
-          doUpdate(originalSession, params).then(function(res) {
-            resolve(res);
-          }, function(error) {
-            reject(error);
-          });
-        } else {
-          resolve({ validation: validationRes });
-        }
+      updateParams(originalSession, params);
+      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (validationRes.isValid) {
+        doUpdate(originalSession, params).then(function(res) {
+          resolve(res);
+        }, function(error) {
+          reject(error);
+        });
       } else {
-        reject(filters.errors(MessagesUtil.session.actionNotAllowed));  
+        resolve({ validation: validationRes });
       }
     }, function(error) {
       reject(filters.errors(error));
@@ -247,11 +243,6 @@ function updateParams(session, params) {
   if (!session.type && params["type"] && sessionTypesConstants[params["type"]].features.dateAndTime.enabled) {
     params["startTime"] = params["endTime"] = initializeDate(session.timeZone);
   }
-}
-
-function isUpdateAllowed(session, params) {
-  let statusChanged = params["status"] && params["status"] != session.status;
-  return  !statusChanged || sessionTypesConstants[session.type].features.closeSession.enabled;
 }
 
 function isSessionChangedToActive(params) {
