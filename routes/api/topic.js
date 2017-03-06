@@ -98,20 +98,16 @@ function updateDefaultTopic(req, res) {
   let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
 
   topicsService.updateDefaultTopic(params, isAdmin).then(function(response) { 
-    if (params.isCurrentSessionTopic) {
-      if(response.sessionTopic) {
-        let sessionId = response.sessionTopic.sessionId;
+      if(params.sessionId) {
+        let sessionId = params.sessionId;
         sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, params.accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
           res.send({success: true, data:response, snapshot: snapshotResult, message: MessagesUtil.routes.topic.updated });
         }, function(error) {
           res.send({error:error});
         });
       } else {
-        res.send(response);
+        res.send({success: true, data:response, message: MessagesUtil.routes.topic.updated });
       }
-    } else {
-      res.send({success: true, data:response, message: MessagesUtil.routes.topic.updated });
-    }
   }, function(error) { 
     res.send({error:error});
   });

@@ -206,10 +206,26 @@
       } else {
         vm.list.push(res.data);
       }
+
+      updateSessionDefaultTopic();
+
       vm.prepareCurrentPageItems();
       messenger.ok(res.message);
       domServices.modal('topicModalWindow', 'close');
       vm.topicData = {};
+    }
+
+    function updateSessionDefaultTopic() {
+      if(vm.topicData.default && vm.session) {
+        for (var i = 0; i < vm.session.steps.step2.topics.length; i++) {
+          if(vm.session.steps.step2.topics[i].id == vm.topicData.id) {
+            vm.session.steps.step2.topics[i].sessionTopic.name = vm.topicData.name;
+            vm.session.steps.step2.topics[i].sessionTopic.boardMessage = vm.topicData.boardMessage;
+            vm.session.steps.step2.topics[i].sessionTopic.sign = vm.topicData.sign;
+            return;
+          }
+        }
+      }
     }
 
     function showErrorMessage(error) {

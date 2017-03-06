@@ -60,7 +60,7 @@ function updateDefaultTopic(params, isAdmin) {
     update(topicParams, isAdmin).then((topic) => {
       models.SessionTopics.findAll({where: {topicId: topicId}}).then((sessionTopics) => {
         Bluebird.each(sessionTopics, (sessionTopic) => {
-          if (params.isCurrentSessionTopic && params.snapshot && params.sessionId == sessionTopic.sessionId) {
+          if (params.snapshot && params.sessionId == sessionTopic.sessionId) {
              return updateSessionTopic(params).then((updateSessionTopic) => {
               newSessionTopic = updateSessionTopic;
              });
@@ -74,7 +74,7 @@ function updateDefaultTopic(params, isAdmin) {
             return sessionTopic.update(sessionTopicsParams);
           }
         }).then((updatedSessionTopics) => {
-          if (params.isCurrentSessionTopic) {
+          if (newSessionTopic) {
             resolve(newSessionTopic);
           } else {
             resolve(topic);
