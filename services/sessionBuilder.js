@@ -235,6 +235,8 @@ function update(sessionId, accountId, params) {
         }, function(error) {
           reject(error);
         });
+      } else {		
+        resolve({ validation: validationRes });		
       }
     }, function(error) {
       reject(filters.errors(error));
