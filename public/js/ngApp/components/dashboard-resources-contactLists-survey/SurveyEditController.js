@@ -41,6 +41,10 @@
     vm.sectionQuestions = sectionQuestions;
     vm.questionTemplate = questionTemplate;
 
+    vm.displaySaveButton = true;
+    vm.displayPublishButton = true;
+    vm.displayPreviewButton = true;
+
     vm.customSurveyTemplate = function(object) {
       let template;
       if (vm.surveySettings.userTemplates) {
@@ -91,6 +95,10 @@
     function validateSurveySettings(surveySettings) {
       if (!surveySettings || !surveySettings.type) {
         throw "Survey editor must accept settings and type";
+      } else {
+        vm.displayPreviewButton = surveySettings.showPreviewButton;
+        vm.displaySaveButton = surveySettings.showSaveButton
+        vm.displayPublishButton = surveySettings.showPublishButton
       }
     }
 

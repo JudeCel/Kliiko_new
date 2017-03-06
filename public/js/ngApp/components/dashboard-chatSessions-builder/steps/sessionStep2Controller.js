@@ -72,14 +72,16 @@
     function surveyBasicSectionData() {
       return {
         defaultSurveyName: vm.session.steps.step1.name,
-        onSaved: vm.onSurveySaved
+        onSaved: vm.onSurveySaved,
+        showSaveButton: false,
+        showPublishButton: false,
+        showPreviewButton: false
       }
     }
 
     function initSurveys() {
       var listSurvey = initContactListSurvey();
       var prizeSurvey = initPrizeDrawSurvey();
-      console.log("listSurvey==================", listSurvey);
       vm.surveyList = [listSurvey, prizeSurvey];
     }
 
