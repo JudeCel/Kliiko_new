@@ -313,8 +313,7 @@ function update(params, isAdmin) {
           resolve(updateRegularTopic(topic, params, isAdmin));
         }
       } else {
-        //TODO: check why constant is missing?
-        reject(MessagesUtil.topics.notFound);
+        reject(MessagesUtil.topics.error.notFound);
       }
     }).then((topic) => {
       resolve(topic);
