@@ -85,18 +85,14 @@ module.exports = {
       minAnswers: 2,
       maxAnswers: 5
     },
-    {
-      order: 3,
-      name: 'Interest',
-      hardcodedName: true,
-      required: true
-    },
-
   ],
   tableOfContents: [
     {
       questions: true,
-      interval: [0, 4]
+      interval: [0, 3]
+    },
+    {
+      footer: true
     }
   ]
 }

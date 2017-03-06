@@ -1,7 +1,8 @@
 'use strict';
 var MessagesUtil = require('./messages');
 var recruiterSurvey = require('./surveyQuestions/recruiterSurvey');
-var sessionSurvey = require('./surveyQuestions/sessionSurvey');
+var sessionContactListSurvey = require('./surveyQuestions/sessionContactListSurvey');
+var sessionPrizeDrawSurvey = require('./surveyQuestions/sessionPrizeDrawSurvey');
 var _ = require('lodash');
 var constants = require('./constants');
 
@@ -11,8 +12,11 @@ function getSurveyConstants(type) {
     case constants.surveyTypes.recruiter:
       survey = recruiterSurvey;
       break;
-    case constants.surveyTypes.session:
-      survey = sessionSurvey;
+    case constants.surveyTypes.sessionContactListSurvey:
+      survey = sessionContactListSurvey;
+      break;
+    case constants.surveyTypes.sessionPrizeDrawSurvey:
+      survey = sessionPrizeDrawSurvey;
       break;
     default:
       // for now have recruiterSurvey as a default

@@ -35,15 +35,7 @@
     vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
     vm.getTopicStockClass = getTopicStockClass;
     vm.getSessionTopicName = getSessionTopicName;
-
-    function setupSurveyEditorParameters() {
-      //Pass these to SurveyEditController
-      vm.surveySettings = {
-        type: 'session',
-        defaultSurveyName: vm.session.steps.step1.name,
-        onSaved: vm.onSurveySaved
-      }
-    }
+    vm.surveyList = [];
 
     function surveyWithType(type) {
       var survey;
@@ -55,13 +47,39 @@
       return survey;
     }
 
-    function initSurveys() {
-      var survey = surveyWithType('session');
-      console.log("asdasdasdas", survey);
-      vm.contactListSurvey = null;
+    function initContactListSurvey() {
+      var survey = surveyWithType('sessionContactList');
+      var surveySection = surveyBasicSectionData();
+      surveySection.type = 'sessionContactList';
+      surveySection.title = "Contact List Questions";
       if (survey) {
-        vm.contactListSurvey = survey.surveyId;
+        surveySection.id = survey.surveyId;
       }
+      return surveySection;
+    }
+
+    function initPrizeDrawSurvey() {
+      var survey = surveyWithType('sessionPrizeDraw');
+      var surveySection = surveyBasicSectionData();
+      surveySection.type = 'sessionPrizeDraw';
+      surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
+      if (survey) {
+        surveySection.id = survey.surveyId;
+      }
+      return surveySection;
+    }
+
+    function surveyBasicSectionData() {
+      return {
+        defaultSurveyName: vm.session.steps.step1.name,
+        onSaved: vm.onSurveySaved
+      }
+    }
+
+    function initSurveys() {
+      var listSurvey = initContactListSurvey();
+      var prizeSurvey = initPrizeDrawSurvey();
+      vm.surveyList = [listSurvey, prizeSurvey];
     }
 
     function init(topicController) {
@@ -71,14 +89,11 @@
       vm.topicController.session = vm.session;
       vm.topicController.resetSessionTopics = vm.init;
 
-      initSurveys();
-
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
       });
       vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
-
-      setupSurveyEditorParameters();
+      initSurveys();
     }
 
     vm.onSurveySaved = function(surveyId) {
