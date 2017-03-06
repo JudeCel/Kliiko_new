@@ -39,7 +39,9 @@
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
     'KliikoApp.sessionExpire',
-    'KliikoApp.propertyDisabler'
+    'KliikoApp.propertyDisabler',
+    'angulartics',
+    'angulartics.mixpanel'
   ];
 
   angular
@@ -73,9 +75,9 @@
 
   function useAPI_URL(config) {
     var regex = /(\.html|\/api\/|http|\.template)/
-    return(!config.url.match(regex)) 
+    return(!config.url.match(regex))
   }
-  
+
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
   function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
@@ -96,11 +98,11 @@
       },
 
       'response': function(response) {
-        
+
         if (response.status == 404) {
           alert('that is all folks');
         }
-        
+
         if(response.config.transformResponse.length > 0) {
           saveToken(response.headers()['refresh-token']);
           $rootScope.showSpinner = false;
@@ -136,7 +138,7 @@
       window.localStorage.setItem('jwtToken', token);
     }
   }
-  
+
   function getToken(){
     return(window.localStorage.getItem("jwtToken"));
   }
