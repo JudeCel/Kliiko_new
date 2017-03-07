@@ -7,6 +7,7 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
+var urlHeplers = require('./../services/urlHeplers');
 var contactListUserServices = require('./../services/contactListUser');
 var contactListServices = require('./../services/contactList');
 var MessagesUtil = require('./../util/messages');
@@ -840,16 +841,8 @@ function getIds(questions) {
 };
 
 function validUrl(survey) {
-  return 'http://' + process.env.SERVER_DOMAIN + getPort() + '/survey/' + survey.id;
+  return urlHeplers.getBaseUrl() + '/survey/' + survey.id;
 };
-
-function getPort() {
-  let port = ''
-  if (process.env.SERVER_PORT && process.env.NODE_ENV != 'production') {
-    port = ':'+ process.env.SERVER_PORT
-  }
-  return port
-}
 
 function validateParams(params, attributes) {
   if(_.isObject(params.SurveyQuestions)) {

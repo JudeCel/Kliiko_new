@@ -130,7 +130,7 @@ router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings)
 router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
-
+router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 
 
 // Session Member
@@ -158,6 +158,5 @@ router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
 router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addSurveyToSession);
 router.post('/sessionBuilder/:id/setSurveyEnabled', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setSurveyEnabled);
-
-
+router.post('/sessionBuilder/:id/publish', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.publish);
 router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

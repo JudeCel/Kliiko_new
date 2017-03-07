@@ -144,6 +144,38 @@ describe('SERVICE - Session', function() {
       });
     });
 
+    describe('#setOpen)', function(done) {
+      describe('happy path', function(done) {
+        it('should open', function(done) {
+          sessionServices.setOpen(testData.session.id, true, testData.session.accountId).then(function(result) {
+            assert.deepEqual(result, { data: { status: "open", showStatus: "Pending" } });
+            models.Session.find({ where: { id: testData.session.id } }).then(function(session) {
+              assert.equal(session.status, "open");
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+
+        it('should close', function(done) {
+          sessionServices.setOpen(testData.session.id, false, testData.session.accountId).then(function(result) {
+            assert.deepEqual(result, { data: { status: "closed", showStatus: "Closed" } });
+            models.Session.find({ where: { id: testData.session.id } }).then(function(session) {
+              assert.equal(session.status, "closed");
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
     describe('#removeSession', function() {
       describe('happy path', function() {
         it('should succeed on deleting session', function (done) {

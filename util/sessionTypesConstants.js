@@ -41,8 +41,11 @@ module.exports = {
       "sendSms": {
         "enabled": true
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": true
+      },
+      "closeSessionToggle": {
+        "enabled": false
       },
       "dateAndTime": {
         "enabled": true
@@ -54,6 +57,9 @@ module.exports = {
         "type": "focus"
       },
       "socialMediaGraphics": {
+        "enabled": false
+      },
+      "publish": {
         "enabled": false
       }
     },
@@ -104,8 +110,11 @@ module.exports = {
       "sendSms": {
         "enabled": false
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": true
+      },
+      "closeSessionToggle": {
+        "enabled": false
       },
       "dateAndTime": {
         "enabled": true
@@ -117,6 +126,9 @@ module.exports = {
         "type": "forum"
       },
       "socialMediaGraphics": {
+        "enabled": false
+      },
+      "publish": {
         "enabled": false
       }
     },
@@ -167,8 +179,11 @@ module.exports = {
       "sendSms": {
         "enabled": false
       },
-      "closeSession": {
+      "closeSessionButton": {
         "enabled": false
+      },
+      "closeSessionToggle": {
+        "enabled": true
       },
       "dateAndTime": {
         "enabled": false,
@@ -183,6 +198,9 @@ module.exports = {
       "socialMediaGraphics": {
         "enabled": true,
         "message": "We're currently building an exciting tool for you to customize your social media posts and help your Chat Session stand out. We'll keep you updated on progress ☺"
+      },
+      "publish": {
+        "enabled": true
       }
     },
     "validations": {

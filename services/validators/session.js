@@ -29,6 +29,12 @@ function addShowStatus(session, chargebeeSub) {
       } else {
         settings.showStatus = 'Open';
       }
+    } else if (sessionTypesConstants[type].features.publish.enabled) {
+      if (session.publicUid) {
+        settings.showStatus = 'Open';
+      } else {
+        settings.showStatus = 'Unpublished';
+      }
     } else {
       settings.showStatus = 'Open';
     }
