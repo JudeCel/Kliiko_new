@@ -346,6 +346,13 @@
         messenger.error(error);
       });
     }
+
+    vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
+      sessionEditor.initGallery(galeryController);
+      sessionEditor.initAutoSave(galeryController);
+      sessionEditor.init(survey.id, survey);
+      vm.addEditorController(sessionEditor);
+    }
   }
 
 })();
