@@ -39,11 +39,11 @@
     vm.surveyEditors = [];
     vm.attachedSurveysToSession = {};
 
-    function surveyWithType(type) {
+    function surveyWithType(surveyType) {
       var survey;
       if (vm.session.steps.step2.surveys && vm.session.steps.step2.surveys.length) {
         survey = vm.session.steps.step2.surveys.find( function(survey) {
-          return survey.type == type;
+          return survey.surveyType == surveyType;
         });
       }
       return survey;
@@ -52,7 +52,7 @@
     function initContactListSurvey() {
       var survey = surveyWithType('sessionContactList');
       var surveySection = surveyBasicSectionData();
-      surveySection.type = 'sessionContactList';
+      surveySection.surveyType = 'sessionContactList';
       surveySection.enabled = survey ? survey.enabled : false;
       surveySection.title = "Contact List Questions";
       if (survey) {
@@ -65,7 +65,7 @@
     function initPrizeDrawSurvey() {
       var survey = surveyWithType('sessionPrizeDraw');
       var surveySection = surveyBasicSectionData();
-      surveySection.type = 'sessionPrizeDraw';
+      surveySection.surveyType = 'sessionPrizeDraw';
       surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
       surveySection.canDisable = true;
       surveySection.enabled = survey ? survey.enabled : false;
@@ -110,10 +110,7 @@
     vm.onSurveySaved = function(surveyId) {
       if (!vm.attachedSurveysToSession[surveyId]) {
         vm.session.addSurveyToSession(surveyId).then(function(result) {
-          console.log("attached survey", surveyId);
           vm.attachedSurveysToSession[surveyId] = true;
-        }, function(error) {
-          console.error("survey not attached", surveyId);
         });
       }
     }

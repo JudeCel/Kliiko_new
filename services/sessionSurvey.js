@@ -53,7 +53,7 @@ function sessionSurveys(sessionId) {
         where: { sessionId: sessionId},
         include: [{
           model:      models.Survey,
-          attributes: ['type']
+          attributes: ['surveyType']
         }]
       })
       .then((result) => {
@@ -63,7 +63,7 @@ function sessionSurveys(sessionId) {
             return {
               surveyId: item.surveyId,
               enabled: item.enabled,
-              type: item.Survey.type
+              surveyType: item.Survey.surveyType
             }
           });
         }

@@ -29,7 +29,7 @@ const VALID_ATTRIBUTES = {
     'description',
     'thanks',
     'SurveyQuestions',
-    'type'
+    'surveyType'
   ],
   survey: [
     'id',
@@ -42,7 +42,7 @@ const VALID_ATTRIBUTES = {
     'confirmedAt',
     'closedAt',
     'url',
-    'type'
+    'surveyType'
   ],
   question: [
     'id',
@@ -70,7 +70,7 @@ function findAllSurveys(account, params) {
   let deferred = q.defer();
 
   Survey.findAll({
-    where: { accountId: account.id, type: params.type },
+    where: { accountId: account.id, surveyType: params.surveyType },
     attributes: VALID_ATTRIBUTES.survey,
     order: [
       ['id', 'asc']
@@ -606,10 +606,9 @@ function canExportSurveyData(account) {
   return deferred.promise;
 }
 
-function constantsSurvey(surveyType) {
+function constantsSurvey(survey) {
   let deferred = q.defer();
-
-  let surveyData = surveyConstants.getSurveyConstants(surveyType.type)
+  let surveyData = surveyConstants.getSurveyConstants(survey.type)
   if(surveyData) {
     deferred.resolve(simpleParams(surveyData));
   }

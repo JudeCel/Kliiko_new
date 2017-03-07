@@ -81,7 +81,7 @@
     }
 
     function initConstants() {
-      return surveyServices.getConstants(vm.surveySettings.type).then(function(res) {
+      return surveyServices.getConstants(vm.surveySettings.surveyType).then(function(res) {
         vm.defaultQuestions = res.data.defaultQuestions;
         vm.contactDetails = res.data.contactDetails;
         vm.constantErrors = res.data.validationErrors;
@@ -101,7 +101,7 @@
     }
 
     function validateSurveySettings(surveySettings) {
-      if (!surveySettings || !surveySettings.type) {
+      if (!surveySettings || !surveySettings.surveyType) {
         throw "Survey editor must accept settings and type";
       } else {
         vm.displayPreviewButton = checkButtonVisibilityValue(surveySettings.showPreviewButton);
@@ -143,7 +143,7 @@
       if (!vm.survey.name && vm.surveySettings.defaultSurveyName) {
         vm.survey.name = vm.surveySettings.defaultSurveyName;
       }
-      vm.survey.type = vm.surveySettings.type;
+      vm.survey.surveyType = vm.surveySettings.surveyType;
     }
 
     function startSurveyEdit(survey) {

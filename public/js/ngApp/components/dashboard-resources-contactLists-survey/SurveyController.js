@@ -33,7 +33,7 @@
     }
     //Pass these to SurveyEditController
     vm.surveySettings = {
-      type: 'recruiter',
+      surveyType: 'recruiter',
       onFinished: vm.showStartPage,
       userTemplates: vm.userTemplates
     }
@@ -52,7 +52,7 @@
     vm.canDelete = canDelete;
 
     function init() {
-      surveyServices.getAllSurveys({type: vm.surveySettings.type}).then(function(res) {
+      surveyServices.getAllSurveys({surveyType: vm.surveySettings.surveyType}).then(function(res) {
         vm.surveys = res.data;
         vm.dateFormat = res.dateFormat;
         vm.currentSurveyId = null;

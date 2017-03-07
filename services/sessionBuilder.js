@@ -1093,7 +1093,7 @@ function step2Queries(session, step) {
       step.surveys = result;
       cb();
     }, function(e) {
-      filters.errors(error)
+      filters.errors(e)
     });
 
   }];

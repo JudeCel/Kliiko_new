@@ -38,9 +38,8 @@
 
     function getConstants(type) {
       var deferred = $q.defer();
-
       dbg.log2('#surveyServices > getConstants > make rest call');
-      surveyRestApi.constants({type: type}, function(res) {
+      surveyRestApi.constants({surveyType: type}, function(res) {
         dbg.log2('#surveyServices > getConstants > rest call responds');
         deferred.resolve(res);
       });

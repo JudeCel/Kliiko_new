@@ -7,7 +7,7 @@
  module.exports = {
    up: (queryInterface, Sequelize) => {
      return new Bluebird((resolve, reject) => {
-       queryInterface.addColumn('Surveys', 'type', { type: Sequelize.ENUM, allowNull: false, values: _.keys(constants.surveyTypes), defaultValue: constants.surveyTypes.recruiter}).then(() => {
+       queryInterface.addColumn('Surveys', 'surveyType', { type: Sequelize.ENUM, allowNull: false, values: _.keys(constants.surveyTypes), defaultValue: constants.surveyTypes.recruiter}).then(() => {
          resolve();
        }, (error) => {
          validateError(error, resolve, reject);
