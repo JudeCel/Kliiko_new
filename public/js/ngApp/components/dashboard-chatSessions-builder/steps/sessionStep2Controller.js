@@ -331,11 +331,8 @@
     }
 
     vm.saveSurveys = function(autoSave, publish) {
-      var timeoutStep = 1500;
-      vm.surveyEditors.map(function(sc) {
-        setTimeout( function() {
-          sc.saveSurvey(autoSave, publish);
-        }, timeoutStep);
+      vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
+          return vm.surveyEditors[1].saveSurvey(autoSave, publish);
       });
     }
 
