@@ -1094,15 +1094,31 @@ function step2Queries(session, step) {
       });
     }
   , function(cb) {
-    console.log("__+++++++++++++++++++++++_", sessionTypesConstants[session.type]);
-    sessionSurvey.sessionSurveys(session.id).then(function(result) {
-      step.surveys = result;
+    let sessionSurveyEnabled = sessionSurveysAvailable(session);
+    if (sessionSurveyEnabled) {
+      sessionSurvey.sessionSurveys(session.id).then(function(result) {
+        step.surveys = result;
+        step.sessionSurveyEnabled = sessionSurveyEnabled;
+        cb();
+      }, function(e) {
+        filters.errors(e)
+      });
+    } else {
+      step.surveys = [];
+      step.sessionSurveyEnabled = sessionSurveyEnabled;
       cb();
-    }, function(e) {
-      filters.errors(e)
-    });
-
+    }
   }];
+}
+
+function sessionSurveysAvailable(session) {
+  let sessionFeatures = sessionTypesConstants[session.type];
+  if (sessionFeatures && sessionFeatures.features) {
+    if (sessionFeatures.features.survay) {
+      return sessionFeatures.features.survay.enabled;
+    }
+  }
+  return false;
 }
 
 function step3Query(sessionId) {

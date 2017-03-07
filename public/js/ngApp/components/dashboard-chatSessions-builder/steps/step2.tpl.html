@@ -74,7 +74,7 @@
       </div>
     </section>
 
-    <div class="session-survey-section">
+    <div ng-if="step2Controller.session.steps.step2.sessionSurveyEnabled" class="session-survey-section">
       <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList">
         <uib-accordion-group is-open="survey.expanded" class="green-input session-type">
           <uib-accordion-heading>
