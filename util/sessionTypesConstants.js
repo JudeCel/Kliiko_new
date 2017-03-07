@@ -58,6 +58,9 @@ module.exports = {
       },
       "socialMediaGraphics": {
         "enabled": false
+      },
+      "publish": {
+        "enabled": false
       }
     },
     "validations": {
@@ -123,6 +126,9 @@ module.exports = {
         "type": "forum"
       },
       "socialMediaGraphics": {
+        "enabled": false
+      },
+      "publish": {
         "enabled": false
       }
     },
@@ -192,6 +198,9 @@ module.exports = {
       "socialMediaGraphics": {
         "enabled": true,
         "message": "We're currently building an exciting tool for you to customize your social media posts and help your Chat Session stand out. We'll keep you updated on progress ☺"
+      },
+      "publish": {
+        "enabled": true
       }
     },
     "validations": {

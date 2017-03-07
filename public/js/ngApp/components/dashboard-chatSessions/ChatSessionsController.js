@@ -26,6 +26,7 @@
     vm.changeOrder = changeOrder;
     vm.prepareSessionsPagination = prepareSessionsPagination;
     vm.getSessionTypeName = getSessionTypeName;
+    vm.initShouldShowStatusLabel = initShouldShowStatusLabel;
     vm.initIsOpen = initIsOpen;
     vm.setOpen = setOpen;
     vm.showStats = showStats;
@@ -230,6 +231,16 @@
       if (session.publicUid) {
         vm.currentSelectedSessionPublicUrl = vm.baseUrl + "/session/" + session.publicUid;
         domServices.modal("publicUrlModal");
+      }
+    }
+
+    function initShouldShowStatusLabel(session) {
+      var typeFeatures = session.SessionType.properties.features;
+      if (typeFeatures.closeSessionToggle.enabled && (!typeFeatures.publish.enabled || session.publicUid)) {
+        session.showStatusLabel = false;
+        initIsOpen(session);
+      } else {
+        session.showStatusLabel = true;
       }
     }
 

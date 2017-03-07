@@ -69,8 +69,8 @@
             <td>{{ session.startTime | date:csc.dateFormat }}</td>
             <td>{{ session.endTime | date:csc.dateFormat }}</td>
             <td>{{ session.expireDate | date:csc.dateFormat }}</td>
-            <td>
-              <span ng-if="session.SessionType.properties.features.closeSessionToggle.enabled" ng-init="csc.initIsOpen(session)">
+            <td ng-init="csc.initShouldShowStatusLabel(session)">
+              <span ng-if="!session.showStatusLabel">
                 <toggle-switch
                   ng-model="session.isOpen"
                   ng-change="csc.setOpen(session)"
@@ -79,7 +79,7 @@
                   >
                 </toggle-switch>
               </span>
-              <span ng-if="!session.SessionType.properties.features.closeSessionToggle.enabled">
+              <span ng-if="session.showStatusLabel">
                 {{ session.showStatus }}
               </span>
             </td>

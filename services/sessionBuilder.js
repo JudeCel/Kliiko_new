@@ -899,7 +899,8 @@ function sessionBuilderObject(session, steps) {
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
       snapshot: sessionBuilderObjectSnapshot(result, session.step),
-      properties: session.type ? sessionTypesConstants[session.type] : null
+      properties: session.type ? sessionTypesConstants[session.type] : null,
+      publicUid: session.publicUid
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
