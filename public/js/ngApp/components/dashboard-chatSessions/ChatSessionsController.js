@@ -206,7 +206,6 @@
 
     function setOpen(session) {
       chatSessionsServices.setOpen(session.id, session.isOpen).then(function(res) {
-        console.log(res);
         if (res.error) {
           messenger.error(res.error);
         } else {
