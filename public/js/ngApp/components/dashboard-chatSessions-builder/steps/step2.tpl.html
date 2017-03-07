@@ -83,11 +83,14 @@
           </div>
         </uib-accordion-heading>
         <div ng-controller="GalleryController as gc">
-          <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(survey.id, survey)'>
+          <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(survey.id, survey); step2Controller.addEditorController(sc);'>
             <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
           </div>
         </div>
       </uib-accordion-group>
     </uib-accordion>
+    <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)'>Save</button>
+    <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)'>Publish</button>
+
   </section>
 </section>

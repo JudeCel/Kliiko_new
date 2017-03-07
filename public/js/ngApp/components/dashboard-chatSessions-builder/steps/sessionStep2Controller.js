@@ -36,6 +36,7 @@
     vm.getTopicStockClass = getTopicStockClass;
     vm.getSessionTopicName = getSessionTopicName;
     vm.surveyList = [];
+    vm.surveyEditors = [];
 
     function surveyWithType(type) {
       var survey;
@@ -312,6 +313,16 @@
 
     function getTopicStockClass(topic) {
       return 'topic-list-item topic-' + (topic.stock ? 'stock' : 'not-stock');
+    }
+
+    vm.addEditorController = function(sc) {
+      vm.surveyEditors.push(sc);
+    }
+
+    vm.saveSurveys = function(autoSave, publish) {
+      vm.surveyEditors.map(function(sc) {
+        sc.saveSurvey(autoSave, publish);
+      });
     }
   }
 
