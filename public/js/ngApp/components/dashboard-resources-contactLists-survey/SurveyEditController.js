@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('KliikoApp').controller('SurveyEditController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices', '$scope'];
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices', '$scope', '$q'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices, $scope) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices, $scope, $q) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
@@ -173,6 +173,7 @@
     }
 
     function saveSurvey(autoSave, publish) {
+      var deferred;
       vm.submitedForm = true;
       if(vm.manageForm.$valid) {
         var selected = findSelected();
@@ -183,12 +184,13 @@
           var object = JSON.parse(JSON.stringify(vm.survey));
           object.SurveyQuestions = selected;
           if (!object.id) {
-            finishCreate(object, autoSave, publish);
+            deferred = finishCreate(object, autoSave, publish);
           } else {
-            finishEdit(object, autoSave, publish);
+            deferred = finishEdit(object, autoSave, publish);
           }
         }
       } else if (!autoSave) {
+        deferred = $q.defer().promise;
         vm.submitError = vm.constantErrors.default;
         var form = angular.element('#manageForm');
         var elem = form.find('.ng-invalid:first');
@@ -201,9 +203,10 @@
         if(panelParent.hasOwnProperty('accordion')) {
           panelParent.object.open = true;
         }
+        deferred.resolve();
         moveBrowserTo(panel[0].id);
       }
-
+      return deferred;
     }
 
     function quitEditor() {
@@ -220,7 +223,7 @@
 
     function finishCreate(survey, autoSave, publish) {
       vm.submitingForm = true;
-      surveyServices.createSurvey(survey).then(function(res) {
+      return surveyServices.createSurvey(survey).then(function(res) {
         vm.submitingForm = false;
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
@@ -245,7 +248,7 @@
 
     function finishEdit(survey, autoSave, publish) {
       vm.submitingForm = true;
-      surveyServices.updateSurvey(survey).then(function(res) {
+      return surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
         vm.submitingForm = false;
         if (res.error) {
@@ -254,7 +257,7 @@
           }
         } else {
           if (publish) {
-            confirmSurvey(survey);
+            return confirmSurvey(survey);
           } else if (!autoSave) {
             messenger.ok(res.message);
             quitEditor();
@@ -266,7 +269,7 @@
     };
 
     function confirmSurvey(survey) {
-      surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
+      return surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
         if (res.error) {

@@ -332,7 +332,9 @@
 
     vm.saveSurveys = function(autoSave, publish) {
       vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
-          return vm.surveyEditors[1].saveSurvey(autoSave, publish);
+        vm.surveyEditors[1].saveSurvey(autoSave, publish);
+      }).catch(function(e) {
+        messenger.error(e);
       });
     }
 

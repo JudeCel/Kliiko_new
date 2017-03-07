@@ -26,7 +26,7 @@ module.exports = {
   canAddObservers: canAddObservers,
   setAnonymous: setAnonymous,
   addSurveyToSession: addSurveyToSession,
-  setSurveyEnabled: setSurveyEnabled
+  setSurveyEnabled: setSurveyEnabled,
   publish: publish
 };
 
