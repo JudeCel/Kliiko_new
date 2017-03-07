@@ -237,8 +237,8 @@ function update(sessionId, accountId, params) {
         }, function(error) {
           reject(error);
         });
-      } else {		
-        resolve({ validation: validationRes });		
+      } else {
+        resolve({ validation: validationRes });
       }
     }, function(error) {
       reject(filters.errors(error));
@@ -1094,6 +1094,7 @@ function step2Queries(session, step) {
       });
     }
   , function(cb) {
+    console.log("__+++++++++++++++++++++++_", sessionTypesConstants[session.type]);
     sessionSurvey.sessionSurveys(session.id).then(function(result) {
       step.surveys = result;
       cb();
