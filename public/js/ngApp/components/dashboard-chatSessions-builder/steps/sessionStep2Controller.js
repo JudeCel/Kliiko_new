@@ -37,6 +37,7 @@
     vm.getSessionTopicName = getSessionTopicName;
     vm.surveyList = [];
     vm.surveyEditors = [];
+    vm.attachedSurveysToSession = {};
 
     function surveyWithType(type) {
       var survey;
@@ -52,9 +53,11 @@
       var survey = surveyWithType('sessionContactList');
       var surveySection = surveyBasicSectionData();
       surveySection.type = 'sessionContactList';
+      surveySection.enabled = survey ? survey.enabled : false;
       surveySection.title = "Contact List Questions";
       if (survey) {
         surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
       }
       return surveySection;
     }
@@ -64,8 +67,12 @@
       var surveySection = surveyBasicSectionData();
       surveySection.type = 'sessionPrizeDraw';
       surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
+      surveySection.canDisable = true;
+      surveySection.enabled = survey ? survey.enabled : false;
+
       if (survey) {
         surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
       }
       return surveySection;
     }
@@ -101,7 +108,14 @@
     }
 
     vm.onSurveySaved = function(surveyId) {
-      vm.session.addSurveyToSession(surveyId);
+      if (!vm.attachedSurveysToSession[surveyId]) {
+        vm.session.addSurveyToSession(surveyId).then(function(result) {
+          console.log("attached survey", surveyId);
+          vm.attachedSurveysToSession[surveyId] = true;
+        }, function(error) {
+          console.error("survey not attached", surveyId);
+        });
+      }
     }
 
     function addSessionTopic(topic) {
@@ -320,8 +334,20 @@
     }
 
     vm.saveSurveys = function(autoSave, publish) {
+      var timeoutStep = 1500;
       vm.surveyEditors.map(function(sc) {
-        sc.saveSurvey(autoSave, publish);
+        setTimeout( function() {
+          sc.saveSurvey(autoSave, publish);
+        }, timeoutStep);
+      });
+    }
+
+    vm.blockSurvey = function(survey) {
+      var enabled = !survey.enabled;
+      vm.session.setSurveyEnabled(survey.id, enabled).then(function(result) {
+        survey.enabled = enabled;
+      }, function(error) {
+        messenger.error(error);
       });
     }
   }

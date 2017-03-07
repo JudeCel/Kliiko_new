@@ -5,8 +5,7 @@ var Bluebird = require('bluebird');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
-    models.SessionSurvey.find({where:
-      { surveyId: surveyId, sessionId: sessionId} })
+    models.SessionSurvey.find({where: { surveyId: surveyId, sessionId: sessionId} })
       .then((result) => {
         if (result) {
           resolve();
@@ -33,6 +32,18 @@ function addSurveyToSession(sessionId, surveyId) {
         reject(e);
       });
     });
+  });
+}
+
+function setSurveyEnabled(sessionId, surveyId, enabled) {
+  return new Bluebird((resolve, reject) => {
+      let data = {enabled: enabled};
+      models.SessionSurvey.update(data, {where: { surveyId: surveyId, sessionId: sessionId} })
+      .then(function(result) {
+        resolve();
+      }).catch(function(e) {
+        reject(e);
+      });
   });
 }
 
@@ -66,5 +77,6 @@ function sessionSurveys(sessionId) {
 
 module.exports = {
   addSurveyToSession: addSurveyToSession,
-  sessionSurveys: sessionSurveys
+  sessionSurveys: sessionSurveys,
+  setSurveyEnabled: setSurveyEnabled
 }

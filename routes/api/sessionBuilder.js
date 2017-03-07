@@ -25,7 +25,8 @@ module.exports = {
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
   setAnonymous: setAnonymous,
-  addSurveyToSession: addSurveyToSession
+  addSurveyToSession: addSurveyToSession,
+  setSurveyEnabled: setSurveyEnabled
 };
 
 function initializeBuilder(req, res, next) {
@@ -205,6 +206,17 @@ function addSurveyToSession(req, res, next) {
   let surveyId = req.body.surveyId;
   let sessionId = req.params.id;
   sessionSurvey.addSurveyToSession(sessionId, surveyId).then(function(result) {
+    res.send({success:true});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function setSurveyEnabled(req, res, next) {
+  let surveyId = req.body.surveyId;
+  let sessionId = req.params.id;
+  let enabled = req.body.enabled;
+  sessionSurvey.setSurveyEnabled(sessionId, surveyId, enabled).then(function(result) {
     res.send({success:true});
   }, function(error) {
     res.send({ error: error });
