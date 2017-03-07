@@ -57,6 +57,9 @@
         if(!exists) {
           vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
+        else {
+
+        }
       }
     }
 
@@ -99,7 +102,7 @@
     function selectAllTopics(list) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
       list.map(function(topic) {
-        topic._selected = vm.allTopicsSelected && !topic.stock;
+        topic._selected = vm.allTopicsSelected && !topic.stock && !topic.default;
       });
     }
 
@@ -179,6 +182,7 @@
         if (result.ignored) {
           init(vm.topicController);
         } else {
+          console.error(result);
           orderByFilter(result.data, "id").map(function(topic) {
             addSessionTopic(topic);
           });

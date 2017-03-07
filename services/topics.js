@@ -2,7 +2,7 @@
 
 var MessagesUtil = require('./../util/messages');
 let q = require('q');
-var validators = require('./../services/validators');
+var validators = require('./../services/validators/subscription');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
@@ -86,39 +86,40 @@ function updateSessionTopics(sessionId, topicsArray) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
     joinToSession(ids, sessionId, topicsArray).then(function(result) {
-      Bluebird.each(result.sessionTopics, (sessionTopic) => {
+      validators.getTopicCount(result.session.accountId, { sessionId }).then((c) => {
+        Bluebird.each(result.sessionTopics, (sessionTopic, index) => {
 
-        return new Bluebird(function (resolveInternal, rejectInternal) {
-          Bluebird.each(topicsArray, (topic) => {
+          return new Bluebird(function (resolveInternal, rejectInternal) {
+            Bluebird.each(topicsArray, (topic) => {
+              if (topic.id == sessionTopic.topicId) {
+                let params = {
+                  order: topic.sessionTopic.order,
+                  active: c >= index || c === -1,
+                  landing: topic.sessionTopic.landing,
+                  name: topic.sessionTopic.name,
+                  boardMessage: topic.sessionTopic.boardMessage,
+                  sign: topic.sessionTopic.sign,
+                  lastSign: topic.sessionTopic.lastSign,
+                }
 
-            if (topic.id == sessionTopic.topicId) {
-              let params = {
-                order: topic.sessionTopic.order,
-                active: topic.sessionTopic.active,
-                landing: topic.sessionTopic.landing,
-                name: topic.sessionTopic.name,
-                boardMessage: topic.sessionTopic.boardMessage,
-                sign: topic.sessionTopic.sign,
-                lastSign: topic.sessionTopic.lastSign,
+                return sessionTopic.update(params).then(() =>{
+                  topic.SessionTopics = [sessionTopic];
+                  returning.push(topic);
+                });
               }
 
-              return sessionTopic.update(params).then(() =>{
-                topic.SessionTopics = [sessionTopic];
-                returning.push(topic);
-              });
-            }
-
-          }).then(function() {
-            resolveInternal();
-          }, function(error) {
-            rejectInternal(error);
+            }).then(function() {
+              resolveInternal();
+            }, function(error) {
+              rejectInternal(error);
+            });
           });
-        });
 
-      }).then(function() {
-        resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
-      }, function(error) {
-        reject(filters.errors(error));
+        }).then(function() {
+          resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
+        }, function(error) {
+          reject(filters.errors(error));
+        });
       });
     }, function(error) {
       reject(filters.errors(error));
@@ -138,7 +139,7 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length});
+          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length, session });
         });
       }, function(error) {
         deferred.reject(filters.errors(error));
@@ -233,15 +234,15 @@ function create(params, isAdmin) {
     params.stock = false;
   }
 
-  validators.subscription(params.accountId, 'topic', 1).then(function() {
+  // validators.subscription(params.accountId, 'topic', 1).then(function() {
     Topic.create(params).then(function(topic) {
       deferred.resolve(topic);
     },function(error) {
       deferred.reject(filters.errors(error));
     });
-  },function(error) {
-    deferred.reject(error);
-  });
+  // },function(error) {
+    // deferred.reject(error);
+  // });
 
   return deferred.promise;
 }

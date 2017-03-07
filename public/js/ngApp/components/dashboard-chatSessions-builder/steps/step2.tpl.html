@@ -58,6 +58,7 @@
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+              {{ topic.sessionTopic.active }}
               <toggle-switch
                 ng-model="topic.sessionTopic.active"
                 ng-change="step2Controller.changeActiveState(topic)"
