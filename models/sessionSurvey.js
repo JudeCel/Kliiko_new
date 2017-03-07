@@ -11,8 +11,7 @@ module.exports = (Sequelize, DataTypes) => {
         SessionSurvey.belongsTo(models.Survey, { foreignKey: 'surveyId', onDelete: 'cascade' });
       }
     }
-  }
-);
+  });
 
   return SessionSurvey;
 };
