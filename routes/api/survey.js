@@ -79,7 +79,7 @@ function confirm(req, res, next) {
 };
 
 function getConstants(req, res, next) {
-  surveyService.constantsSurvey({type: req.query.surveyType}).then(
+  surveyService.constantsSurvey(req.query.surveyType).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );

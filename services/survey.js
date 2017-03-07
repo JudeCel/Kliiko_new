@@ -606,9 +606,9 @@ function canExportSurveyData(account) {
   return deferred.promise;
 }
 
-function constantsSurvey(survey) {
+function constantsSurvey(surveyType) {
   let deferred = q.defer();
-  let surveyData = surveyConstants.getSurveyConstants(survey.type)
+  let surveyData = surveyConstants.getSurveyConstants(surveyType)
   if(surveyData) {
     deferred.resolve(simpleParams(surveyData));
   }

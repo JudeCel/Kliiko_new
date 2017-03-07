@@ -53,7 +53,7 @@
       var survey = surveyWithType('sessionContactList');
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionContactList';
-      surveySection.active = survey ? survey.active : false;
+      surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
       if (survey) {
         surveySection.id = survey.surveyId;
@@ -68,7 +68,7 @@
       surveySection.surveyType = 'sessionPrizeDraw';
       surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
       surveySection.canDisable = true;
-      surveySection.active = survey ? survey.active : false;
+      surveySection.active = survey && survey.active;
 
       if (survey) {
         surveySection.id = survey.surveyId;
