@@ -21,7 +21,7 @@ function addSurveyToSession(sessionId, surveyId) {
     let data = {
       sessionId:  sessionId,
       surveyId:   surveyId,
-      enabled:    true
+      active:    true
     }
     isSurveyAttached(sessionId, surveyId).then(function() {
       resolve();
@@ -35,9 +35,9 @@ function addSurveyToSession(sessionId, surveyId) {
   });
 }
 
-function setSurveyEnabled(sessionId, surveyId, enabled) {
+function setSurveyEnabled(sessionId, surveyId, active) {
   return new Bluebird((resolve, reject) => {
-      let data = {enabled: enabled};
+      let data = {active: active};
       models.SessionSurvey.update(data, {where: { surveyId: surveyId, sessionId: sessionId} })
       .then(function(result) {
         resolve();
@@ -62,7 +62,7 @@ function sessionSurveys(sessionId) {
           items = result.map((item) => {
             return {
               surveyId: item.surveyId,
-              enabled: item.enabled,
+              active: item.active,
               surveyType: item.Survey.surveyType
             }
           });

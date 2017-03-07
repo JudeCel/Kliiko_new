@@ -3,7 +3,7 @@ module.exports = (Sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     sessionId: { type: DataTypes.INTEGER, allowNull: false },
     surveyId: { type: DataTypes.INTEGER, allowNull: false },
-    enabled: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     classMethods: {
       associate: function(models) {

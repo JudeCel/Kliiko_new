@@ -87,8 +87,8 @@
             <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(survey.id, survey); step2Controller.addEditorController(sc);'>
               <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
 
-              <button ng-if="survey.canDisable && !survey.enabled" class='btn border-radius-none ng-binding btn-success pull-right' ng-click='step2Controller.blockSurvey(survey)'>Enable</button>
-              <button ng-if="survey.canDisable && survey.enabled" class='btn border-radius-none ng-binding btn-danger pull-right' ng-click='step2Controller.blockSurvey(survey)'>Disable</button>
+              <button ng-if="survey.canDisable && !survey.active" class='btn border-radius-none ng-binding btn-success pull-right' ng-click='step2Controller.blockSurvey(survey)'>Enable</button>
+              <button ng-if="survey.canDisable && survey.active" class='btn border-radius-none ng-binding btn-danger pull-right' ng-click='step2Controller.blockSurvey(survey)'>Disable</button>
             </div>
           </div>
 

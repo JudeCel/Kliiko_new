@@ -53,7 +53,7 @@
       var survey = surveyWithType('sessionContactList');
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionContactList';
-      surveySection.enabled = survey ? survey.enabled : false;
+      surveySection.active = survey ? survey.active : false;
       surveySection.title = "Contact List Questions";
       if (survey) {
         surveySection.id = survey.surveyId;
@@ -68,7 +68,7 @@
       surveySection.surveyType = 'sessionPrizeDraw';
       surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
       surveySection.canDisable = true;
-      surveySection.enabled = survey ? survey.enabled : false;
+      surveySection.active = survey ? survey.active : false;
 
       if (survey) {
         surveySection.id = survey.surveyId;
@@ -340,9 +340,9 @@
     }
 
     vm.blockSurvey = function(survey) {
-      var enabled = !survey.enabled;
-      vm.session.setSurveyEnabled(survey.id, enabled).then(function(result) {
-        survey.enabled = enabled;
+      var active = !survey.active;
+      vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
+        survey.active = active;
       }, function(error) {
         messenger.error(error);
       });

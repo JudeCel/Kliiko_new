@@ -215,8 +215,8 @@ function addSurveyToSession(req, res, next) {
 function setSurveyEnabled(req, res, next) {
   let surveyId = req.body.surveyId;
   let sessionId = req.params.id;
-  let enabled = req.body.enabled;
-  sessionSurvey.setSurveyEnabled(sessionId, surveyId, enabled).then(function(result) {
+  let active = req.body.active;
+  sessionSurvey.setSurveyEnabled(sessionId, surveyId, active).then(function(result) {
     res.send({success:true});
   }, function(error) {
     res.send({ error: error });

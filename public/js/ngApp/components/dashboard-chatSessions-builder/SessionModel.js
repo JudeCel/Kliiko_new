@@ -337,7 +337,7 @@
 
     function setSurveyEnabled(surveyId, enabled) {
       var deferred = $q.defer();
-      sessionBuilderRestApi.setSurveyEnabled({id: this.id}, {surveyId: surveyId, enabled: enabled}, function(res) {
+      sessionBuilderRestApi.setSurveyEnabled({id: this.id}, {surveyId: surveyId, active: enabled}, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {
