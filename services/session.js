@@ -36,7 +36,8 @@ module.exports = {
   changeComment: changeComment,
   getSessionByInvite: getSessionByInvite,
   setAnonymous: setAnonymous,
-  canChangeAnonymous: canChangeAnonymous
+  canChangeAnonymous: canChangeAnonymous,
+  checkSessionByPublicUid: checkSessionByPublicUid
 };
 
 function isInviteSessionInvalid(resp) {
@@ -300,7 +301,6 @@ function copySession(sessionId, accountId, provider) {
       delete result.data.dataValues.id;
       delete result.data.dataValues.facilitator;
       delete result.data.dataValues.status;
-      delete result.data.dataValues.type;
       delete result.data.dataValues.anonymous;
       delete result.data.dataValues.resourceId;
       delete result.data.dataValues.brandProjectPreferenceId;
@@ -433,7 +433,7 @@ function findAllSessionsAsManager(accountId, provider) {
         model: AccountUser,
         attributes: ['firstName', 'lastName', 'email']
       }]
-    }, { 
+    }, {
       model: SessionType,
       attributes: ['name', 'properties']
     }]
@@ -544,5 +544,27 @@ function changeSessionData(sessions, chargebeeSub, provider) {
       session.SessionMembers.splice(facIndex, 1);
       session.dataValues.averageRating = total / session.SessionMembers.length;
     }
+  });
+}
+
+function checkSessionByPublicUid(uid) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        publicUid: uid
+      }
+    }).then(function(session) {
+      if (session && sessionTypesConstants[session.type].features.ghostParticipants.enabled) {
+        if (session.status == "open") {
+          resolve(session);
+        } else {
+          reject(MessagesUtil.session.closed.replace("sessionName", session.name));
+        }
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }, function(error) {
+      reject(error);
+    });
   });
 }

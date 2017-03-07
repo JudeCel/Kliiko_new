@@ -10,6 +10,7 @@ const cluster = require('cluster');
   if (cluster.isMaster) {
     cluster.fork({ROLE: "webServer"});
     cluster.fork({ROLE: "backgroundWorkerServer"});
+    cluster.fork({ROLE: "monitoring"});
 
     cluster.on('exit', (worker, code, signal) => {
       console.log(worker)
@@ -19,6 +20,14 @@ const cluster = require('cluster');
     });
   } else {
     switch (process.env.ROLE) {
+      case "monitoring":
+        console.log("start monitoring server");
+        try {
+          require("../apps/monitoring.js");
+        } catch (e) {
+          console.log(e);
+        }
+        break;
       case "webServer":
         console.log("start web server");
         try {

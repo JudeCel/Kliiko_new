@@ -111,7 +111,9 @@ var frontendScripts = [
   "public/js/ngApp/components/**/*.js",
   "public/js/ngApp/filters/**/*.js",
   "public/js/ngApp/factories/**/*.js",
-  "node_modules/phoenix/priv/static/phoenix.js"
+  "node_modules/phoenix/priv/static/phoenix.js",
+  "node_modules/angulartics/dist/angulartics.min.js",
+  "node_modules/angulartics-mixpanel/dist/angulartics-mixpanel.min.js"
 ]
 
 var frontendStyles = [

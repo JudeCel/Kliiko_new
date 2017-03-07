@@ -19,7 +19,7 @@ function successProvider(params) {
     return {
       request: function(callback) {
         callback(null, {
-          subscription: { id: params.id, plan_id: 'free_account' },
+          subscription: { id: params.id, plan_id: 'junior_monthly' },
           customer: { id: params.id }
         });
       }

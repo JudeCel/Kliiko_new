@@ -129,7 +129,7 @@
     function canDragElement(topic) {
       var can = false, selected = getSelectedTopics();
 
-      if (topic.stock) {
+      if (topic.stock || topic.default) {
         return false;
       }
 
@@ -323,7 +323,7 @@
     }
 
     function getTopicStockClass(topic) {
-      return 'topic-list-item topic-' + (topic.stock ? 'stock' : 'not-stock');
+      return 'topic-list-item topic-' + (topic.stock || topic.default ? 'stock' : 'not-stock');
     }
 
     vm.addEditorController = function(sc) {

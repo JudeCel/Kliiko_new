@@ -11,13 +11,13 @@ var MessagesUtil = require('./../util/messages');
 function assignCurrentDomain(result, req) {
   req.currentResources = {
     accountUser: { id: result.id, role: result.role},
-    account: { 
-      id: result.Account.id, 
-      name: result.Account.name, 
-      subdomain: result.Account.subdomain, 
-      admin: result.Account.admin 
+    account: {
+      id: result.Account.id,
+      name: result.Account.name,
+      subdomain: result.Account.subdomain,
+      admin: result.Account.admin
     },
-    user: {id: result.User.id, email: result.User.email}
+    user: {id: result.User.id, email: result.User.email, selectedPlanOnRegistration: result.User.selectedPlanOnRegistration}
   };
 }
 
@@ -45,7 +45,7 @@ function getAccauntWithRoles(user, subdomain, callback) {
     include: [
       { model: models.User,
         where: { id: user.id },
-        attributes: ['id', 'email'],
+        attributes: constants.safeUserParams,
         required: true
       },
       { model: models.Account,
