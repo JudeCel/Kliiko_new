@@ -63,9 +63,9 @@
     function canDragElement(topic) {
       var can = false, selected = getSelectedTopics();
 
-      if (topic.stock) {
+      if (topic.stock || topic.default) {
         return false;
-      } 
+      }
 
       if(!selected.length) {
         return true;
@@ -90,9 +90,9 @@
 
     function getSessionTopicName(topic){
        if(topic.parentTopicId){
-        return ("Copy of " + topic.sessionTopic.name) 
+        return ("Copy of " + topic.sessionTopic.name)
       }else{
-        return (topic.sessionTopic.name) 
+        return (topic.sessionTopic.name)
       }
     }
 
@@ -257,7 +257,7 @@
     }
 
     function getTopicStockClass(topic) {
-      return 'topic-list-item topic-' + (topic.stock ? 'stock' : 'not-stock');
+      return 'topic-list-item topic-' + (topic.stock || topic.default ? 'stock' : 'not-stock');
     }
   }
 
