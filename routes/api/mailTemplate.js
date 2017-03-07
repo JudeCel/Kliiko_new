@@ -52,7 +52,7 @@ function allSessionMailTemplatesWithColorsGet(req, res, next) {
 
 function allMailTemplatesGet(req, res, next) {
   let accountId;
-  if (!policy.hasAccess([req.currentResources.accountUser.role], ['admin'])) {
+  if (!policy.hasAccess(req.currentResources.accountUser.role, ['admin'])) {
     accountId = req.currentResources.account.id;
   }
 
@@ -63,7 +63,8 @@ function allMailTemplatesGet(req, res, next) {
 
 function allMailTemplatesWithColorsGet(req, res, next) {
   let accountId;
-  if (!policy.hasAccess([req.currentResources.accountUser.role], ['admin'])) {
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
+  if (!isAdmin) {
     accountId = req.currentResources.account.id;
   }
 
@@ -77,7 +78,7 @@ function allMailTemplatesWithColorsGet(req, res, next) {
     } else {
       res.send({error: error, templates: result, colors: null, manageFields: BrandColourService.manageFields()});
     }
-  });
+  }, isAdmin);
 }
 
 //get mail template by "id"
