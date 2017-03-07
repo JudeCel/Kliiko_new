@@ -92,20 +92,27 @@
       });
     };
 
+    function checkButtonVisibilityValue(val) {
+      if ( val != undefined ) {
+        return val;
+      } else {
+        return true;
+      }
+    }
+
     function validateSurveySettings(surveySettings) {
       if (!surveySettings || !surveySettings.type) {
         throw "Survey editor must accept settings and type";
       } else {
-        vm.displayPreviewButton = surveySettings.showPreviewButton;
-        vm.displaySaveButton = surveySettings.showSaveButton
-        vm.displayPublishButton = surveySettings.showPublishButton
+        vm.displayPreviewButton = checkButtonVisibilityValue(surveySettings.showPreviewButton);
+        vm.displaySaveButton = checkButtonVisibilityValue(surveySettings.showSaveButton);
+        vm.displayPublishButton = checkButtonVisibilityValue(surveySettings.showPublishButton);
       }
     }
 
     function init(surveyId, surveySettings) {
       validateSurveySettings(surveySettings);
       vm.surveySettings = surveySettings;
-
       initConstants().then(function() {
         if (surveyId) {
           return surveyServices.findSurvey( {id: surveyId, skipValidations: true} );
