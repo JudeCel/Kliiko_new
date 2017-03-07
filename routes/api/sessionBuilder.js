@@ -23,7 +23,8 @@ module.exports = {
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  setAnonymous: setAnonymous
+  setAnonymous: setAnonymous,
+  publish: publish
 };
 
 function initializeBuilder(req, res, next) {
@@ -197,4 +198,13 @@ function removeTopic(req, res, next) {
   }, function(error) {
     res.send({ error: error });
   });
+}
+
+function publish(req, res, next) {
+  let accountId = req.currentResources.account.id;
+  sessionBuilderServices.publish(req.params.id, accountId).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  })
 }

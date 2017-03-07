@@ -93,7 +93,6 @@ function canChangeAnonymous(session) {
 
 function setOpen(sessionId, open, accountId) {
   return new Bluebird((resolve, reject) => {
-
     Session.find({
       where: {
         id: sessionId,
@@ -112,7 +111,6 @@ function setOpen(sessionId, open, accountId) {
     }).catch(function(error) {
       reject(filters.errors(error));
     });
-
   });
 }
 

@@ -279,6 +279,28 @@ describe('SERVICE - SessionBuilder', function() {
     });
   });
 
+  describe('#publish', function(done) {
+    describe('happy path', function(done) {
+      it('should generate publicUid', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(sessionBuilder) {
+          let params = sessionParams(sessionBuilder);
+          sessionBuilderServices.publish(params.id, params.accountId).then(function(result) {
+            assert.equal(result.id, params.id);
+            assert.isString(result.publicUid);
+            models.Session.find({ where: { id: params.id } }).then(function(session) {
+              assert.equal(session.publicUid, result.publicUid);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
   describe('#nextStep', function(done) {
     describe('happy path', function(done) {
       it('should go to next step', function(done) {

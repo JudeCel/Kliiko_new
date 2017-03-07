@@ -29,6 +29,7 @@ var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 var Bluebird = require('bluebird');
+var uuid = require('node-uuid');
 
 const MIN_MAIL_TEMPLATES = 4;
 const MAX_STEP_INDEX = 4;
@@ -54,7 +55,8 @@ module.exports = {
   canAddObservers: canAddObservers,
   sessionMailTemplateExists: sessionMailTemplateExists,
   searchSessionMembers: searchSessionMembers,
-  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot,
+  publish: publish
 };
 
 function defaultTopicParams(session, topic) {
@@ -1450,4 +1452,30 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   });
 
   return deferred.promise;
+}
+
+
+function publish(sessionId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        id: sessionId,
+        accountId: accountId
+      }
+    }).then(function(session) {
+      if (session) {
+        if (session.publicUid) {
+          resolve({ id: session.id, publicUid: session.publicUid });
+        } else {
+          session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
+            resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+          });
+        }
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }).catch(function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }
