@@ -10,8 +10,16 @@ module.exports = {
   copy: copy,
   updateRating: updateRating,
   getAllSessionRatings: getAllSessionRatings,
-  getSessionByInvite: getSessionByInvite
+  getSessionByInvite: getSessionByInvite,
+  setOpen: setOpen
 };
+
+function setOpen(req, res, next) {
+  sessionServices.setOpen(req.params.id, req.body.open, req.currentResources.account.id).then(
+    getResponses(res).onSuccess,
+    getResponses(res).onError
+  );
+}
 
 function comment(req, res, next) {
   sessionServices.changeComment(req.params.id, req.body.comment, req.currentResources.account.id).then(
@@ -71,7 +79,8 @@ function prepareParams(result) {
     sessionListManageRoles: constants.sessionListManageRoles,
     data: result.data,
     message: result.message,
-    dateFormat: constants.dateFormat
+    dateFormat: constants.dateFormat,
+    baseUrl: result.baseUrl
   };
 }
 
