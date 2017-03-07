@@ -15,7 +15,7 @@ module.exports = (Sequelize, DataTypes) => {
     confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     closedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     url: { type: DataTypes.STRING, allowNull: true },
-    type: { type: DataTypes.ENUM, values: _.keys(constants.surveyTypes), allowNull: false }
+    type: { type: DataTypes.ENUM, values: _.keys(constants.surveyTypes), allowNull: false, defaultValue: constants.surveyTypes.recruiter }
   }, {
     timestamps: true,
     classMethods: {
