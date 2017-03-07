@@ -87,14 +87,14 @@ function updateSessionTopics(sessionId, topicsArray) {
     let returning = [];
     joinToSession(ids, sessionId, topicsArray).then(function(result) {
       validators.getTopicCount(result.session.accountId, { sessionId }).then((c) => {
-        Bluebird.each(result.sessionTopics, (sessionTopic, index) => {
+        Bluebird.each(result.sessionTopics, (sessionTopic) => {
 
           return new Bluebird(function (resolveInternal, rejectInternal) {
             Bluebird.each(topicsArray, (topic) => {
               if (topic.id == sessionTopic.topicId) {
                 let params = {
                   order: topic.sessionTopic.order,
-                  active: c >= index || c === -1,
+                  active: c >= topic.sessionTopic.order || c === -1,
                   landing: topic.sessionTopic.landing,
                   name: topic.sessionTopic.name,
                   boardMessage: topic.sessionTopic.boardMessage,

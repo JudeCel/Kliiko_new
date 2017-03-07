@@ -57,9 +57,14 @@
         if(!exists) {
           vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
-        else {
-
-        }
+        vm.sessionTopicsArray = vm.sessionTopicsArray.map(function(item) {
+          if(topic.id == item.id) {
+            return topic;
+          }
+          else {
+            return item;
+          }
+        });
       }
     }
 
