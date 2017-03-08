@@ -211,7 +211,7 @@
 
     function quitEditor() {
       if (vm.surveySettings.onFinished) {
-        vm.surveySettings.onFinished()
+        vm.surveySettings.onFinished();
       }
     }
 
@@ -238,10 +238,8 @@
             confirmSurvey(survey);
           } else if (!autoSave) {
             messenger.ok(res.message);
-            quitEditor();
+            onSaved();
           }
-
-          onSaved();
         }
       });
     };
@@ -260,10 +258,8 @@
             return confirmSurvey(survey);
           } else if (!autoSave) {
             messenger.ok(res.message);
-            quitEditor();
+            onSaved();
           }
-
-          onSaved();
         }
       });
     };

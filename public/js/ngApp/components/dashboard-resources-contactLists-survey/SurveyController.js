@@ -31,13 +31,6 @@
       "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
       "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
     }
-    //Pass these to SurveyEditController
-    vm.surveySettings = {
-      surveyType: 'recruiter',
-      onFinished: vm.showStartPage,
-      userTemplates: vm.userTemplates
-    }
-
 
     // Uses services
     vm.removeSurvey = removeSurvey;
@@ -184,6 +177,14 @@
         $location.hash(elementId);
         $anchorScroll();
       });
+    }
+
+    //Pass these to SurveyEditController
+    vm.surveySettings = {
+      surveyType: 'recruiter',
+      onFinished: vm.showStartPage,
+      onSaved: vm.showStartPage,
+      userTemplates: vm.userTemplates
     }
 
     vm.showStartPage();
