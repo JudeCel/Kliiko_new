@@ -24,11 +24,13 @@ var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
+var sessionSurvey = require('./sessionSurvey');
 
 var async = require('async');
 var _ = require('lodash');
 var q = require('q');
 var Bluebird = require('bluebird');
+var uuid = require('node-uuid');
 
 const MIN_MAIL_TEMPLATES = 4;
 const MAX_STEP_INDEX = 4;
@@ -54,7 +56,8 @@ module.exports = {
   canAddObservers: canAddObservers,
   sessionMailTemplateExists: sessionMailTemplateExists,
   searchSessionMembers: searchSessionMembers,
-  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot
+  sessionBuilderObjectStepSnapshot: sessionBuilderObjectStepSnapshot,
+  publish: publish
 };
 
 function defaultTopicParams(session, topic) {
@@ -108,7 +111,7 @@ function addDefaultTopicVideo(session) {
 function createNewSessionDefaultItems(session, userId) {
   return new Bluebird((resolve, reject) => {
     sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
-      addDefaultTopic(session, sessionMember).then((sessionMember) => {
+      addDefaultTopic(session, sessionMember).then(() => {
         resolve();
       }, (error) => {
         resolve();
@@ -133,7 +136,6 @@ function initializeBuilder(params) {
       manageSessionParticipants: false,
       inviteSessionObservers: false
     };
-
     Session.create(params).then(function(session) {
       createNewSessionDefaultItems(session, params.userId).then(function() {
         sessionBuilderObject(session).then(function(result) {
@@ -227,20 +229,16 @@ function update(sessionId, accountId, params) {
 
   return new Bluebird(function (resolve, reject) {
     findSession(sessionId, accountId).then(function(originalSession) {
-      if (isUpdateAllowed(originalSession, params)) {
-        updateParams(originalSession, params);
-        let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
-        if (validationRes.isValid) {
-          doUpdate(originalSession, params).then(function(res) {
-            resolve(res);
-          }, function(error) {
-            reject(error);
-          });
-        } else {
-          resolve({ validation: validationRes });
-        }
+      updateParams(originalSession, params);
+      let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (validationRes.isValid) {
+        doUpdate(originalSession, params).then(function(res) {
+          resolve(res);
+        }, function(error) {
+          reject(error);
+        });
       } else {
-        reject(filters.errors(MessagesUtil.session.actionNotAllowed));
+        resolve({ validation: validationRes });
       }
     }, function(error) {
       reject(filters.errors(error));
@@ -258,11 +256,6 @@ function updateParams(session, params) {
   if (!session.type && params["type"] && sessionTypesConstants[params["type"]].features.dateAndTime.enabled) {
     params["startTime"] = params["endTime"] = initializeDate(session.timeZone);
   }
-}
-
-function isUpdateAllowed(session, params) {
-  let statusChanged = params["status"] && params["status"] != session.status;
-  return  !statusChanged || sessionTypesConstants[session.type].features.closeSession.enabled;
 }
 
 function isSessionChangedToActive(params) {
@@ -906,7 +899,8 @@ function sessionBuilderObject(session, steps) {
       startTime: changeTimzone(session.startTime, session.timeZone, "UTC"),
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
       snapshot: sessionBuilderObjectSnapshot(result, session.step),
-      properties: session.type ? sessionTypesConstants[session.type] : null
+      properties: session.type ? sessionTypesConstants[session.type] : null,
+      publicUid: session.publicUid
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
@@ -1099,7 +1093,30 @@ function step2Queries(session, step) {
         cb(filters.errors(error));
       });
     }
-  ];
+  , function(cb) {
+    let sessionSurveyEnabled = sessionSurveysAvailable(session);
+    if (sessionSurveyEnabled) {
+      sessionSurvey.sessionSurveys(session.id).then(function(result) {
+        step.surveys = result;
+        step.sessionSurveyEnabled = sessionSurveyEnabled;
+        cb();
+      }, function(e) {
+        filters.errors(e)
+      });
+    } else {
+      step.surveys = [];
+      step.sessionSurveyEnabled = sessionSurveyEnabled;
+      cb();
+    }
+  }];
+}
+
+function sessionSurveysAvailable(session) {
+  let sessionFeatures = sessionTypesConstants[session.type];
+  if (sessionFeatures) {
+    return sessionFeatures.features.survay.enabled;
+  }
+  return false;
 }
 
 function step3Query(sessionId) {
@@ -1459,4 +1476,30 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   });
 
   return deferred.promise;
+}
+
+
+function publish(sessionId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        id: sessionId,
+        accountId: accountId
+      }
+    }).then(function(session) {
+      if (session) {
+        if (session.publicUid) {
+          resolve({ id: session.id, publicUid: session.publicUid });
+        } else {
+          session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
+            resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+          });
+        }
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }).catch(function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }

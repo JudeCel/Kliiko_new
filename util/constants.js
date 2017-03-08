@@ -9,6 +9,7 @@ module.exports = {
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
   gender: ["", "male", "female"],
+  surveyTypes: {recruiter: "recruiter", sessionContactList: "sessionContactList", sessionPrizeDraw: "sessionPrizeDraw"},
   safeAccountUserParams: [
     'id',
     'firstName',

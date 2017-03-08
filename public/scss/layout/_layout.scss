@@ -533,8 +533,9 @@ input#reveiveNewsLetters{
   .fa {
     color: #a7a7a9;
     border: 2px solid #a7a7a9;
-    padding: 5px;
+    padding: 6px;
     font-size: 14px;
+    height: 30px;
   }
 }
 
@@ -630,4 +631,21 @@ input#reveiveNewsLetters{
     margin-top: 20px;
     margin-bottom: -15px;
   }
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+.table-item-buttons {
+  width: 165px;
+}
+
+.url-input {
+  width: 85%;
+  padding: 3px;
+  color: #1B15C6;
+  text-decoration: underline;
+  font-size: 13px;
+  cursor: text;
 }

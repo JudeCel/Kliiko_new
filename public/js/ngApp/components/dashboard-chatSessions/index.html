@@ -50,23 +50,45 @@
                 Status
               </a>
             </th>
+            <th>
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('publicUid')">
+                URL
+              </a>
+            </th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.pagination.sessions | orderBy:csc.orderByField'>
+          <tr ng-class='session.rowClass' ng-repeat='session in csc.pagination.sessions | orderBy:csc.orderByField' ng-init="csc.initRowClass(session)">
             <td>
               {{ session.name }}
               <i ng-if='session.name == ""'>untitled</i>
             </td>
-            <td class="capitalize">{{ session.type }}</td>
+            <td ng-init="typeName = csc.getSessionTypeName(session)">{{ typeName }}</td>
             <td>{{ session.facilitator.AccountUser.firstName }} {{ session.facilitator.AccountUser.lastName }}</td>
             <td>{{ session.startTime | date:csc.dateFormat }}</td>
             <td>{{ session.endTime | date:csc.dateFormat }}</td>
             <td>{{ session.expireDate | date:csc.dateFormat }}</td>
-            <td>{{ session.showStatus }}</td>
-            <td class='text-right col-xs-3'>
+            <td ng-init="csc.initShouldShowStatusLabel(session)">
+              <span ng-if="!session.showStatusLabel">
+                <toggle-switch
+                  ng-model="session.isOpen"
+                  ng-change="csc.setOpen(session)"
+                  on-label="OPEN"
+                  off-label="CLOSE"
+                  >
+                </toggle-switch>
+              </span>
+              <span ng-if="session.showStatusLabel">
+                {{ session.showStatus }}
+              </span>
+            </td>
+            <td>
+              <span class="text-underline" ng-click="csc.showPublicUrl(session)" ng-if="session.publicUid">Guest Session URL</span>
+            </td>
+            <td class='text-right table-item-buttons dashboardActions'>
 
+              <span class="fa fa-bar-chart" ng-if='session.SessionType.properties.features.survay.enabled' ng-click='csc.showStats(session)'></span>
               <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.openCopySessionDialog(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
               <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session, app.accountUser.id)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
@@ -89,5 +111,6 @@
     <div class='col-xs-12 fixed-bottom-margin'></div>
   </div>
 
-  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modal.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modals/copySessionModel.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modals/publicUrlModal.html'"></ng-include>
 </div>

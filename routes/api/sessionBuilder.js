@@ -6,6 +6,7 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 var sessionServices = require('./../../services/session');
 let topicsService = require('./../../services/topics');
+let sessionSurvey = require('./../../services/sessionSurvey');
 let _ = require('lodash');
 
 module.exports = {
@@ -24,7 +25,10 @@ module.exports = {
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
   setAnonymous: setAnonymous,
-  canChangeTopicActive: canChangeTopicActive
+  canChangeTopicActive: canChangeTopicActive,
+  addSurveyToSession: addSurveyToSession,
+  setSurveyEnabled: setSurveyEnabled,
+  publish: publish
 };
 
 function initializeBuilder(req, res, next) {
