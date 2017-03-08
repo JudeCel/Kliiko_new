@@ -45,7 +45,7 @@
     vm.charactersLeft = charactersLeft;
     vm.togglePanel = togglePanel;
     vm.setType = setType;
-    vm.topicName = topicName;
+    vm.isCopy = isCopy;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
 
     init();
@@ -71,11 +71,9 @@
       vm.prepareCurrentPageItems();
     }
 
-    function topicName(topic){
+    function isCopy(topic){
       if(topic.parentTopicId){
-        return ("Copy of " + topic.name) 
-      }else{
-        return (topic.name) 
+        return "Copy of ";
       }
     }
 

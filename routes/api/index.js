@@ -23,7 +23,6 @@ var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
-
 let sessionMember = require('./sessionMember');
 module.exports = router;
 
@@ -158,6 +157,7 @@ router.post('/sessionBuilder/:id/sendCloseEmail', PERMISSIONS.facilitatorManager
 router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sessionMailTemplateStatus);
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
+router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addSurveyToSession);
+router.post('/sessionBuilder/:id/setSurveyEnabled', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setSurveyEnabled);
 router.post('/sessionBuilder/:id/publish', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.publish);
-
 router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

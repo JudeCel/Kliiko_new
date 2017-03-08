@@ -1,0 +1,98 @@
+var ageOptions = require('./ageOptions')
+
+module.exports = {
+  contactDetails: [
+    {
+      model: 'firstName',
+      name: 'First Name',
+      input: true,
+      order: 0
+    },
+    {
+      model: 'lastName',
+      name: 'Last Name',
+      input: true,
+      order: 1
+    },
+    {
+      model: 'email',
+      name: 'Email',
+      input: true,
+      order: 2
+    },
+    {
+      model: 'mobile',
+      name: 'Mobile',
+      number: true,
+      canDisable: true,
+      order: 3
+    },
+    {
+      model: 'gender',
+      name: 'Gender',
+      select: true,
+      options: ['male', 'female'],
+      order: 4
+    },
+    {
+      model: 'age',
+      name: 'Age',
+      select: true,
+      options: ageOptions.ages,
+      order: 5
+    }
+  ],
+  defaultQuestions: [
+    {
+      order: 0,
+      name: 'Interest',
+      question: "e.g. Are you interested in taking part in a future online discussion group, about (brand/product/service)?\nIt'll be easy and fun, chatting with others and making a difference.\nIf Yes, we'll need your Contact Details, so we can keep in touch.\nPlease also see our Privacy Policy below.\nYou must be aged 18 or over to participate.",
+      hardcodedName: true,
+      answers: [
+        { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0, tag: 'InterestYesTag' },
+        { name: 'No', order: 1 }
+      ],
+      link: { name: 'Privace Policy', url: '/privacy_policy' },
+      input: true,
+      required: true,
+      minAnswers: 2,
+      maxAnswers: 2
+    },
+    {
+      order: 1,
+      name: 'Contact Details',
+      question: 'If you answered Yes, please complete your Contact Details. All information is confidential and will not be shared with other parties.',
+      hardcodedName: true,
+      hardcodedQuestion: true,
+      required: true,
+      contact: true,
+      minAnswers: 0,
+      maxAnswers: 0,
+      handleTag: 'InterestYesTag'
+    },
+    {
+      order: 2,
+      name: 'First Choice',
+      hardcodedName: true,
+      question: 'e.g. Which ONE of these is your FIRST choice for (product/service type)?',
+      answers: [
+        { name: 'Brand Name', order: 0 },
+        { name: 'Brand Name', order: 1 },
+        { name: 'Brand Name', order: 2 },
+        { name: "Don't Know", order: 3 }
+      ],
+      input: true,
+      minAnswers: 2,
+      maxAnswers: 5
+    },
+  ],
+  tableOfContents: [
+    {
+      questions: true,
+      interval: [0, 3]
+    },
+    {
+      footer: true
+    }
+  ]
+}

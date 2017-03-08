@@ -9,6 +9,10 @@
       canAddObservers: { method: 'GET', params: { path: 'canAddObservers' } },
     });
 
+    var sessionBuilderPublishApi = $resource('/sessionBuilder/:id/publish', null, {
+      publish: { method: 'post', params: { id: '@id' } },
+    });
+
     var sessionMemberApi = $resource('/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } },
@@ -28,6 +32,7 @@
     Services.rateSessionMember = rateSessionMember;
     Services.saveComment = saveComment;
     Services.getSessionMembers = getSessionMembers;
+    Services.publish = publish;
 
     return Services;
 
@@ -70,9 +75,9 @@
     function canAddObservers() {
       var deferred = $q.defer();
 
-      dbg.log2('#brandColourServices > canAddObservers > make rest call');
+      dbg.log2('#sessionBuilderControllerServices > canAddObservers > make rest call');
       sessionBuilderApi.canAddObservers({}, function(res) {
-        dbg.log2('#brandColourServices > canAddObservers > rest call responds');
+        dbg.log2('#sessionBuilderControllerServices > canAddObservers > rest call responds');
 
         deferred.resolve(res);
       });
@@ -95,8 +100,7 @@
     function getExpireDays(endDate) {
       var today = moment(new Date());
       var expDay = moment(endDate);
-      var diff = expDay.diff(today, 'days');
-
+      var diff = Math.ceil(expDay.diff(today, 'days', true));
       if(diff <= 5 && diff > 0) {
         return "Session will expire in " + diff + " day(s)";
       }else if(diff == 0){
@@ -169,6 +173,18 @@
       }
 
       return newArray;
+    }
+
+    function publish(id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#sessionBuilderControllerServices > publish > make rest call');
+      sessionBuilderPublishApi.publish({id: id}, function(res) {
+        dbg.log2('#sessionBuilderControllerServices > publish > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
     }
 
   }

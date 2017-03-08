@@ -20,7 +20,9 @@
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-      certainStep: {method: 'POST', params: {path: 'step'} }
+      certainStep: {method: 'POST', params: {path: 'step'} },
+      addSurvey: {method: 'POST', params: {path: 'addSurvey'} },
+      setSurveyEnabled: {method: 'POST', params: {path: 'setSurveyEnabled'} },
     });
 
     var mailRestApi = {
@@ -58,6 +60,9 @@
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
     SessionModel.prototype.activateSession = activateSession;
+    SessionModel.prototype.addSurveyToSession = addSurveyToSession;
+    SessionModel.prototype.setSurveyEnabled = setSurveyEnabled;
+
 
     return SessionModel;
 
@@ -317,6 +322,31 @@
 
       return deferred.promise;
     }
+
+    function addSurveyToSession(surveyId) {
+      var deferred = $q.defer();
+      sessionBuilderRestApi.addSurvey({id: this.id}, {surveyId: surveyId}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+    }
+
+    function setSurveyEnabled(surveyId, enabled) {
+      var deferred = $q.defer();
+      sessionBuilderRestApi.setSurveyEnabled({id: this.id}, {surveyId: surveyId, active: enabled}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+    }
+
 
     function saveTopics(topicsArray) {
       var deferred = $q.defer();

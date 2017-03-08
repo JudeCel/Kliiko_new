@@ -29,7 +29,8 @@ const VALID_ATTRIBUTES = {
     'closedAt',
     'description',
     'thanks',
-    'SurveyQuestions'
+    'SurveyQuestions',
+    'surveyType'
   ],
   survey: [
     'id',
@@ -41,7 +42,8 @@ const VALID_ATTRIBUTES = {
     'closed',
     'confirmedAt',
     'closedAt',
-    'url'
+    'url',
+    'surveyType'
   ],
   question: [
     'id',
@@ -65,20 +67,15 @@ function simpleParams(data, message) {
 };
 
 // Exports
-function findAllSurveys(account) {
+function findAllSurveys(account, params) {
   let deferred = q.defer();
 
   Survey.findAll({
-    where: { accountId: account.id },
+    where: { accountId: account.id, surveyType: params.surveyType },
     attributes: VALID_ATTRIBUTES.survey,
     order: [
-      ['id', 'asc'],
-      [SurveyQuestion, 'order', 'ASC']
-    ],
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question,
-    }]
+      ['id', 'asc']
+    ]
   }).then(function(surveys) {
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
@@ -92,7 +89,6 @@ function findAllSurveys(account) {
 
 function findSurvey(params, skipValidations) {
   let deferred = q.defer();
-
   Survey.find({
     where: { id: params.id },
     attributes: VALID_ATTRIBUTES.survey,
@@ -208,11 +204,11 @@ function tryFindContactList(survey, t) {
    return new Bluebird((resolve, reject) => {
 
     ContactList.find({
-      where: {accountId: survey.accountId, 
+      where: {accountId: survey.accountId,
         $or: [{id: survey.contactListId}, {name: survey.name}]},
         transaction: t}
       ).then((contactList) => {
-        resolve(contactList); 
+        resolve(contactList);
     }, (error) => {
       reject(error);
     });
@@ -256,7 +252,6 @@ function getContactListFields(questions) {
 
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
-
   validators.hasValidSubscription(account.id).then(function() {
       let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
       validParams.accountId = account.id;
@@ -275,7 +270,6 @@ function createSurveyWithQuestions(params, account) {
                 return survey;
               }
             }, (error) => {
-
               throw error;
             });
           });
@@ -581,7 +575,7 @@ function getSurveyStats(id, account) {
   return new Bluebird(function (resolve, reject) {
     canExportSurveyStats(account).then(function() {
       getSurveyData(id, account.id).then(function(survey) {
-        let stats = createStats(survey); 
+        let stats = createStats(survey);
         resolve(simpleParams(stats));
       }, function(error) {
         reject(error);
@@ -613,11 +607,11 @@ function canExportSurveyData(account) {
   return deferred.promise;
 }
 
-function constantsSurvey() {
+function constantsSurvey(surveyType) {
   let deferred = q.defer();
-
-  if(surveyConstants) {
-    deferred.resolve(simpleParams(surveyConstants));
+  let surveyData = surveyConstants.getSurveyConstants(surveyType)
+  if(surveyData) {
+    deferred.resolve(simpleParams(surveyData));
   }
   else {
     deferred.reject(MessagesUtil.survey.noConstants);
@@ -756,7 +750,7 @@ function createStats(survey) {
     },
     questions: { }
   };
-  
+
   survey.SurveyQuestions.forEach(function(surveyQuestion) {
     populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
 
@@ -787,7 +781,7 @@ function createStats(survey) {
 
     });
   });
-  
+
   calculateStatsPercents(res.questions, res.survey.answers);
   return res;
 }

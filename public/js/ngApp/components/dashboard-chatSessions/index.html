@@ -88,7 +88,7 @@
             </td>
             <td class='text-right table-item-buttons dashboardActions'>
 
-              <span class="fa fa-bar-chart" ng-if='true' ng-click='csc.showStats(session)'></span>
+              <span class="fa fa-bar-chart" ng-if='session.SessionType.properties.features.survay.enabled' ng-click='csc.showStats(session)'></span>
               <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.openCopySessionDialog(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
               <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session, app.accountUser.id)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
               <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
