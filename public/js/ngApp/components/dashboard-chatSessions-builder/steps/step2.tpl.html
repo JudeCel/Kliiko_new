@@ -58,6 +58,7 @@
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+
               <toggle-switch
                 ng-model="topic.sessionTopic.active"
                 ng-change="step2Controller.changeActiveState(topic)"
@@ -99,4 +100,24 @@
       <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)' ng-if='!step2Controller.session.publicUid'>Publish</button>
     </div>
   </section>
+
+  <div class='modal fade' id='topicCantShow' role='dialog'>
+    <div class='modal-dialog'>
+      <div class='modal-content border-green border-radius-none'>
+        <div class='modal-body'>
+          <h3>
+            You have reached your Topic limit.<br />
+            To Show this Topic, please Hide one,<br />
+            or Upgrade your Plan.
+          </h3>
+        </div>
+
+        <div class='modal-footer'>
+          <div type='submit' class='pull-right btn-standart btn-green btn-small text-center' ng-click="step2Controller.closeModal()">
+            OK
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

@@ -154,6 +154,7 @@ router.delete('/sessionBuilder/:id/removeInvite/:inviteId', PERMISSIONS.facilita
 router.post('/sessionBuilder/:id/sendGenericEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendGenericEmail);
 router.post('/sessionBuilder/:id/sendCloseEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendCloseEmail);
 router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sessionMailTemplateStatus);
+router.get('/sessionBuilder/:id/canChangeTopicActive', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.canChangeTopicActive);
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
 router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addSurveyToSession);

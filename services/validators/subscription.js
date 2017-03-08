@@ -46,9 +46,9 @@ const DEPENDENCIES = {
   },
   topic: {
     key: 'topicCount',
-    model: models.Topic,
-    params: function(accountId) {
-      return { where: { accountId: accountId, default: false } };
+    model: models.SessionTopics,
+    params: function(accountId, sessionId) {
+      return { where: { sessionId, active: true }, include:[{ model: models.Topic, where: { default: false } }] };
     },
     countMessage: countMessage
   },
@@ -60,6 +60,7 @@ module.exports = {
   validate: validate,
   planAllowsToDoIt: planAllowsToDoIt,
   canAddAccountUsers: canAddAccountUsers,
+  getTopicCount: getTopicCount,
   countMessage: countMessage,
   countRecruiterMessage: countRecruiterMessage
 };
@@ -143,6 +144,26 @@ function planAllowsToDoIt(accountId, keys) {
         resolve();
       }
     }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function getTopicCount(accountId, params) {
+  return new bluebird((resolve, reject) => {
+    let subscription, dependency = DEPENDENCIES.topic;
+    subscriptionValidator.validate(accountId).then((account) => {
+      subscription = account.Subscription;
+      if(subscription) {
+        return models.SessionTopics.count(dependency.params(accountId, params.sessionId));
+      }
+      else {
+        reject(MessagesUtil.validators.subscription.notFound);
+      }
+    }).then((count) => {
+      const limit = subscription.SubscriptionPreference.data[dependency.key];
+      resolve({ count, limit });
+    }).catch((error) => {
       reject(error);
     });
   });
