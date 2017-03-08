@@ -52,7 +52,7 @@ describe('SERVICE - ContactListUser', () => {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'senior_monthly' },
+            subscription: { id: params.id, plan_id: 'senior_monthly', current_term_end: new Date() },
             customer: { id: params.id }
           });
         }

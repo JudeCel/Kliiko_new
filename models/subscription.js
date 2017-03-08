@@ -16,7 +16,8 @@ module.exports = (Sequelize, DataTypes) => {
         isUnique: validations.unique(Sequelize, 'Subscription', 'subscriptionId')
       }
     },
-    active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true }
+    active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
+    endDate: { type: DataTypes.DATE, allowNull: true }
   }, {
     timestamps: true,
     paranoid: true,

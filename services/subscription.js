@@ -42,7 +42,8 @@ module.exports = {
   retrievCheckoutAndUpdateSub: retrievCheckoutAndUpdateSub,
   getChargebeeSubscription: getChargebeeSubscription,
   postQuote: postQuote,
-  createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin
+  createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin,
+  getSubscriptionEndDate: getSubscriptionEndDate
 }
 
 function postQuote(params) {
@@ -277,17 +278,15 @@ function createSubscription(accountId, userId, provider, plan) {
 
   // TODO need refacture!!!
   findSubscription(accountId).then(function(subscription) {
-    if(subscription) {
+    if (subscription) {
       deferred.reject(MessagesUtil.subscription.alreadyExists);
-    }
-    else {
+    } else {
       return AccountUser.find({ where: { AccountId: accountId, UserId: userId } });
     }
   }).then(function(accountUser) {
-    if(accountUser) {
+    if (accountUser) {
       return chargebeeSubCreate(chargebeeSubParams(accountUser, plan), provider);
-    }
-    else {
+    } else {
       deferred.reject(MessagesUtil.subscription.notFound.accountUser);
     }
   }).then(function(chargebeeSub) {
@@ -296,28 +295,28 @@ function createSubscription(accountId, userId, provider, plan) {
         chargebeePlanId: chargebeeSub.subscription.plan_id
       }
     }).then(function(plan) {
-      if(plan){
-          let transactionPool = models.sequelize.transactionPool;
-          let tiket = transactionPool.getTiket();
-          let deferredTransactionPool = q.defer();
+      if (plan) {
+        let transactionPool = models.sequelize.transactionPool;
+        let tiket = transactionPool.getTiket();
+        let deferredTransactionPool = q.defer();
 
-          transactionPool.once(tiket, () => {
-            models.sequelize.transaction(function (t) {
-              return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-                return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.chargebeePlanId]}, {transaction: t}).then(function() {
-                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                  deferredTransactionPool.resolve(subscription);
-                }, function(error) {
-                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                  // TODO Take a look!!!
-                  throw error;
-                });
+        transactionPool.once(tiket, () => {
+          models.sequelize.transaction(function (t) {
+            return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
+              return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.chargebeePlanId]}, {transaction: t}).then(function() {
+                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                deferredTransactionPool.resolve(subscription);
+              }, function(error) {
+                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                // TODO Take a look!!!
+                throw error;
               });
-            }).catch(function(error) {
-              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-              deferredTransactionPool.reject(error);
             });
+          }).catch(function(error) {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferredTransactionPool.reject(error);
           });
+        });
 
         transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
             throw("Server Timeoute");
@@ -326,7 +325,7 @@ function createSubscription(accountId, userId, provider, plan) {
         transactionPool.emit(transactionPool.CONSTANTS.nextTick);
         return deferredTransactionPool.promise;
 
-      }else{
+      } else {
         deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
@@ -443,7 +442,7 @@ function updateSubscription(params, providers) {
       accountHasValidCeditCard(result.subscription.subscriptionId, providers.creditCard).then(function(creditCardStatus){
         if(params.skipCardCheck || validCard(creditCardStatus)){
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
-            updateSubscriptionData(chargebeePassParams(result)).then(function(result_1) {
+            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription)).then(function(result_1) {
               deferred.resolve(result_1);
             }, function(error) {
               deferred.reject(error);
@@ -480,15 +479,20 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
   let deferred = q.defer();
 
   chargebee.hosted_page.retrieve(hostedPageId).request(function(error, result){
-    if(error){
+    if (error) {
       deferred.reject(error);
-    }else{
-      let passThruContent = JSON.parse(result.hosted_page.pass_thru_content)
-      updateSubscriptionData(passThruContent).then(function(result) {
-        deferred.resolve({message: MessagesUtil.subscription.successPlanUpdate});
+    } else {
+      let passThruContent = JSON.parse(result.hosted_page.pass_thru_content);
+      getChargebeeSubscription(passThruContent.subscriptionId).then(function(subscription) {
+        passThruContent.endDate = getSubscriptionEndDate(subscription);
+        updateSubscriptionData(passThruContent).then(function(result) {
+          deferred.resolve({message: MessagesUtil.subscription.successPlanUpdate});
+        }, function(error) {
+          deferred.reject(filters.errors(error));
+        });
       }, function(error) {
         deferred.reject(filters.errors(error));
-      })
+      });
     }
   });
 
@@ -498,7 +502,7 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
-    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true}).then(function(updatedSub) {
+    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true, endDate: passThruContent.endDate }).then(function(updatedSub) {
 
       let params = _.cloneDeep(PLAN_CONSTANTS[passThruContent.planId]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
@@ -667,7 +671,8 @@ function subscriptionParams(accountId, chargebeeSub, subscriptionPlanId) {
     planId: chargebeeSub.subscription.plan_id,
     subscriptionId: chargebeeSub.subscription.id,
     customerId: chargebeeSub.customer.id,
-    subscriptionPlanId: subscriptionPlanId
+    subscriptionPlanId: subscriptionPlanId,
+    endDate: getSubscriptionEndDate(chargebeeSub.subscription)
   }
 }
 
@@ -678,7 +683,7 @@ function chargebeePortalParams(subscription, callbackUrl) {
   }
 }
 
-function chargebeePassParams(result) {
+function chargebeePassParams(result, subscription) {
   return {
     id: result.subscription.id,
     subscriptionId: result.subscription.subscriptionId,
@@ -687,8 +692,13 @@ function chargebeePassParams(result) {
     paidSmsCount: result.subscription.SubscriptionPreference.data.paidSmsCount,
     planSmsCount: result.subscription.SubscriptionPreference.data.planSmsCount,
     oldPriority: result.subscription.SubscriptionPlan.priority,
-    accountName: result.accountName
+    accountName: result.accountName,
+    endDate: getSubscriptionEndDate(subscription)
   }
+}
+
+function getSubscriptionEndDate(subscription) {
+  return subscription ? new Date((subscription.current_term_end || subscription.trial_end) * 1000) : null;
 }
 
 function chargebeeSubParams(accountUser, plan) {
