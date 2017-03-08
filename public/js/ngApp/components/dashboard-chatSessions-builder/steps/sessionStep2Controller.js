@@ -34,7 +34,7 @@
     vm.onDragStart = onDragStart;
     vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
     vm.getTopicStockClass = getTopicStockClass;
-    vm.getSessionTopicName = getSessionTopicName;
+    vm.isCopy = isCopy;
     vm.surveyList = [];
     vm.surveyEditors = [];
     vm.attachedSurveysToSession = {};
@@ -154,11 +154,9 @@
       return false;
     }
 
-    function getSessionTopicName(topic){
-       if(topic.parentTopicId){
-        return ("Copy of " + topic.sessionTopic.name)
-      }else{
-        return (topic.sessionTopic.name)
+    function isCopy(topic){
+      if(topic.parentTopicId){
+        return "Copy of ";
       }
     }
 
