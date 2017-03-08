@@ -1,8 +1,4 @@
 <div class='col-md-12 fixed-bottom-margin' id='GalleryController' ng-controller='GalleryController as gc'>
-  <div>
-    <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
-  </div>
-  {{ upload = surveyListController.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
   <div class='dashboard-container'>
     <div class="survey-mode-header">
       <div class='col-md-offset-3 col-md-6'>
@@ -14,6 +10,8 @@
     </div>
 
     <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(surveyListController.currentSurveyId, surveyListController.surveySettings)'>
+      <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
+      {{ upload = sc.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
       <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
     </div>
   </div>  <!-- new here-->
