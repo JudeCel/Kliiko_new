@@ -2,7 +2,7 @@ var constants = require('../../util/constants');
 var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
-  surveyService.findAllSurveys(req.currentResources.account).then(
+  surveyService.findAllSurveys(req.currentResources.account, req.query).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -23,7 +23,7 @@ function getSurveyStats(req, res, next) {
 }
 
 function find(req, res, next) {
-  surveyService.findSurvey(req.query).then(
+  surveyService.findSurvey(req.query, req.query.skipValidations).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
@@ -79,7 +79,7 @@ function confirm(req, res, next) {
 };
 
 function getConstants(req, res, next) {
-  surveyService.constantsSurvey().then(
+  surveyService.constantsSurvey(req.query.surveyType).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
