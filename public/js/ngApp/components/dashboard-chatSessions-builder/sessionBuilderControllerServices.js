@@ -95,8 +95,7 @@
     function getExpireDays(endDate) {
       var today = moment(new Date());
       var expDay = moment(endDate);
-      var diff = expDay.diff(today, 'days');
-
+      var diff = Math.ceil(expDay.diff(today, 'days', true));
       if(diff <= 5 && diff > 0) {
         return "Session will expire in " + diff + " day(s)";
       }else if(diff == 0){
