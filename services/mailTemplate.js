@@ -332,12 +332,12 @@ function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getS
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
 }
 
-function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback) {
+function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback, isAdmin) {
   let templateQuery = {};
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback, isAdmin);
 }
 
-function prepareCategoryQuery(baseTemplateQuery) {
+function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
   if (!baseTemplateQuery) {
     baseTemplateQuery = {};
   }
@@ -345,14 +345,15 @@ function prepareCategoryQuery(baseTemplateQuery) {
   if (!baseTemplateQuery.category) {
     baseTemplateQuery.category = {};
   }
-  baseTemplateQuery.category.$not = 'confirmation';
+
+  baseTemplateQuery.category.$not = isAdmin ? 'confirmation' : ['confirmation', 'accountManagerConfirmation'];
   return baseTemplateQuery;
 }
 
-function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
+function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback, isAdmin) {
   let query = templateQuery || {};
 
-  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery);
+  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
   if(accountId && !getSystemMail){
