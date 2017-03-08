@@ -129,7 +129,7 @@ function updateSessionTopic(params) {
       }
 
     } else {
-      deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
+      deferred.reject(MessagesUtil.topics.error.notFound);
     }
   }, function(error) {
     deferred.reject(filters.errors(error));
