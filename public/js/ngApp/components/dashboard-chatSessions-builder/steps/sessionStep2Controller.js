@@ -35,6 +35,63 @@
     vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
     vm.getTopicStockClass = getTopicStockClass;
     vm.getSessionTopicName = getSessionTopicName;
+    vm.surveyList = [];
+    vm.surveyEditors = [];
+    vm.attachedSurveysToSession = {};
+
+    function surveyWithType(surveyType) {
+      var survey;
+      if (vm.session.steps.step2.surveys && vm.session.steps.step2.surveys.length) {
+        survey = vm.session.steps.step2.surveys.find( function(survey) {
+          return survey.surveyType == surveyType;
+        });
+      }
+      return survey;
+    }
+
+    function initContactListSurvey() {
+      var survey = surveyWithType('sessionContactList');
+      var surveySection = surveyBasicSectionData();
+      surveySection.surveyType = 'sessionContactList';
+      surveySection.active = survey && survey.active;
+      surveySection.title = "Contact List Questions";
+      if (survey) {
+        surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
+      }
+      return surveySection;
+    }
+
+    function initPrizeDrawSurvey() {
+      var survey = surveyWithType('sessionPrizeDraw');
+      var surveySection = surveyBasicSectionData();
+      surveySection.surveyType = 'sessionPrizeDraw';
+      surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
+      surveySection.canDisable = true;
+      surveySection.active = survey && survey.active;
+
+      if (survey) {
+        surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
+      }
+      return surveySection;
+    }
+
+    function surveyBasicSectionData() {
+      return {
+        defaultSurveyName: vm.session.steps.step1.name,
+        onSaved: vm.onSurveySaved,
+        showSaveButton: false,
+        showPublishButton: false,
+        showPreviewButton: false
+      }
+    }
+
+    function initSurveys() {
+      var listSurvey = initContactListSurvey();
+      var prizeSurvey = initPrizeDrawSurvey();
+      vm.surveyList = [listSurvey, prizeSurvey];
+    }
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
@@ -47,6 +104,15 @@
         addSessionTopic(topic);
       });
       vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
+      initSurveys();
+    }
+
+    vm.onSurveySaved = function(surveyId) {
+      if (!vm.attachedSurveysToSession[surveyId]) {
+        vm.session.addSurveyToSession(surveyId).then(function(result) {
+          vm.attachedSurveysToSession[surveyId] = true;
+        });
+      }
     }
 
     function addSessionTopic(topic) {
@@ -258,6 +324,34 @@
 
     function getTopicStockClass(topic) {
       return 'topic-list-item topic-' + (topic.stock || topic.default ? 'stock' : 'not-stock');
+    }
+
+    vm.addEditorController = function(sc) {
+      vm.surveyEditors.push(sc);
+    }
+
+    vm.saveSurveys = function(autoSave, publish) {
+      vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
+        vm.surveyEditors[1].saveSurvey(autoSave, publish);
+      }).catch(function(e) {
+        messenger.error(e);
+      });
+    }
+
+    vm.blockSurvey = function(survey) {
+      var active = !survey.active;
+      vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
+        survey.active = active;
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
+      sessionEditor.initGallery(galeryController);
+      sessionEditor.initAutoSave(galeryController);
+      sessionEditor.init(survey.id, survey);
+      vm.addEditorController(sessionEditor);
     }
   }
 

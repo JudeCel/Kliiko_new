@@ -24,6 +24,7 @@ var whiteboardService = require('./whiteboard');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
 var helpers = require('./../mailers/helpers');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
+var sessionSurvey = require('./sessionSurvey');
 
 var async = require('async');
 var _ = require('lodash');
@@ -110,7 +111,7 @@ function addDefaultTopicVideo(session) {
 function createNewSessionDefaultItems(session, userId) {
   return new Bluebird((resolve, reject) => {
     sessionMemberService.findOrCreate(userId, session.id).then((sessionMember) => {
-      addDefaultTopic(session, sessionMember).then((sessionMember) => {
+      addDefaultTopic(session, sessionMember).then(() => {
         resolve();
       }, (error) => {
         resolve();
@@ -135,7 +136,6 @@ function initializeBuilder(params) {
       manageSessionParticipants: false,
       inviteSessionObservers: false
     };
-
     Session.create(params).then(function(session) {
       createNewSessionDefaultItems(session, params.userId).then(function() {
         sessionBuilderObject(session).then(function(result) {
@@ -237,8 +237,8 @@ function update(sessionId, accountId, params) {
         }, function(error) {
           reject(error);
         });
-      } else {		
-        resolve({ validation: validationRes });		
+      } else {
+        resolve({ validation: validationRes });
       }
     }, function(error) {
       reject(filters.errors(error));
@@ -1093,7 +1093,30 @@ function step2Queries(session, step) {
         cb(filters.errors(error));
       });
     }
-  ];
+  , function(cb) {
+    let sessionSurveyEnabled = sessionSurveysAvailable(session);
+    if (sessionSurveyEnabled) {
+      sessionSurvey.sessionSurveys(session.id).then(function(result) {
+        step.surveys = result;
+        step.sessionSurveyEnabled = sessionSurveyEnabled;
+        cb();
+      }, function(e) {
+        filters.errors(e)
+      });
+    } else {
+      step.surveys = [];
+      step.sessionSurveyEnabled = sessionSurveyEnabled;
+      cb();
+    }
+  }];
+}
+
+function sessionSurveysAvailable(session) {
+  let sessionFeatures = sessionTypesConstants[session.type];
+  if (sessionFeatures) {
+    return sessionFeatures.features.survay.enabled;
+  }
+  return false;
 }
 
 function step3Query(sessionId) {
