@@ -25,7 +25,8 @@
     "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js",
     "addMailTemplate": "node ./tasks/addMailTemplate.js",
     "updateSessionTypes": "node ./tasks/updateSessionTypes.js",
-    "prepareLoadTest": "node ./tasks/prepareLoadTest.js"
+    "prepareLoadTest": "node ./tasks/prepareLoadTest.js",
+    "updateSubscriptions": "node ./tasks/updateSubscriptions.js"
   },
   "engineStrict": true,
   "engine": {
