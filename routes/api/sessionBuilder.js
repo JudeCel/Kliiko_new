@@ -209,3 +209,33 @@ function removeTopic(req, res, next) {
     res.send({ error: error });
   });
 }
+
+function addSurveyToSession(req, res, next) {
+  let surveyId = req.body.surveyId;
+  let sessionId = req.params.id;
+  sessionSurvey.addSurveyToSession(sessionId, surveyId).then(function(result) {
+    res.send({success:true});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function setSurveyEnabled(req, res, next) {
+  let surveyId = req.body.surveyId;
+  let sessionId = req.params.id;
+  let active = req.body.active;
+  sessionSurvey.setSurveyEnabled(sessionId, surveyId, active).then(function(result) {
+    res.send({success:true});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function publish(req, res, next) {
+  let accountId = req.currentResources.account.id;
+  sessionBuilderServices.publish(req.params.id, accountId).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  })
+}

@@ -259,15 +259,11 @@ function create(params, isAdmin) {
     params.stock = false;
   }
 
-  // validators.subscription(params.accountId, 'topic', 1).then(function() {
-    Topic.create(params).then(function(topic) {
-      deferred.resolve(topic);
-    },function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  // },function(error) {
-    // deferred.reject(error);
-  // });
+  Topic.create(params).then(function(topic) {
+    deferred.resolve(topic);
+  },function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
