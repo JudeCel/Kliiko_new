@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm', 'domServices'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm, domServices) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -26,6 +26,7 @@
     vm.init = init;
     vm.canDragElement = canDragElement;
     vm.selectAllTopics = selectAllTopics;
+    vm.closeModal = closeModal;
     vm.removeTopicFromList = removeTopicFromList;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
@@ -112,15 +113,25 @@
     }
 
     function changeActiveState(topic) {
-      if (topic.default && !topic.sessionTopic.active && topic.sessionTopic.landing) {
-        for(var i=0; i<vm.sessionTopicsArray.length; i++) {
-          if (vm.sessionTopicsArray[i].sessionTopic.active) {
-            changeLandingState(vm.sessionTopicsArray[i]);
-            return;
+      topic.sessionTopic.active = !topic.sessionTopic.active;
+      vm.session.canChangeTopicActive(!topic.sessionTopic.active).then(function(res) {
+        if (topic.default && !topic.sessionTopic.active && topic.sessionTopic.landing) {
+          for(var i=0; i<vm.sessionTopicsArray.length; i++) {
+            if (vm.sessionTopicsArray[i].sessionTopic.active) {
+              changeLandingState(vm.sessionTopicsArray[i]);
+              return;
+            }
           }
         }
-      }
-      saveTopics(vm.sessionTopicsArray);
+        topic.sessionTopic.active = !topic.sessionTopic.active;
+        saveTopics(vm.sessionTopicsArray);
+      }, function() {
+        domServices.modal('topicCantShow');
+      });
+    }
+
+    function closeModal() {
+      domServices.modal('topicCantShow', true);
     }
 
     function changeLandingState(topic) {
@@ -187,7 +198,6 @@
         if (result.ignored) {
           init(vm.topicController);
         } else {
-          console.error(result);
           orderByFilter(result.data, "id").map(function(topic) {
             addSessionTopic(topic);
           });

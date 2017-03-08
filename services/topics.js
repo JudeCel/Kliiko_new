@@ -22,6 +22,7 @@ module.exports = {
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
+  canChangeTopicActive: canChangeTopicActive,
   messages: MessagesUtil.topics,
   createDefaultForAccount: createDefaultForAccount
 };
@@ -86,40 +87,38 @@ function updateSessionTopics(sessionId, topicsArray) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
     joinToSession(ids, sessionId, topicsArray).then(function(result) {
-      validators.getTopicCount(result.session.accountId, { sessionId }).then((c) => {
-        Bluebird.each(result.sessionTopics, (sessionTopic) => {
+      Bluebird.each(result.sessionTopics, (sessionTopic) => {
 
-          return new Bluebird(function (resolveInternal, rejectInternal) {
-            Bluebird.each(topicsArray, (topic) => {
-              if (topic.id == sessionTopic.topicId) {
-                let params = {
-                  order: topic.sessionTopic.order,
-                  active: c >= topic.sessionTopic.order || c === -1,
-                  landing: topic.sessionTopic.landing,
-                  name: topic.sessionTopic.name,
-                  boardMessage: topic.sessionTopic.boardMessage,
-                  sign: topic.sessionTopic.sign,
-                  lastSign: topic.sessionTopic.lastSign,
-                }
-
-                return sessionTopic.update(params).then(() =>{
-                  topic.SessionTopics = [sessionTopic];
-                  returning.push(topic);
-                });
+        return new Bluebird(function (resolveInternal, rejectInternal) {
+          Bluebird.each(topicsArray, (topic) => {
+            if (topic.id == sessionTopic.topicId) {
+              let params = {
+                order: topic.sessionTopic.order,
+                active: topic.sessionTopic.active,
+                landing: topic.sessionTopic.landing,
+                name: topic.sessionTopic.name,
+                boardMessage: topic.sessionTopic.boardMessage,
+                sign: topic.sessionTopic.sign,
+                lastSign: topic.sessionTopic.lastSign,
               }
 
-            }).then(function() {
-              resolveInternal();
-            }, function(error) {
-              rejectInternal(error);
-            });
-          });
+              return sessionTopic.update(params).then(() =>{
+                topic.SessionTopics = [sessionTopic];
+                returning.push(topic);
+              });
+            }
 
-        }).then(function() {
-          resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
-        }, function(error) {
-          reject(filters.errors(error));
+          }).then(function() {
+            resolveInternal();
+          }, function(error) {
+            rejectInternal(error);
+          });
         });
+
+      }).then(function() {
+        resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
+      }, function(error) {
+        reject(filters.errors(error));
       });
     }, function(error) {
       reject(filters.errors(error));
@@ -195,12 +194,38 @@ function removeAllFromSession(sessionId) {
   return deferred.promise;
 }
 
-function removeAllAndAddNew(sessionId, topics) {
+function canChangeTopicActive(accountId, sessionId) {
+  return validators.getTopicCount(accountId, { sessionId });
+}
+
+function removeAllAndAddNew(accountId, sessionId, topics) {
   let deferred = q.defer();
+  let data;
 
   updateSessionTopics(sessionId, topics).then(function(result) {
-    deferred.resolve(result);
-  }, function(error) {
+    data = result;
+    return canChangeTopicActive(accountId, sessionId);
+  }).then((validation) => {
+    if(validation.count > validation.limit && validation.limit !== -1) {
+      models.SessionTopics.findAll({ where: { sessionId }, limit: validation.count - validation.limit, order: '"updatedAt" DESC' }).then((result) => {
+        const ids = _.map(result, 'id');
+        return models.SessionTopics.update({ active: false }, { where: { id: ids } });
+      }).then(() => {
+        return models.Topic.findAll({
+          order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
+          include: [{
+            model: models.SessionTopics,
+            where: { sessionId }
+          }]
+        })
+      }).then((result) => {
+        deferred.resolve({ data: result });
+      });
+    }
+    else {
+      deferred.resolve(data);
+    }
+  }).catch((error) => {
     deferred.reject(error);
   });
 

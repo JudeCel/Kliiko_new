@@ -48,7 +48,7 @@ const DEPENDENCIES = {
     key: 'topicCount',
     model: models.SessionTopics,
     params: function(accountId, sessionId) {
-      return { where: { sessionId } };
+      return { where: { sessionId, active: true }, include:[{ model: models.Topic, where: { default: false } }] };
     },
     countMessage: countMessage
   },
@@ -155,11 +155,14 @@ function getTopicCount(accountId, params) {
     subscriptionValidator.validate(accountId).then((account) => {
       subscription = account.Subscription;
       if(subscription) {
-        resolve(subscription.SubscriptionPreference.data[dependency.key]);
+        return models.SessionTopics.count(dependency.params(accountId, params.sessionId));
       }
       else {
         reject(MessagesUtil.validators.subscription.notFound);
       }
+    }).then((count) => {
+      const limit = subscription.SubscriptionPreference.data[dependency.key];
+      resolve({ count, limit });
     }).catch((error) => {
       reject(error);
     });

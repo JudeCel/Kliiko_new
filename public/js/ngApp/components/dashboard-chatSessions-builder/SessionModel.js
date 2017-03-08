@@ -18,6 +18,7 @@
       sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
       setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
+      canChangeTopicActive: {method: 'GET',  params: {path: 'canChangeTopicActive'} },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
       certainStep: {method: 'POST', params: {path: 'step'} }
@@ -49,6 +50,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    SessionModel.prototype.canChangeTopicActive = canChangeTopicActive;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -330,6 +332,27 @@
       }, function(err) {
         deferred.reject(err);
       });
+
+      return deferred.promise;
+    }
+
+    function canChangeTopicActive(active) {
+      var self = this;
+      var deferred = $q.defer();
+
+      if(active) {
+        sessionBuilderRestApi.canChangeTopicActive({id: self.id}, {}, function(res) {
+          if(res.can) {
+            deferred.resolve();
+          }
+          else {
+            deferred.reject();
+          }
+        });
+      }
+      else {
+        deferred.resolve();
+      }
 
       return deferred.promise;
     }
