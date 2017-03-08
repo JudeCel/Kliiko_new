@@ -1113,7 +1113,10 @@ function step2Queries(session, step) {
 
 function sessionSurveysAvailable(session) {
   let sessionFeatures = sessionTypesConstants[session.type];
-  return sessionFeatures.features.survay.enabled;
+  if (sessionFeatures) {
+    return sessionFeatures.features.survay.enabled;
+  }
+  return false;
 }
 
 function step3Query(sessionId) {
