@@ -731,7 +731,7 @@ describe('SERVICE - Subscription', function() {
           } catch (e) {
             done(e)
           }
-          subscriptionServices.recurringSubscription(subId, 'someEventId').then(function(result) {
+          subscriptionServices.recurringSubscription(subId, 'someEventId', null, { current_term_end: new Date() }).then(function(result) {
             assert.equal(result.subscription.lastWebhookId, 'someEventId');
             return result.promise;
           }).then(function(result) {
@@ -754,7 +754,7 @@ describe('SERVICE - Subscription', function() {
 
     describe('sad path', function() {
       it('should fail because cannot find subscription', function(done) {
-        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId').then(function() {
+        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId', null, { current_term_end: new Date() }).then(function() {
           done('Should not get here!');
         }, function(error) {
           try {

@@ -524,7 +524,7 @@ function updateSubscriptionData(passThruContent){
   return deferred.promise;
 }
 
-function cancelSubscription(subscriptionId, eventId, provider) {
+function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
     disableSubDependencies(subscription.accountId).then(function() {
@@ -543,11 +543,12 @@ function cancelSubscription(subscriptionId, eventId, provider) {
   return deferred.promise;
 }
 
-function recurringSubscription(subscriptionId, eventId) {
+function recurringSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
 
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
-    subscription.update({ lastWebhookId: eventId }, { returning: true }).then(function(subscription) {
+
+    subscription.update({ lastWebhookId: eventId, endDate: getSubscriptionEndDate(chargebeeSub) }, { returning: true }).then(function(subscription) {
       let promise = recurringSubDependencies(subscription);
       deferred.resolve({ subscription: subscription, promise: promise });
     }, function(error) {
