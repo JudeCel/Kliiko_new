@@ -332,10 +332,22 @@
 
     vm.saveSurveys = function(autoSave, publish) {
       vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
-        vm.surveyEditors[1].saveSurvey(autoSave, publish);
+        vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
+          if (publish) {
+            sessionBuilderControllerServices.publish(vm.session.id).then(function() {
+              openSessionsListAndHighlight();
+            });
+          } else if (!autoSave) {
+            openSessionsListAndHighlight();
+          }
+        });
       }).catch(function(e) {
         messenger.error(e);
       });
+    }
+
+    function openSessionsListAndHighlight() {
+      location.href = "#/chatSessions?highlight=" + vm.session.id;
     }
 
     vm.blockSurvey = function(survey) {

@@ -225,6 +225,7 @@ function setSurveyEnabled(req, res, next) {
 }
 
 function publish(req, res, next) {
+  console.log(">>>>>>>", req.params.id);
   let accountId = req.currentResources.account.id;
   sessionBuilderServices.publish(req.params.id, accountId).then(function(result) {
     res.send(result);

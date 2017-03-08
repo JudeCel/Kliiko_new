@@ -234,8 +234,8 @@
     }
 
     function initShouldShowStatusLabel(session) {
-      var typeFeatures = session.SessionType.properties.features;
-      if (typeFeatures.closeSessionToggle.enabled && (!typeFeatures.publish.enabled || session.publicUid)) {
+      if (session.SessionType && session.SessionType.properties.features.closeSessionToggle.enabled && 
+          (!session.SessionType.properties.features.publish.enabled || session.publicUid)) {
         session.showStatusLabel = false;
         initIsOpen(session);
       } else {
