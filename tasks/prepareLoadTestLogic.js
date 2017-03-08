@@ -102,6 +102,7 @@ function getUserParams(index) {
     lastName: name,
     password: USERS_PASSWORD,
     gender: 'male',
+    signInCount: 3,
     email: getUserEmail(index),
     confirmedAt: new Date()
   };
