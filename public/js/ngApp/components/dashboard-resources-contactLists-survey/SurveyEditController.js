@@ -46,7 +46,7 @@
     vm.displayPreviewButton = true;
 
     vm.customSurveyTemplate = function(object) {
-      let template;
+      var template;
       if (vm.surveySettings.userTemplates) {
         template = vm.surveySettings.userTemplates[object.tag];
       }
