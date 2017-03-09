@@ -2,6 +2,7 @@
 
 var ejs = require('ejs');
 var fs = require('fs');
+var urlHeplers = require('./../services/urlHeplers');
 
 var helpers = exports;
 
@@ -10,20 +11,12 @@ helpers.mailFrom = function(){
 };
 
 helpers.getUrl = function(token, accountUserId, path){
-  let url = "http://" + process.env.SERVER_DOMAIN + returnPort() + path + token;
+  let url = urlHeplers.getBaseUrl() + path + token;
   if (accountUserId) {
     url += '/' + encodeURI(new Buffer(accountUserId.toString()).toString('base64'))
   }
   return url;
 };
-
-function returnPort() {
-  if(process.env.NODE_ENV == "production"){
-    return '';
-  }else{
-    return ":" + process.env.SERVER_PORT;
-  }
-}
 
 helpers.renderMailTemplate = function(filename, params, callback){
   let tplfile = __dirname + '/templates/' + filename + '.ejs';

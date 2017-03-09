@@ -103,13 +103,12 @@ function recalculateRole(accountUser, newRole, removeRole) {
     }
 
     setRemoveStatus(destinationRoll, removeRole, params);
-
     resolve(params);
   })
 }
 
 function setRemoveStatus(destinationRole, removeRole, params) {
-  params.isRemoved = !destinationRole && removeRole == 'admin';
+  return params.isRemoved = !destinationRole && removeRole == 'admin' || removeRole == 'accountManager';
 }
 
 function createAccountManager(object, callback) {
@@ -223,36 +222,49 @@ function updateWithUserId(data, userId, callback) {
 
     let accountUserPermitParams = _.pick(data, permitList)
     let userPermitParams = _.pick(data, ['email'])
-
-    models.sequelize.transaction().then(function(t) {
-      User.find({
-        where: {
-          id: userId
-        }
-      }).then(function (result) {
-        result.update(userPermitParams, {transaction: t}).then(function(updateResult) {
-          updateAccountUserWithId(accountUserPermitParams, userId, t, function(err, accountUserResult) {
-            if (err) {
-              t.rollback().then(function() {
-                callback(filters.errors(err));
-              });
-            } else {
-              t.commit().then(function() {
-                callback();
-              });
-            }
+    let transactionPool = models.sequelize.transactionPool;
+    let tiket = transactionPool.getTiket();
+    transactionPool.once(tiket, () => {
+      models.sequelize.transaction().then(function(t) {
+        User.find({
+          where: {
+            id: userId
+          }
+        }).then(function (result) {
+          result.update(userPermitParams, {transaction: t}).then(function(updateResult) {
+            updateAccountUserWithId(accountUserPermitParams, userId, t, function(err, accountUserResult) {
+              if (err) {
+                t.rollback().then(function() {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  callback(filters.errors(err));
+                });
+              } else {
+                t.commit().then(function() {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  callback();
+                });
+              }
+            });
+          }).catch(function(updateError) {
+            t.rollback().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(filters.errors(updateError));
+            });
           });
-        }).catch(function(updateError) {
+        }).catch(function (err) {
           t.rollback().then(function() {
-            callback(filters.errors(updateError));
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(err));
           });
         });
-      }).catch(function (err) {
-        t.rollback().then(function() {
-          callback(filters.errors(err));
-        });
-      });
+    });
+  })
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function findWithSessionMembers(userId, accountId) {

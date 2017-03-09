@@ -5,14 +5,14 @@ var Subscription = models.Subscription;
 
 var subscriptionValidators = require('./../../../services/validators/subscription');
 var subscriptionFixture = require('./../../fixtures/subscription');
-
+var testDatabase = require("../../database");
 var assert = require('chai').assert;
 
 describe('SERVICE - VALIDATORS - Subscription', function() {
   var testData;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       subscriptionFixture.createSubscription().then(function(result) {
         testData = result;
         done();

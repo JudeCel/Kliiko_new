@@ -6,11 +6,12 @@ var AccountUser = models.AccountUser;
 
 var accountService = require('./../../services/account');
 var userFixture = require('./../fixtures/user');
+var testDatabase = require("../database");
 var testData;
 
 describe('SERVICE - Account', function() {
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         done();

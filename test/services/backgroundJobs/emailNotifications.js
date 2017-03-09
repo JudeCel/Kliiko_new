@@ -1,5 +1,4 @@
 'use strict';
-
 var {Session, sequelize} = require('../../../models');
 var userService = require('../../../services/users');
 var backgroundJobsEmailNotifications = require('../../../services/backgroundJobs/emailNotifications');
@@ -7,6 +6,7 @@ var assert = require('chai').assert;
 var async = require('async');
 var messages = require('../../../util/messages');
 var sessionMemberService = require('../../../services/sessionMember');
+var testDatabase = require("../../database");
 
 
 describe('Background Jobs - Email Notifications', function() {
@@ -33,7 +33,7 @@ describe('Background Jobs - Email Notifications', function() {
   };
 
   beforeEach(function(done) {
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(userAttrs, (err, user) =>  {
         user.getOwnerAccount().then((accounts) =>  {
           accountUserId = accounts[0].AccountUser.id;

@@ -1,4 +1,5 @@
 'use strict';
+var constants = require('../util/constants');
 
 module.exports = (Sequelize, DataTypes) => {
   var Survey = Sequelize.define('Survey', {
@@ -12,7 +13,8 @@ module.exports = (Sequelize, DataTypes) => {
     closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     confirmedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
     closedAt: { type: DataTypes.DATE, allowNull: true, validate: { notEmpty: true } },
-    url: { type: DataTypes.STRING, allowNull: true }
+    url: { type: DataTypes.STRING, allowNull: true },
+    surveyType: { type: DataTypes.ENUM, values: Object.keys(constants.surveyTypes), allowNull: false, defaultValue: constants.surveyTypes.recruiter }
   }, {
     timestamps: true,
     classMethods: {

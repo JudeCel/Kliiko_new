@@ -3,7 +3,7 @@
 var models = require('./../../models');
 var SocialProfile = models.SocialProfile;
 var userServices = require('./../../services/users');
-
+var testDatabase = require("../database");
 var _ = require('lodash');
 var assert = require('chai').assert;
 
@@ -20,7 +20,7 @@ describe('SERVICE - SocialProfile', function() {
     }
 
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).done(function(error, result) {
+      testDatabase.prepareDatabaseForTests().done(function(error, result) {
         done();
       });
     });
@@ -53,7 +53,7 @@ describe('SERVICE - SocialProfile', function() {
 
     describe('sad path', function() {
       beforeEach(function(done) {
-        models.sequelize.sync({ force: true }).done(function(error, result) {
+        testDatabase.prepareDatabaseForTests().done(function(error, result) {
           userServices.create(validAttrs, function(errors, user) {
             done();
           });

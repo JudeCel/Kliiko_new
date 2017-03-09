@@ -6,11 +6,12 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var ContactListUser = models.ContactListUser;
-
+var testDatabase = require("../database");
 var surveyConstants = require('../../util/surveyConstants');
 var surveyServices = require('./../../services/survey');
 var subscriptionFixture = require('./../fixtures/subscription');
 var userFixture = require('./../fixtures/user');
+var constants = require('../../util/constants');
 
 var assert = require('chai').assert;
 var _ = require('lodash');
@@ -19,7 +20,7 @@ describe('SERVICE - Survey', function() {
   var testData;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
@@ -71,6 +72,7 @@ describe('SERVICE - Survey', function() {
       thanks: 'Survey thanks',
       accountId: testData.account.id,
       confirmedAt: new Date(),
+      type: constants.surveyTypes.recruiter,
       SurveyQuestions: [
         surveyQuestionParams(0),
         surveyQuestionParams(1)
@@ -246,7 +248,7 @@ describe('SERVICE - Survey', function() {
           });
         });
       });
-      
+
       it("delete survey keep contact list", (done) =>{
         let params = surveyParams();
         surveyServices.createSurveyWithQuestions(params, testData.account).then((result) => {
@@ -260,7 +262,7 @@ describe('SERVICE - Survey', function() {
                     done();
                   } else {
                   done("Contact List is misssing");
-                  } 
+                  }
                 })
               })
             } catch (e) {
@@ -381,7 +383,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#findAllSurveys', function() {
     it('should succeed on finding 0 surveys', function (done) {
-      surveyServices.findAllSurveys(testData.account).then(function(result) {
+      surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
         assert.deepEqual(result.data, []);
         done();
       }, function(error) {
@@ -395,7 +397,7 @@ describe('SERVICE - Survey', function() {
       surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
         let survey = result.data;
 
-        surveyServices.findAllSurveys(testData.account).then(function(result) {
+        surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
           assert.equal(result.data[0].id, survey.id);
           done();
         }, function(error) {
@@ -620,8 +622,8 @@ describe('SERVICE - Survey', function() {
                     done();
                   } else {
                   done("Contact List is misssing");
-                  } 
-                  
+                  }
+
                 } catch (error) {
                   done(error);
                 }
@@ -950,31 +952,31 @@ describe('SERVICE - Survey', function() {
 
           surveyServices.answerSurvey(answerParams).then(function(result) {
               surveyServices.getSurveyStats(survey.id, testData.account).then(function(result) {
-                let validResult = { 
-                  survey: { 
-                    name: params.name, 
-                    id: survey.id, 
-                    answers: 1 
+                let validResult = {
+                  survey: {
+                    name: params.name,
+                    id: survey.id,
+                    answers: 1
                   },
-                  questions: { 
-                    '1': { 
+                  questions: {
+                    '1': {
                       name: 'Some default name 0',
-                      answers: { 
-                        '0': { name: '0 answer 0', count: 1, percent: 100 }, 
-                        '1': { name: '1 answer 0', count: 0, percent: 0 }, 
-                        '2': { name: '2 answer 0', count: 0, percent: 0 }, 
-                        '3': { name: '3 answer 0', count: 0, percent: 0 } 
-                      } 
+                      answers: {
+                        '0': { name: '0 answer 0', count: 1, percent: 100 },
+                        '1': { name: '1 answer 0', count: 0, percent: 0 },
+                        '2': { name: '2 answer 0', count: 0, percent: 0 },
+                        '3': { name: '3 answer 0', count: 0, percent: 0 }
+                      }
                     },
-                    '2': { 
+                    '2': {
                       name: 'Some default name 1',
-                      answers: { 
-                        '0': { name: '0 answer 1', count: 1, percent: 100 }, 
-                        '1': { name: '1 answer 1', count: 0, percent: 0 }, 
-                        '2': { name: '2 answer 1', count: 0, percent: 0 }, 
+                      answers: {
+                        '0': { name: '0 answer 1', count: 1, percent: 100 },
+                        '1': { name: '1 answer 1', count: 0, percent: 0 },
+                        '2': { name: '2 answer 1', count: 0, percent: 0 },
                         '3': { name: '3 answer 1', count: 0, percent: 0 }
-                      } 
-                    } 
+                      }
+                    }
                   }
                 };
 
@@ -992,8 +994,8 @@ describe('SERVICE - Survey', function() {
   describe('#constantsSurvey', function() {
     describe('happy path', function() {
       it('should succeed returning default values', function (done) {
-        surveyServices.constantsSurvey().then(function(result) {
-          assert.deepEqual(result.data, surveyConstants);
+        surveyServices.constantsSurvey({type:'recruiter'}).then(function(result) {
+          assert.deepEqual(result.data, surveyConstants.getSurveyConstants('recruiter'));
           done();
         }, function(error) {
           done(error);

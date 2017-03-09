@@ -188,17 +188,21 @@
     }
 
     function goToStep(step) {
-      vm.listIgnoring = null;
-      var routerProgressbar = ngProgressFactory.createInstance();
-      routerProgressbar.start();
+      if (!vm.session.properties || vm.session.properties.steps[stepNames[step - 1]].enabled) {
+        vm.listIgnoring = null;
+        var routerProgressbar = ngProgressFactory.createInstance();
+        routerProgressbar.start();
 
-      vm.session.goCertainStep(step).then(function(result) {
-        handleStepSwitch(result, step);
-        routerProgressbar.complete();
-      }, function(error) {
-        routerProgressbar.complete();
-        messenger.error(error);
-      });
+        vm.session.goCertainStep(step).then(function(result) {
+          handleStepSwitch(result, step);
+          routerProgressbar.complete();
+        }, function(error) {
+          routerProgressbar.complete();
+          messenger.error(error);
+        });
+      } else {
+        $confirm({ text: vm.session.properties.steps.message, title: null, closeOnly: true, showAsError: false });
+      }
     }
 
     function finishSessionBuilder() {
@@ -399,13 +403,9 @@
 
     function mapToAccountUser(list){
       return list.map(function(i) {
-        return {
-          id: i.accountUserId,
-          firstName: i.firstName,
-          lastName: i.lastName,
-          email: i.email,
-          invite: null,
-        }
+        var copy = angular.copy(i);
+        copy.id = i.accountUserId;
+        return copy;
       })
     }
 
@@ -496,11 +496,15 @@
     }
 
     function activateSession() {
-      vm.session.activateSession().then(function(res) {
+      if (vm.session.sessionData.isInactive) {
+        vm.session.activateSession().then(function(res) {
+          finishSessionBuilder();
+        }, function(error) {
+          messenger.error(error);
+        });
+      } else {
         finishSessionBuilder();
-      }, function(error) {
-        messenger.error(error);
-      });
+      }
     }
 
   }

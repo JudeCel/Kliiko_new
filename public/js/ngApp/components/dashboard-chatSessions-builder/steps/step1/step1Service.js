@@ -66,6 +66,7 @@
     function updateContact(facilitatorData) {
       var deferred = $q.defer();
 
+      facilitatorData.sessionBuilder = true;
       contactListsUserApi.createOrUpdate.put({ id: facilitatorData.defaultFields.id }, facilitatorData, function(res) {
         if (res.error) {
           deferred.reject(res.error);

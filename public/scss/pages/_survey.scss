@@ -1,3 +1,10 @@
+.survey-question-section {
+  display: inline-block;
+  width: 100%;
+  font-size: 14px;
+  text-align: left;
+}
+
 .survey-container {
   min-height: 20px;
   padding: 10px;
@@ -57,4 +64,9 @@ hr.survey-hr {
     padding-top: 10px;
     padding-bottom: 0px;
   }
+}
+
+.survey-mode-header {
+  display: inline-block;
+  width: 100%;
 }

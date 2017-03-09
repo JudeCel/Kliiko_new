@@ -5,8 +5,9 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var mailFixture = require('./../fixtures/mailTemplates');
 var constants = require('../../util/constants');
+var sessionTypesConstants = require('../../util/sessionTypesConstants');
 var models = require('./../../models');
-
+var testDatabase = require("../database");
 var sessionBuilderServices = require('./../../services/sessionBuilder');
 var sessionMemberService = require('./../../services/sessionMember');
 var inviteService = require('./../../services/invite');
@@ -16,7 +17,7 @@ var _ = require('lodash');
 describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser, subscriptionId;
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testUser = result.user;
         testAccount = result.account;
@@ -91,7 +92,7 @@ describe('SERVICE - SessionBuilder', function() {
             assert.equal(result.sessionBuilder.steps.step1.name, '');
             assert.equal(result.sessionBuilder.steps.step1.facilitator, null);
             assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
-            assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
+            assert.isArray(result.sessionBuilder.steps.step2.topics);
             assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
             assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
             assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
@@ -100,9 +101,10 @@ describe('SERVICE - SessionBuilder', function() {
             assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
             assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
             assert.isObject(result.sessionBuilder.snapshot);
+            assert.isObject(result.sessionBuilder.properties);
 
             for (var i = 1; i <= 5; i++) {
-              assert.equal(result.sessionBuilder.steps['step' + i].isVisited, false);
+              assert.equal(result.sessionBuilder.steps['step' + i].isVisited, i == 1);
             }
             done();
           } catch (e) {
@@ -226,6 +228,20 @@ describe('SERVICE - SessionBuilder', function() {
           done(error);
         });
       });
+
+      it('should return rigth type properties', function(done) {
+        let params = accountParams();
+        sessionBuilderServices.initializeBuilder(params).then(function(result) {
+          sessionBuilderServices.findSession(result.sessionBuilder.id, testAccount.id).then(function(session) {
+            assert.deepEqual(result.sessionBuilder.properties, sessionTypesConstants[params.type]);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
     });
 
     describe('sad path', function(done) {
@@ -255,6 +271,28 @@ describe('SERVICE - SessionBuilder', function() {
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.steps.step1.name, params.name);
             done();
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
+  describe('#publish', function(done) {
+    describe('happy path', function(done) {
+      it('should generate publicUid', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(sessionBuilder) {
+          let params = sessionParams(sessionBuilder);
+          sessionBuilderServices.publish(params.id, params.accountId).then(function(result) {
+            assert.equal(result.id, params.id);
+            assert.isString(result.publicUid);
+            models.Session.find({ where: { id: params.id } }).then(function(session) {
+              assert.equal(session.publicUid, result.publicUid);
+              done();
+            }, function(error) {
+              done(error);
+            });
           }, function(error) {
             done(error);
           });
@@ -399,6 +437,7 @@ describe('SERVICE - SessionBuilder', function() {
       it('should send sms to numbers', function(done) {
         const smsParams = {
           message: 'random message',
+          sessionId: null,
           recievers: [{
             mobile: mobileNumber
           }, {
@@ -410,10 +449,11 @@ describe('SERVICE - SessionBuilder', function() {
           'data.sessionCount': 10,
           'data.planSmsCount': 1,
           'data.paidSmsCount': 1
-
         }
+
         models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
-          sessionBuilderServices.initializeBuilder(accountParams()).then(() => {
+          sessionBuilderServices.initializeBuilder(accountParams()).then((session) => {
+            smsParams.sessionId = session.sessionBuilder.id;
             sessionBuilderServices.sendSms(testAccount.id, smsParams, provider).then((result) => {
               models.SubscriptionPreference.find({ where: { subscriptionId: subscriptionId } }).then((sp) => {
                 try {
@@ -446,29 +486,35 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = {
             message: 'random message',
+            sessionId: null,
             recievers: [{
               mobile: 'nonNumberMobile'
             }]
           };
+
           const subscriptionPreferenceParams = {
             'data.sessionCount': 1,
             'data.planSmsCount': 10,
             'data.paidSmsCount': 10
-
           }
 
           let errorMessage = "The 'To' number nonNumberMobile is not a valid phone number.";
           let provider = errorProvider(errorMessage);
           models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
-            sessionBuilderServices.sendSms(testAccount.id, params, provider).then(function(result) {
-              done('Should not get here!');
+            sessionBuilderServices.initializeBuilder(accountParams()).then((session) => {
+              params.sessionId = session.sessionBuilder.id;
+              sessionBuilderServices.sendSms(testAccount.id, params, provider).then(function(result) {
+                done('Should not get here!');
+              }, function(error) {
+                try {
+                  assert.equal(error, errorMessage);
+                  done();
+                } catch (e) {
+                  done(e);
+                }
+              });
             }, function(error) {
-              try {
-                assert.equal(error, errorMessage);
-                done();
-              } catch (e) {
-                done(e);
-              }
+              done(error);
             });
           });
         });
@@ -556,21 +602,6 @@ describe('SERVICE - SessionBuilder', function() {
           });
         }, function(error) {
           done(error);
-        });
-      });
-    });
-
-    describe('sad path', function(done) {
-      it('should fail on #update', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-
-          sessionBuilderServices.update(params.id, params.accountId, { endTime: null }).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error.endTime, "End Time can't be empty");
-            done();
-          });
         });
       });
     });
@@ -679,7 +710,6 @@ describe('SERVICE - SessionBuilder', function() {
               done(error);
             });
           }, (error) => {
-            console.log(error);
             done(error);
           });
         });

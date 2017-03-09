@@ -56,7 +56,7 @@ function sendGeneric(params, callback) {
 
 //provide senders accountId in params, this will take latest template version for this account
 function sendFacilitatorEmailConfirmation(params, callback) {
-  sendEmail("facilitatorConfirmation", params, callback, false, true);
+  sendEmail("facilitatorConfirmation", params, callback, false, !params.removeTimeBlock);
 };
 
 //provide senders accountId in params, this will take latest template version for this account

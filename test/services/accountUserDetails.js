@@ -3,6 +3,7 @@ var assert = require("chai").assert;
 var models  = require('./../../models');
 var usersServices = require('./../../services/users');
 var AccountUserService  = require('./../../services/accountUser');
+var testDatabase = require("../database");
 
 describe('Account User Service', () => {
   var testUser = null;
@@ -20,7 +21,7 @@ describe('Account User Service', () => {
   }
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       usersServices.create(attrs, function(errors, user) {
         testUser = user;
         user.getOwnerAccount().then(function(accounts) {

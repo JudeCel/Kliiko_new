@@ -76,28 +76,41 @@ function createBaseMailTemplate(params, callback) {
 }
 
 function create(params, callback) {
-  models.sequelize.transaction().then(function(transaction) {
-    MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
-        transaction.commit().then(function() {
-          callback(null, result);
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.create(params, { transaction: transaction }).then(function(result) {
+        setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          });
         });
-      }, function(error) {
+      }).catch(function(error) {
         transaction.rollback().then(function() {
-          callback(filters.errors(error));
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          if (error.name == 'SequelizeUniqueConstraintError') {
+            callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+          } else {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          }
+          ;
         });
-      });
-    }).catch(function(error) {
-      transaction.rollback().then(function() {
-        if (error.name == 'SequelizeUniqueConstraintError') {
-          callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
-        } else {
-          callback(filters.errors(error));
-        }
-        ;
       });
     });
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function update(id, parameters, callback){
@@ -319,12 +332,12 @@ function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getS
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
 }
 
-function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback) {
+function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback, isAdmin) {
   let templateQuery = {};
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback, isAdmin);
 }
 
-function prepareCategoryQuery(baseTemplateQuery) {
+function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
   if (!baseTemplateQuery) {
     baseTemplateQuery = {};
   }
@@ -332,14 +345,15 @@ function prepareCategoryQuery(baseTemplateQuery) {
   if (!baseTemplateQuery.category) {
     baseTemplateQuery.category = {};
   }
-  baseTemplateQuery.category.$not = 'confirmation';
+
+  baseTemplateQuery.category.$not = isAdmin ? 'confirmation' : ['confirmation', 'accountManagerConfirmation'];
   return baseTemplateQuery;
 }
 
-function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
+function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback, isAdmin) {
   let query = templateQuery || {};
 
-  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery);
+  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
   if(accountId && !getSystemMail){
@@ -813,6 +827,9 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
+    if (params.removeTimeBlock) {
+      template.content = removeTimeBlock(template.content);
+    }
     template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
@@ -822,6 +839,20 @@ function composeMailFromTemplate(template, params) {
   } catch (error) {
     return {error: error};
   }
+}
+
+function removeTimeBlock(content) {
+  const blockStart = "<div class=timeInfoPanelTitle>";
+  const blockEnd = "<div class=timeInfoPanelEnd>";
+
+  let blockStartIndex = content.indexOf(blockStart);
+  if (blockStartIndex >= 0) {
+    let blockEndIndex = content.indexOf(blockEnd, blockStartIndex);
+    if (blockEndIndex >= 0) {
+      return content.substr(0, blockStartIndex) + content.substr(blockEndIndex + blockEnd.length);
+    }
+  }
+  return content;
 }
 
 function sendMailFromTemplate(id, params, callback) {

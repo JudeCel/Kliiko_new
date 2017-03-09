@@ -9,12 +9,13 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('SERVICE - AccountDatabase', () => {
   var testUser, testAccount, testAccountUser;
 
   beforeEach((done) => {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userFixture.createUserAndOwnerAccount().then((result) => {
         testUser = result.user;
         testAccount = result.account;
@@ -116,23 +117,31 @@ describe('SERVICE - AccountDatabase', () => {
         role: 'admin',
         password: "rrrrrrrrrrr"
       }
-      let id, params = {};
+      let id, userId, params = {};
 
       userFixture.createAdminUser(adminParams).then((adminUser) => {
         params = { email: adminUser.email, accountId: testAccount.id };
         return accountDatabaseService.addAdmin(params);
       }).then((adminAccoutUser) => {
         id = adminAccoutUser.id;
+        userId = adminAccoutUser.UserId;
         assert.equal(adminAccoutUser.role, 'admin');
 
         return accountDatabaseService.removeAdmin(params);
       }).then((account) => {
         assert.equal(account.dataValues.hasActiveAdmin, false);
-        account.AccountUsers.map((accountUser) => {
-          assert.equal(accountUser.active, accountUser.role !== 'admin');
-        });
 
-        done();
+        ContactListUser.find({where: {userId: userId, accountId: testAccount.id}}).then((contactListUser) => {
+          assert.isNull(contactListUser);
+          
+          account.AccountUsers.map((accountUser) => {
+            assert.equal(accountUser.active, accountUser.role !== 'admin');
+          });
+
+          done();
+        }, (error) => {
+          done(error);
+        });
       }).catch((error) => done(error));
     })
   });

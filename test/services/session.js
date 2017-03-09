@@ -9,6 +9,7 @@ var sessionServices = require('./../../services/session');
 var sessionFixture = require('./../fixtures/session');
 var subscriptionFixture = require('./../fixtures/subscription');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var testDatabase = require("../database");
 
 var assert = require('chai').assert;
 describe('SERVICE - Session', function() {
@@ -28,7 +29,7 @@ describe('SERVICE - Session', function() {
     var testData = {};
 
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(() => {
+      testDatabase.prepareDatabaseForTests().then(() => {
         sessionFixture.createChat({ participants: 2 }).then(function(result) {
           testData = result;
           testData.session = result.session
@@ -42,14 +43,6 @@ describe('SERVICE - Session', function() {
     function accountParams() {
       return { id: testData.account.id, roles: ['accountManager'] };
     };
-
-    function provider(params) {
-      return {
-        request: function(callback) {
-          callback(null, { subscription: {} });
-        }
-      }
-    }
 
     describe('#setAnonymous', function() {
       it('change to anonymous true', function (done) {
@@ -69,7 +62,7 @@ describe('SERVICE - Session', function() {
     describe('#findSession', function() {
       describe('happy path', function() {
         it('should succeed on finding session', function (done) {
-          sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
+          sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
             assert.equal(result.data.accountId, testData.account.id);
             done();
           }, function(error) {
@@ -80,7 +73,7 @@ describe('SERVICE - Session', function() {
 
       describe('sad path', function() {
         it('should fail on finding session', function (done) {
-          sessionServices.findSession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
+          sessionServices.findSession(testData.session.id + 100, testData.account.id).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, sessionServices.messages.notFound);
@@ -93,7 +86,7 @@ describe('SERVICE - Session', function() {
     describe('#findAllSessions', function() {
       describe('happy path', function() {
         it('should succeed on finding all sessions', function (done) {
-          sessionServices.findAllSessions(testData.user.id, testData.accountUser, testData.account, provider).then(function(result) {
+          sessionServices.findAllSessions(testData.user.id, testData.accountUser, testData.account).then(function(result) {
             try {
               assert.equal(result.data[0].accountId, testData.account.id);
               done();
@@ -107,13 +100,81 @@ describe('SERVICE - Session', function() {
       });
     });
 
+    describe('#checkSessionByPublicUid', function() {
+      it('should succeed', function (done) {
+        models.Session.update({publicUid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByPublicUid("test-uid").then(function(result) {
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should fail', function (done) {
+        sessionServices.checkSessionByPublicUid("fake-uid").then(function(result) {
+          done('Should not get here!');
+        }, function(error) {
+          assert.equal(error, sessionServices.messages.notFound);
+          done();
+        });
+      });
+
+      it('should fail because closed', function (done) {
+        models.Session.update({publicUid: "test-uid", type: "socialForum", status: "closed"}, { where: { id: testData.session.id } }).then(function() {
+          sessionServices.checkSessionByPublicUid("test-uid").then(function(result) {
+            done('Should not get here!');
+          }, function(error) {
+            assert.equal(error, sessionServices.messages.closed.replace("sessionName", testData.session.name));
+            done();
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+    });
+
+    describe('#setOpen)', function(done) {
+      describe('happy path', function(done) {
+        it('should open', function(done) {
+          sessionServices.setOpen(testData.session.id, true, testData.session.accountId).then(function(result) {
+            assert.deepEqual(result, { data: { status: "open", showStatus: "Pending" } });
+            models.Session.find({ where: { id: testData.session.id } }).then(function(session) {
+              assert.equal(session.status, "open");
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+
+        it('should close', function(done) {
+          sessionServices.setOpen(testData.session.id, false, testData.session.accountId).then(function(result) {
+            assert.deepEqual(result, { data: { status: "closed", showStatus: "Closed" } });
+            models.Session.find({ where: { id: testData.session.id } }).then(function(session) {
+              assert.equal(session.status, "closed");
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+
     describe('#removeSession', function() {
       describe('happy path', function() {
         it('should succeed on deleting session', function (done) {
           Session.count().then(function(c) {
             assert.equal(c, 1);
 
-            sessionServices.removeSession(testData.session.id, testData.account.id, provider).then(function(result) {
+            sessionServices.removeSession(testData.session.id, testData.account.id).then(function(result) {
               assert.equal(result.message, sessionServices.messages.removed);
 
               Session.count().then(function(c) {
@@ -138,7 +199,7 @@ describe('SERVICE - Session', function() {
               AccountUser.find({ where: { id: accountUserId} }).then(function(accountUser) {
               assert.equal(accountUser.role, 'participant');
 
-                sessionServices.removeSession(testData.session.id, testData.account.id, provider).then(function(result) {
+                sessionServices.removeSession(testData.session.id, testData.account.id).then(function(result) {
                   assert.equal(result.message, sessionServices.messages.removed);
 
                   AccountUser.find({ where: { id: accountUserId} }).then(function(accountUserRes) {
@@ -157,7 +218,7 @@ describe('SERVICE - Session', function() {
 
       describe('sad path', function() {
         it('should fail because not found', function (done) {
-          sessionServices.removeSession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
+          sessionServices.removeSession(testData.session.id + 100, testData.account.id).then(function(result) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error, sessionServices.messages.notFound);
@@ -174,7 +235,7 @@ describe('SERVICE - Session', function() {
             Session.count().then(function(c) {
               assert.equal(c, 1);
 
-              sessionServices.copySession(testData.session.id, testData.account.id, provider).then(function(result) {
+              sessionServices.copySession(testData.session.id, testData.account.id).then(function(result) {
                 assert.equal(result.message, sessionServices.messages.copied);
 
                 Session.count().then(function(c) {
@@ -194,7 +255,7 @@ describe('SERVICE - Session', function() {
       describe('sad path', function() {
         it('should fail because not found', function (done) {
           models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: testData.subscription.id } }).then(function(result) {
-            sessionServices.copySession(testData.session.id + 100, testData.account.id, provider).then(function(result) {
+            sessionServices.copySession(testData.session.id + 100, testData.account.id).then(function(result) {
               done('Should not get here!');
             }, function(error) {
               assert.equal(error, sessionServices.messages.notFound);
@@ -255,7 +316,7 @@ describe('SERVICE - Session', function() {
         });
 
         it('should fail because not found', function (done) {
-          sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
+          sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
             let params = { id: result.data.dataValues.facilitator.id + 100, rating: 4 };
             sessionServices.updateSessionMemberRating(params, testData.user.id, testData.account.id).then(function(result) {
               done('Should not get here!');
@@ -299,7 +360,7 @@ describe('SERVICE - Session', function() {
         });
 
         it('should fail because not found', function (done) {
-          sessionServices.findSession(testData.session.id, testData.account.id, provider).then(function(result) {
+          sessionServices.findSession(testData.session.id, testData.account.id).then(function(result) {
             sessionServices.changeComment(result.data.dataValues.facilitator.id + 100, "test", testData.account.id).then(function(result) {
               done('Should not get here!');
             }, function(error) {

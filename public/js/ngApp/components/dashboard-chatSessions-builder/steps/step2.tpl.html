@@ -29,12 +29,12 @@
 
           <div id="topics-list" multiple-dragging-zone="step2Controller.isDragInProgress" drag-all="step2Controller.allTopicsSelected">
             <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
-              <div class="check" ng-if="!topic.stock">
+              <div class="check" ng-if="!topic.stock && !topic.default">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
               </div>
-              <div class="check-empty" ng-if="topic.stock">&nbsp;</div>
-              {{ tc.topicName(topic) }}
+              <div class="check-empty" ng-if="topic.stock || topic.default">&nbsp;</div>
+              <span class="copy-of-stock">{{ tc.isCopy(topic) }}</span> {{ topic.name }}
               <span ng-if="topic.stock">(Stock)</span>
               <img ng-drag="false" class="pull-right ic" ng-click="tc.deleteTopic(topic.id)" ng-if="tc.canDelete(topic)" src="/icons/dashboardElement_remove.png" title="Delete">
               <img ng-drag="false" class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('edit', topic)">
@@ -53,11 +53,12 @@
             <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in step2Controller.sessionTopicsArray">
               <span>
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
-                {{ step2Controller.getSessionTopicName(topic) }}
+                <span class="copy-of-stock">{{ step2Controller.isCopy(topic) }}</span> {{ topic.sessionTopic.name }}
               </span>
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+
               <toggle-switch
                 ng-model="topic.sessionTopic.active"
                 ng-change="step2Controller.changeActiveState(topic)"
@@ -73,5 +74,50 @@
         <ng-include ng-init="topics = tc" src="'/js/ngApp/components/dashboard-resources-topics/topicsModals.html'"></ng-include>
       </div>
     </section>
+
+    <div ng-if="step2Controller.session.steps.step2.sessionSurveyEnabled" class="session-survey-section">
+      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList">
+        <uib-accordion-group is-open="survey.expanded" class="green-input session-type">
+          <uib-accordion-heading>
+            <div class="panel-label text-left">
+              {{survey.title}}
+              <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': survey.expanded, 'glyphicon-chevron-right': !survey.expanded}"></i>
+            </div>
+          </uib-accordion-heading>
+          <div ng-controller="GalleryController as gc">
+            <div ng-controller='SurveyEditController as sc' ng-init='step2Controller.initSurveyEditor(sc, gc, survey)'>
+              <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
+
+              <button ng-if="survey.canDisable && !survey.active" class='btn border-radius-none ng-binding btn-success pull-right' ng-click='step2Controller.blockSurvey(survey)'>Enable</button>
+              <button ng-if="survey.canDisable && survey.active" class='btn border-radius-none ng-binding btn-danger pull-right' ng-click='step2Controller.blockSurvey(survey)'>Disable</button>
+            </div>
+          </div>
+
+        </uib-accordion-group>
+
+      </uib-accordion>
+      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)'>Save</button>
+      <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)' ng-if='!step2Controller.session.publicUid'>Publish</button>
+    </div>
   </section>
+
+  <div class='modal fade' id='topicCantShow' role='dialog'>
+    <div class='modal-dialog'>
+      <div class='modal-content border-green border-radius-none'>
+        <div class='modal-body'>
+          <h3>
+            You have reached your Topic limit.<br />
+            To Show this Topic, please Hide one,<br />
+            or Upgrade your Plan.
+          </h3>
+        </div>
+
+        <div class='modal-footer'>
+          <div type='submit' class='pull-right btn-standart btn-green btn-small text-center' ng-click="step2Controller.closeModal()">
+            OK
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

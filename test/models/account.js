@@ -3,13 +3,14 @@ var assert = require('assert');
 var models  = require('./../../models');
 var constants = require('../../util/constants')
 var MessagesUtil = require('../../util/messages');
+var testDatabase = require("../database");
 var Account  = models.Account;
-var encryptedPasswordLength = 60
+var encryptedPasswordLength = 60;
 
 describe('Account', () => {
   describe('uniq account name',  ()=>  {
     beforeEach((done) => {
-      models.sequelize.sync({ force: true }).then(() => {
+      testDatabase.prepareDatabaseForTests().then(() => {
         done();
       });
     });

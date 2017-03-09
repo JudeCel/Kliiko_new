@@ -2,7 +2,7 @@
 
 var models = require('./../../models');
 var Subscription = models.Subscription;
-
+var testDatabase = require("../database");
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
@@ -18,7 +18,7 @@ describe('SERVICE - Subscription', function() {
   var currentSubPlanId;
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
+    testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
         return subscriptionFixture.createPlans();
@@ -37,7 +37,7 @@ describe('SERVICE - Subscription', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free_trial' },
+            subscription: { id: params.id, plan_id: 'free_trial', current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
@@ -135,7 +135,8 @@ describe('SERVICE - Subscription', function() {
           request: function(callback) {
             callback(null, {
               id: params.id,
-              plan_id: params.plan_id
+              plan_id: params.plan_id, 
+              current_term_end: new Date()
             });
           }
         }
@@ -329,7 +330,7 @@ describe('SERVICE - Subscription', function() {
                   assert.equal(result.subscription.planId, testData.lowerPlan.chargebeePlanId);
                   done();
                 }, function(error) {
-                  done("should not get here");
+                  done(error);
                 });
               }
             });
@@ -571,7 +572,8 @@ describe('SERVICE - Subscription', function() {
           request: function(callback) {
             callback(null, {
               id: params.id,
-              plan_id: params.plan_id
+              plan_id: params.plan_id, 
+              current_term_end: new Date()
             });
           }
         }
@@ -729,7 +731,7 @@ describe('SERVICE - Subscription', function() {
           } catch (e) {
             done(e)
           }
-          subscriptionServices.recurringSubscription(subId, 'someEventId').then(function(result) {
+          subscriptionServices.recurringSubscription(subId, 'someEventId', null, { current_term_end: new Date() }).then(function(result) {
             assert.equal(result.subscription.lastWebhookId, 'someEventId');
             return result.promise;
           }).then(function(result) {
@@ -752,7 +754,7 @@ describe('SERVICE - Subscription', function() {
 
     describe('sad path', function() {
       it('should fail because cannot find subscription', function(done) {
-        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId').then(function() {
+        subscriptionServices.recurringSubscription('someNonExistingId', 'someEventId', null, { current_term_end: new Date() }).then(function() {
           done('Should not get here!');
         }, function(error) {
           try {

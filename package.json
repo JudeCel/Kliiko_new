@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/server",
-    "start_pm2": "./node_modules/.bin/pm2 start ecosystem.config.js",
+    "start_pm2": "node ./pm2_main.js",
     "pm2_logs": "./node_modules/.bin/pm2 logs",
     "test": "./node_modules/.bin/mocha test",
     "gulp": "./node_modules/.bin/gulp",
@@ -23,7 +23,11 @@
     "updateContactLists": "node ./tasks/updateContactLists.js",
     "createDefaultTopics": "node ./tasks/createDefaultTopics.js",
     "updateSubscriptionPlans": "node ./tasks/updateSubscriptionPlans.js",
-    "addMailTemplate": "node ./tasks/addMailTemplate.js"
+    "addMailTemplate": "node ./tasks/addMailTemplate.js",
+    "updateSessionTypes": "node ./tasks/updateSessionTypes.js",
+    "prepareLoadTest": "node ./tasks/prepareLoadTest.js",
+    "updateSubscriptions": "node ./tasks/updateSubscriptions.js",
+    "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js"
   },
   "engineStrict": true,
   "engine": {
@@ -91,6 +95,8 @@
   },
   "dependencies": {
     "airbrake": "^1.2.0",
+    "angulartics": "^1.4.0",
+    "angulartics-mixpanel": "^0.1.3",
     "async": "^2.1.2",
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
@@ -103,6 +109,7 @@
     "debug": "^2.2.0",
     "dotenv-extended": "^1.0.4",
     "ejs": "^2.4.1",
+    "eventemitter2": "^3.0.1",
     "express": "^4.14.0",
     "express-jwt": "^5.1.0",
     "express-session": "^1.14.2",
@@ -129,14 +136,17 @@
     "pg": "^6.1",
     "pg-hstore": "^2.3.2",
     "phoenix": "^1.2.1",
-    "pm2": "^2.1.6",
+    "pm2": "^2.4.0",
     "q": "^1.4.1",
+    "recaptcha2": "^1.3.2",
     "sanitize-html": "^1.5.3",
     "sequelize": "^3.30.2",
     "sequelize-cli": "^2.5.1",
     "serve-favicon": "~2.3.0",
+    "systeminformation": "^3.17.0",
     "twilio": "^2.9.0",
     "winston": "^2.3.1",
+    "ws": "^2.1.0",
     "xlsx": "^0.8.0"
   }
 }

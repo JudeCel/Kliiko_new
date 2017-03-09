@@ -14,7 +14,7 @@
 
 <div ng-if='lastStepsController.prepareData(sbc).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true'>
     <div class="text-right filter-row" ng-if="!sbc.canSendCloseEmail()">
-      <a ng-repeat='(key, value) in lastStepsController.filterTypes' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
+      <a ng-repeat='(key, value) in lastStepsController.correctFilterOptions()' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
         <span ng-if="key == 'all'">
           {{ value }}({{ lastStepsController.stepMembers.length }})
         </span>
@@ -106,7 +106,7 @@
         Send Generic Email
         ({{ lastStepsController.findSelectedMembersGenericEmail().length }})
       </div>
-      <div ng-show="lastStepsController.canSendSMSOnThisPage()" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
+      <div ng-show="lastStepsController.canSendGroupSms" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
         Send SMS
         ({{ lastStepsController.findSelectedMembersSMS().length }})
       </div>

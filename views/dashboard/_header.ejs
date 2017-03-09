@@ -37,7 +37,7 @@
 
       <ul class='dropdown-menu dropdown-menu-right' aria-labelledby='headerDropdown'>
         <li class='text-right text-size-dashboard'>
-          <a ng-click='app.openModal("contactDetailsModal")'> Contact Details 
+          <a ng-click='app.openModal("contactDetailsModal")'> Contact Details
             <img class="my-details-container" src='/icons/contact_list_red.png' alt='' />
           </a>
         </li>
@@ -59,10 +59,11 @@
         <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canPaymentDetails')">
           <a href='/account-hub/paymentDetails' target="_blank">Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a>
         </li>
-        <li role="separator" class="divider" ng-if="app.hasPermissions('canSmsCredits')"></li>
-        <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canSmsCredits')">
+        <!-- NOTE: Right now we need to disable this, while Judy is deciding what we will do with SMS credit purchasing. -->
+        <!-- <li role="separator" class="divider" ng-if="app.hasPermissions('canSmsCredits')"></li> -->
+        <!-- <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canSmsCredits')">
           <a href="/account-hub#/smsCredits">Get SMS credits</a>
-        </li>
+        </li> -->
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>

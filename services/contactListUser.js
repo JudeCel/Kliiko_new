@@ -140,20 +140,31 @@ function assignErrorWithRowNr(errors, error, attrs) {
 function bulkCreate(list, accountId) {
   let errors = {required: false};
   let deferred = q.defer();
-
-  models.sequelize.transaction().then(function(t) {
-    async.map(list, transactionFun(t, accountId, errors), function(err, results) {
-      if (errors.required) {
-        t.rollback().then(function() {
-          deferred.reject(errors);
-        });
-      }else {
-        t.commit().then(function() {
-          deferred.resolve(results);
-        });
-      }
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(t) {
+      async.map(list, transactionFun(t, accountId, errors), function(err, results) {
+        if (errors.required) {
+          t.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.reject(errors);
+          });
+        }else {
+          t.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.resolve(results);
+          });
+        }
+      });
     });
   });
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    deferred.reject("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   return deferred.promise;
 }
@@ -300,7 +311,7 @@ function update(params) {
 
   validators.hasValidSubscription(params.accountId).then(function() {
     //params.id can be AccountUser Id or ContactListUser Id depends on input data from frontend - is it invited or not
-    let where = params.defaultFields.status ? {accountId: params.accountId, accountUserId: params.id} : {id: params.id};
+    let where = params.sessionBuilder ? {accountId: params.accountId, accountUserId: params.id} : {id: params.id};
     ContactListUser.find({where: where, include: [AccountUser, ContactList]}).then(function(contactListUser) {
       let customFields = _.merge(contactListUser.customFields,  params.customFields)
       contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
@@ -326,7 +337,7 @@ function comments(params) {
       include: [
         { model: AccountUser, include: [{ model: ContactListUser, where: {id: params.id, contactListId: params.contactListId} }] },
         { model: models.Session, attributes: ['name'] },
-      ], 
+      ],
       where: { $and: [{comment: {$ne: null}}, {comment: {$ne: ''}}] },
       attributes: ['comment']
     }).then(function(res) {

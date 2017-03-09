@@ -28,6 +28,8 @@
           </span>
         </div>
       </uib-accordion-heading>
+      <input type="radio" id="sessionBuilder-session-type-social-forum" name="type" value="socialForum" ng-model="step1Controller.type" ng-click="step1Controller.confirmType();">
+      <label for="sessionBuilder-session-type-social-forum">Social Forum</label>
       <input type="radio" id="sessionBuilder-session-type-focus" name="type" value="focus" ng-model="step1Controller.type" ng-click="step1Controller.confirmType();">
       <label for="sessionBuilder-session-type-focus">Focus</label>
       <input type="radio" id="sessionBuilder-session-type-forum" name="type" value="forum" ng-model="step1Controller.type" ng-click="step1Controller.confirmType();">
@@ -35,107 +37,124 @@
     </uib-accordion-group>
 
     <!-- Anonymous Name -->
-    <uib-accordion-group is-open="step1Controller.accordions.anonymous" class="green-input anonymous">
+    <uib-accordion-group is-open="step1Controller.accordions.anonymous" class="green-input anonymous" is-disabled="step1Controller.session.steps.step1.type && !step1Controller.session.properties.features.anonymous.enabled" >
       <uib-accordion-heading>
         <div class="panel-label">
           Anonymous Name
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.anonymous, 'glyphicon-chevron-right': !step1Controller.accordions.anonymous}"></i>
         </div>
       </uib-accordion-heading>
-      <input type="radio" id="sessionBuilder-session-anonymous" name="anonymous" value="true" ng-model="step1Controller.anonymous" ng-click="step1Controller.confirmAnonymous();">
-      <label for="sessionBuilder-session-anonymous"> Turn On Anonymous Name</label>
+
+      <div ng-if='!step1Controller.session.steps.step1.type'>
+        You need to enter Session Type before you can select Anonymous Name
+      </div>
+
+      <div ng-if='step1Controller.session.steps.step1.type'>
+        <input type="radio" id="sessionBuilder-session-anonymous" name="anonymous" value="true" ng-model="step1Controller.anonymous" ng-click="step1Controller.confirmAnonymous();">
+        <label for="sessionBuilder-session-anonymous"> Turn On Anonymous Name</label>
+      </div>
     </uib-accordion-group>
 
+
     <!-- Date And Time -->
-    <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input">
+    <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input" is-disabled="!step1Controller.session.steps.step1.canEditTime || step1Controller.session.steps.step1.type && !step1Controller.session.properties.features.dateAndTime.enabled" 
+        ng-click='step1Controller.showTimeBlockedMessage()'>
       <uib-accordion-heading>
         <div class="panel-label">
           Enter Date And Time
           <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.dateAndTime, 'glyphicon-chevron-right': !step1Controller.accordions.dateAndTime}"></i>
-          <span class="panel-value pull-right">{{ step1Controller.step1.startTime | date : step1Controller.format}} - {{ step1Controller.step1.endTime | date : step1Controller.format}}</span>
+          <span class="panel-value pull-right" ng-if="step1Controller.session.properties.features.dateAndTime.enabled">
+            {{ step1Controller.step1.startTime | date : step1Controller.format}} - {{ step1Controller.step1.endTime | date : step1Controller.format}}
+          </span>
         </div>
       </uib-accordion-heading>
 
-      <div class="data-time-content-wrapper" style="display: flex" data-property='dateAndTime'>
-        <span class='date-time-label start'>Start</span>
-        <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.startOpened = true' />
-
-        <input type='text' class='timepicker-wrapper date'
-          uib-datepicker-popup='{{step1Controller.format}}'
-          ng-model='step1Controller.step1.startTime'
-          ng-model-options='step1Controller.step1.ngModalOptions'
-          ng-change="step1Controller.updateStep('startTime')"
-          ng-click='step1Controller.startOpened = true'
-          is-open='step1Controller.startOpened'
-          datepicker-options='step1Controller.dateOption'
-          close-text='X'
-          datetimepicker-neutral-timezone
-        />
-
-        <img class='date-time-ico time' src='/icons/time_green.png' />
-        <uib-timepicker class='timepicker-wrapper'
-          ng-model='step1Controller.step1.startTime'
-          ng-model-options='step1Controller.step1.ngModalOptions'
-          ng-change="step1Controller.updateStep('startTime')"
-          hour-step='step1Controller.dateTime.hstep'
-          minute-step='step1Controller.dateTime.mstep'
-          show-meridian='true'
-          datetimepicker-neutral-timezone
-        >
-        </uib-timepicker>
+      <div ng-if='!step1Controller.session.steps.step1.type'>
+        You need to enter Session Type before you can select Date And Time
       </div>
 
-      <div class="data-time-content-wrapper" data-property='dateAndTime'>
-        <span class='date-time-label end'>End</span>
-        <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.endOpened = true' />
+      <div ng-if='step1Controller.session.properties.features.dateAndTime.enabled' data-property='dateAndTime'>
+        <div class="data-time-content-wrapper" style="display: flex">
+          <span class='date-time-label start'>Start</span>
+          <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.startOpened = true' />
 
-        <input type='text' class='timepicker-wrapper date'
-          uib-datepicker-popup='{{step1Controller.format}}'
-          ng-model='step1Controller.step1.endTime'
-          ng-model-options='step1Controller.step1.ngModalOptions'
-          ng-change="step1Controller.updateStep('endTime')"
-          ng-click='step1Controller.endOpened = true'
-          is-open='step1Controller.endOpened'
-          datepicker-options='step1Controller.dateOption'
-          close-text='X'
-          datetimepicker-neutral-timezone
-        />
+          <input type='text' class='timepicker-wrapper date'
+            uib-datepicker-popup='{{step1Controller.format}}'
+            ng-model='step1Controller.step1.startTime'
+            ng-model-options='step1Controller.step1.ngModalOptions'
+            ng-change="step1Controller.updateStep('startTime')"
+            ng-click='step1Controller.startOpened = true'
+            is-open='step1Controller.startOpened'
+            datepicker-options='step1Controller.dateOption'
+            close-text='X'
+            datetimepicker-neutral-timezone
+          />
 
-        <img class='date-time-ico time' src='/icons/time_green.png' />
-        <uib-timepicker class='timepicker-wrapper'
-          ng-model='step1Controller.step1.endTime'
-          ng-model-options='step1Controller.step1.ngModalOptions'
-          ng-change="step1Controller.updateStep('endTime')"
-          hour-step='step1Controller.dateTime.hstep'
-          minute-step='step1Controller.dateTime.mstep'
-          show-meridian='true'
-          datetimepicker-neutral-timezone
-        >
-        </uib-timepicker>
+          <img class='date-time-ico time' src='/icons/time_green.png' />
+          <uib-timepicker class='timepicker-wrapper'
+            ng-model='step1Controller.step1.startTime'
+            ng-model-options='step1Controller.step1.ngModalOptions'
+            ng-change="step1Controller.updateStep('startTime')"
+            hour-step='step1Controller.dateTime.hstep'
+            minute-step='step1Controller.dateTime.mstep'
+            show-meridian='true'
+            datetimepicker-neutral-timezone
+          >
+          </uib-timepicker>
+        </div>
+
+        <div class="data-time-content-wrapper">
+          <span class='date-time-label end'>End</span>
+          <img class='date-time-ico' src='/icons/calendar_green.png' ng-click='step1Controller.endOpened = true' />
+
+          <input type='text' class='timepicker-wrapper date'
+            uib-datepicker-popup='{{step1Controller.format}}'
+            ng-model='step1Controller.step1.endTime'
+            ng-model-options='step1Controller.step1.ngModalOptions'
+            ng-change="step1Controller.updateStep('endTime')"
+            ng-click='step1Controller.endOpened = true'
+            is-open='step1Controller.endOpened'
+            datepicker-options='step1Controller.dateOption'
+            close-text='X'
+            datetimepicker-neutral-timezone
+          />
+
+          <img class='date-time-ico time' src='/icons/time_green.png' />
+          <uib-timepicker class='timepicker-wrapper'
+            ng-model='step1Controller.step1.endTime'
+            ng-model-options='step1Controller.step1.ngModalOptions'
+            ng-change="step1Controller.updateStep('endTime')"
+            hour-step='step1Controller.dateTime.hstep'
+            minute-step='step1Controller.dateTime.mstep'
+            show-meridian='true'
+            datetimepicker-neutral-timezone
+          >
+          </uib-timepicker>
+        </div>
+
+        <div class='data-time-content-wrapper'>
+          <span class='date-time-label timeZone'>Time Zone</span>
+          <select class='form-control border-radius-none'
+            ng-controller='TimeZonePickerController as tzpc'
+            ng-model='step1Controller.step1.timeZone'
+            ng-init='tzpc.init(step1Controller.step1)'
+            ng-change="step1Controller.updateStep('timeZone')"
+          >
+
+            <option ng-repeat='object in tzpc.timeZoneList' value='{{ tzpc.optionValue(object.utc, step1Controller.step1.timeZone) }}'>
+              {{ object.text }}
+            </option>
+          </select>
+        </div>
+
+        <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
+          End Time should be greater then Start Time
+        </code>
+
+        <code ng-if='step1Controller.accordions.invalidFormat' class='calendar-error'>
+          Invalid date format
+        </code>
       </div>
-
-      <div class='data-time-content-wrapper' data-property='dateAndTime'>
-        <span class='date-time-label timeZone'>Time Zone</span>
-        <select class='form-control border-radius-none'
-          ng-controller='TimeZonePickerController as tzpc'
-          ng-model='step1Controller.step1.timeZone'
-          ng-init='tzpc.init(step1Controller.step1)'
-          ng-change="step1Controller.updateStep('timeZone')"
-        >
-
-          <option ng-repeat='object in tzpc.timeZoneList' value='{{ tzpc.optionValue(object.utc, step1Controller.step1.timeZone) }}'>
-            {{ object.text }}
-          </option>
-        </select>
-      </div>
-
-      <code ng-if="step1Controller.accordions.dateAndTimeError" class='calendar-error'>
-        End Time should be greater then Start Time
-      </code>
-
-      <code ng-if='step1Controller.accordions.invalidFormat' class='calendar-error'>
-        Invalid date format
-      </code>
     </uib-accordion-group>
 
     <!-- Hosts -->
@@ -273,7 +292,8 @@
 
         <section>
           <div ng-if="!step1Controller.type" class="small">Select type first</div>
-          <div ng-if="step1Controller.type" class='row' ng-controller='BrandColourController as bcc' ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId); bcc.setType(step1Controller.type)">
+          <div ng-if="step1Controller.session.properties.features.colorScheme.type" class='row' ng-controller='BrandColourController as bcc' 
+              ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId); bcc.setType(step1Controller.session.properties.features.colorScheme.type)">
             <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length" data-property='colorScheme'>
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
                 <div class='panel panel-default panel-success'>
@@ -298,6 +318,16 @@
             </div>
           </div>
         </section>
+    </uib-accordion-group>
+
+    <!-- Social Media Graphics -->
+    <uib-accordion-group is-open="step1Controller.accordions.socialMediaGraphics" class="green-input" ng-if="step1Controller.session.properties.features.socialMediaGraphics.enabled" is-disabled="true" ng-click="step1Controller.showSocialMediaGraphicsMessage()">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Social Media Graphics
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.socialMediaGraphics, 'glyphicon-chevron-right': !step1Controller.accordions.socialMediaGraphics}"></i>
+        </div>
+      </uib-accordion-heading>
     </uib-accordion-group>
   </uib-accordion>
 

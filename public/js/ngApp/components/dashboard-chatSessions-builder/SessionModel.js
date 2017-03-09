@@ -18,9 +18,12 @@
       sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
       setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
+      canChangeTopicActive: {method: 'GET',  params: {path: 'canChangeTopicActive'} },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-      certainStep: {method: 'POST', params: {path: 'step'} }
+      certainStep: {method: 'POST', params: {path: 'step'} },
+      addSurvey: {method: 'POST', params: {path: 'addSurvey'} },
+      setSurveyEnabled: {method: 'POST', params: {path: 'setSurveyEnabled'} },
     });
 
     var mailRestApi = {
@@ -49,6 +52,7 @@
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    SessionModel.prototype.canChangeTopicActive = canChangeTopicActive;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
@@ -58,6 +62,9 @@
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
     SessionModel.prototype.activateSession = activateSession;
+    SessionModel.prototype.addSurveyToSession = addSurveyToSession;
+    SessionModel.prototype.setSurveyEnabled = setSurveyEnabled;
+
 
     return SessionModel;
 
@@ -120,17 +127,11 @@
       return deferred.promise;
     }
 
-    function initializeDate() {
-      var date = new Date();
-      date.setHours(0, 0, 0, 0);
-      return date;
-    }
-
     function createNew() {
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{ date: initializeDate().toString(), timeZone: jstz.determine().name() },function(res) {
+      sessionBuilderRestApi.post({},{ timeZone: jstz.determine().name() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }
@@ -273,7 +274,7 @@
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message }, function(res) {
+      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message, sessionId: self.id }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         }
@@ -324,6 +325,31 @@
       return deferred.promise;
     }
 
+    function addSurveyToSession(surveyId) {
+      var deferred = $q.defer();
+      sessionBuilderRestApi.addSurvey({id: this.id}, {surveyId: surveyId}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+    }
+
+    function setSurveyEnabled(surveyId, enabled) {
+      var deferred = $q.defer();
+      sessionBuilderRestApi.setSurveyEnabled({id: this.id}, {surveyId: surveyId, active: enabled}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+    }
+
+
     function saveTopics(topicsArray) {
       var deferred = $q.defer();
 
@@ -336,6 +362,27 @@
       }, function(err) {
         deferred.reject(err);
       });
+
+      return deferred.promise;
+    }
+
+    function canChangeTopicActive(active) {
+      var self = this;
+      var deferred = $q.defer();
+
+      if(active) {
+        sessionBuilderRestApi.canChangeTopicActive({id: self.id}, {}, function(res) {
+          if(res.can) {
+            deferred.resolve();
+          }
+          else {
+            deferred.reject();
+          }
+        });
+      }
+      else {
+        deferred.resolve();
+      }
 
       return deferred.promise;
     }

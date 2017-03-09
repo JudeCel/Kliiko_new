@@ -10,7 +10,7 @@ var emailConfirmation = require('../../services/emailConfirmation');
 var passport = require('passport');
 var subdomains = require('../../lib/subdomains');
 var mailers = require('../../mailers');
-
+var ghostUserRoutes = require('./ghostUser');
 var middlewareFilters = require('../../middleware/filters');
 var socialProfileMiddleware = require('../../middleware/socialProfile');
 var userRoutes = require('./user.js');
@@ -24,15 +24,16 @@ var contactListUserRoutes = require('./contactListUser');
 var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
-
+var exec = require('child_process').exec;
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
+
 
 router.route('/ics').get(ics.render);
 
 router.use(function (req, res, next) {
   res.locals.appData = appData;
-    if (req.path == '/logout' || req.path.startsWith('/VerifyEmail/')) {
+    if (isPublicPath(req.path)) {
       return next();
     }
 
@@ -59,6 +60,10 @@ router.use(function (req, res, next) {
       }
     }
 });
+
+function isPublicPath(path) {
+  return path == '/logout' || path.startsWith('/VerifyEmail/') || path.startsWith('/session/');
+}
 
 function filterRoutes(path) {
   let array = _.map(router.stack, function(layer) {
@@ -88,6 +93,19 @@ function foundPaths(path, valid) {
 }
 /* GET root page. */
 
+router.get('/updatePackages', function(req, res, next) {
+  if(req.query.token !== 'securityToken123') return res.status(404).send({ error: "Invalid token" });
+
+  exec('yarn outdated --color', (error, stdout, stderr) =>{
+    if(error) {
+      res.status(404).send({ error: error });
+    }
+    else {
+      res.send({ status: 'ok', data: stdout });
+    }
+  });
+});
+
 router.get('/ping', function(req, res, next) {
   res.send({ status: 'ok' });
 });
@@ -103,26 +121,40 @@ router.get('/', function (req, res, next) {
   });
 });
 
+function randomNumberForAccountName(name) {
+  return _.uniqueId(name);
+}
 
 function prepareUrlParams(parameters, query) {
   parameters.selectedPlanOnRegistration = "";
   if (query) {
     if (query.name) {
       parameters.firstName = query.name;
+      query.showOptionalFields = false;
+      parameters.accountName = randomNumberForAccountName(query.name);
+      parameters.showOptionalFields = false;
     }
     if (query.email) {
       parameters.email = query.email;
+      parameters.showOptionalFields = false;
     }
 
     if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
+      parameters.showOptionalFields = false;
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {
         parameters.selectedPlanOnRegistration = "junior_monthly";
       }
     }
+    else if(query.selectedPlanOnRegistration) {
+      parameters.selectedPlanOnRegistration = query.selectedPlanOnRegistration;
+    }
+  }
 
+  if (typeof(parameters.showOptionalFields) != "boolean") {
+    parameters.showOptionalFields = (parameters.showOptionalFields == "true");
   }
 }
 
@@ -174,6 +206,8 @@ function replaceToString(value) {
 router.get('/welcome', function (req, res, next) {
   res.render('welcome', usersRepo.prepareParams(req));
 });
+
+router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
 
 let registrationState = JSON.stringify({type: 'registration'});
 router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'], state: registrationState }));
@@ -299,6 +333,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
       let params = usersRepo.prepareParams(req, error);
+      prepareUrlParams(params, req.query);
 
       if (renderInfo.failed == "registration") {
         params.facebookUrl = facebookUrl;
@@ -342,6 +377,7 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
+  prepareUrlParams(userParams, req.body);
   createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
 });
 

@@ -23,7 +23,6 @@ var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
-
 let sessionMember = require('./sessionMember');
 module.exports = router;
 
@@ -116,6 +115,7 @@ router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
 router.put('/topic/updateSessionTopic', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopic);
 router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);
+router.put('/topic/updateDefaultTopic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateDefaultTopic);
 router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteById);
 
 router.get('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.get);
@@ -131,7 +131,7 @@ router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings)
 router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
-
+router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 
 
 // Session Member
@@ -155,7 +155,10 @@ router.delete('/sessionBuilder/:id/removeInvite/:inviteId', PERMISSIONS.facilita
 router.post('/sessionBuilder/:id/sendGenericEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendGenericEmail);
 router.post('/sessionBuilder/:id/sendCloseEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendCloseEmail);
 router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sessionMailTemplateStatus);
+router.get('/sessionBuilder/:id/canChangeTopicActive', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.canChangeTopicActive);
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
-
+router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addSurveyToSession);
+router.post('/sessionBuilder/:id/setSurveyEnabled', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setSurveyEnabled);
+router.post('/sessionBuilder/:id/publish', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.publish);
 router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

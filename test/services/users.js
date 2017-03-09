@@ -5,6 +5,7 @@ var User  = models.User;
 var Account  = models.Account;
 var AccountUser  = models.AccountUser;
 var UserService  = require('./../../services/users');
+var testDatabase = require("../database");
 
 var validAttrs = {
   accountName: "DainisL",
@@ -18,7 +19,7 @@ var validAttrs = {
 describe('User Service', () => {
   describe('Create User',  () => {
     beforeEach((done) => {
-      models.sequelize.sync({force: true}).done((error, result) => {
+      testDatabase.prepareDatabaseForTests().done((error, result) => {
         done();
       });
     });

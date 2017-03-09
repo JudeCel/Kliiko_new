@@ -5,6 +5,7 @@ var usersServices  = require('./../../services/users');
 var resetPassword  = require('./../../services/resetPassword');
 var assert = require('assert');
 var bcrypt = require('bcrypt');
+var testDatabase = require("../database");
 
 describe('Reset Password', function() {
 
@@ -21,7 +22,7 @@ describe('Reset Password', function() {
       resetPasswordToken: testToken,
       resetPasswordSentAt: new Date(),
     }
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       User.build(attrs).save()
         .then(function(user) {
           done();
