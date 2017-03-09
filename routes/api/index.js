@@ -38,6 +38,7 @@ router.get('/myDashboard/data', myDashboard.getAllData);
 router.get('/user', userRoutes.userGet);
 router.post('/user', userRoutes.userPost);
 router.put('/user', userRoutes.changePassword);
+router.patch('/user', userRoutes.reloadPermissions);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
 router.post('/account', account.createNewAccount);

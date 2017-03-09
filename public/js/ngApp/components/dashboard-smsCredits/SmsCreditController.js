@@ -56,21 +56,29 @@
         }
       })
     }
-    function checkout (id, selectedQty) {
+    function checkout(id, selectedQty, permission) {
+      if(!selectedQty) {
+        return messenger.error('Quantity not selected');
+      }
+      if(!permission) {
+        return domServices.modal('smsCreditsModal');
+      }
+
+      var button = $('#purchase-submit');
       SmsCreditService.checkout().then(function(result){
         ChargeBee.bootStrapModal(result.hosted_page.url, result.hosted_page.site_name, "paymentModal").load({
-              onLoad: function() {
-                  $('#purchase-submit').attr("disabled", "disabled");
-              },
-              onSuccess: function(a, b) {
-                return purchaseCredits(id, selectedQty);
-              },
-              onCancel: function() {
-                  $(".alert-danger").show().text("Payment Aborted !!");
-                  $('#purchase-submit').removeAttr("disabled");
-              }
-            });
-       });
+          onLoad: function() {
+            button.attr('disabled', 'disabled');
+          },
+          onSuccess: function(a, b) {
+            return purchaseCredits(id, selectedQty);
+          },
+          onCancel: function() {
+            $(".alert-danger").show().text("Payment Aborted !!");
+            button.removeAttr('disabled');
+          }
+        });
+      });
     }
 
     function purchaseCredits(addonId, qty) {

@@ -31,7 +31,7 @@ const canSeeFreeTrialWarning = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager']))
 }
 const canSmsCredits = (account, accountUser, sub) => {
-    return(checkRoles(accountUser.role, ['accountManager']))
+    return(!!checkSub(account, accountUser, sub, 'planSmsCount'))
 }
 const canPaymentDetails = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager']))
@@ -47,7 +47,7 @@ const canUploadToGallery = (account, accountUser, sub) => {
 }
 
 
-const permissionsObject = { 
+const permissionsObject = {
     canAccountDatabase: canAccountDatabase,
     canAccountManagers: canAccountManagers,
     canUpgradePlan: canUpgradePlan,
@@ -63,7 +63,7 @@ const permissionsObject = {
     canSeeChatSessions: canSeeChatSessions,
     canUploadToGallery: canUploadToGallery,
     canAccountProfile: canAccountProfile
-} 
+}
 
 const Bluebird = require('bluebird');
 const forAccount = (account, accountUser, sub)  => {
