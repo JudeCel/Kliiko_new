@@ -56,6 +56,7 @@
     vm.openCommentModalWindow = openCommentModalWindow;
     vm.saveComment = saveComment;
     vm.showSpinner = showSpinner;
+    vm.correctFilterOptions = correctFilterOptions;
 
     vm.stepMembers = [];
     vm.emailSentFailedTooltip = "Sorry, failed to send your email. Please check for typos in the email address, or refer to this <a>Help Topic</a>";
@@ -131,6 +132,21 @@
 
       return deferred.promise;
     }
+
+    function correctFilterOptions() {
+      var filterOptions = vm.filterTypes;
+
+      if(vm.session.currentStep == 'manageSessionParticipants' && vm.session.steps.step1.type == 'forum') {
+        delete filterOptions['sessionFull']
+      }
+
+      if(vm.session.currentStep == 'inviteSessionObservers' && !('sessionFull' in filterOptions)) {
+        filterOptions['sessionFull'] = "Session Full";
+      }
+
+      return filterOptions;
+    }
+
     function faderHack() {
       setTimeout(function() {
         jQuery('.modal-backdrop.fade.in').hide();

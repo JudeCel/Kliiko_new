@@ -123,8 +123,10 @@ function getSubscriptionProvider(uid) {
   return function() {
     return {
       request: function(callback) {
+        let date = new Date();
+        date.setFullYear(date.getFullYear() + 1);
         callback(null, {
-          subscription: { id: uid, plan_id: USERS_PLAN },
+          subscription: { id: uid, plan_id: USERS_PLAN, current_term_end: date },
           customer: { id: uid }
         });
       },
