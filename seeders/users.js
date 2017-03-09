@@ -5,6 +5,7 @@ require('dotenv-extended').load({
 
 var UserService = require('./../services/users');
 var resourcesService = require('./../services/resources');
+var topicsService = require('./../services/topics');
 var Constants = require('./../util/constants');
 var async = require('async');
 
@@ -37,7 +38,17 @@ function createAdmin(callback) {
           account.update({ role: 'admin' });
           resourcesService.addDefaultTopicVideo(account, Constants.defaultTopic.video.focus, "Focus").then(function() {
             resourcesService.addDefaultTopicVideo(account, Constants.defaultTopic.video.forum, "Forum").then(function() {
-              callback(null);
+              let inviteAgainTopicParams = {
+                accountId: account.id,
+                name: "Invite Again",
+                stock: true,
+                inviteAgain: true
+              };
+              topicsService.create(inviteAgainTopicParams, true).then(function() {
+                callback(null);
+              }, function(error) {
+                callback(error);
+              });
             }, function(error) {
               callback(error);
             });

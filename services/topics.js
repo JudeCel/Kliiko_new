@@ -239,6 +239,8 @@ function destroy(id, isAdmin) {
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (topic.default) {
       deferred.reject(MessagesUtil.topics.error.default);
+    } else if (topic.stock && topic.inviteAgain) {
+      deferred.reject(MessagesUtil.topics.error.inviteAgain);
     } else if (topic.stock && !isAdmin) {
       deferred.reject(MessagesUtil.topics.error.stock);
     } else if (_.isEmpty(topic.Sessions)) {

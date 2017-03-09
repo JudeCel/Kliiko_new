@@ -221,7 +221,8 @@ module.exports = {
     error: {
       relatedSession: "This Topic is currently being used in a Session, and can't be deleted.",
       default: "Can't delete default topic",
-      stock: "Can't delete stock topic"
+      stock: "Can't delete stock topic",
+      inviteAgain: "Can't delete Invite Again stock topic"
     }
   },
   users: {

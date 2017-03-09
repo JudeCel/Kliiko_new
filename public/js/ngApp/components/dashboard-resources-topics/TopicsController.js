@@ -210,7 +210,7 @@
     }
 
     function canDelete(topic, isAdmin) {
-      return !topic.default && (!topic.stock || isAdmin);
+      return !topic.default && !(topic.inviteAgain && topic.stock) && (!topic.stock || isAdmin);
     }
 
     function deleteTopic(id) {
