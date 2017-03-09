@@ -1092,23 +1092,24 @@ function step2Queries(session, step) {
       }).catch(function(error) {
         cb(filters.errors(error));
       });
-    }
-  , function(cb) {
-    let sessionSurveyEnabled = sessionSurveysAvailable(session);
-    if (sessionSurveyEnabled) {
-      sessionSurvey.sessionSurveys(session.id).then(function(result) {
-        step.surveys = result;
+    }, 
+    function(cb) {
+      let sessionSurveyEnabled = sessionSurveysAvailable(session);
+      if (sessionSurveyEnabled) {
+        sessionSurvey.sessionSurveys(session.id).then(function(result) {
+          step.surveys = result;
+          step.sessionSurveyEnabled = sessionSurveyEnabled;
+          cb();
+        }, function(e) {
+          filters.errors(e)
+        });
+      } else {
+        step.surveys = [];
         step.sessionSurveyEnabled = sessionSurveyEnabled;
         cb();
-      }, function(e) {
-        filters.errors(e)
-      });
-    } else {
-      step.surveys = [];
-      step.sessionSurveyEnabled = sessionSurveyEnabled;
-      cb();
+      }
     }
-  }];
+  ];
 }
 
 function sessionSurveysAvailable(session) {

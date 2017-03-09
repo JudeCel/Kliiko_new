@@ -7,7 +7,7 @@
   topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource', 'changesValidation'];
   function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource, changesValidation) {
     var restApi = {
-      topics: $resource('/topics'),
+      topics: $resource('/topics/:sessionType', {sessionType: '@sessionType'}),
       topic: $resource('/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
       sessionTopic: $resource('/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
       sessionByInvite: $resource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
@@ -55,11 +55,11 @@
      * Get all topics list
      * @returns {* | Array }
      */
-    function getAllTopics() {
+    function getAllTopics(sessionType) {
       var deferred = $q.defer();
 
       dbg.log2('#topicsAndSessions > getAllTopics > call to API');
-      restApi.topics.get(success, error);
+      restApi.topics.get({sessionType: sessionType}, success, error);
 
       return deferred.promise;
 

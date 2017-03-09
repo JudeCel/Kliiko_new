@@ -6,6 +6,7 @@ var validators = require('./../services/validators/subscription');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var Topic = models.Topic;
 var _ = require('lodash');
 let Bluebird = require('bluebird')
@@ -27,17 +28,17 @@ module.exports = {
   createDefaultForAccount: createDefaultForAccount
 };
 
-function getAll(accountId) {
+function getAll(accountId, sessionType) {
   let deferred = q.defer();
+
+  let includeInviteAgainTopic = !sessionType || sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled;
+  let where = includeInviteAgainTopic ? 
+    { $or: [{ accountId: accountId }, { stock: true }] } : 
+    { $or: [{ accountId: accountId }, { stock: true }], inviteAgainTopic : false };
+
   Topic.findAll({
     order: '"name" ASC',
-    where: {
-      $or: [{
-        accountId: accountId
-      }, {
-        stock: true
-      }]
-    },
+    where: where,
     include: [{
       model: models.SessionTopics,
       include: [{
@@ -49,6 +50,7 @@ function getAll(accountId) {
   }, function(error) {
     deferred.reject(filters.errors(error));
   });
+
   return deferred.promise;
 }
 

@@ -51,7 +51,8 @@
     init();
 
     function init() {
-      topicsAndSessions.getAllTopics().then(
+      var sessionType = vm.session ? vm.session.type : null;
+      topicsAndSessions.getAllTopics(sessionType).then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
           vm.list = res.topics;
