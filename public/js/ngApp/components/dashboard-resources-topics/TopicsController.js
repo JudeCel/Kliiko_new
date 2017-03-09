@@ -159,18 +159,36 @@
     }
 
     function updateSessionTopic() {
-      topicsAndSessions.updateSessionTopic(vm.topicData, vm.session).then(function (res) {
-        if (res.ignored && vm.resetSessionTopics) {
-          vm.resetSessionTopics(vm);
-        } else {
-          angular.copy(vm.topicData, vm.originalReference);
-          messenger.ok(res.message);
+      vm.topicData.default = isDefaultTopic();
+
+      topicsAndSessions.updateSessionTopic(vm.topicData, vm.session).then(
+        seesionTopicUpdateSuccess, 
+        showErrorMessage);
+    }
+
+    function seesionTopicUpdateSuccess(res) {
+      if (res.ignored && vm.resetSessionTopics) {
+        vm.resetSessionTopics(vm);
+      } else {
+        angular.copy(vm.topicData, vm.originalReference);
+        messenger.ok(res.message);
+
+        if(vm.topicData.default) {
+          init();
         }
-        domServices.modal('topicModalWindow', 'close');
-        vm.topicData = {};
-      }, function(error) {
-        messenger.error(error)
-      });
+      }
+      domServices.modal('topicModalWindow', 'close');
+      vm.topicData = {};
+    }
+
+    function isDefaultTopic() {
+      for (var i = 0; i < vm.list.length; i++) {
+        if (vm.list[i].default && vm.list[i].id == vm.topicData.topicId) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
     function editTopic() {
@@ -178,19 +196,39 @@
         vm.topicData.sessionId = vm.session.id
       }
 
-      topicsAndSessions.updateTopic(vm.topicData).then(function(res) {
-        if (res.data.id == vm.topicData.id) {
-          vm.list[vm.editTopicIndex] = res.data;
-        } else {
-          vm.list.push(res.data);
+      topicsAndSessions.updateTopic(vm.topicData).then(updateTopicSuccess, showErrorMessage);      
+    }
+
+    function updateTopicSuccess(res) {
+      if (res.data.id == vm.topicData.id) {
+        vm.list[vm.editTopicIndex] = res.data;
+      } else {
+        vm.list.push(res.data);
+      }
+
+      updateSessionDefaultTopic();
+
+      vm.prepareCurrentPageItems();
+      messenger.ok(res.message);
+      domServices.modal('topicModalWindow', 'close');
+      vm.topicData = {};
+    }
+
+    function updateSessionDefaultTopic() {
+      if(vm.topicData.default && vm.session) {
+        for (var i = 0; i < vm.session.steps.step2.topics.length; i++) {
+          if(vm.session.steps.step2.topics[i].id == vm.topicData.id) {
+            vm.session.steps.step2.topics[i].sessionTopic.name = vm.topicData.name;
+            vm.session.steps.step2.topics[i].sessionTopic.boardMessage = vm.topicData.boardMessage;
+            vm.session.steps.step2.topics[i].sessionTopic.sign = vm.topicData.sign;
+            return;
+          }
         }
-        vm.prepareCurrentPageItems();
-        messenger.ok(res.message);
-        domServices.modal('topicModalWindow', 'close');
-        vm.topicData = {};
-      }, function(error) {
-        messenger.error(error);
-      });
+      }
+    }
+
+    function showErrorMessage(error) {
+      messenger.error(error);
     }
 
     function createTopic() {

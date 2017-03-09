@@ -12,7 +12,8 @@ module.exports = {
   post: post,
   deleteById: deleteById,
   updateById: updateById,
-  updateSessionTopic: updateSessionTopic
+  updateSessionTopic: updateSessionTopic,
+  updateDefaultTopic: updateDefaultTopic
 };
 
 function getAll(req, res, next) {
@@ -84,4 +85,30 @@ function updateById(req, res) {
     function(response) { res.send({success: true, data:response, message: MessagesUtil.routes.topic.updated })},
     function(error) { res.send({error:error})}
   );
+}
+
+function updateDefaultTopic(req, res) {
+  if (!req.params.id) {
+    res.send({error: '@id query param is missed'});
+    return
+  }
+
+  let params = req.body.topic;
+  params.accountId = req.currentResources.account.id;
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
+
+  topicsService.updateDefaultTopic(params, isAdmin).then(function(response) { 
+      if(params.sessionId) {
+        let sessionId = params.sessionId;
+        sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, params.accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
+          res.send({success: true, data:response, snapshot: snapshotResult, message: MessagesUtil.routes.topic.updated });
+        }, function(error) {
+          res.send({error:error});
+        });
+      } else {
+        res.send({success: true, data:response, message: MessagesUtil.routes.topic.updated });
+      }
+  }, function(error) { 
+    res.send({error:error});
+  });
 }

@@ -115,6 +115,7 @@ router.get('/topics/:sessionType?', PERMISSIONS.facilitatorManagerAdmin, topic.g
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
 router.put('/topic/updateSessionTopic', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopic);
 router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);
+router.put('/topic/updateDefaultTopic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateDefaultTopic);
 router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteById);
 
 router.get('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.get);
