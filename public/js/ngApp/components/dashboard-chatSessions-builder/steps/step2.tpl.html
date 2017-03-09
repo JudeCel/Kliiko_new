@@ -76,7 +76,7 @@
     </section>
 
     <div ng-if="step2Controller.session.steps.step2.sessionSurveyEnabled" class="session-survey-section">
-      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList">
+      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList" ng-if="step2Controller.inviteAgainTopicAdded()">
         <uib-accordion-group is-open="survey.expanded" class="green-input session-type">
           <uib-accordion-heading>
             <div class="panel-label text-left">
@@ -96,7 +96,7 @@
         </uib-accordion-group>
 
       </uib-accordion>
-      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)'>Save</button>
+      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)' ng-if="step2Controller.inviteAgainTopicAdded()">Save</button>
       <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)' ng-if='!step2Controller.session.publicUid'>Publish</button>
     </div>
   </section>

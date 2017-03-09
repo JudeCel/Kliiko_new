@@ -39,6 +39,7 @@
     vm.surveyList = [];
     vm.surveyEditors = [];
     vm.attachedSurveysToSession = {};
+    vm.inviteAgainTopicAdded = inviteAgainTopicAdded;
 
     function surveyWithType(surveyType) {
       var survey;
@@ -317,7 +318,20 @@
       }
     }
 
+    function inviteAgainTopicAdded() {
+      for (var index in vm.sessionTopicsArray) {
+        if (vm.sessionTopicsArray[index].inviteAgain) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     function addTopics(topic, list) {
+      if (topic.inviteAgain && inviteAgainTopicAdded()) {
+        return;
+      }
+
       if(!vm.sessionTopicsObject[topic.id]) {
         topic.sessionTopic = {
           order: vm.sessionTopicsArray.length,
