@@ -9,6 +9,7 @@ var userFixture = require('./../fixtures/user');
 let q = require('q');
 var MessagesUtil = require('./../../util/messages');
 var testDatabase = require("../database");
+var sessionBuilderSnapshotValidation = require('./../../services/sessionBuilderSnapshotValidation');
 
 describe('Topic Service', function() {
   function createSession() {
@@ -131,6 +132,95 @@ describe('Topic Service', function() {
               assert.lengthOf(results, 1);
               done();
             }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it("should update both session and resources topics when changing default topic", function(done) {
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        let defaultTopicParams = getTopicParams();
+        defaultTopicParams.default = true;
+        topicService.create(defaultTopicParams).then(function(topic) {
+          topicService.joinToSession([topic.id], testSession.id).then(function(result) {
+
+            defaultTopicParams.boardMessage = "Resources Topic Test";
+            defaultTopicParams.sign = "Resources Topic Test";
+            defaultTopicParams.id = topic.id;
+
+            topicService.updateDefaultTopic(defaultTopicParams, true).then(function(updatedTopic) {
+              models.SessionTopics.findAll({where: {topicId: defaultTopicParams.id}}).then((sessionTopics) => {
+                assert.equal(updatedTopic.boardMessage, defaultTopicParams.boardMessage);
+                assert.equal(updatedTopic.sign, defaultTopicParams.sign);
+                assert.lengthOf(sessionTopics, 1);
+                assert.equal(sessionTopics[0].boardMessage, updatedTopic.boardMessage);
+                assert.equal(sessionTopics[0].sign, updatedTopic.sign);
+                assert.equal(sessionTopics[0].name, updatedTopic.name);
+                assert.equal(sessionTopics[0].topicId, updatedTopic.id);
+
+                done();
+              }, (error) => {
+                done(error);
+              });
+            }, function(err) {
+              done(err);
+            });
+          }, function(err) {
+            done(err);
+          });
+        }, function(err) {
+          done(err);
+        });
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it("should update both session and resources topics when changing session default topic", function(done) {
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        let defaultTopicParams = getTopicParams();
+        defaultTopicParams.default = true;
+        topicService.create(defaultTopicParams).then(function(topic) {
+          topicService.joinToSession([topic.id], testSession.id).then(function(result) {
+
+          defaultTopicParams.boardMessage = "Session Topic Test";
+          defaultTopicParams.sign = "Session  Topic Test";
+          defaultTopicParams.topicId = topic.id;
+          defaultTopicParams.isCurrentSessionTopic = true;
+          defaultTopicParams.snapshot = { 
+            [topic.id] : sessionBuilderSnapshotValidation.getTopicSnapshot(result.sessionTopics)
+          };
+          defaultTopicParams.sessionId = testSession.id;
+          defaultTopicParams.id = result.sessionTopics[0].id;
+            
+          topicService.updateDefaultTopic(defaultTopicParams, true).then(function(updatedTopic) {
+            
+            models.SessionTopics.findAll({where: {topicId: defaultTopicParams.topicId}}).then((sessionTopics) => {
+              assert.lengthOf(sessionTopics, 1);
+              assert.equal(sessionTopics[0].boardMessage, defaultTopicParams.boardMessage);
+              assert.equal(sessionTopics[0].sign, defaultTopicParams.sign);
+              assert.equal(sessionTopics[0].topicId, defaultTopicParams.topicId);
+              assert.equal(sessionTopics[0].sessionId, defaultTopicParams.sessionId);
+              models.Topic.find({where: {id: defaultTopicParams.topicId}}).then((defaultTopic) => {
+                assert.isObject(defaultTopic);
+                assert.equal(defaultTopicParams.boardMessage, defaultTopic.boardMessage);
+                assert.equal(defaultTopicParams.sign, defaultTopic.sign);
+                done();
+              }, (error) => {
+                done(error)
+              })
+            }, (error) => {
+              done(error);
+            });
+          }, function(err) {
               done(err);
             });
           }, function(err) {
