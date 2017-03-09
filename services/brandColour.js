@@ -24,7 +24,7 @@ const VALID_ATTRIBUTES = {
 function findScheme(params, accountId) {
   let deferred = q.defer();
 
-  BrandProjectPreference.find({ where: { id: params.id, accountId: accountId } }).then(function(scheme) {
+  BrandProjectPreference.find({ where: { id: params.id, accountId: accountId, default: false } }).then(function(scheme) {
     if(scheme) {
       deferred.resolve(simpleParams(scheme));
     }
@@ -81,6 +81,7 @@ function createDefaultForAccount(params, t) {
 
   let errors = {};
   let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
+  validParams.default = true;
   validateColours(validParams.colours, errors);
 
   if(_.isEmpty(errors)) {
