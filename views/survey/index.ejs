@@ -1,6 +1,7 @@
 <% include ../header %>
 <div ng-app="KliikoApp.Root">
   <div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>)">
+    <div class='form-horizontal survey-container' id='GalleryController'>
       <div ng-if='!sc.message'>
         <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/preview.html'"></ng-include>
 
@@ -18,6 +19,7 @@
       <div class='text-center' ng-if='sc.message'>
         <h2>{{ sc.message }}</h2>
       </div>
+    </div>
   </div>
 </div>
 <% include ../footer %>
