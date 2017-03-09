@@ -18,7 +18,7 @@ module.exports = {
 
 function getAll(req, res, next) {
   let accountId = req.currentResources.account.id;
-  topicsService.getAll(accountId, req.body.sessionType).then(
+  topicsService.getAll(accountId, req.params.sessionType).then(
     function(result) { res.send({ topics: result, validations: topicConstants.validations })},
     function(error) { res.send({error:error})}
   );

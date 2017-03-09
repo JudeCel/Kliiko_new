@@ -35,7 +35,7 @@ function getAll(accountId, sessionType) {
   let includeInviteAgainTopic = !sessionType || sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled;
   let where = includeInviteAgainTopic ? 
     { $or: [{ accountId: accountId }, { stock: true }] } : 
-    { $or: [{ accountId: accountId }, { stock: true }], inviteAgainTopic : false };
+    { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
 
   Topic.findAll({
     order: '"name" ASC',

@@ -47,11 +47,10 @@
     vm.setType = setType;
     vm.isCopy = isCopy;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
-
-    init();
+    vm.init = init;
 
     function init() {
-      var sessionType = vm.session ? vm.session.type : null;
+      var sessionType = vm.session ? vm.session.steps.step1.type : null;
       topicsAndSessions.getAllTopics(sessionType).then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);

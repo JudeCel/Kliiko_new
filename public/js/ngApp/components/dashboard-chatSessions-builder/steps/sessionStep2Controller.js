@@ -100,6 +100,7 @@
       vm.topicController = topicController;
       vm.topicController.session = vm.session;
       vm.topicController.resetSessionTopics = vm.init;
+      vm.topicController.init();
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
