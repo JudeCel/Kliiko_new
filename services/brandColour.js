@@ -21,10 +21,12 @@ const VALID_ATTRIBUTES = {
 };
 
 // Exports
-function findScheme(params, accountId) {
+function findScheme(params, accountId, isDefault) {
   let deferred = q.defer();
+  const where = { id: params.id, accountId };
+  if(isDefault !== undefined) where.default = isDefault;
 
-  BrandProjectPreference.find({ where: { id: params.id, accountId: accountId, default: false } }).then(function(scheme) {
+  BrandProjectPreference.find({ where }).then(function(scheme) {
     if(scheme) {
       deferred.resolve(simpleParams(scheme));
     }
@@ -122,7 +124,7 @@ function updateScheme(params, accountId) {
   validateColours(validParams.colours, errors);
 
   if(_.isEmpty(errors)) {
-    findScheme(params, accountId).then(function(result) {
+    findScheme(params, accountId, false).then(function(result) {
       result.data.update(validParams, { returning: true }).then(function(scheme) {
         deferred.resolve(simpleParams(scheme, MessagesUtil.brandColour.updated));
       }).catch(function(error) {
@@ -142,7 +144,7 @@ function updateScheme(params, accountId) {
 function removeScheme(params, accountId) {
   let deferred = q.defer();
 
-  findScheme(params, accountId).then(function(result) {
+  findScheme(params, accountId, false).then(function(result) {
     result.data.destroy().then(function() {
       deferred.resolve(simpleParams(null, MessagesUtil.brandColour.removed));
     }).catch(function(error) {
@@ -158,7 +160,7 @@ function removeScheme(params, accountId) {
 function copyScheme(params, accountId) {
   let deferred = q.defer();
 
-  findScheme(params, accountId).then(function(result) {
+  findScheme(params, accountId, false).then(function(result) {
     delete result.data.dataValues.id;
     let originalName = 'Copy of ' + result.data.dataValues.name;
     result.data.dataValues.name = originalName + new Date().getTime();

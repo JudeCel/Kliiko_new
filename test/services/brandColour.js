@@ -20,7 +20,7 @@ describe('SERVICE - BrandColour', function() {
         testData.account = result.account;
         testData.session = result.session;
         testData.preference = result.preference;
-        done();
+        BrandProjectPreference.update({ default: false }, { where: { id: result.preference.id } }).then(() => done());
       }, function(error) {
         done(error);
       });
@@ -188,7 +188,7 @@ describe('SERVICE - BrandColour', function() {
         }, function(error) {
           try {
             assert.equal(error, brandColourServices.messages.notFound);
-            done();  
+            done();
           } catch (error) {
             done(error);
           }
