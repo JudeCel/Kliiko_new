@@ -27,7 +27,9 @@
     "updateSessionTypes": "node ./tasks/updateSessionTypes.js",
     "prepareLoadTest": "node ./tasks/prepareLoadTest.js",
     "updateSubscriptions": "node ./tasks/updateSubscriptions.js",
-    "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",    "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js"  },
+    "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",
+    "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js"
+  },
   "engineStrict": true,
   "engine": {
     "node": "~ 6.9.*"
