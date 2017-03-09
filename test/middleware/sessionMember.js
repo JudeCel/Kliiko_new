@@ -6,6 +6,7 @@ var _ = require('lodash');
 var sessionMemberMiddleware = require('./../../middleware/sessionMember');
 var sessionFixture = require('./../fixtures/session');
 var models = require('./../../models');
+var testDatabase = require("../database");
 
 describe('MIDDLEWARE - Session Member', function() {
   let req, res;
@@ -27,7 +28,7 @@ describe('MIDDLEWARE - Session Member', function() {
 
   describe('happy path ', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         sessionFixture.createChat().then(function(result) {
           _.map(result.sessionMembers, function(member) {
             if(member.role == 'facilitator') {

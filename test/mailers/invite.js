@@ -13,15 +13,16 @@ describe('MAILERS - Invite ', () => {
       inviteMailers.sendInviteAccountManager(params, function(error, result) {
         if(error) {
           done(error);
-        }
-        try {
-          assert.include(result.html, 'Hello! And welcome to klzii');
-          assert.include(result.html, 'You can login anytime with your');
-          assert.include(result.accepted[0], email);
-          assert.include(result.html, token);
-          done();
-        } catch (e) {
-          done(e);
+        } else {
+          try {
+            assert.include(result.html, 'Hello! And welcome to klzii');
+            assert.include(result.html, 'You can login anytime with your');
+            assert.include(result.accepted[0], email);
+            assert.include(result.html, token);
+            done();
+          } catch (e) {
+            done(e);
+          }
         }
       });
     });

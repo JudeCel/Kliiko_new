@@ -3,7 +3,7 @@
 var models = require('./../../models');
 var SessionMember = models.SessionMember;
 var AccountUser = models.AccountUser;
-
+var testDatabase = require("../database");
 var sessionFixture = require('./../fixtures/session');
 var sessionMemberServices = require('./../../services/sessionMember');
 
@@ -13,7 +13,7 @@ var _ = require('lodash');
 describe('SERVICE - SessionMember', function() {
   var testData = {};
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       sessionFixture.createChat({ participants: 2 }).then(function(result) {
         testData.user = result.user;
         testData.account = result.account;
@@ -58,6 +58,33 @@ describe('SERVICE - SessionMember', function() {
           assert.equal(error, sessionMemberServices.messages.notFound);
           done();
         });
+      });
+    });
+  });
+
+  describe('createGhost', function() {
+    beforeEach(function(done) {
+      models.Session.update({uid: "test-uid", type: "socialForum"}, { where: { id: testData.session.id } }).then(function() {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('should succeed', function (done) {
+      sessionMemberServices.createGhost("testName", testData.session).then(function(result) {
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it('should fail because empty name', function (done) {
+      sessionMemberServices.createGhost("", testData.session).then(function(result) {
+        done('Should not get here!');
+      }, function(error) {
+        assert.equal(error, sessionMemberServices.messages.nameEmpty);
+        done();
       });
     });
   });

@@ -3,14 +3,14 @@
     <div class='modal-content border-green border-radius-none'>
       <div class='modal-header'>
         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-        <h2 class='modal-title text-center'>Enter Template name</h2>
+        <h2 class='modal-title text-center'>Enter unique name of version</h2>
       </div>
 
       <div class='modal-body text-gray-medium'>
         <div class='row'>
           <div class='col-md-12'>
             <div class='form-group'>
-              <label class='control-label col-md-4 text-no-bold text-login-page' for='templateName'>Name</label>
+              <label class='control-label col-md-4 text-no-bold text-login-page' for='templateName'>Name of version - {{ec.currentTemplate.name}}</label>
               <div class='col-md-8'>
                 <input type='text' class='form-control' id='templateName' placeholder='Name' ng-model='ec.templateNameAdd'>
               </div>
@@ -21,6 +21,35 @@
       <div class='modal-footer'>
         <button ng-click='ec.modifyAndSave(true, null, true, ec.templateNameAdd, true)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
           Save as
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='modal fade' id='applyTemplateModal' role='dialog'>
+  <div class='modal-dialog'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Enter unique name for applied version</h2>
+      </div>
+
+      <div class='modal-body text-gray-medium'>
+        <div class='row'>
+          <div class='col-md-12'>
+            <div class='form-group'>
+              <label class='control-label col-md-4 text-no-bold text-login-page' for='templateName'>Name of applied version - {{ec.currentTemplate.name}}</label>
+              <div class='col-md-8'>
+                <input type='text' class='form-control' id='templateName' placeholder='Name' ng-model='step3Controller.templateNameAdd'>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button ng-click='step3Controller.modifyAndSave(false, true)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
+          Apply
         </button>
       </div>
     </div>

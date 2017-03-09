@@ -8,7 +8,6 @@ module.exports = (Sequelize, DataTypes) => {
     token: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     sentAt: { type : DataTypes.DATE, allowNull: false, validate: { notEmpty: true } },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles },
-
     accountUserId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteStatuses, defaultValue: 'pending' },
     emailStatus: { type: DataTypes.ENUM, allowNull: false, values: constants.inviteEmailStatuses, defaultValue: 'waiting' },

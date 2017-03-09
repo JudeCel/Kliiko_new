@@ -4,7 +4,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
@@ -12,11 +12,12 @@ var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
 var sessionMiddleware = require('./middleware/session');
 const { setUpQueue} = require('./services/backgroundQueue.js');
-
 var app = express();
 var flash = require('connect-flash');
-var fs = require('fs');
+var _ = require('lodash');
 var airbrake = require('./lib/airbrake').instance;
+var cors = require('./middleware/cors');
+var winstonMiddleware = require('./middleware/winstonMiddleware');
 app.use(airbrake.expressHandler());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -46,11 +47,14 @@ app.use(session({
 }));
 
 app.use(setUpQueue);
-
 app.use(flash());
-app.use(logger('dev'));
-var api = require('./routes/api');
-app.use('/api', jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
+app.use(winstonMiddleware.logger())
+
+var api = require('./routes/api/index');
+var apiPublic = require('./routes/api/public');
+app.use('/api',  apiPublic);
+
+app.use('/api', cors.setCors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
@@ -66,6 +70,7 @@ app.use('/resources', sessionMiddleware.extendUserSession, resources);
 app.use('/', routes);
 // Added socket.io routes
 // catch 404 and forward to error handler
+app.use(winstonMiddleware.errorLogger())
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

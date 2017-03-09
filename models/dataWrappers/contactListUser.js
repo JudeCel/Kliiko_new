@@ -31,6 +31,7 @@ var ContactListUser = class ContactListUser {
   assignIds(data){
     this.id = data.id;
     this.accountUserId = data.accountUserId;
+    this.admin = data.AccountUser.role == 'admin';
   }
 
   assignValues(fieldsList, data){

@@ -29,7 +29,7 @@ spec:
         name: admin
     spec:
       imagePullSecrets:
-        - name: docker-hub-secret
+        - name: docker-hub-secret-2
       containers:
       - image: "index.docker.io/klzii/kliiko:stable"
         command: ['/bin/sh', './start_server.sh']
@@ -42,6 +42,8 @@ spec:
           value: "redis-master"
         - name: NODE_ENV
           value: "production"
+        - name: LOG_SERVER_URL
+          value: "chat.klzii.chat"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "https://chat.klzii.chat"
         - name: EVENT_SOCKET_SERVER_URL
@@ -110,3 +112,13 @@ spec:
           value: "40c3e7b2fb16608f28bafbd53466c2dc"
         - name: TWILIO_SENDER_NUMBER
           value: "+61428805081"
+        - name: RECAPTCHA_SITE_KEY
+          value: "+6LekfhcUAAAAAM6MfFRSud5fddd76HkrHpEo2sLF"
+        - name: RECAPTCHA_SECRET_KEY
+          value: "+6LekfhcUAAAAAH-2NMv74uTJrYsqgcShWhdQCZEt"
+        - name: MONITORING_SERVER_URL
+          value: "ws://83.99.159.206:8080/socket/websocket"
+        - name: MONITORING_SERVER_TOKEN
+          value: "2155b16e-22bb-40f7-8e67-89c9499a7c29"
+        - name: MONITORING_SERVER_PROJECT_NAME
+          value: "kliiko_prod"

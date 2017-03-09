@@ -6,6 +6,7 @@ var sessionBuilderServices = require('./../../services/sessionBuilder');
 var sessionBuilderSnapshotValidationService = require('./../../services/sessionBuilderSnapshotValidation');
 var sessionServices = require('./../../services/session');
 let topicsService = require('./../../services/topics');
+let sessionSurvey = require('./../../services/sessionSurvey');
 let _ = require('lodash');
 
 module.exports = {
@@ -23,7 +24,11 @@ module.exports = {
   removeTopic: removeTopic,
   sessionMailTemplateStatus: sessionMailTemplateStatus,
   canAddObservers: canAddObservers,
-  setAnonymous: setAnonymous
+  setAnonymous: setAnonymous,
+  canChangeTopicActive: canChangeTopicActive,
+  addSurveyToSession: addSurveyToSession,
+  setSurveyEnabled: setSurveyEnabled,
+  publish: publish
 };
 
 function initializeBuilder(req, res, next) {
@@ -161,6 +166,12 @@ function sendCloseEmail(req, res, next) {
 
 }
 
+function canChangeTopicActive(req, res, next) {
+  topicsService.canChangeTopicActive(req.currentResources.account.id, req.params.id).then((validation) => {
+    res.send({ can: validation.limit > validation.count || validation.limit === -1 });
+  });
+}
+
 function addTopics(req, res, next) {
   let accountId = req.currentResources.account.id;
   let sessionId = req.params.id;
@@ -171,7 +182,7 @@ function addTopics(req, res, next) {
   sessionBuilderSnapshotValidationService.isTopicsDataValid(snapshot, sessionId, accountId, topics).then(function(validationRes) {
 
     if (validationRes.isValid) {
-      topicsService.removeAllAndAddNew(sessionId, topics).then(function(result) {
+      topicsService.removeAllAndAddNew(accountId, sessionId, topics).then(function(result) {
         sessionBuilderServices.sessionBuilderObjectStepSnapshot(sessionId, accountId, "facilitatiorAndTopics").then(function(snapshotResult) {
           res.send({success: true, data: result.data, message: result.message, snapshot: snapshotResult});
         }, function (error) {
@@ -197,4 +208,34 @@ function removeTopic(req, res, next) {
   }, function(error) {
     res.send({ error: error });
   });
+}
+
+function addSurveyToSession(req, res, next) {
+  let surveyId = req.body.surveyId;
+  let sessionId = req.params.id;
+  sessionSurvey.addSurveyToSession(sessionId, surveyId).then(function(result) {
+    res.send({success:true});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function setSurveyEnabled(req, res, next) {
+  let surveyId = req.body.surveyId;
+  let sessionId = req.params.id;
+  let active = req.body.active;
+  sessionSurvey.setSurveyEnabled(sessionId, surveyId, active).then(function(result) {
+    res.send({success:true});
+  }, function(error) {
+    res.send({ error: error });
+  });
+}
+
+function publish(req, res, next) {
+  let accountId = req.currentResources.account.id;
+  sessionBuilderServices.publish(req.params.id, accountId).then(function(result) {
+    res.send(result);
+  }, function(error) {
+    res.send({error: error});
+  })
 }

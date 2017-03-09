@@ -9,7 +9,8 @@ module.exports = {
 function endPoint(req, res, next) {
   chargebeeWebhookService.select(req.body).then(function() {
     res.sendStatus(200);
-  }, function() {
+  }, function(error) {
+    console.log(error);
     res.sendStatus(500);
   });
 }

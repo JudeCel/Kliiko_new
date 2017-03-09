@@ -1,0 +1,28 @@
+<div class='modal fade' id='copySessionConfirm' role='dialog'>
+  <div class='modal-dialog'>
+    <div class='modal-content border-red border-radius-none'>
+        <div class='modal-header'>
+            <h2 class='modal-title text-center'>Copy Session</h2>
+        </div>
+      <div class='modal-body'>
+        <div class='row'>
+          <div class='col-md-12'>
+            <div class="text-center">
+              Copying <strong>{{ csc.currentSelectedSessionName }}</strong>
+              Session will only duplicate TopicNames, Order, & Billboard text.
+              All other set-up Steps will need to be completed for your new Session.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-standart btn-red pull-left btn-small margin-right-10' data-dismiss='modal'>
+            Cancel
+        </button>
+        <button ng-click='csc.copySession(csc.currentSelectedSession)' type='button' class='btn btn-standart btn-green btn-small pull-right'>
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

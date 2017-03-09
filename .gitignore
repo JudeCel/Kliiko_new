@@ -20,3 +20,4 @@
 **/.DS_Store
 /bin/.kube
 /bin/kube_config
+/yarn-error.log

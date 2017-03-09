@@ -357,8 +357,8 @@
       }
     }
 
-    function handleUploadPermission() {
-      planService.checkPlanFeatures('uploadToGallery').then(function(response) {
+    function handleUploadPermission(validation) {
+      planService.checkPlanFeatures(validation || 'uploadToGallery').then(function(response) {
         if(response.error) {
           errorMessenger.showError(response.error);
         }
@@ -368,6 +368,7 @@
     function openUploadModal(current, parent, replaceResource, modalTitle) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
+      vm.isReplacingStock = replaceResource && replaceResource.stock;
       if (replaceResource) {
         vm.modalTitle = "Replace resource";
         parent.modal.replace = true;
@@ -459,7 +460,7 @@
     }
 
     function normalVideoServiceUrl(url, source) {
-      return GalleryServices.prepareVideoServiceUrl;
+      return GalleryServices.prepareVideoServiceUrl(url, source);
     }
 
     function videoServiceUrl(url, source) {

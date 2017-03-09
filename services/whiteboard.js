@@ -8,25 +8,16 @@ module.exports = {
 };
 
 function defaultTopicImageParams(sessionTopic, sessionMember) {
+  let link = process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/images/default-topic-image.gif?" + sessionTopic.id;
   return {
     sessionMemberId: sessionMember.id,
     sessionTopicId: sessionTopic.id,
     uid: "defaultImage" + sessionTopic.id,
+    eventType: "image",
     event: {
       id: "defaultImage" + sessionTopic.id,
-      action: "draw", 
-      element: {
-        attr: {
-          x: "10", 
-          y: "20", 
-          href: "/images/default-topic-image.gif?" + sessionTopic.id, 
-          width: "395", 
-          height: "304", 
-          transform: "matrix(1,0,0,1,262,26)", 
-          preserveAspectRatio: "none"
-        }, 
-        type: "image"
-      }
+      action: "draw",
+      element: "<image id=\"defaultImage"+sessionTopic.id+"\" xmlns:xlink="+link+" xlink:href="+link+" width='395' height='304' x='10' y='76' fill='none'></image>"
     }
   };
 }

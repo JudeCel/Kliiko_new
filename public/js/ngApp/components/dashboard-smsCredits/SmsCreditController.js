@@ -79,7 +79,12 @@
         addon_quantity: qty
       }).then(function(result) {
         if(result.error){
-          messenger.error(result.error);
+          if(result.error.planTooLow) {
+            domServices.modal('smsCreditsModal');
+          }
+          else {
+            messenger.error(result.error);
+          }
         }else{
           $('#purchase-submit').removeAttr("disabled");
           vm.currentSmsCreditCount = result.smsCretiCount;

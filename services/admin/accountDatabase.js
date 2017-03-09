@@ -4,12 +4,14 @@ var MessagesUtil = require('./../../util/messages');
 var mailers = require('../../mailers');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
-var Account = models.Account;
-var User = models.User;
-var AccountUser = models.AccountUser;
+var inviteService = require('./../..//services/invite');
+var accountUserService = require('./../../services/accountUser');
+var ContactListUserService = require('./../..//services/contactListUser');
+var {ContactList, User, Account, AccountUser, Subscription} = models;
 var constants = require('../../util/constants');
-var _ = require('lodash');
+const _ = require('lodash');
 var q = require('q');
+const Bluebird = require('bluebird');
 
 var validAttributes = [
   'comment',
@@ -18,20 +20,164 @@ var validAttributes = [
 
 function findAllAccounts(callback) {
   Account.findAll({
-    include: [{ model: AccountUser, where: { role: 'accountManager' }, include: [ { model: User } ] }, {model: models.Subscription} ]
-  }).then(function(accounts) {
-    callback(null, accounts);
-  }, function(error) {
+    attributes: ['id','admin', 'name'],
+    where: {admin: false},
+    include: accountInclude()
+  }).then((accounts) => {
+    callback(null, mapData(accounts));
+  }, (error) => {
       callback(filters.errors(error));
   });
 };
 
-function shouldUpdateUser(params, byUser) {
+
+function accountInclude() {
+  const accountUserAttrs = constants.safeAccountUserParams.concat('createdAt').concat('role').concat('owner');
+  return [{
+    model: AccountUser,
+    where: { role: { $in: ['accountManager', 'admin'] } },
+    order: 'createdAt ASC',
+    attributes: accountUserAttrs,
+    include: [{ model: User, attributes: ['id'] }]
+  },
+  { model: Subscription, attributes: ['planId'] }];
+}
+
+function mapData(accounts) {
+  return accounts.map((account) => {
+    let adminUsers = account.AccountUsers.filter((au) => au.role == 'admin' && !au.isRemoved);
+    if(_.isEmpty(adminUsers)){
+      account.dataValues.hasActiveAdmin = false;
+    }else{
+      account.dataValues.hasActiveAdmin = true;
+    }
+
+    return account
+  });
+}
+
+function shouldUpdateUser(params, byAccountUser) {
   //is active field being updated
   if (_.indexOf(_.keys(params), "active") > 0) {
-    return !(params.userId == byUser.accountUserId);
+    return params.accountUserId != byAccountUser.id;
   }
   return true;
+}
+
+function addAdmin({accountId, email}, _accountUserId) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.findAll({where: {email: email, role: 'admin'}}).then((accountUsers) => {
+      if (_.isEmpty(accountUsers)) {
+        reject((MessagesUtil.accountDatabase.adminNotFound  + email));
+      } else {
+        AccountUser.find({ where: { AccountId: accountId, role: 'admin', email: email,  active: false } }).then((accountUser) => {          
+          if(accountUser) {
+            accountUser.update({ isRemoved: false }).then((updatedAccountUser) => {
+              processAdminTransaction(accountId, updatedAccountUser, resolve, reject);
+            }, (error) => {
+              reject(error);
+            });
+          }
+          else {
+            let adminAccountUser = accountUsers[0];
+            processAdminTransaction(accountId, adminAccountUser, resolve, reject);
+          }
+        });
+      }
+    })
+  });
+}
+
+function processAdminTransaction(accountId, adminAccountUser, resolve, reject) {
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then((transaction) => {
+      ContactList.find({where: {accountId: accountId, role: 'accountManager'}, transaction: transaction}).then((contactList) => {
+        let contactListUserParams = {
+          accountId: accountId,
+          contactListId: contactList.id,
+          role: adminAccountUser.role,
+          defaultFields: {
+            firstName: adminAccountUser.firstName,
+            lastName: adminAccountUser.lastName,
+            email: adminAccountUser.email,
+            gender: adminAccountUser.gender
+          }}
+
+        ContactListUserService.create(contactListUserParams, transaction).then((contactListUser) => {
+          let inviteParams = {
+            accountUserId: contactListUser.accountUserId,
+            accountId: accountId,
+            role: adminAccountUser.role
+          }
+
+          inviteService.createInvite(inviteParams, transaction).then(() => {
+            resolve(adminAccountUser);
+          }, (error) => {
+            transaction.rollback().then(() => {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              reject(error);
+            });
+          });
+        }, (error) => {
+          transaction.rollback().then(() => {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              reject(error)
+            });
+          });
+      }, (error) => {
+        transaction.rollback().then(() => {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            reject(error)
+        });
+      });
+    });
+  });
+  
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    reject("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+}
+
+function removeAdmin({ accountId }) {
+  return new Bluebird((resolve, reject) => {
+    AccountUser.find({ where: { AccountId: accountId, role: 'admin' }, include: [{ model: Account, include: [AccountUser] }] }).then((accountUser) => {
+      if(!accountUser) return reject('Not found');
+      
+      models.ContactListUser.destroy({where: {accountUserId: accountUser.id, accountId: accountId}}).then((contactListUser) => {
+      accountUserService.deleteOrRecalculate(accountUser.id, null, 'admin')
+        .then(() => Account.find({ where: { id: accountId }, include: accountInclude() }))
+        .then((account) => {
+          let query = { where: {
+            accountUserId: accountUser.id,
+            status: 'pending'
+            },
+            include: [{
+              model: models.AccountUser,
+              required: true
+            }]
+          };
+
+          models.Invite.find(query).then((invite) => { 
+            if (invite) {
+              inviteService.removeInvite(invite).then((message) => {
+                resolve(mapData([account])[0]);
+              }, (error) => {
+                reject(error);
+              });
+            } else {
+              resolve(mapData([account])[0]);
+            }  
+          });
+        }).catch((error) => reject(error));
+      }, (error) => {
+        reject(error);
+      });
+    });
+  });
 }
 
 function updateAccountUserComment(params) {
@@ -55,16 +201,16 @@ function updateAccountUserComment(params) {
   return deferred.promise;
 }
 
-function updateAccountUser(params, byUser, callback) {
-  byUser = byUser || {};
+function updateAccountUser(params, byAccountUser, callback) {
+  byAccountUser = byAccountUser || {};
   let updateParams = validateParams(params);
 
-  if (shouldUpdateUser(params, byUser)) {
+  if (shouldUpdateUser(params, byAccountUser)) {
     if (params.userId) {
       AccountUser.update(updateParams, {
         where: {
-          UserId: params.userId,
-          AccountId: params.accountId
+          AccountId: params.accountId,
+          isRemoved: false
         },
         returning: true
       }).then(function(result) {
@@ -179,5 +325,7 @@ module.exports = {
   updateAccountUser: updateAccountUser,
   updateAccountUserComment: updateAccountUserComment,
   csvData: csvData,
-  csvHeader: csvHeader
+  csvHeader: csvHeader,
+  addAdmin: addAdmin,
+  removeAdmin: removeAdmin
 };

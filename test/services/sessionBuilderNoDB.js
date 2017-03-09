@@ -3,6 +3,7 @@
 var assert = require('chai').assert;
 var constants = require('../../util/constants');
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionTypesConstants = require('./../../util/sessionTypesConstants');
 
 describe('SERVICE - SessionBuilder', function() {
   describe('#getDestinationStep', function(done) {
@@ -168,7 +169,8 @@ describe('SERVICE - SessionBuilder', function() {
   function getSession() {
     return {
       currentStep: "setUp",
-      steps: getSteps()
+      steps: getSteps(),
+      properties: sessionTypesConstants.focus
     };
   }
 

@@ -2,7 +2,7 @@
 
 var MessagesUtil = require('./../util/messages');
 let q = require('q');
-var validators = require('./../services/validators');
+var validators = require('./../services/validators/subscription');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
@@ -22,8 +22,10 @@ module.exports = {
   removeFromSession: removeFromSession,
   removeAllFromSession: removeAllFromSession,
   removeAllAndAddNew: removeAllAndAddNew,
+  canChangeTopicActive: canChangeTopicActive,
   messages: MessagesUtil.topics,
-  createDefaultForAccount: createDefaultForAccount
+  createDefaultForAccount: createDefaultForAccount,
+  updateDefaultTopic: updateDefaultTopic
 };
 
 function getAll(accountId) {
@@ -31,7 +33,7 @@ function getAll(accountId) {
   Topic.findAll({
     order: '"name" ASC',
     where: {
-      $or: [{ 
+      $or: [{
         accountId: accountId
       }, {
         stock: true
@@ -49,6 +51,62 @@ function getAll(accountId) {
     deferred.reject(filters.errors(error));
   });
   return deferred.promise;
+}
+
+function updateDefaultTopic(params, isAdmin) {
+  let topicId = getTopicId(params);
+  let topicParams = getTopicParams(params, topicId);
+  let newSessionTopic;
+  return new Bluebird((resolve, reject) => {
+    update(topicParams, isAdmin).then((topic) => {
+      models.SessionTopics.findAll({where: {topicId: topicId}}).then((sessionTopics) => {
+        Bluebird.each(sessionTopics, (sessionTopic) => {
+          if (params.snapshot && params.sessionId == sessionTopic.sessionId) {
+             return updateSessionTopic(params).then((updateSessionTopic) => {
+              newSessionTopic = updateSessionTopic;
+             });
+          } else {
+            let sessionTopicsParams = {
+              boardMessage: params.boardMessage,
+              name: params.name,
+              sign: params.sign
+            };
+
+            return sessionTopic.update(sessionTopicsParams);
+          }
+        }).then((updatedSessionTopics) => {
+          if (newSessionTopic) {
+            resolve(newSessionTopic);
+          } else {
+            resolve(topic);
+          }
+        }, (error) => {
+          reject(error);
+        });
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+function getTopicId(params) {
+  return params.isCurrentSessionTopic ? params.topicId : params.id;
+}
+
+function getTopicParams(params, topicId) {
+  if(params.isCurrentSessionTopic) {
+    return {
+      id: topicId,
+      boardMessage: params.boardMessage,
+      name: params.name,
+      sign: params.sign
+    };
+  }
+
+  return params; 
 }
 
 function updateSessionTopic(params) {
@@ -72,7 +130,7 @@ function updateSessionTopic(params) {
       }
 
     } else {
-      deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
+      deferred.reject(MessagesUtil.topics.error.notFound);
     }
   }, function(error) {
     deferred.reject(filters.errors(error));
@@ -90,7 +148,6 @@ function updateSessionTopics(sessionId, topicsArray) {
 
         return new Bluebird(function (resolveInternal, rejectInternal) {
           Bluebird.each(topicsArray, (topic) => {
-
             if (topic.id == sessionTopic.topicId) {
               let params = {
                 order: topic.sessionTopic.order,
@@ -138,7 +195,7 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length});
+          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length, session });
         });
       }, function(error) {
         deferred.reject(filters.errors(error));
@@ -194,12 +251,38 @@ function removeAllFromSession(sessionId) {
   return deferred.promise;
 }
 
-function removeAllAndAddNew(sessionId, topics) {
+function canChangeTopicActive(accountId, sessionId) {
+  return validators.getTopicCount(accountId, { sessionId });
+}
+
+function removeAllAndAddNew(accountId, sessionId, topics) {
   let deferred = q.defer();
+  let data;
 
   updateSessionTopics(sessionId, topics).then(function(result) {
-    deferred.resolve(result);
-  }, function(error) {
+    data = result;
+    return canChangeTopicActive(accountId, sessionId);
+  }).then((validation) => {
+    if(validation.count > validation.limit && validation.limit !== -1) {
+      models.SessionTopics.findAll({ where: { sessionId }, limit: validation.count - validation.limit, order: '"updatedAt" DESC' }).then((result) => {
+        const ids = _.map(result, 'id');
+        return models.SessionTopics.update({ active: false }, { where: { id: ids } });
+      }).then(() => {
+        return models.Topic.findAll({
+          order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
+          include: [{
+            model: models.SessionTopics,
+            where: { sessionId }
+          }]
+        })
+      }).then((result) => {
+        deferred.resolve({ data: result });
+      });
+    }
+    else {
+      deferred.resolve(data);
+    }
+  }).catch((error) => {
     deferred.reject(error);
   });
 
@@ -233,43 +316,66 @@ function create(params, isAdmin) {
     params.stock = false;
   }
 
-  validators.subscription(params.accountId, 'topic', 1).then(function() {
-    Topic.create(params).then(function(topic) {
-      deferred.resolve(topic);
-    },function(error) {
-      deferred.reject(error);
-    });
+  Topic.create(params).then(function(topic) {
+    deferred.resolve(topic);
   },function(error) {
-    deferred.reject(error);
+    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
 }
 
-function update(params) {
-  let deferred = q.defer();
-
-  Topic.find({ where: { id: params.id } }).then(function(topic) {
-    if (topic) {
-      if (topic.stock) {
-        if (params.name == topic.name) {
-          params.name = "Copy of " + topic.name;
+function update(params, isAdmin) {
+  return new Bluebird((resolve, reject) => {
+    Topic.find({ where: { id: params.id } }).then((topic) => {
+      if (topic) {
+        if(topic.stock){
+          resolve(updateStockTopic(topic, params, isAdmin));
+        }else{
+          resolve(updateRegularTopic(topic, params, isAdmin));
         }
-        delete params.id;
-        return create(params);
       } else {
-        return topic.update(params, { returning: true });
+        reject(MessagesUtil.topics.error.notFound);
       }
-    } else {
-      deferred.reject(MessagesUtil.topics.notFound);
-    }
-  }).then(function(topic) {
-    deferred.resolve(topic);
-  }).catch(function(error) {
-    deferred.reject(error);
+    }).then((topic) => {
+      resolve(topic);
+    }).catch((error) => {
+      reject(filters.errors(error));
+    });
   });
+}
 
-  return deferred.promise;
+function updateStockTopic(topic, params, isAdmin){
+  return new Bluebird((resolve, reject) => {
+     if(params.sessionId){
+       if (params.name == topic.name) {
+            params.parentTopicId = topic.id;
+          }
+        delete params.id;
+        resolve(create(params))
+     }else{
+       if(isAdmin){
+        simpleUpdate(topic, params, resolve, reject);
+       }else{
+          if (params.name == topic.name) {
+            params.parentTopicId = topic.id;
+          }
+          delete params.id;
+          resolve(create(params))
+       }
+     }
+  })
+}
+function updateRegularTopic(topic, params, isAdmin){
+  return new Bluebird((resolve, reject) => {
+      simpleUpdate(topic, params, resolve, reject);
+  })
+}
+
+function simpleUpdate(topic, params, resolve, reject) {
+  topic.update(params, { returning: true })
+    .then((topic) => resolve(topic))
+    .catch((error) => reject(filters.errors(error)))
 }
 
 function sessionTopicUpdateParams(params) {

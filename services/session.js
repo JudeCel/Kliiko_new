@@ -2,11 +2,12 @@
 
 var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
-var { Subscription, Session, Invite, SessionMember, AccountUser, Account } = require('./../models');
+var { Subscription, Session, Invite, SessionMember, AccountUser, Account, SessionType } = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
+var urlHeplers = require('./urlHeplers');
 
 var q = require('q');
 var _ = require('lodash');
@@ -17,6 +18,7 @@ var MailTemplateService = require('./mailTemplate');
 var sessionMemberServices = require('./../services/sessionMember');
 var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 
 
 const VALID_ATTRIBUTES = {
@@ -35,7 +37,9 @@ module.exports = {
   changeComment: changeComment,
   getSessionByInvite: getSessionByInvite,
   setAnonymous: setAnonymous,
-  canChangeAnonymous: canChangeAnonymous
+  canChangeAnonymous: canChangeAnonymous,
+  checkSessionByPublicUid: checkSessionByPublicUid,
+  setOpen: setOpen
 };
 
 function isInviteSessionInvalid(resp) {
@@ -70,10 +74,9 @@ function setAnonymous(sessionId, accountId) {
             deferred.resolve(updatedSession);
           });
         })
-      }else{
+      } else {
         deferred.reject(MessagesUtil.session.cannotBeChanged);
       }
-
     } else {
       deferred.reject(MessagesUtil.session.notFound);
     }
@@ -85,8 +88,30 @@ function setAnonymous(sessionId, accountId) {
 }
 
 function canChangeAnonymous(session) {
-  if (session.anonymous == true) { return false };
-  return true;
+  return !session.anonymous && sessionTypesConstants[session.type].features.anonymous.enabled;
+}
+
+function setOpen(sessionId, open, accountId) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        id: sessionId,
+        accountId: accountId
+      }
+    }).then(function(session) {
+      if (session) {
+        let status = open ? "open" : "closed";
+        session.update({ status: status }).then(function(updatedSession) {
+          sessionValidator.addShowStatus(updatedSession);
+          resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
+        });
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }).catch(function(error) {
+      reject(filters.errors(error));
+    });
+  });
 }
 
 function getSessionByInvite(token) {
@@ -140,7 +165,7 @@ function changeComment(id, comment, accountId) {
   return deferred.promise;
 }
 
-function findSession(sessionId, accountId, provider) {
+function findSession(sessionId, accountId) {
   let deferred = q.defer();
 
   Session.find({
@@ -155,7 +180,7 @@ function findSession(sessionId, accountId, provider) {
     }]
   }).then(function(session) {
     if(session) {
-      modifySessions(session, accountId, provider).then(function(result) {
+      modifySessions(session, accountId).then(function(result) {
         deferred.resolve(simpleParams(result));
       }, function(error) {
         deferred.reject(error);
@@ -171,17 +196,17 @@ function findSession(sessionId, accountId, provider) {
   return deferred.promise;
 };
 
-function findAllSessions(userId, accountUser, account, provider) {
+function findAllSessions(userId, accountUser, account) {
   let deferred = q.defer();
   if(policy.hasAccess(accountUser.role, ['accountManager', 'admin'])) {
-    findAllSessionsAsManager(account.id, provider).then(function(data) {
+    findAllSessionsAsManager(account.id).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
     });
   }
   else {
-    findAllSessionsAsMember(userId, account.id, provider).then(function(data) {
+    findAllSessionsAsMember(userId, account.id).then(function(data) {
       deferred.resolve(data);
     }, function(error) {
       deferred.reject(error);
@@ -244,10 +269,10 @@ function prepareAccountRatings(accounts) {
   return ratings;
 };
 
-function removeSession(sessionId, accountId, provider) {
+function removeSession(sessionId, accountId) {
   let deferred = q.defer();
 
-    findSession(sessionId, accountId, provider).then(function(result) {
+    findSession(sessionId, accountId).then(function(result) {
       sessionMemberServices.findAllMembersIds(sessionId).then(function(ids) {
         result.data.destroy().then(function() {
           sessionMemberServices.refreshAccountUsersRole(ids).then(function() {
@@ -292,14 +317,22 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
   return deferred.promise;
 }
 
-function copySession(sessionId, accountId, provider) {
+function copySession(sessionId, accountId) {
   let deferred = q.defer();
 
-  validators.subscription(accountId, 'session', 1).then(function() {
-    findSession(sessionId, accountId, provider).then(function(result) {
+  validators.subscription(accountId, 'session', 0).then(function() {
+    findSession(sessionId, accountId).then(function(result) {
       let facilitator = result.data.dataValues.facilitator;
       delete result.data.dataValues.id;
       delete result.data.dataValues.facilitator;
+      delete result.data.dataValues.status;
+      delete result.data.dataValues.anonymous;
+      delete result.data.dataValues.resourceId;
+      delete result.data.dataValues.brandProjectPreferenceId;
+      delete result.data.dataValues.startTime;
+      delete result.data.dataValues.endTime;
+      delete result.data.dataValues.isVisited;
+      result.data.dataValues.isInactive = true;
       result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
       result.data.dataValues.step = "setUp";
       Session.create(result.data.dataValues).then(function(session) {
@@ -311,15 +344,17 @@ function copySession(sessionId, accountId, provider) {
                 //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                 callback();
               });
-            },
-            function(callback) {
-              MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
-                callback();
-              });
             }
+            //  NOTE: right now we need to disable this functionality.
+            //  When client will want to copy email templates we will jsut need to add this code back.
+            // function(callback) {
+            //   MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+            //     callback();
+            //   });
+            // }
         ], function (error) {
           //we ignore error in callback because data is copied step by step, and one error shouldn't stop following copying
-          prepareModifiedSessions(session, accountId, provider, deferred);
+          prepareModifiedSessions(session, accountId, deferred);
         });
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
@@ -334,9 +369,9 @@ function copySession(sessionId, accountId, provider) {
   return deferred.promise;
 };
 
-function prepareModifiedSessions(session, accountId, provider, deferred) {
-  findSession(session.id, session.accountId, provider).then(function(result) {
-    modifySessions(result.data, accountId, provider).then(function(result) {
+function prepareModifiedSessions(session, accountId, deferred) {
+  findSession(session.id, session.accountId).then(function(result) {
+    modifySessions(result.data, accountId).then(function(result) {
       deferred.resolve(simpleParams(result, MessagesUtil.session.copied));
     }, function(error) {
       deferred.reject(error);
@@ -409,7 +444,7 @@ function findFacilitator(members) {
   return facilitator.dataValues;
 }
 
-function findAllSessionsAsManager(accountId, provider) {
+function findAllSessionsAsManager(accountId) {
   let deferred = q.defer();
   Session.findAll({
     where: {
@@ -423,9 +458,12 @@ function findAllSessionsAsManager(accountId, provider) {
         model: AccountUser,
         attributes: ['firstName', 'lastName', 'email']
       }]
+    }, {
+      model: SessionType,
+      attributes: ['name', 'properties']
     }]
   }).then(function(sessions) {
-    modifySessions(sessions, accountId, provider).then(function(result) {
+    modifySessions(sessions, accountId).then(function(result) {
       deferred.resolve(simpleParams(result));
     }, function(error) {
       deferred.reject(error);
@@ -437,7 +475,7 @@ function findAllSessionsAsManager(accountId, provider) {
   return deferred.promise;
 };
 
-function findAllSessionsAsMember(userId, accountId, provider) {
+function findAllSessionsAsMember(userId, accountId) {
   let deferred = q.defer();
   Session.findAll({
     where: {
@@ -455,7 +493,7 @@ function findAllSessionsAsMember(userId, accountId, provider) {
       }]
     }]
   }).then(function(sessions) {
-    modifySessions(sessions, accountId, provider).then(function(result) {
+    modifySessions(sessions, accountId).then(function(result) {
       deferred.resolve(simpleParams(result));
     }, function(error) {
       deferred.reject(error);
@@ -467,7 +505,7 @@ function findAllSessionsAsMember(userId, accountId, provider) {
   return deferred.promise;
 };
 
-function copySessionMember(session, facilitator, provider) {
+function copySessionMember(session, facilitator) {
   let deferred = q.defer();
   facilitator.sessionId = session.id;
   sessionMemberServices.createWithTokenAndColour(facilitator).then(function(sessionMember) {
@@ -480,39 +518,33 @@ function copySessionMember(session, facilitator, provider) {
 }
 
 function simpleParams(data, message) {
-  return { data: data, message: message };
+  return { 
+    data: data, 
+    message: message, 
+    baseUrl: urlHeplers.getBaseUrl() 
+  };
 };
 
-function modifySessions(sessions, accountId, provider) {
+function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
-  Account.find({ where: { id: accountId } }).then(function(account) {
-    if(account.admin) {
-      changeSessionData(sessions, null, provider);
-      deferred.resolve(sessions);
-    }
-    else {
-      Subscription.find({ where: { accountId: accountId } }).then(function(subscription) {
-        subscriptionService.getChargebeeSubscription(subscription.subscriptionId, provider).then(function(chargebeeSub) {
-          changeSessionData(sessions, chargebeeSub, provider);
-          deferred.resolve(sessions);
-        }, function(error) {
-          deferred.reject(error);
-        })
-      }).catch(function(error) {
-        deferred.reject(filters.errors(error));
-      });
-    }
-  })
-
+  Account.find({ 
+    where: { id: accountId },
+    include: [Subscription]
+  }).then(function(account) {
+    changeSessionData(sessions, account.admin ? null : account.Subscription.endDate);
+    deferred.resolve(sessions);
+  }).catch(function(error) {
+    deferred.reject(filters.errors(error));
+  });
 
   return deferred.promise;
 }
 
-function changeSessionData(sessions, chargebeeSub, provider) {
+function changeSessionData(sessions, subscriptionEndDate) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
-    sessionValidator.addShowStatus(session, chargebeeSub);
+    sessionValidator.addShowStatus(session, subscriptionEndDate);
 
     let facilitator = findFacilitator(session.SessionMembers);
     if(facilitator) {
@@ -531,5 +563,27 @@ function changeSessionData(sessions, chargebeeSub, provider) {
       session.SessionMembers.splice(facIndex, 1);
       session.dataValues.averageRating = total / session.SessionMembers.length;
     }
+  });
+}
+
+function checkSessionByPublicUid(uid) {
+  return new Bluebird((resolve, reject) => {
+    Session.find({
+      where: {
+        publicUid: uid
+      }
+    }).then(function(session) {
+      if (session && sessionTypesConstants[session.type].features.ghostParticipants.enabled) {
+        if (session.status == "open") {
+          resolve(session);
+        } else {
+          reject(MessagesUtil.session.closed.replace("sessionName", session.name));
+        }
+      } else {
+        reject(MessagesUtil.session.notFound);
+      }
+    }, function(error) {
+      reject(error);
+    });
   });
 }

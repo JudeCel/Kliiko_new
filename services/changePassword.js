@@ -28,7 +28,7 @@ function save(req, callback){
     if (err) {
       return callback(err);
     }
-    mailers.users.sendPasswordChangedSuccess(params);
+    mailers.users.sendPasswordChangedSuccess(params, () => { });
     callback(null, MessagesUtil.changePassword.success, req.currentResources.user);
   });
 }

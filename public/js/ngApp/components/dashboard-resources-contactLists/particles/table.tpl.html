@@ -30,7 +30,7 @@
             </td>
 
             <td >
-                <span class='table-item-edit-group'>
+                <span ng-if="clc.canEditOrDelete(member)" class='table-item-edit-group'>
                   <img src='/icons/dashboardElement_edit.png' alt='' ng-click="clc.contactAddEditClickHandle('update', member)"/>
                   <img src='/icons/dashboardElement_remove.png' alt='' ng-click="clc.removeContacts(member.id)" />
                 </span>

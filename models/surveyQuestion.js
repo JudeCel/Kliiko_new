@@ -11,11 +11,11 @@ module.exports = (Sequelize, DataTypes) => {
     required: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     name: { type: DataTypes.STRING, allowNull: false, validate: {
       notEmpty: true,
-      isLength: validations.length('question', { max: surveyConstants.minsMaxs.input.max })
+      isLength: validations.length('question', { max: surveyConstants.surveyConstantsBase.minsMaxs.input.max })
     } },
     question: { type: DataTypes.TEXT, allowNull: false, validate: {
       notEmpty: true,
-      isLength: validations.length('question', { max: surveyConstants.minsMaxs.textarea.max })
+      isLength: validations.length('question', { max: surveyConstants.surveyConstantsBase.minsMaxs.textarea.max })
     } },
     order: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.ENUM, allowNull: false, validate: { notEmpty: true },

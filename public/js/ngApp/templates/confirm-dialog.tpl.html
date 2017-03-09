@@ -1,4 +1,4 @@
-<div class='modal-content border-green border-radius-none {{data.wide ? "modal-content-wide" : ""}}'>
+<div class='modal-content border-radius-none {{data.wide ? "modal-content-wide" : ""}} {{data.showAsError ? "border-red" : "border-green"}}'>
     <div class='modal-header' ng-if="data.title">
       <h2 class='modal-title text-center'>{{data.title}}</h2>
     </div>

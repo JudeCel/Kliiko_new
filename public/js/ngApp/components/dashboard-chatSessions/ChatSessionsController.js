@@ -13,13 +13,24 @@
 
     vm.removeSession = removeSession;
     vm.copySession = copySession;
+    vm.setOpen = setOpen;
+    vm.openCopySessionDialog = openCopySessionDialog;
+    vm.currentSelectedSessionName = "Untitled";
+    vm.currentSelectedSessionPublicUrl = "";
+    vm.baseUrl = null;
 
     vm.changePage = changePage;
-    vm.rowClass = rowClass;
+    vm.initRowClass = initRowClass;
     vm.hasAccess = hasAccess;
     vm.redirectToChatSession = redirectToChatSession;
     vm.changeOrder = changeOrder;
     vm.prepareSessionsPagination = prepareSessionsPagination;
+    vm.getSessionTypeName = getSessionTypeName;
+    vm.initShouldShowStatusLabel = initShouldShowStatusLabel;
+    vm.initIsOpen = initIsOpen;
+    vm.setOpen = setOpen;
+    vm.showStats = showStats;
+    vm.showPublicUrl = showPublicUrl;
 
     vm.disablePlayButton = false;
     vm.originalSession = {};
@@ -36,12 +47,15 @@
       sessions: []
     }
 
+    var confirmCopySessionDialog = "copySessionConfirm";
+
     changePage('index');
 
     function init() {
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.queriedForSessions = true;
         vm.sessions = res.data;
+        vm.baseUrl = res.baseUrl;
         vm.dateFormat = res.dateFormat;
         vm.chatRoomUrl = res.chatRoomUrl;
         vm.sessionListManageRoles = res.sessionListManageRoles;
@@ -123,6 +137,18 @@
       });
     }
 
+    function openCopySessionDialog(session) {
+      vm.currentSelectedSession = session;
+      if (vm.currentSelectedSession.name) {
+        vm.currentSelectedSessionName = vm.currentSelectedSession.name
+      }
+      domServices.modal(confirmCopySessionDialog);
+    }
+
+    function showName(name) {
+      return name || "Untitled";
+    }
+
     function copySession(session) {
       if(!vm.inAction) {
         vm.inAction = true;
@@ -137,28 +163,44 @@
             vm.sessions.push(res.data);
             prepareSessionsPagination();
           }
+
+          domServices.modal(confirmCopySessionDialog, 'close');
         });
       }
     };
 
-    function rowClass(session, user) {
-      return 'session-' + session.showStatus.toLowerCase();
+    function getURLParameter(name) {
+      var url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+      var results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    function hasAccess(sessionId, accountUser) {
-      var found = vm.sessionListManageRoles.accountUser.indexOf(accountUser.role);
-      if(found > -1) {
-        return true;
+    function initRowClass(session) {
+      var highlightId = getURLParameter("highlight");
+      if (highlightId && highlightId == session.id) {
+        session.rowClass = 'session-highlight';
+      } else {
+        session.rowClass = 'session-' + session.showStatus.toLowerCase();
       }
-      else {
-        for(var i in accountUser.SessionMembers) {
-          var member = accountUser.SessionMembers[i];
-          if(member.sessionId == sessionId) {
-            found = vm.sessionListManageRoles.sessionMember.indexOf(member.role);
-            return (found > -1);
-          }
-        }
-      }
+    }
+
+    function hasAccess(session, accountUserId) {
+      var canAccess = false;
+      if(session.facilitator && (session.facilitator.accountUserId == accountUserId) || session.isInactive){
+        canAccess = true;
+      } else {
+        session.SessionMembers.map(function(member) {
+          member.accountUserId == accountUserId;
+          canAccess = true;
+          return false;
+        });
+      };
+
+      return canAccess;
     };
 
     function changePage(page, session) {
@@ -167,6 +209,54 @@
         vm.currentPage = { page: page };
       }
     };
+
+    function getSessionTypeName(session) {
+      if (session.type) {
+        var str = session.type.replace( /([A-Z])/g, " $1" );
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      } else {
+        return "";
+      }
+    }
+
+    function setOpen(session) {
+      chatSessionsServices.setOpen(session.id, session.isOpen).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          session.status = res.data.status;
+          session.showStatus = res.data.showStatus;
+        }
+        initIsOpen(session);
+        initRowClass(session);
+      });
+    }
+
+    function initIsOpen(session) {
+      session.isOpen = session.status == "open";
+    }
+
+    function showStats(session) {
+      //todo:
+      //will be implemented in TA1592
+    }
+
+    function showPublicUrl(session) {
+      if (session.publicUid) {
+        vm.currentSelectedSessionPublicUrl = vm.baseUrl + "/session/" + session.publicUid;
+        domServices.modal("publicUrlModal");
+      }
+    }
+
+    function initShouldShowStatusLabel(session) {
+      if (session.SessionType && session.SessionType.properties.features.closeSessionToggle.enabled && 
+          (!session.SessionType.properties.features.publish.enabled || session.publicUid)) {
+        session.showStatusLabel = false;
+        initIsOpen(session);
+      } else {
+        session.showStatusLabel = true;
+      }
+    }
 
   }
 })();

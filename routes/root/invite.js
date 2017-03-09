@@ -21,7 +21,6 @@ function index(req, res, next) {
       }
     });
   }, (error) => {
-    console.log(error, "invite.js:24");
     res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
@@ -41,13 +40,17 @@ function accept(req, res, next) {
       loginUser(req, res, next, user);
     }, (error) => {
       console.log(error);
-      inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
-        if (user) {
-          loginUser(req, res, next, user);
-        } else {
-          res.render(views_path('newUser'), simpleParams('Invite', invite, error));
-        }
-      })
+      if (error == MessagesUtil.invite.sessionIsFull) {
+        res.render(views_path('sessionFull'), {title: "Session Full"});
+      } else {
+        inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+          if (user) {
+            loginUser(req, res, next, user);
+          } else {
+            res.render(views_path('newUser'), simpleParams('Invite', invite, error));
+          }
+        });
+      }
     });
   }, (error) => {
     res.render(views_path('notFound'), {title: "Invite", error: error});

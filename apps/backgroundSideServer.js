@@ -1,4 +1,8 @@
 "use strict";
+ require('dotenv-extended').load({
+     errorOnMissing: true
+ });
+
 const NR = require("node-resque");
 const _ = require('lodash')
 const connectionDetails = require('../config/backgroudServer.js');
@@ -9,7 +13,7 @@ const multiWorker = new NR.multiWorker({
   connection: connectionDetails,
   queues: _.values(backgroundQueues.queues),
   minTaskProcessors:   1,
-  maxTaskProcessors:   10,
+  maxTaskProcessors:   1,
   checkTimeout:        1000,
   maxEventLoopDelay:   10,
   toDisconnectProcessors: true,

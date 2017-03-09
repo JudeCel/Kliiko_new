@@ -1,0 +1,15 @@
+<div ng-init='question = sc.initQuestion(object, sc.survey.SurveyQuestions[object.order])'>
+  <div id='panel-{{ object.order }}' class='panel panel-default border-radius-none'>
+    <div class='panel-heading' ng-if='!object.hardcodedName'><strong>Question #{{ object.order + 1 }}</strong></h4></div>
+    <div class='panel-heading' ng-if='object.hardcodedName'><strong>{{ object.name }}</strong></h4></div>
+    <div class='panel-body'>
+      <ng-form name='{{ object.order }}'>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/question.html'"></ng-include>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/answers.html'"></ng-include>
+      </ng-form>
+    </div>
+    <div class='panel-footer' ng-if='!sc.survey.confirmedAt && !question.required'>
+      <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/questionFooter.html'"></ng-include>
+    </div>
+  </div>
+</div>

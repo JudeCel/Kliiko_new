@@ -21,11 +21,14 @@ module.exports = {
 }
 
 // Exports
-function getAllData(userId, protocol, provider) {
+function getAllData(userId, protocol) {
   let deferred = q.defer();
 
   AccountUser.findAll({
-    where: { UserId: userId },
+    where: { 
+      UserId: userId,
+      isRemoved: false
+     },
     include: [{
       model: SessionMember,
       required: false,
@@ -42,7 +45,7 @@ function getAllData(userId, protocol, provider) {
     }, Account]
   }).then(function(accountUsers) {
     let object = prepareAccountUsers(accountUsers, protocol);
-    return prepareSessions(object, provider);
+    return prepareSessions(object);
   }).then(function(object) {
     deferred.resolve(object);
   }).catch(function(error) {
@@ -53,7 +56,7 @@ function getAllData(userId, protocol, provider) {
 }
 
 // Helpers
-function prepareSessions(object, provider) {
+function prepareSessions(object) {
   let deferred = q.defer();
   let array = _.map(object, function(role) {
     if(role.field != 'accountManager') {
@@ -63,7 +66,7 @@ function prepareSessions(object, provider) {
 
   array = _.map(array, function(data) {
     return function(callback) {
-      prepareAsync(data, provider).then(function() {
+      prepareAsync(data).then(function() {
         callback();
       }, function(error) {
         callback(error);
@@ -83,26 +86,21 @@ function prepareSessions(object, provider) {
   return deferred.promise;
 }
 
-function prepareAsync(data, provider) {
+function prepareAsync(data) {
   let deferred = q.defer();
 
   async.each(data, function(accountUser, callback) {
-    if(accountUser.dataValues.session.Account.admin) {
+    if (accountUser.dataValues.session.Account.admin) {
       sessionValidator.addShowStatus(accountUser.dataValues.session);
-      return callback();
-    }
-
-    subscriptionServices.getChargebeeSubscription(accountUser.dataValues.session.Account.Subscription.subscriptionId, provider).then(function(chargebeeSub) {
-      sessionValidator.addShowStatus(accountUser.dataValues.session, chargebeeSub);
       callback();
-    }, function(error) {
-      callback(error);
-    });
-  }, function(error) {
-    if(error) {
-      deferred.reject(error);
+    } else {
+      sessionValidator.addShowStatus(accountUser.dataValues.session, accountUser.dataValues.session.Account.Subscription.endDate);
+      callback();
     }
-    else {
+  }, function(error) {
+    if (error) {
+      deferred.reject(error);
+    } else {
       deferred.resolve();
     }
   });
@@ -118,12 +116,13 @@ function prepareAccountUsers(accountUsers, protocol) {
     observer: { name: 'Spectators', field: 'observer', data: [] }
   };
 
-  _.map(accountUsers, function(accountUser) {
+  _.each(accountUsers, function(accountUser) {
+    
     if (_.includes(['admin', 'accountManager'], accountUser.role)) {
       userSwitch(object, accountUser, protocol);
     }
 
-    _.map(accountUser.SessionMembers, function(sessionMember) {
+    _.each(accountUser.SessionMembers, function(sessionMember) {
       let user = _.cloneDeep(accountUser);
       user.role = sessionMember.role;
       user.SessionMembers = [sessionMember];
@@ -182,7 +181,9 @@ function userSwitch(object, user, protocol) {
 }
 
 function addDashboardUrl(accountUser, path, protocol) {
-  accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.subdomain, path);
+  if(accountUser.active){
+    accountUser.dataValues.dashboardUrl = subdomains.url({ protocol: protocol }, accountUser.Account.subdomain, path);
+  }
 }
 
 function addSession(accountUser) {

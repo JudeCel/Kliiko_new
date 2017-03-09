@@ -88,7 +88,7 @@
       <div class='modal-body'>
         <div class='form-group'>
           <label for='name'>Name</label>
-          <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' required>
+          <input ng-model='gc.newResource.name' type='text' class='form-control center-block border-radius-none' name='name' id='name' placeholder='Name' ng-disabled="gc.isReplacingStock" required>
         </div>
 
         <div ng-if='typeOf.videoService' class='form-group'>
@@ -112,7 +112,7 @@
           </div>
         </div>
 
-        <div class='form-group' ng-if='app.accountUser.isAdmin'>
+        <div class='form-group' ng-if="app.hasPermissions('canStockCreateTopics')">
           <div class='checkbox checkbox-sm checkbox-success survey-input'>
             <input class='styled' id='checkbox' type='checkbox' name='checkbox' ng-model='gc.newResource.stock'>
             <label for='checkbox'>Stock?</label>

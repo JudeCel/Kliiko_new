@@ -77,15 +77,23 @@ function findAccountManagers(accountId) {
   AccountUser.findAll({
     where: {
       AccountId: accountId,
-      role: 'accountManager'
+      role: {$in: ['accountManager', 'admin']},
+      isRemoved: false
     }
-  }).then(function(result) {
-    deferred.resolve(result);
-  }, function(error) {
+  }).then((result) => {
+    deferred.resolve(parseAccuntManagers(result) );
+  }, (error) => {
     deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
+}
+
+function parseAccuntManagers(list){
+  return list.map((au) => {
+      au.dataValues.admin = (au.role == 'admin');
+      return au;
+    });
 }
 
 function findAndRemoveAccountUser(id, accountId) {
@@ -152,7 +160,7 @@ function addAccountUser(params, accountId) {
     createAccountUser(params, accountId).then((data) => {
       resolve(data);
     }, (error) => {
-      reject(filters.errors(error));
+      reject(error);
     });
   })
 }
@@ -183,7 +191,7 @@ function createAccountUser(params, accountId) {
             reject(filters.errors(error));
           });
         }, (error) => {
-          reject(error);
+          reject(filters.errors(error));
         })
       } else {
         AccountUser.create(params).then((newAccountUser) =>{

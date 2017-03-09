@@ -14,6 +14,7 @@
 @import "components/_inlineManual.scss";
 @import "components/_toolTip.scss";
 @import "components/_loading.scss";
+@import "components/_video-player.scss";
 @import "components/angular-toggle-switch.scss";
 
 // Base
@@ -33,6 +34,7 @@
 @import "pages/_brandColours.scss";
 @import "pages/_sessions.scss";
 @import "pages/closeSession.scss";
+@import "pages/_systemRequirements.scss";
 
 // ngApp
 @import "../js/ngApp/components/dashboard-accountProfile-upgradePlan/upgrade-plan";

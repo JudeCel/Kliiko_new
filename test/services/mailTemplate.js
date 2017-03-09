@@ -4,6 +4,7 @@ var models = require('./../../models');
 var mailTemplateService = require('./../../services/mailTemplate.js');
 var mailTemplateSender = require('./../../mailers/mailTemplate.js');
 var usersServices = require('./../../services/users');
+var testDatabase = require("../database");
 
 describe('Mail Template Service', () => {
   var validAttrs = {
@@ -20,7 +21,7 @@ describe('Mail Template Service', () => {
 
   describe("success", function () {
     beforeEach((done) => {
-      models.sequelize.sync({ force: true }).done((error, result) => {
+      testDatabase.prepareDatabaseForTests().done((error, result) => {
         done();
       });
     });
@@ -80,7 +81,7 @@ describe('Mail Template Service', () => {
       }
 
       beforeEach(function(done) {
-        models.sequelize.sync({ force: true }).then(() => {
+        testDatabase.prepareDatabaseForTests().then(() => {
           usersServices.create(userAttrs, function(errors, user) {
             user.getOwnerAccount().then(function(accounts) {
               user.getAccountUsers().then(function(results) {
@@ -116,7 +117,7 @@ describe('Mail Template Service', () => {
   describe("failed", function () {
     it("should fail creating mail template with empty parameter", (done) => {
       beforeEach((done) => {
-        models.sequelize.sync({ force: true }).done((error, result) => {
+        testDatabase.prepareDatabaseForTests().done((error, result) => {
           done();
         });
       });

@@ -6,14 +6,16 @@
     <button class='btn btn-standart btn-margin btn-green btn-small-x' type='button' ng-click='gc.changeView(gc.currentPage.viewType)'>
       <span class='{{ gc.currentPage.viewClass }}' aria-hidden='true'></span>
     </button>
-    <ng-include ng-show='app.account.permissions.uploadToGallery' class='dropdown' src="gc.templatesDir + 'dropdown.html'"
+
+    <ng-include ng-show='app.hasPermissions("canUploadToGallery")' class='dropdown' src="gc.templatesDir + 'dropdown.html'"
     ng-init='upload = { types: gc.uploadTypes, modal: { upload: true } }' style='padding-bottom: 9px;'></ng-include>
   </div>
 </div>
 
 <div class='col-md-12 fixed-bottom-margin'>
   {{ typeOf = gc.isTypeOf({}); "" }}
-  <ng-include ng-show='app.account.permissions.uploadToGallery' src="gc.templatesDir + 'filters.html'" id='filter-view'></ng-include>
+
+  <ng-include ng-show='app.hasPermissions("canUploadToGallery")' src="gc.templatesDir + 'filters.html'" id='filter-view'></ng-include>
   <ng-include src="gc.templatesDir + 'tableView.html'" ng-if='typeOf.table' id='table-view'></ng-include>
   <ng-include src="gc.templatesDir + 'panelView.html'" ng-if='typeOf.panel' id='panel-view'></ng-include>
   <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>

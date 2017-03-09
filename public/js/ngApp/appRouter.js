@@ -34,14 +34,13 @@
         views: {
           'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-accountProfile/dashboard-content.html"}
         },
-        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
+        onEnter: ['$state', 'dbg', 'user', function($state, dbg, user) {
           dbg.rs('account-hub.accountProfile is on');
           sessionStorage.setItem('bannerType', 'profile');
-          if(accountUser.accountUser.isFacilitator) $state.go('account-hub.chatSessions');
         }]
       })
       .state('account-hub.accountProfile.upgradePlan', {
-        url: "/upgrade-plan?step",
+        url: "/upgrade-plan?step&plan",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },
@@ -97,12 +96,9 @@
       })
       .state('account-hub.chatSessions.builder', {
         url: '/builder/:id',
-        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
+        onEnter: ['$state', 'dbg', function($state, dbg) {
           dbg.rs('chatSessions builder');
           sessionStorage.setItem('bannerType', 'sessions');
-          setTimeout(function() {
-            if(accountUser.accountUser.isFacilitator && !$state.params.id) $state.go('account-hub.chatSessions');
-          }, 10);
         }],
         views: {
           'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-chatSessions-builder/session-builder-index.html"}
@@ -110,7 +106,7 @@
       })
       .state('account-hub.resources', {
         url: "/resources",
-        onEnter: ['$state', 'dbg', 'accountUser', function($state, dbg, accountUser) {
+        onEnter: ['$state', 'dbg', function($state, dbg) {
           dbg.rs('resources');
           sessionStorage.setItem('bannerType', 'resources');
 
@@ -156,15 +152,16 @@
           dbg.rs('account-hub.resources.topics is on');
         }]
       })
-      .state('account-hub.smsCredits', {
-        url: "/smsCredits",
-        views: {
-          'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
-        },
-        onEnter: ['dbg', function(dbg) {
-          dbg.rs('account-hub.smsCredits is on');
-        }]
-      })
+      // NOTE: Right now we need to disable this, while Judy is deciding what we will do with SMS credit purchasing.
+      // .state('account-hub.smsCredits', {
+      //   url: "/smsCredits",
+      //   views: {
+      //     'dashboardContent@account-hub': {templateUrl: prePath + "dashboard-smsCredits/dashboard-content.html"}
+      //   },
+      //   onEnter: ['dbg', function(dbg) {
+      //     dbg.rs('account-hub.smsCredits is on');
+      //   }]
+      // })
       .state('account-hub.resources.emailTemplates', {
         url: "/email-templates",
         views: {

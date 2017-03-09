@@ -2,6 +2,8 @@
 
 module.exports = {
   queues: {
-    invites: "invites"
+    invites: "invites",
+    sessionOverQuota: "sessionOverQuota",
+    emailNotifications: "emailNotifications"
   }
 }

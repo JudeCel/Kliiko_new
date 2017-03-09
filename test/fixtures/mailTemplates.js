@@ -159,6 +159,13 @@ let templateFiles = [
     type: "sessionNotYetOpen",
     subject: "Session Not Yet Open",
     systemMessage: true
+  },
+  {
+    fileName: 'SystemEmail_EmailNotification.html',
+    name: constants.mailTemplateType.emailNotification,
+    type: "emailNotification",
+    subject: "Message Notification {Session Name}",
+    systemMessage: true
   }
 ];
 
@@ -197,6 +204,7 @@ function createMailTemplate() {
   num = 0;
   async.waterfall([
     (cb) => { addTemplate(cb) },
+    addTemplate,
     addTemplate,
     addTemplate,
     addTemplate,

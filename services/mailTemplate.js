@@ -76,23 +76,41 @@ function createBaseMailTemplate(params, callback) {
 }
 
 function create(params, callback) {
-  models.sequelize.transaction().then(function(transaction) {
-    MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-      setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
-        transaction.commit().then(function() {
-          callback(null, result);
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.create(params, { transaction: transaction }).then(function(result) {
+        setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          });
         });
-      }, function(error) {
+      }).catch(function(error) {
         transaction.rollback().then(function() {
-          callback(filters.errors(error));
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          if (error.name == 'SequelizeUniqueConstraintError') {
+            callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+          } else {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(error));
+          }
+          ;
         });
-      });
-    }).catch(function(error) {
-      transaction.rollback().then(function() {
-        callback(filters.errors(error));
       });
     });
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function update(id, parameters, callback){
@@ -314,12 +332,12 @@ function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getS
   getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
 }
 
-function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback) {
+function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback, isAdmin) {
   let templateQuery = {};
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback, isAdmin);
 }
 
-function prepareCategoryQuery(baseTemplateQuery) {
+function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
   if (!baseTemplateQuery) {
     baseTemplateQuery = {};
   }
@@ -327,14 +345,15 @@ function prepareCategoryQuery(baseTemplateQuery) {
   if (!baseTemplateQuery.category) {
     baseTemplateQuery.category = {};
   }
-  baseTemplateQuery.category.$not = 'confirmation';
+
+  baseTemplateQuery.category.$not = isAdmin ? 'confirmation' : ['confirmation', 'accountManagerConfirmation'];
   return baseTemplateQuery;
 }
 
-function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
+function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback, isAdmin) {
   let query = templateQuery || {};
 
-  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery);
+  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
   if(accountId && !getSystemMail){
@@ -362,12 +381,34 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
       raw: true,
       order: "id ASC"
   }).then(function(result) {
-    sortMailTemplates(result);
-    callback(null, result);
+    getTemplatesSessionNames(result).then(function(templates) {
+      sortMailTemplates(result);
+      callback(null, result);
+    }, function(error) {
+      callback(error);
+    });
   }).catch(function(error) {
     callback(error);
   });
 };
+
+function getTemplatesSessionNames(templates) {
+  return new Bluebird((resolve, reject) => {
+    Bluebird.each(templates, (template) => {
+      if (template.sessionId) {
+        return Session.find({ where: { id: template.sessionId } }).then((session) => {
+          template.sessionName = session.name;
+        }, (error) => {
+          reject(error)
+        });
+      }
+    }).then(() => {
+      resolve(templates);
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
 
 function sortMailTemplates(result) {
   let templateOrder = {"firstInvitation": 1, "confirmation": 2, "notThisTime": 3, "notAtAll": 4, "closeSession": 5, "generic": 6};
@@ -487,7 +528,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (template.properties.templateName) {
       result = true;
-      template.name = template.name + " " + template.properties.templateName;
     }
   }
 
@@ -670,6 +710,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
     validateTemplate(template).then(function() {
 
       let templateObject = buildTemplate(template);
+      assignTemplateName(templateObject.template);
       let shouldCreateTemplateCopy = shouldCreateCopy(templateObject.template, createCopy, accountId);
 
       validateTemplateSnapshot(shouldCreateTemplateCopy, template.snapshot, templateObject, function(validationError, validationResult) {
@@ -724,6 +765,12 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
   } else {
     callback(MessagesUtil.mailTemplate.error.notProvided);
   }
+
+  function assignTemplateName(template) {
+    if (template.properties && template.properties.templateName) {
+      template.name = template.properties.templateName;
+    }
+  }
 }
 
 
@@ -765,6 +812,7 @@ function prepareMailDefaultParameters(params) {
   let defaultParams = {
     termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
     privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
+    systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
@@ -779,6 +827,9 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
+    if (params.removeTimeBlock) {
+      template.content = removeTimeBlock(template.content);
+    }
     template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
@@ -788,6 +839,20 @@ function composeMailFromTemplate(template, params) {
   } catch (error) {
     return {error: error};
   }
+}
+
+function removeTimeBlock(content) {
+  const blockStart = "<div class=timeInfoPanelTitle>";
+  const blockEnd = "<div class=timeInfoPanelEnd>";
+
+  let blockStartIndex = content.indexOf(blockStart);
+  if (blockStartIndex >= 0) {
+    let blockEndIndex = content.indexOf(blockEnd, blockStartIndex);
+    if (blockEndIndex >= 0) {
+      return content.substr(0, blockStartIndex) + content.substr(blockEndIndex + blockEnd.length);
+    }
+  }
+  return content;
 }
 
 function sendMailFromTemplate(id, params, callback) {
@@ -823,14 +888,18 @@ function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
     where: { id: accountUserId },
   }).then(function(accountUser) {
     if (accountUser) {
-      composePreviewMailTemplate(mailTemplate, sessionId, function(template) {
-        var params = {
-          orginalStartTime: new Date(),
-          orginalEndTime:  new Date(),
-          email: accountUser.email
-        };
+      composePreviewMailTemplate(mailTemplate, sessionId, function(result) {
+        if (result.error) {
+          callback(result.error);
+        } else {
+          var params = {
+            orginalStartTime: new Date(),
+            orginalEndTime:  new Date(),
+            email: accountUser.email
+          };
 
-        templateMailer.sendMailWithTemplateAndCalendarEvent(template, params, callback);
+          templateMailer.sendMailWithTemplateAndCalendarEvent(result, params, callback);
+        }
       });
     } else {
       callback({ error: MessagesUtil.accountUser.notFound });
@@ -871,9 +940,9 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Guest Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
-  str = str.replace(/\{Guest First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Guest First Name\}/ig, "<%= guestFirstName %>");
   str = str.replace(/\{Participant First Name\}/ig, "<%= firstName %>");
-  str = str.replace(/\{Guest Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Guest Last Name\}/ig, "<%= guestLastName %>");
   str = str.replace(/\{Participant Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Host Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
@@ -881,7 +950,6 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
-
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
@@ -892,6 +960,7 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
   str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
+  str = str.replace(/\{System Requirements\}/ig, "<%= systemRequirementsUrl %>");
   return str;
 }
 
@@ -931,6 +1000,7 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
     resetPasswordUrl: "#/resetPasswordUrl",
+    systemRequirementsUrl: "#/systemRequirementsdUrl",
     timeZone: ""
   };
   if (sessionId) {
@@ -960,13 +1030,22 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
           mailPreviewVariables.facilitatorMobileNumber = result.SessionMembers[0].AccountUser.mobile;
         }
       }
-      var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-      template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-      callback(template);
+
+      processMailTemplate(mailTemplate, mailPreviewVariables, callback);
     });
   } else {
-    var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-    template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-    callback(template);
+    processMailTemplate(mailTemplate, mailPreviewVariables, callback);
+  }
+
+  function processMailTemplate(mailTemplate, mailPreviewVariables, callback) {
+    var result = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+
+    if (result.error) {
+      callback({ error: result.error });
+    } else {
+      result.content = result.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      result.content = result.content.replace(/href="\{Calendar\}"/ig, "");
+      callback(result);
+    }
   }
 }

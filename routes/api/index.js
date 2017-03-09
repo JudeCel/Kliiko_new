@@ -23,32 +23,14 @@ var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
-
 let sessionMember = require('./sessionMember');
 module.exports = router;
-
-// Common Rules
-router.use((req, res, next)  => {
-  let exceptionPaths = ["/survey/constants", "/survey/find", "/ping"];
-  if (req.currentResources || _.includes(exceptionPaths, req.path)) {
-    next();
-  } else {
-    notAuthExit(res);
-  }
-});
-
-//Common not authorized message
-function notAuthExit(res) {
-  res.status(403).send('not authorized');
-}
 
 var PERMISSIONS = {
   admin: policy.authorized(['admin']),
   managerAdmin: policy.authorized(['accountManager', 'admin']),
   facilitatorManagerAdmin: sessionMemberMiddleware.hasAccess(['facilitator'], ['facilitator', 'accountManager', 'admin'])
 }
-
-router.post('/ping', (req, res, next) => { res.send({})});
 
 // Main Routes
 router.get('/myDashboard/data', myDashboard.getAllData);
@@ -70,6 +52,8 @@ router.get('/accountManager/canAddAccountManager', PERMISSIONS.managerAdmin, acc
 
 router.get('/accountDatabase', PERMISSIONS.admin, accountDatabase.get);
 router.put('/accountDatabase/:id', PERMISSIONS.admin, accountDatabase.update);
+router.post('/accountDatabase/:id/addAdmin', PERMISSIONS.admin, accountDatabase.addAdmin);
+router.post('/accountDatabase/:id/removeAdmin', PERMISSIONS.admin, accountDatabase.removeAdmin);
 router.put('/accountDatabase/:accountUserId/comment', PERMISSIONS.admin, accountDatabase.updateAccountUserComment);
 
 router.post('/banners', PERMISSIONS.admin, banners.create);
@@ -93,10 +77,7 @@ router.post('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.create);
 router.put('/survey', PERMISSIONS.facilitatorManagerAdmin, survey.update);
 router.post('/survey/copy', PERMISSIONS.facilitatorManagerAdmin, survey.copy);
 router.put('/survey/status', PERMISSIONS.facilitatorManagerAdmin, survey.status);
-router.get('/survey/find', survey.find);
-router.post('/survey/answer', survey.answer);
 router.put('/survey/confirm', PERMISSIONS.facilitatorManagerAdmin, survey.confirm);
-router.get('/survey/constants', survey.getConstants);
 router.get('/survey/canExportSurveyData', PERMISSIONS.facilitatorManagerAdmin, survey.canExportSurveyData);
 router.get('/survey/stats', PERMISSIONS.facilitatorManagerAdmin, survey.getSurveyStats);
 
@@ -120,6 +101,7 @@ router.get('/contactLists/canExportContactListData', PERMISSIONS.facilitatorMana
 router.post('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactListImport.single('uploadedfile'), contactList.parseImportFile);
 router.put('/contactLists/:id/import', PERMISSIONS.facilitatorManagerAdmin, contactList.importContacts);
 router.post('/contactLists/:id/validate', PERMISSIONS.facilitatorManagerAdmin, contactList.validateContacts);
+router.post('/contactLists/:id/toggleListState', PERMISSIONS.facilitatorManagerAdmin, contactList.toggleListState);
 
 router.put('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.update);
 router.delete('/contactLists/:id', PERMISSIONS.facilitatorManagerAdmin, contactList.destroy);
@@ -134,6 +116,7 @@ router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
 router.put('/topic/updateSessionTopic', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopic);
 router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);
+router.put('/topic/updateDefaultTopic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateDefaultTopic);
 router.delete('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.deleteById);
 
 router.get('/brandColour', PERMISSIONS.facilitatorManagerAdmin, brandColour.get);
@@ -149,7 +132,7 @@ router.get('/session/ratings',  PERMISSIONS.admin, session.getAllSessionRatings)
 router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
-
+router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 
 
 // Session Member
@@ -173,7 +156,10 @@ router.delete('/sessionBuilder/:id/removeInvite/:inviteId', PERMISSIONS.facilita
 router.post('/sessionBuilder/:id/sendGenericEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendGenericEmail);
 router.post('/sessionBuilder/:id/sendCloseEmail', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sendCloseEmail);
 router.get('/sessionBuilder/:id/sessionMailTemplateStatus', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.sessionMailTemplateStatus);
+router.get('/sessionBuilder/:id/canChangeTopicActive', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.canChangeTopicActive);
 router.post('/sessionBuilder/:id/addTopics', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addTopics);
 router.post('/sessionBuilder/:id/removeTopic', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.removeTopic);
-
+router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.addSurveyToSession);
+router.post('/sessionBuilder/:id/setSurveyEnabled', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setSurveyEnabled);
+router.post('/sessionBuilder/:id/publish', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.publish);
 router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);

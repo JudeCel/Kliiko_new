@@ -39,7 +39,9 @@
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
     'KliikoApp.sessionExpire',
-    'KliikoApp.propertyDisabler'
+    'KliikoApp.propertyDisabler',
+    'angulartics',
+    'angulartics.mixpanel'
   ];
 
   angular
@@ -73,9 +75,9 @@
 
   function useAPI_URL(config) {
     var regex = /(\.html|\/api\/|http|\.template)/
-    return(!config.url.match(regex)) 
+    return(!config.url.match(regex))
   }
-  
+
   myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
   function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
     // Show progress bar on every request
@@ -96,11 +98,11 @@
       },
 
       'response': function(response) {
-        
+
         if (response.status == 404) {
           alert('that is all folks');
         }
-        
+
         if(response.config.transformResponse.length > 0) {
           saveToken(response.headers()['refresh-token']);
           $rootScope.showSpinner = false;
@@ -136,15 +138,14 @@
       window.localStorage.setItem('jwtToken', token);
     }
   }
-  
+
   function getToken(){
     return(window.localStorage.getItem("jwtToken"));
   }
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
   function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
-    //$rootScopeProvider.digestTtl(20);
-    dbgProvider.enable(1);
+    dbgProvider.enable(window.appData.mode != 'production');
     dbgProvider.debugLevel('trace');
 
     $httpProvider.interceptors.push('myInterceptor');
@@ -194,31 +195,35 @@
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$cookies', '$injector', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $cookies, $injector, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
+    vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
-    $rootScope.$on('app.updateUser', init);
+    $rootScope.$on('app.user', init);
 
     init();
 
     function init() {
       user.getUserData(vm).then(function(res) {
         setSessionStorage(res);
-        vm.user = res;
+        sessionExpire.init();
       });
-      accountUser.getAccountUserData().then(function(res) {
-        vm.accountUser = res
-      });
-      account.getAccountData().then(function(res) { vm.account = res });
-      sessionExpire.init();
     }
 
     function openModal(id) {
       setTimeout(function () {
         domServices.modal(id);
       }, 10);
+    }
+
+    function hasPermissions(perrmission){
+      if(vm.permissions){
+        return vm.permissions[perrmission]
+      }else{
+        return false
+      }
     }
 
     function setSessionStorage(res) {

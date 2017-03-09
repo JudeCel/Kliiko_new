@@ -2,9 +2,9 @@
   'use strict';
   angular.module('KliikoApp').factory('surveyServices', surveyServices);
   angular.module('KliikoApp.Root').factory('surveyServices', surveyServices);
-  surveyServices.$inject = ['$q', '$resource', 'dbg'];
+  surveyServices.$inject = ['$q', '$resource', 'dbg', 'globalSettings', '$window'];
 
-  function surveyServices($q, $resource, dbg) {
+  function surveyServices($q, $resource, dbg, globalSettings, $window) {
     var surveyRestApi = $resource('/survey/:path', null, {
       update: { method: 'PUT' },
       find: { method: 'GET', params: { path: 'find' } },
@@ -33,13 +33,13 @@
     upServices.checkTag = checkTag;
     upServices.canExportSurveyData = canExportSurveyData;
     upServices.getSurveyStats = getSurveyStats;
+    upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
     return upServices;
 
-    function getConstants() {
+    function getConstants(type) {
       var deferred = $q.defer();
-
       dbg.log2('#surveyServices > getConstants > make rest call');
-      surveyRestApi.constants({}, function(res) {
+      surveyRestApi.constants({surveyType: type}, function(res) {
         dbg.log2('#surveyServices > getConstants > rest call responds');
         deferred.resolve(res);
       });
@@ -58,6 +58,10 @@
 
       return deferred.promise;
     }
+    function exportSurveyStatsUrl(surveyId, format) {
+      var apiUrl = '/api/surveys/report/'+surveyId+'/'+format+'/';
+      return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
+    }
 
     function getSurveyStats(id) {
       var deferred = $q.defer();
@@ -74,11 +78,11 @@
       return deferred.promise;
     }
 
-    function getAllSurveys() {
+    function getAllSurveys(data) {
       var deferred = $q.defer();
 
       dbg.log2('#surveyServices > getAllSurveys > make rest call');
-      surveyRestApi.get({}, function(res) {
+      surveyRestApi.get(data, function(res) {
         dbg.log2('#surveyServices > getAllSurveys > rest call responds');
         deferred.resolve(res);
       });

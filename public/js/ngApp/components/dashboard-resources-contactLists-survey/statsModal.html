@@ -4,8 +4,8 @@
       <div class='modal-header'>
         <h3 class="pull-left">{{sc.stats.survey.name}}</h3>
         <div custom-select-directive data-title="Export" data-id="survey-stats-button" class="custom-select-directive btn-large pull-right">
-          <li id='surveyStatsExportPDF' ng-click="sc.exportStats(sc.stats.survey.id, 'pdf')"><a href=""><i class="icon-remove"></i>Export to PDF</a></li>
-          <li id='surveyStatsExportXLS' ng-click="sc.exportStats(sc.stats.survey.id, 'xls')"><a href=""><i class="icon-remove"></i>Export to XLS</a></li>
+          <li id='surveyStatsExportPDF'><a href="{{sc.exportStatsUrl(sc.stats.survey.id, 'pdf')}}"><i class="icon-remove"></i>Export to PDF</a></li>
+          <li id='surveyStatsExportXLS'><a href="{{sc.exportStatsUrl(sc.stats.survey.id, 'xlsx')}}"><i class="icon-remove"></i>Export to XLS</a></li>
         </div>
         <div class="clearfix"></div>
       </div>

@@ -4,5 +4,6 @@ module.exports = {
   uniqueStructureSql: require('./unique.js').uniqueStructureSql,
   length: require('./length.js').length,
   userName: require('./userName.js').userName,
-  phone: require('./phone.js').phone
+  phone: require('./phone.js').phone,
+  notInLower: require('./notInLower.js').notInLower
 };

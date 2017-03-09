@@ -17,6 +17,11 @@ module.exports = (Sequelize, DataTypes) => {
     required: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     isCopy: {type: DataTypes.BOOLEAN, allowNull: true}
   }, {
+    indexes:[{
+      name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
+      unique: true,
+      fields: ['name', 'AccountId', 'MailTemplateBaseId']
+    }],
     classMethods: {
       associate: function(models) {
         MailTemplate.belongsTo(models.MailTemplateBase);

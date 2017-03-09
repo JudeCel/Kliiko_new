@@ -2,25 +2,25 @@
 
 var models = require('./../../models');
 var BrandProjectPreference = models.BrandProjectPreference;
-
 var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
 var _ = require('lodash');
+var testDatabase = require("../database");
 
 describe('SERVICE - BrandColour', function() {
   var testData = {};
 
   beforeEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       sessionFixture.createChat().then(function(result) {
         testData.user = result.user;
         testData.account = result.account;
         testData.session = result.session;
         testData.preference = result.preference;
-        done();
+        BrandProjectPreference.update({ default: false }, { where: { id: result.preference.id } }).then(() => done());
       }, function(error) {
         done(error);
       });
@@ -186,8 +186,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
-          assert.equal(error, brandColourServices.messages.notFound);
-          done();
+          try {
+            assert.equal(error, brandColourServices.messages.notFound);
+            done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
 
@@ -273,8 +277,12 @@ describe('SERVICE - BrandColour', function() {
         brandColourServices.copyScheme({ id: testData.preference.id + 100 }, accountParams()).then(function(result) {
           done('Should not get here!');
         }, function(error) {
+          try {
           assert.equal(error, brandColourServices.messages.notFound);
           done();
+          } catch (error) {
+            done(error);
+          }
         });
       });
     });

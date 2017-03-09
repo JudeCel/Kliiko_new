@@ -8,7 +8,8 @@ module.exports = {
   accountDatabase: {
     notFound: 'Account User not found',
     notVerified: 'Account is not verified',
-    selfDisable: 'You cannot disable your account'
+    selfDisable: 'You cannot disable your account',
+    adminNotFound: 'Admin not found with email:'
   },
   accountManager: {
     removed: 'Successfully removed account from Account List',
@@ -76,7 +77,8 @@ module.exports = {
     notFound: 'Mail Template not found',
     error: {
       categoryNotFound: 'Mail Template category not found',
-      notProvided: 'Mail Template not provided'
+      notProvided: 'Mail Template not provided',
+      uniqueName: 'Mail Template name has already been taken',
     },
     testMailSent: 'A Test Email has been successfully sent'
   },
@@ -96,6 +98,9 @@ module.exports = {
     cannotBeChanged: 'Session cannot be changed',
     cantRateSelf: "You can't rate your self",
     sessionNotClosed: "You can't rate or comment participants because session in not closed",
+    cantSendSMS: "You can't send SMS for this session",
+    actionNotAllowed: "Action not allowed",
+    closed: "Sorry, \"{sessionName}\", has now closed. Thank you for interest!"
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
@@ -107,6 +112,8 @@ module.exports = {
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
     sessionClosed: "You can't send invites because session has been closed",
+    sessionClosedGuestsInvite: "Sorry, but you cannot yet Invite Guests in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Guests, when you have Closed a Session, or Upgraded your Plan.",
+    sessionClosedObserversInvite: "Sorry, but you cannot yet Invite Spectators in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Spectators, when you have Closed a Session, or Upgraded your Plan.",
     cantRemoveInvite: {
       messages: "Is posted messages"
     },
@@ -140,7 +147,8 @@ module.exports = {
     }
   },
   sessionMember: {
-    notFound: 'Session Member not found'
+    notFound: 'Session Member not found',
+    nameEmpty: 'Sorry but we need your first name'
   },
   socialProfile: {
     verifyEmail: 'Please verify your email address'
@@ -173,6 +181,7 @@ module.exports = {
   },
   contactList: {
     notFound: 'Contact List not found!',
+    reachedMaxLimit: 'You have reached max limit for contact list 50'
   },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
@@ -210,9 +219,10 @@ module.exports = {
   topics: {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
-      relatedSession: "Can't delete topic is related session",
+      relatedSession: "This Topic is currently being used in a Session, and can't be deleted.",
       default: "Can't delete default topic",
-      stock: "Can't delete stock topic"
+      stock: "Can't delete stock topic",
+      notFound: "No topic found"
     }
   },
   users: {
@@ -242,7 +252,8 @@ module.exports = {
       countLimit: 'You have reached limit for _name_s (max: _max_number_)',
       recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter on the ',
       recruiterCountLimitCore: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
-      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.'
+      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.',
+      sessionsTimeInputDisabledMessage: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
     }
   },
   models: {
@@ -262,7 +273,8 @@ module.exports = {
         min: ' must be longer than XXX characters',
         max: ' must not be longer than XXX characters'
       },
-      firstLastName: 'Invalid XXX format'
+      firstLastName: 'Invalid XXX format',
+      restrictedAccountName: 'This Account name is restricted'
     },
     filters: {
       uniqueAccountName: 'Name has already been taken',
@@ -309,7 +321,8 @@ module.exports = {
       invite: 'Successfully invited contacts'
     },
     user: {
-      updateContactDetails: 'Contact details updated successfully.'
+      updateContactDetails: 'Contact details updated successfully.',
+      updateEmailNotifications: 'Email notifications updated successfully.'
     },
     sessionMember: {
       addFacilitator: 'Host was successfully set'

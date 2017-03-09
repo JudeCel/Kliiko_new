@@ -312,20 +312,10 @@
     }
 
     function resetMailTemplate() {
-      var deferred = $q.defer();
-      mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
-            deferred.resolve();
-          });
-        } else {
-          messenger.error(res.error);
-          deferred.reject();
-        }
-      });
 
-      return deferred.promise;
+      refreshTemplateList(function() {
+        vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
+      });
     }
 
     function previewMailTemplate() {
@@ -337,7 +327,7 @@
           //this is for case when preview button pressed after save but before server responce
           var template = res.template || vm.currentTemplate;
           contentFrame.html(template.content);
-          $("#mailTemplatePreviewSubject").html(template.subject);
+          $("#mailTemplatePreviewSubject").text(template.subject);
         } else {
           messenger.error(res.error);
         }
@@ -485,6 +475,7 @@
 
     function galleryDropdownData(dependency) {
       return {
+        validation: 'uploadToGallery',
         types: vm.uploadTypes[vm.currentUpload],
         modal: { upload: true },
         dependency: dependency

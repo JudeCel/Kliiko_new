@@ -13,6 +13,10 @@ var q = require('q');
 var path = './seeders/mailTemplateFiles/';
 var constants = require('../util/constants');
 let Bluebird = require('bluebird');
+var Minimize = require('minimize');
+var MailTemplateService = require('./../services/mailTemplate');
+
+var minimize = new Minimize();
 
 function doUpdate(config) {
   let deferred = q.defer();
@@ -59,15 +63,21 @@ function processData(item, fileObject, callback) {
     if (error) {
       callback(error);
     }
-    if(fileData) {
-      models.MailTemplateBase.update({ content: fileData }, { where: { category: item.category } }).then(function(updateDataBase) {
-        models.MailTemplate.update({ content: fileData }, { where: { MailTemplateBaseId: item.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(updateData) {
-          callback(null, "Updated email template for " + item.category);
-        }, function(error) {
+    if (fileData) {
+      minimize.parse(fileData, function (error, minifiedData) {
+        if (error) {
           callback(error);
-        });
-      }, function(error) {
-        callback(error);
+        } else {
+          models.MailTemplateBase.update({ content: minifiedData }, { where: { category: item.category } }).then(function(updateDataBase) {
+            models.MailTemplate.update({ content: minifiedData }, { where: { MailTemplateBaseId: item.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(updateData) {
+              callback(null, "Updated email template for " + item.category);
+            }, function(error) {
+              callback(error);
+            });
+          }, function(error) {
+            callback(error);
+          });
+        }
       });
     }
   });
@@ -79,7 +89,77 @@ function processCallBack(infoDataObject) {
   }
 }
 
+function addMailTemplate(templateInfo, config) {  
+  return new Bluebird(function (resolve, reject) {
+    models.MailTemplateBase.find({where: {category: templateInfo.type}}).then(function(mailTemplateBase) {
+      if (!mailTemplateBase) {
+        createMailTemplateFromFile(templateInfo).then(function() {
+          outLog(config, "MailTemplate created: " + templateInfo.name);
+          resolve(true);
+        }, function(error){
+          outLog(config, error);
+          reject(error);
+        });
+      } else {
+        outLog(config, "MailTemplate exists: " + templateInfo.name);
+        resolve(false);
+      }
+    }, function(error) {
+      outLog(config, error);
+      reject(error);
+    });
+  });
+}
+
+function createMailTemplateFromFile(fileInfo) {
+  return new Bluebird(function (resolve, reject) {
+    let filesInfo = getTemplateFilesInfo(path);
+
+    fs.readFile(path + filesInfo[fileInfo.type], 'utf8', function read(error, fileData) {
+      if (error) {
+        reject(error);
+      } else if (fileData) {
+        minimize.parse(fileData, function (error, minifiedData) {
+          if (error) {
+            reject(error);
+          } else {
+            let baseMailTemplateAttrs = {
+              name: fileInfo.name,
+              subject: fileInfo.subject,
+              content: minifiedData,
+              systemMessage: fileInfo.systemMessage,
+              category: fileInfo.type,
+              required: fileInfo.required
+            };
+            MailTemplateService.createBaseMailTemplate(baseMailTemplateAttrs, function (err, mailTemplate) {
+              if(err) {
+                reject(err);
+              } else {
+                let mailTemplateAttrs = {
+                  name: fileInfo.name,
+                  subject: fileInfo.subject,
+                  content: minifiedData,
+                  systemMessage: fileInfo.systemMessage,
+                  required: fileInfo.required,
+                  MailTemplateBaseId: mailTemplate.id
+                };
+                models.MailTemplate.create(mailTemplateAttrs).then(function() {
+                  resolve();
+                }, function(error) {
+                  reject(error);
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+
+  });
+}
+
 module.exports = {
   doUpdate: doUpdate,
-  getTemplateFilesInfo: getTemplateFilesInfo
+  getTemplateFilesInfo: getTemplateFilesInfo,
+  addMailTemplate: addMailTemplate
 }

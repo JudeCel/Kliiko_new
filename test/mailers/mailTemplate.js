@@ -7,6 +7,8 @@ var userFixture = require('./../fixtures/user');
 var constants = require('../../util/constants');
 var mailTemplateService = require('./../../services/mailTemplate');
 var momentTimeZone = require('moment-timezone');
+var testDatabase = require("../database");
+
 
 let accountId;
 let params = {
@@ -46,12 +48,14 @@ let params = {
   notThisTimeButton: '#4CBFE9',
   participantFirstName: 'Name',
   participantLastName: 'Last',
+  guestFirstName: 'Name',
+  guestLastName: 'Last',
   timeZone: momentTimeZone.tz.names()[0]
 };
 
 describe('send MailTemplates',  () => {
   before((done) => {
-    models.sequelize.sync({force: true}).done((error, result) => {
+    testDatabase.prepareDatabaseForTests().done((error, result) => {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         accountId = result.account.id;
         params.accountId = result.account.id;
@@ -70,36 +74,20 @@ describe('send MailTemplates',  () => {
         include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
         attributes: constants.mailTemplateFields,
         raw: true
-      }).then(function (result) {
-        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
-          assert.isNull(error);
-          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
-
-          done();
-        });
-
-      }).catch(function (err) {
-        assert.isNull(err);
+      }).then((result) => {
+        try {
+          mailTemplateService.saveMailTemplate(result, false, accountId, false, (error, saveResult) => {
+            assert.isNull(error);
+            assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
+            done();
+          });
+        } catch (error) {
+          done(error);
+        }
+      }).catch((err) => {
+        done(err);
       });
-    })
-
-    it('#Create copy of mail template for session', (done) =>  {
-      models.MailTemplate.find({
-        include: [{ model: models.MailTemplateBase, attributes: ['id', 'name'], where: {category: "firstInvitation"}}],
-        attributes: constants.mailTemplateFields,
-        raw: true
-      }).then(function (result) {
-        result.properties = {sessionId: 0};
-        mailTemplateService.saveMailTemplate(result, false, accountId, function(error, saveResult) {
-          assert.isNull(error);
-          assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
-          done();
-        });
-
-      }).catch(function (err) {
-        assert.isNull(err);
-      });
-    })
+    });
   });
 
   describe('#Send mail templates', function() {

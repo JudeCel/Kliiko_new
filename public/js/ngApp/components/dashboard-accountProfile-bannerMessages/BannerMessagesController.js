@@ -18,7 +18,6 @@
     vm.upload = upload;
     vm.update = update;
     vm.remove = remove;
-    vm.isAdmin = isAdmin;
 
     $scope.$watch(function() {
       return sessionStorage.getItem('bannerType');
@@ -34,12 +33,7 @@
     });
 
     function init() {
-      if(isAdmin()) {
-        mapBanners();
-      }
-      else {
-        $window.location.href = '/';
-      }
+      mapBanners();
     }
 
     function upload(bannerType) {
@@ -83,10 +77,6 @@
       fileUploader.remove([vm.file[bannerType].resource.id]).then(function(result) {
         angular.copy({}, vm.file[bannerType]);
       });
-    }
-
-    function isAdmin() {
-      return accountUser.isAdmin();
     }
 
     function mapBanners(next) {

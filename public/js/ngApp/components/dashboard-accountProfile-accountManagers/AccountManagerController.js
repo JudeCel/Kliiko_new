@@ -13,10 +13,11 @@
     vm.removeAccountUser = removeAccountUser;
     vm.isInvited = isInvited;
     vm.isAccepted = isAccepted;
-    vm.isAccountOwner = isAccountOwner;
+    vm.canDelete = canDelete;
     vm.removeInvite = removeInvite;
     vm.submitForm = submitForm;
     vm.cancel = cancel;
+    vm.canEdit = canEdit;
 
     vm.modalInstance = null;
     vm.editModalInstance = null;
@@ -96,8 +97,12 @@
       return accountUser.status == "active";
     };
 
-    function isAccountOwner(accountUser) {
-      return accountUser.owner;
+    function canDelete(accountUser) {
+      return(!accountUser.owner && !accountUser.admin);
+    };
+    
+    function canEdit(accountUser) {
+      return(!accountUser.admin);
     };
 
     function removeInvite(accountUser) {

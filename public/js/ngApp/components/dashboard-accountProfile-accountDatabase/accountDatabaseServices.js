@@ -6,6 +6,8 @@
   function AccountDatabaseServices($q, $resource, dbg) {
     var accountDatabaseRestApi = {
       accountDatabase: $resource('/accountDatabase/:id/', null, { update: { method: 'PUT' } }),
+      addAdmin: $resource('/accountDatabase/:id/addAdmin', null, { post: { method: 'POST' } }),
+      removeAdmin: $resource('/accountDatabase/:id/removeAdmin', null, { post: { method: 'POST' } }),
       comment: $resource('/accountDatabase/:id/comment', null, { update: { method: 'PUT', params: { id: '@id' } } })
     };
 
@@ -14,6 +16,8 @@
     upServices.getAccountDatabases = getAccountDatabases;
     upServices.updateAccountUser = updateAccountUser;
     upServices.updateAccountUserComment = updateAccountUserComment;
+    upServices.addAdmin = addAdmin;
+    upServices.removeAdmin = removeAdmin;
     return upServices;
 
     function getAccountDatabases() {
@@ -22,6 +26,30 @@
       dbg.log2('#AccountDatabaseServices > getAccountDatabases > make rest call');
       accountDatabaseRestApi.accountDatabase.get({}, function(res) {
         dbg.log2('#AccountDatabaseServices > getAccountDatabases > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function addAdmin(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountDatabaseServices > addAdmin > make rest call', data);
+      accountDatabaseRestApi.addAdmin.post({ id: data.accountId }, data, function(res) {
+        dbg.log2('#AccountDatabaseServices > addAdmin > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
+
+    function removeAdmin(data) {
+      var deferred = $q.defer();
+
+      dbg.log2('#AccountDatabaseServices > removeAdmin > make rest call', data);
+      accountDatabaseRestApi.removeAdmin.post({ id: data.accountId }, data, function(res) {
+        dbg.log2('#AccountDatabaseServices > removeAdmin > rest call responds');
         deferred.resolve(res);
       });
 

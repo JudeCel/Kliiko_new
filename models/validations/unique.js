@@ -2,10 +2,11 @@
 
 var _ = require('lodash');
 var MessagesUtil = require('./../../util/messages');
+var constants = require('./../../util/constants');
 
 function unique(sequelize, model, fieldName, otherValue) {
   return function(value, next) {
-    if(value) {
+    if(value && !shouldSkipValidation(model, fieldName, value)) {
       let where = {};
       if(otherValue) {
         if(otherValue.lower) {
@@ -15,13 +16,16 @@ function unique(sequelize, model, fieldName, otherValue) {
               sequelize.fn('regexp_replace', sequelize.fn('lower', value), "\\s", '', 'g')
             )]
           };
-        }
-        else {
+        } else {
           where[fieldName] = value;
         }
 
         if(otherValue.accountContext) {
           where.accountId = this.accountId;
+        }
+
+        if(otherValue.topicContext && this.parentTopicId) {
+          where.parentTopicId = this.parentTopicId;
         }
       }
       else {
@@ -46,6 +50,10 @@ function unique(sequelize, model, fieldName, otherValue) {
     }
   }
 };
+
+function shouldSkipValidation(model, fieldName, value) {
+  return model == "Subscription" && fieldName == "subscriptionId" && value == constants.loadTestSubscriptionId;
+}
 
 module.exports = {
   unique: unique

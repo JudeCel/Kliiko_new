@@ -1,6 +1,6 @@
 'use strict';
 
-var {Invite, sequelize, Session, AccountUser, Account, SessionMember} = require('../../../models');
+var {Invite, Session, AccountUser, Account, SessionMember} = require('../../../models');
 
 var userService = require('../../../services/users');
 var inviteService = require('../../../services/invite');
@@ -8,6 +8,7 @@ var accountManagerService = require('../../../services/accountManager');
 var subscriptionFixture = require('../../fixtures/subscription');
 var assert = require('chai').assert;
 var async = require('async');
+var testDatabase = require("../../database");
 
 describe('SERVICE - Invite to Session', function() {
   var testUser1, accountUser1, testUser2, session,
@@ -33,7 +34,7 @@ describe('SERVICE - Invite to Session', function() {
   }
 
   beforeEach(function(done) {
-    sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       userService.create(user1Attrs, (err, user1) =>  {
         testUser1 = user1;
         user1.getOwnerAccount().then((accounts) =>  {
@@ -321,7 +322,8 @@ describe('SERVICE - Invite to Session', function() {
                 AccountUser.find({where: findInvite.accountUserId, include: [SessionMember]}).then((accountUser) => {
                   try {
                     assert.isUndefined(accountUser.SessionMembers[0]);
-                    assert.equal(accountUser.role, "observer");
+                    assert.equal(accountUser.role, "participant");
+                    assert.equal(accountUser.active, false);
                     done();
                   } catch (e) {
                     done(e);

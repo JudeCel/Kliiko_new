@@ -89,6 +89,11 @@
     vm.finishedRenderingPlans = finishedRenderingPlans;
 
     init();
+    vm.setup = function() {
+      if ($stateParams.step && $stateParams.plan) {
+        vm.currentStep = parseInt($stateParams.step);
+      }
+    };
 
     function init() {
       errorWhileCretingSubscription()
@@ -130,6 +135,10 @@
 
             if (canPush('year', subPlan)) {
               vm.annualPlans.push(subPlan);
+            }
+
+            if (subPlan.plan.id == $stateParams.plan) {
+              vm.selectedPlan = subPlan;
             }
           });
 
@@ -190,6 +199,12 @@
 
       nextStep();
     }
+
+    vm.dropdownSelectedPlan = function(planItem) {
+      if (!vm.isCurrentPlan(planItem)) {
+        vm.selectedPlan = planItem;
+      }
+    };
 
     function checkRadioButton(currentPlan, checkPlan) {
       if(currentPlan && checkPlan) {
@@ -278,6 +293,9 @@
       if (view == 'monthly') {
         vm.subPlans = vm.monthlyPlans;
       }
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      });
     }
 
     function submitContactusForm() {
@@ -345,7 +363,9 @@
     }
 
     function finishedRenderingPlans() {
-      updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+      });
     }
   }
 })();

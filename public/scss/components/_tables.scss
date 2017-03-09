@@ -36,6 +36,10 @@
   tr.session-open {
     background-color: #D6E9DF;
   }
+
+  tr.session-highlight {
+    background-color: #c7d9f1;
+  }
 }
 
 .table-dashboardElements > tbody:nth-child(2n+1) {
