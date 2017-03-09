@@ -158,7 +158,7 @@ function getTopicCount(accountId, params) {
         return models.SessionTopics.count(dependency.params(accountId, params.sessionId));
       }
       else {
-        reject(MessagesUtil.validators.subscription.notFound);
+        resolve({ limit: -1 });
       }
     }).then((count) => {
       const limit = subscription.SubscriptionPreference.data[dependency.key];

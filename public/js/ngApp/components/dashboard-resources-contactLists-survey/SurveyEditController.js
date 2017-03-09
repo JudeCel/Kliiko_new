@@ -381,27 +381,39 @@
       }
     };
 
-    function canChangeAnswers(value, question) {
-      if(vm.survey || vm.survey.confirmedAt)
+    function isSessionOpen() {
+      if (vm.survey) {
+        if (vm.survey.confirmedAt) {
+          return !vm.survey.closed;
+        }
+      } else {
         return false;
-
-      if(value == 'add') {
-        return (question.answers.length < question.maxAnswers);
       }
-      else {
-        return (question.answers.length > question.minAnswers);
+    }
+
+    function canChangeAnswers(value, question) {
+      if (isSessionOpen()) {
+        return false;
+      } else {
+        if(value == 'add') {
+          return (question.answers.length < question.maxAnswers);
+        }
+        else {
+          return (question.answers.length > question.minAnswers);
+        }
       }
     };
 
     function changeAnswers(value, question, index) {
-      if(vm.survey || vm.survey.confirmedAt)
+      if (isSessionOpen()) {
         return false;
-
-      if(value == 'add') {
-        question.answers.push({ order: question.answers.length });
-      }
-      else {
-        question.answers.splice(index, 1);
+      } else {
+        if(value == 'add') {
+          question.answers.push({ order: question.answers.length });
+        }
+        else {
+          question.answers.splice(index, 1);
+        }
       }
     };
 
