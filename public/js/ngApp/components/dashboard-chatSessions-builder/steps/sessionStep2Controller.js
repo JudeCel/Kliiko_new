@@ -348,6 +348,16 @@
     }
 
     vm.saveSurveys = function(autoSave, publish) {
+      if (publish) {
+        $confirm({ text: "Once you have Published, you cannot change your Generate Contact List response." }).then(function() {
+          saveSurveysConfirmed(false, publish);
+        });
+      } else {
+        saveSurveysConfirmed(autoSave, false);
+      }
+    }
+
+    function saveSurveysConfirmed(autoSave, publish) {
       vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
         vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
           if (publish) {
