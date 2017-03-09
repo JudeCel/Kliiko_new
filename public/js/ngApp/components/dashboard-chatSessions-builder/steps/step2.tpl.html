@@ -57,7 +57,7 @@
               </span>
 
               <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default && (!topic.inviteAgain || !step2Controller.session.publicUid)" src="/icons/dashboardElement_remove.png" title="Delete">
-              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic)">
 
               <toggle-switch
                 ng-model="topic.sessionTopic.active"

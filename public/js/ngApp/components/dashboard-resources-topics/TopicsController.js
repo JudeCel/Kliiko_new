@@ -122,8 +122,9 @@
         setCreateData();
       }
       else if(vm.modalAction == 'sessionTopic') {
-        vm.originalReference = topic;
-        angular.copy(topic, vm.topicData);
+        vm.originalReference = topic.sessionTopic;
+        angular.copy(topic.sessionTopic, vm.topicData);
+        vm.topicData.inviteAgain = topic.inviteAgain;
         setEditData();
       }
     };
