@@ -143,6 +143,10 @@
         return false;
       }
 
+      if (topic.inviteAgain && vm.session.publicUid) {
+        return false;
+      }
+
       if(!selected.length) {
         return true;
       }
@@ -215,6 +219,26 @@
     }
 
     function removeTopicFromList(id) {
+      for(var index in vm.sessionTopicsArray) {
+        var topic = vm.sessionTopicsArray[index];
+        if (topic.id == id) {
+          if (topic.inviteAgain) {
+            if (!vm.session.publicUid) {
+              $confirm({ 
+                text: "By deleting this Topic ypu will not be able to Generate a Contact List. You can however reactivate by dragging from the left-hand column before publishing your Session." 
+              }).then(function() {
+                removeTopicFromListConfirmed(id);
+              });
+            }
+          } else {
+            removeTopicFromListConfirmed(id);
+          }
+          break;
+        }
+      }
+    }
+
+    function removeTopicFromListConfirmed(id) {
       vm.session.removeTopic(id).then(function(res) {
         dbg.log2('topic removed');
         removeTopicFromLocalList(id);
