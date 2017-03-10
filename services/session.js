@@ -347,6 +347,15 @@ function copySession(sessionId, accountId) {
                 //we ignore error because data is copied step by step, and one error shouldn't stop following copying
                 callback();
               });
+            },
+            function(callback) {
+              sessionSurvey.copySurveys(sessionId, session.id, accountId).then(() => {
+                console.log("----success copying survey");
+                callback();
+              }).catch((e) => {
+                callback();
+                console.log("----failed copying survey", e);
+              })
             }
             //  NOTE: right now we need to disable this functionality.
             //  When client will want to copy email templates we will jsut need to add this code back.

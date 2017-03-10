@@ -3,6 +3,7 @@ var surveyService = require('./survey');
 var constants = require('../util/constants');
 var Bluebird = require('bluebird');
 var _ = require('lodash');
+var surveyService = require('./survey');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
@@ -79,7 +80,7 @@ function removeSurveys(sessionId) {
   return new Bluebird((resolve, reject) => {
 
     models.Session.findOne({
-        where: { id: sessionId},
+        where: { id: sessionId}
     })
     .then((session) => {
       if (session) {
@@ -105,9 +106,43 @@ function removeSurveys(sessionId) {
   });
 }
 
+function copySurveys(fromSessionId, toSessionId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    models.Session.findOne({
+        where: { id: fromSessionId}
+    })
+    .then((session) => {
+      if (session) {
+        return session.getSurveys();
+      } else {
+        resolve();
+      }
+    }).then((surveys) => {
+      let surveyList = _.map(surveys, 'id');
+      if (surveyList.length) {
+        surveyService.copySurvey({id:surveyList[0]}, {id: accountId})
+        .then((survey) => {
+          return addSurveyToSession(toSessionId, survey.data.id);
+        })
+        .then(() => {
+          resolve();
+        })
+        .catch((e) => {
+          reject(e);
+        });
+      } else {
+        resolve();
+      }
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+}
+
 module.exports = {
   addSurveyToSession: addSurveyToSession,
   sessionSurveys: sessionSurveys,
   setSurveyEnabled: setSurveyEnabled,
-  removeSurveys: removeSurveys
+  removeSurveys: removeSurveys,
+  copySurveys: copySurveys
 }
