@@ -46,6 +46,7 @@
           vm.message = res.error;
         }
         else {
+          vm.status = res.status;
           vm.chatUrl = res.chatUrl;
           vm.survey = res.data;
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {

@@ -112,6 +112,13 @@ function findSurvey(params, skipValidations) {
         else if(!survey.confirmedAt) {
           deferred.reject(MessagesUtil.survey.notConfirmed);
         }
+        else if(survey.surveyType !== 'recruiter') {
+          models.SessionSurvey.find({ where: { surveyId: survey.id } }).then((sessionSurvey) => {
+            const params = simpleParams(survey);
+            if(!sessionSurvey.active) params.status = 400;
+            deferred.resolve(params);
+          });
+        }
         else {
           deferred.resolve(simpleParams(survey));
         }
@@ -448,19 +455,27 @@ function answerSurvey(params) {
                   clParams.contactListId = contactList.id;
                   clParams.accountId = survey.accountId;
 
-                  if(survey.surveyType === 'recruiter' || answer.value === 1) {
+                  if(survey.surveyType === 'recruiter') {
                     return createContactListUser(survey, clParams);
                   }
+                  else if(survey.surveyType === 'sessionPrizeDraw') {
+                    return survey;
+                  }
                   else {
-                    const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
-                    return models.AccountUser.find({ where: { AccountId: survey.accountId, email: contactDetails.email } }).then((accountUser) => {
-                      if(accountUser) {
-                        return survey;
-                      }
-                      else {
-                        return createContactListUser(survey, clParams);
-                      }
-                    });
+                    if(answer.value === 1) {
+                      return survey;
+                    }
+                    else {
+                      const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
+                      return models.AccountUser.find({ where: { AccountId: survey.accountId, email: contactDetails.email } }).then((accountUser) => {
+                        if(accountUser) {
+                          return survey;
+                        }
+                        else {
+                          return createContactListUser(survey, clParams);
+                        }
+                      });
+                    }
                   }
                 } else {
                   return survey;
