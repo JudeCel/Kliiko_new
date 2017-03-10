@@ -24,6 +24,7 @@ module.exports = (Sequelize, DataTypes) => {
         Survey.belongsTo(models.ContactList, { foreignKey: 'contactListId', onDelete: 'SET NULL' });
         Survey.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Survey.belongsTo(models.Account, { foreignKey: 'accountId' });
+        Survey.belongsToMany(models.Session, { through: models.SessionSurvey, onDelete: 'cascade', hooks: true});
       }
     }
   });

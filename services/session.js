@@ -19,6 +19,7 @@ var sessionMemberServices = require('./../services/sessionMember');
 var sessionBuilder = require('./../services/sessionBuilder');
 var validators = require('./../services/validators');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
+var sessionSurvey = require('./sessionSurvey');
 
 
 const VALID_ATTRIBUTES = {
@@ -274,10 +275,12 @@ function removeSession(sessionId, accountId) {
 
     findSession(sessionId, accountId).then(function(result) {
       sessionMemberServices.findAllMembersIds(sessionId).then(function(ids) {
-        result.data.destroy().then(function() {
-          sessionMemberServices.refreshAccountUsersRole(ids).then(function() {
-            deferred.resolve(simpleParams(null, MessagesUtil.session.removed));
-          });
+        sessionSurvey.removeSurveys(sessionId).then(function() {
+          return result.data.destroy();
+        }).then(function() {
+          return sessionMemberServices.refreshAccountUsersRole(ids);
+        }).then(function() {
+          deferred.resolve(simpleParams(null, MessagesUtil.session.removed));
         }).catch(function(error) {
           deferred.reject(filters.errors(error));
         });
@@ -518,17 +521,17 @@ function copySessionMember(session, facilitator) {
 }
 
 function simpleParams(data, message) {
-  return { 
-    data: data, 
-    message: message, 
-    baseUrl: urlHeplers.getBaseUrl() 
+  return {
+    data: data,
+    message: message,
+    baseUrl: urlHeplers.getBaseUrl()
   };
 };
 
 function modifySessions(sessions, accountId) {
   let deferred = q.defer();
 
-  Account.find({ 
+  Account.find({
     where: { id: accountId },
     include: [Subscription]
   }).then(function(account) {
