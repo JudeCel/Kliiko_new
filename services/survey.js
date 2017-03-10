@@ -432,6 +432,11 @@ function answerSurvey(params) {
 
   models.sequelize.transaction((t) => {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
+      const answer = findAnswer(validParams, survey, 'interest');
+      if(survey.surveyType === 'sessionPrizeDraw' && answer.value === 1) {
+        return survey;
+      }
+
       return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
          return tryFindContactList(survey, t).then((contactList) => {
           if(!contactList) { return survey }
@@ -442,11 +447,21 @@ function answerSurvey(params) {
                 if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
                   clParams.contactListId = contactList.id;
                   clParams.accountId = survey.accountId;
-                  return contactListUserServices.create(clParams).then((result) => {
-                    return survey;
-                  }, (error)  => {
-                    throw error;
-                  });
+
+                  if(survey.surveyType === 'recruiter' || answer.value === 1) {
+                    return createContactListUser(survey, clParams);
+                  }
+                  else {
+                    const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
+                    return models.AccountUser.find({ where: { AccountId: survey.accountId, email: contactDetails.email } }).then((accountUser) => {
+                      if(accountUser) {
+                        return survey;
+                      }
+                      else {
+                        return createContactListUser(survey, clParams);
+                      }
+                    });
+                  }
                 } else {
                   return survey;
                 }
@@ -472,6 +487,14 @@ function answerSurvey(params) {
   return deferred.promise;
 };
 
+function createContactListUser(survey, clParams) {
+  return contactListUserServices.create(clParams).then((result) => {
+    return survey;
+  }, (error)  => {
+    throw error;
+  });
+}
+
 const ANSWER_RESPONSES = {
   recruiter: 100,
   sessionContactList: {
@@ -489,9 +512,7 @@ function correctSurveyAnsweredMessage(params, survey) {
     return ANSWER_RESPONSES.recruiter;
   }
   else {
-    const question = survey.SurveyQuestions.find((item) => item.name === 'Interest');
-    const answer = params.answers[question.id.toString()];
-
+    const answer = findAnswer(params, survey, 'interest');
     if(answer.value === 0) {
       return ANSWER_RESPONSES[survey.surveyType].interested;
     }
@@ -499,6 +520,26 @@ function correctSurveyAnsweredMessage(params, survey) {
       return ANSWER_RESPONSES[survey.surveyType].notInterested;
     }
   }
+}
+
+function findAnswer(params, survey, type) {
+  let question;
+  if(type === 'contact') {
+    question = findContactQuestion(survey.SurveyQuestions);
+  }
+  else {
+    question = findInterestQuestion(survey.SurveyQuestions);
+  }
+
+  return params.answers[question.id.toString()];
+}
+
+function findContactQuestion(questions) {
+  return questions.find((item) => item.name === 'Contact Details');
+}
+
+function findInterestQuestion(questions) {
+  return questions.find((item) => item.name === 'Interest');
 }
 
 function findContactListAnswers(contactList, answers) {
