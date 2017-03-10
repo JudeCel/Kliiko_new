@@ -74,6 +74,20 @@ function defaultTopicParams(session, topic) {
   };
 }
 
+function inviteAgainTopicParams(session, topic) {
+  return {
+    topicId: topic.id,
+    sessionId: session.id,
+    order: 1,
+    active: true,
+    landing: true,
+    boardMessage: topic.boardMessage,
+    name: topic.name,
+    sign: topic.sign,
+    lastSign: null
+  };
+}
+
 function defaultVideoParams(resource, topic) {
   return {
     sessionTopicId: topic.id,
@@ -103,6 +117,17 @@ function addDefaultTopicVideo(session) {
           models.Console.create(videoParams);
           models.SessionResource.create({ sessionId: session.id, resourceId: resource.id });
         }
+      });
+    }
+  });
+}
+
+function addInviteAgainTopic(session) {
+   return models.Topic.find({ where: { inviteAgain: true, stock: true } }).then(function(topic) {
+    if (topic) {
+      let topicParams = inviteAgainTopicParams(session, topic);
+      models.SessionTopics.update({ landing: false }, { where: { sessionId: session.id } }).then(function() {
+        models.SessionTopics.create(topicParams);
       });
     }
   });
@@ -281,6 +306,9 @@ function doUpdate(originalSession, params) {
       updatedSession = result;
       if (params["type"]) {
         addDefaultTopicVideo(result);
+        if (sessionTypesConstants[params["type"]].features.inviteAgainTopic.enabled) {
+          addInviteAgainTopic(result);
+        }
       }
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
