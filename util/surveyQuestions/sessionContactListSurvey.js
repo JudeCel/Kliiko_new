@@ -32,6 +32,7 @@ module.exports = {
       name: 'Gender',
       select: true,
       options: ['male', 'female'],
+      canDisable: true,
       order: 4
     },
     {
@@ -39,6 +40,7 @@ module.exports = {
       name: 'Age',
       select: true,
       options: ageOptions.ages,
+      canDisable: true,
       order: 5
     }
   ],

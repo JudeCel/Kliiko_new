@@ -299,7 +299,19 @@ function doUpdate(originalSession, params) {
       return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
-        params["step"] = 'manageSessionParticipants';
+        if (params["status"] == "open") {
+          let step = constants.sessionBuilderSteps[0];
+          for (let i=constants.sessionBuilderSteps.length-1; i=0; i--) {
+            let stepName = constants.sessionBuilderSteps[i];
+            if (originalSession.isVisited[stepName]) {
+              step = stepName;
+              break;
+            }
+          }
+          params["step"] = step;
+        } else {
+          params["step"] = 'manageSessionParticipants';
+        }
       }
       return originalSession.updateAttributes(params);
     }).then(function(result) {
