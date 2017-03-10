@@ -14,13 +14,13 @@ module.exports = {
 
 function defaultTopicVideoParams(accountUser, video, type) {
   return {
-    accountId: accountUser.AccountId, 
-    accountUserId: accountUser.id, 
+    accountId: accountUser.AccountId,
+    accountUserId: accountUser.id,
     stock: true,
-    scope: "videoService", 
-    source: video.source, 
+    scope: "videoService",
+    source: video.source,
     link: video.link,
-    name: "Default " + type + " Video",
+    name: type + " Video",
     link: video.link,
     status: "completed",
     type: "link",

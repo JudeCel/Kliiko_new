@@ -26,7 +26,9 @@
     "addMailTemplate": "node ./tasks/addMailTemplate.js",
     "updateSessionTypes": "node ./tasks/updateSessionTypes.js",
     "prepareLoadTest": "node ./tasks/prepareLoadTest.js",
-    "updateSubscriptions": "node ./tasks/updateSubscriptions.js"
+    "updateSubscriptions": "node ./tasks/updateSubscriptions.js",
+    "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js",
+    "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js"
   },
   "engineStrict": true,
   "engine": {

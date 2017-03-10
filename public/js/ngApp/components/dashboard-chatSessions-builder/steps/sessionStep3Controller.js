@@ -58,6 +58,14 @@
       });
     }
 
+    vm.applyTemplate = function(template) {
+      if(template.isCopy) {
+        vm.modifyAndSave()
+      } else {
+        vm.openApplyModal()
+      }
+    }
+
     vm.openApplyModal = function() {
       vm.templateNameAdd = null;
       domServices.modal('applyTemplateModal');

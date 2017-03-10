@@ -24,7 +24,8 @@ module.exports = {
   removeAllAndAddNew: removeAllAndAddNew,
   canChangeTopicActive: canChangeTopicActive,
   messages: MessagesUtil.topics,
-  createDefaultForAccount: createDefaultForAccount
+  createDefaultForAccount: createDefaultForAccount,
+  updateDefaultTopic: updateDefaultTopic
 };
 
 function getAll(accountId) {
@@ -52,6 +53,62 @@ function getAll(accountId) {
   return deferred.promise;
 }
 
+function updateDefaultTopic(params, isAdmin) {
+  let topicId = getTopicId(params);
+  let topicParams = getTopicParams(params, topicId);
+  let newSessionTopic;
+  return new Bluebird((resolve, reject) => {
+    update(topicParams, isAdmin).then((topic) => {
+      models.SessionTopics.findAll({where: {topicId: topicId}}).then((sessionTopics) => {
+        Bluebird.each(sessionTopics, (sessionTopic) => {
+          if (params.snapshot && params.sessionId == sessionTopic.sessionId) {
+             return updateSessionTopic(params).then((updateSessionTopic) => {
+              newSessionTopic = updateSessionTopic;
+             });
+          } else {
+            let sessionTopicsParams = {
+              boardMessage: params.boardMessage,
+              name: params.name,
+              sign: params.sign
+            };
+
+            return sessionTopic.update(sessionTopicsParams);
+          }
+        }).then((updatedSessionTopics) => {
+          if (newSessionTopic) {
+            resolve(newSessionTopic);
+          } else {
+            resolve(topic);
+          }
+        }, (error) => {
+          reject(error);
+        });
+      }, (error) => {
+        reject(filters.errors(error));
+      });
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+function getTopicId(params) {
+  return params.isCurrentSessionTopic ? params.topicId : params.id;
+}
+
+function getTopicParams(params, topicId) {
+  if(params.isCurrentSessionTopic) {
+    return {
+      id: topicId,
+      boardMessage: params.boardMessage,
+      name: params.name,
+      sign: params.sign
+    };
+  }
+
+  return params; 
+}
+
 function updateSessionTopic(params) {
   let deferred = q.defer();
   let snapshot = params.snapshot;
@@ -73,7 +130,7 @@ function updateSessionTopic(params) {
       }
 
     } else {
-      deferred.reject(MessagesUtil.topics.notFoundSessionTopic);
+      deferred.reject(MessagesUtil.topics.error.notFound);
     }
   }, function(error) {
     deferred.reject(filters.errors(error));
@@ -278,7 +335,7 @@ function update(params, isAdmin) {
           resolve(updateRegularTopic(topic, params, isAdmin));
         }
       } else {
-        deferred.reject(MessagesUtil.topics.notFound);
+        reject(MessagesUtil.topics.error.notFound);
       }
     }).then((topic) => {
       resolve(topic);
