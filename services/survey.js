@@ -462,7 +462,7 @@ function answerSurvey(params) {
       });
     })
   }).then((survey) =>{
-    deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
+    deferred.resolve({ status: correctSurveyAnsweredMessage(validParams, survey) });
   }).catch(SurveyAnswer.sequelize.ValidationError, (error) => {
     deferred.reject(filters.errors(error));
   }).catch((error) => {
@@ -471,6 +471,35 @@ function answerSurvey(params) {
 
   return deferred.promise;
 };
+
+const ANSWER_RESPONSES = {
+  recruiter: 100,
+  sessionContactList: {
+    interested: 200,
+    notInterested: 201,
+  },
+  sessionPrizeDraw: {
+    interested: 300,
+    notInterested: 301,
+  }
+};
+
+function correctSurveyAnsweredMessage(params, survey) {
+  if(survey.surveyType === 'recruiter') {
+    return ANSWER_RESPONSES.recruiter;
+  }
+  else {
+    const question = survey.SurveyQuestions.find((item) => item.name === 'Interest');
+    const answer = params.answers[question.id.toString()];
+
+    if(answer.value === 0) {
+      return ANSWER_RESPONSES[survey.surveyType].interested;
+    }
+    else {
+      return ANSWER_RESPONSES[survey.surveyType].notInterested;
+    }
+  }
+}
 
 function findContactListAnswers(contactList, answers) {
   let values;

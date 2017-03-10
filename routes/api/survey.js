@@ -3,97 +3,101 @@ var surveyService = require('../../services/survey');
 
 function get(req, res, next) {
   surveyService.findAllSurveys(req.currentResources.account, req.query).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function canExportSurveyData(req, res, next) {
   surveyService.canExportSurveyData(req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 }
 
 function getSurveyStats(req, res, next) {
   surveyService.getSurveyStats(req.query.id, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 }
 
 function find(req, res, next) {
   surveyService.findSurvey(req.query, req.query.skipValidations).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function remove(req, res, next) {
   surveyService.removeSurvey(req.query, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function create(req, res, next) {
   surveyService.createSurveyWithQuestions(req.body, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function update(req, res, next) {
   surveyService.updateSurvey(req.body, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function status(req, res, next) {
   surveyService.changeStatus(req.body, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function copy(req, res, next) {
   surveyService.copySurvey(req.body, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function answer(req, res, next) {
   surveyService.answerSurvey(req.body).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function confirm(req, res, next) {
   surveyService.confirmSurvey(req.body, req.currentResources.account).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
 function getConstants(req, res, next) {
   surveyService.constantsSurvey(req.query.surveyType).then(
-    getResponses(res).onSuccess,
-    getResponses(res).onError
+    getResponses(req, res).onSuccess,
+    getResponses(req, res).onError
   );
 };
 
-function getResponses(res) {
+function getResponses(req, res) {
   return {
     onError: function(error) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat });
+      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat, status: result.status, chatUrl: chatUrl(req.query.token) });
     }
   };
+}
+
+function chatUrl(token) {
+  return process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/?ghost_token=" + token;
 }
 
 module.exports = {
