@@ -21,7 +21,7 @@ const DEPENDENCIES = {
         where: {
           accountId: accountId,
           status: 'open',
-          endTime: { $gt: new Date() },
+          $or: [{ endTime: { $gt: new Date() } }, { publicUid: { $ne: null } }],
           id: { $ne: sessionId || null }
         }
       };

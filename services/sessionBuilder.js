@@ -123,13 +123,15 @@ function addDefaultTopicVideo(session) {
 }
 
 function addInviteAgainTopic(session) {
-   return models.Topic.find({ where: { inviteAgain: true, stock: true } }).then(function(topic) {
-    if (topic) {
-      let topicParams = inviteAgainTopicParams(session, topic);
-      models.SessionTopics.update({ landing: false }, { where: { sessionId: session.id } }).then(function() {
-        models.SessionTopics.create(topicParams);
-      });
-    }
+  return validators.subscription(session.accountId, 'contactList', 1).then(function() {
+    models.Topic.find({ where: { inviteAgain: true, stock: true } }).then(function(topic) {
+      if (topic) {
+        let topicParams = inviteAgainTopicParams(session, topic);
+        models.SessionTopics.update({ landing: false }, { where: { sessionId: session.id } }).then(function() {
+          models.SessionTopics.create(topicParams);
+        });
+      }
+    });
   });
 }
 
