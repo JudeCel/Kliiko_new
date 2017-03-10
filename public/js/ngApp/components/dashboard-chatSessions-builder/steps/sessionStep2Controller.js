@@ -17,9 +17,9 @@
     vm.isDragInProgress = false;
 
     vm.sortableOptionsA = {
-      stop : function(e, ui) {
+      stop: function(e, ui) {
         reOrderTopics();
-        saveTopics(vm.sessionTopicsArray);
+        saveTopics(vm.sessionTopicsArray); 
       }
     };
 
@@ -119,18 +119,17 @@
     }
 
     function addSessionTopic(topic) {
-      if(topic.SessionTopics[0]) {
+      if (topic.SessionTopics[0]) {
         var exists = vm.sessionTopicsObject[topic.id];
         vm.sessionTopicsObject[topic.id] = topic;
         vm.sessionTopicsObject[topic.id].sessionTopic = topic.SessionTopics[0];
-        if(!exists) {
+        if (!exists) {
           vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
         vm.sessionTopicsArray = vm.sessionTopicsArray.map(function(item) {
-          if(topic.id == item.id) {
+          if (topic.id == item.id) {
             return topic;
-          }
-          else {
+          } else {
             return item;
           }
         });
@@ -291,10 +290,10 @@
           orderByFilter(result.data, "id").map(function(topic) {
             addSessionTopic(topic);
           });
+          vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
           if (result.message) {
             $confirm({ text: result.message, closeOnly: true, title: null });
           }
-
         }
       }, function(error) {
         messenger.error(error);

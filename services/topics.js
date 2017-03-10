@@ -141,34 +141,62 @@ function updateSessionTopic(params) {
   return deferred.promise;
 }
 
+function checkInviteAgainTopic(sessionTopic, length, arrayLength) {
+  return new Bluebird(function (resolve, reject) {
+    if (sessionTopic.Topic.inviteAgain && arrayLength < length) {
+      return sessionTopic.update({order: length}).then(() => {
+        sessionTopic.order = length;
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
+    } else {
+      resolve();
+    }
+  });
+}
+
 function updateSessionTopics(sessionId, topicsArray) {
   return new Bluebird(function (resolve, reject) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
     joinToSession(ids, sessionId, topicsArray).then(function(result) {
       Bluebird.each(result.sessionTopics, (sessionTopic) => {
-
+        
         return new Bluebird(function (resolveInternal, rejectInternal) {
-          Bluebird.each(topicsArray, (topic) => {
-            if (topic.id == sessionTopic.topicId) {
-              let params = {
-                order: topic.sessionTopic.order,
-                active: topic.sessionTopic.active,
-                landing: topic.sessionTopic.landing,
-                name: topic.sessionTopic.name,
-                boardMessage: topic.sessionTopic.boardMessage,
-                sign: topic.sessionTopic.sign,
-                lastSign: topic.sessionTopic.lastSign,
+          let inviteAgainTopicUpdated = false;
+          checkInviteAgainTopic(sessionTopic, result.sessionTopics.length, topicsArray.length).then(function() {
+            Bluebird.each(topicsArray, (topic) => {
+
+              if (topic.id == sessionTopic.topicId) {
+                if (sessionTopic.Topic.inviteAgain) {
+                  inviteAgainTopicUpdated = true;
+                }
+                let params = {
+                  order: sessionTopic.Topic.inviteAgain ? result.sessionTopics.length : topic.sessionTopic.order,
+                  active: topic.sessionTopic.active,
+                  landing: topic.sessionTopic.landing,
+                  name: topic.sessionTopic.name,
+                  boardMessage: topic.sessionTopic.boardMessage,
+                  sign: topic.sessionTopic.sign,
+                  lastSign: topic.sessionTopic.lastSign,
+                }
+                return sessionTopic.update(params).then(() =>{
+                  topic.SessionTopics = [sessionTopic];
+                  returning.push(topic);
+                });
               }
 
-              return sessionTopic.update(params).then(() =>{
-                topic.SessionTopics = [sessionTopic];
-                returning.push(topic);
-              });
-            }
-
-          }).then(function() {
-            resolveInternal();
+            }).then(function() {
+              if (!inviteAgainTopicUpdated && sessionTopic.Topic.inviteAgain) {
+                let inviteAgainTopic = Object.assign({}, sessionTopic.Topic.dataValues);
+                inviteAgainTopic.SessionTopics = [sessionTopic];
+                returning.push(inviteAgainTopic);
+              }
+              resolveInternal();
+            }, function(error) {
+              rejectInternal(error);
+            });
           }, function(error) {
             rejectInternal(error);
           });
