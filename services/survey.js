@@ -390,7 +390,7 @@ function copySurvey(params, account) {
   validators.hasValidSubscription(account.id).then(function() {
     Survey.find({
       where: { id: params.id, accountId: account.id },
-      attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId'],
+      attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId', 'surveyType'],
       include: [{
           model: SurveyQuestion,
           attributes: ['name', 'question', 'order', 'answers', 'type', 'resourceId'],
