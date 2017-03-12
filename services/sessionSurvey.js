@@ -4,6 +4,7 @@ var constants = require('../util/constants');
 var Bluebird = require('bluebird');
 var _ = require('lodash');
 var surveyService = require('./survey');
+var async = require('async');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
@@ -106,10 +107,35 @@ function removeSurveys(sessionId) {
   });
 }
 
+function copySurveysWithIds(ids, accountId, toSessionId) {
+  return new Bluebird((resolve, reject) => {
+    async.waterfall(ids.map((id) => {
+      return function (nextCallback) {
+        surveyService.copySurvey({id: id}, {id: accountId})
+        .then((survey) => {
+          return addSurveyToSession(toSessionId, survey.data.id);
+        })
+        .then(() => {
+          nextCallback();
+        })
+        .catch((e) => {
+          nextCallback(e);
+        });
+      }
+    }), function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 function copySurveys(fromSessionId, toSessionId, accountId) {
   return new Bluebird((resolve, reject) => {
     models.Session.findOne({
-        where: { id: fromSessionId}
+      where: { id: fromSessionId }
     })
     .then((session) => {
       if (session) {
@@ -120,20 +146,15 @@ function copySurveys(fromSessionId, toSessionId, accountId) {
     }).then((surveys) => {
       let surveyList = _.map(surveys, 'id');
       if (surveyList.length) {
-        surveyService.copySurvey({id:surveyList[0]}, {id: accountId})
-        .then((survey) => {
-          return addSurveyToSession(toSessionId, survey.data.id);
-        })
-        .then(() => {
-          resolve();
-        })
-        .catch((e) => {
-          reject(e);
-        });
+        return copySurveysWithIds(surveyList, accountId, toSessionId);
       } else {
         resolve();
       }
-    }).catch((e) => {
+    })
+    .then(() => {
+      resolve();
+    })
+    .catch((e) => {
       reject(e);
     });
   });
