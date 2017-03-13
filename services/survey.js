@@ -115,7 +115,7 @@ function findSurvey(params, skipValidations) {
         else if(survey.surveyType !== 'recruiter') {
           models.SessionSurvey.find({ where: { surveyId: survey.id } }).then((sessionSurvey) => {
             const params = simpleParams(survey);
-            if(!sessionSurvey.active) params.status = 400;
+            if(!sessionSurvey.active) params.status = ANSWER_RESPONSES.notActive;
             deferred.resolve(params);
           });
         }
@@ -519,7 +519,8 @@ const ANSWER_RESPONSES = {
   sessionPrizeDraw: {
     interested: 300,
     notInterested: 301,
-  }
+  },
+  notActive: 400
 };
 
 function correctSurveyAnsweredMessage(params, survey) {
