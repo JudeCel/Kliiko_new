@@ -26,20 +26,6 @@ module.exports = {
       number: true,
       canDisable: true,
       order: 3
-    },
-    {
-      model: 'gender',
-      name: 'Gender',
-      select: true,
-      options: ['male', 'female'],
-      order: 4
-    },
-    {
-      model: 'age',
-      name: 'Age',
-      select: true,
-      options: ageOptions.ages,
-      order: 5
     }
   ],
   defaultQuestions: [

@@ -274,6 +274,7 @@
         } else {
           survey.confirmedAt = res.data.confirmedAt;
           messenger.ok(res.message);
+          onSaved();
           quitEditor();
         }
       });
