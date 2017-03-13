@@ -396,7 +396,7 @@
     }
 
     function saveSurveysConfirmed(autoSave, publish) {
-      /*vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
+      vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
         vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
           if (publish) {
             sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
@@ -412,18 +412,7 @@
         });
       }).catch(function(e) {
         messenger.error(e);
-      });*/
-      if (publish) {
-        sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
-          if (res.error) {
-            messenger.error(res.error);
-          } else {
-            openSessionsListAndHighlight();
-          }
-        });
-      } else if (!autoSave) {
-        openSessionsListAndHighlight();
-      }
+      });
     }
 
     function openSessionsListAndHighlight() {
