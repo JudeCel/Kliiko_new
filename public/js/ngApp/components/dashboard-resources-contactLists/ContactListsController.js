@@ -113,9 +113,9 @@
     function listStatusMessage() {
       if (vm.lists.activeList) {
         if (vm.lists.activeList.active) {
-          return('Deactive Contact list');
+          return('Deactivate Contact List');
         }else{
-          return('Reactive Contact list');
+          return('Reactivate Contact List');
         }
       }
     }

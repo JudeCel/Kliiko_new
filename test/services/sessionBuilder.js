@@ -881,7 +881,7 @@ describe('SERVICE - SessionBuilder', function() {
                     let openParams = sessionParams(nextStepResult);
                     openParams.status = "open";
                     sessionBuilderServices.update(closeParams.id, openParams.accountId, openParams).then(function(openResult) {
-                      assert.equal(openResult.sessionBuilder.currentStep, "manageSessionParticipants");
+                      assert.equal(openResult.sessionBuilder.currentStep, "setUp");
                       done();
                     }, function(error) {
                       done(error);
