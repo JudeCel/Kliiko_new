@@ -9,20 +9,20 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: true}
             var accountUser = {role: 'admin'}
-            var sub = {uploadToGallery: true}
+            var sub = {uploadToGallery: true, planSmsCount: 0}
             PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
             });
         });
-        
+
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, true)});
         it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, false)});
         it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, true)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, true)});
         it("canSeeFreeTrialWarning", () => {assert.equal(permisssions.canSeeFreeTrialWarning, false)});
-        it("canSmsCredits", () => {assert.equal(permisssions.canSmsCredits, false)});
+        it("canSmsCredits", () => {assert.equal(permisssions.canSmsCredits, true)});
         it("canPaymentDetails", () => {assert.equal(permisssions.canPaymentDetails, false)});
         it("canStockCreateTopics", () => {assert.equal(permisssions.canStockCreateTopics, true)});
         it("canUploadBanners", () => {assert.equal(permisssions.canUploadBanners, true)});
@@ -38,7 +38,7 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'admin'}
-            var sub = {uploadToGallery: true}
+            var sub = {uploadToGallery: true, planSmsCount: 0}
             PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
@@ -50,7 +50,7 @@ describe('SERVICE - permissions', () => {
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, false)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, false)});
         it("canSeeFreeTrialWarning", () => {assert.equal(permisssions.canSeeFreeTrialWarning, false)});
-        it("canSmsCredits", () => {assert.equal(permisssions.canSmsCredits, false)});
+        it("canSmsCredits", () => {assert.equal(permisssions.canSmsCredits, true)});
         it("canPaymentDetails", () => {assert.equal(permisssions.canPaymentDetails, false)});
         it("canStockCreateTopics", () => {assert.equal(permisssions.canStockCreateTopics, false)});
         it("canUploadBanners", () => {assert.equal(permisssions.canUploadBanners, false)});
@@ -65,7 +65,7 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'accountManager'}
-            var sub = {uploadToGallery: true}
+            var sub = {uploadToGallery: true, planSmsCount: 50}
             PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
@@ -93,7 +93,7 @@ describe('SERVICE - permissions', () => {
         before((done) => {
             var account =  {admin: false}
             var accountUser = {role: 'facilitator'}
-            var sub = {uploadToGallery: true}
+            var sub = {uploadToGallery: true, planSmsCount: 0}
             PermissionsService.forAccount(account, accountUser, sub).then((result) => {
                 permisssions = result;
                 done();
