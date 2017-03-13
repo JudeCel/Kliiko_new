@@ -46,9 +46,9 @@
                 </td>
 
                 <td>
-                  <a id="purchase-submit" href="" class="btn btn-standart btn-green btn-medium btn-margin pull-right" ng-click="sms.checkout(smsCredit.addon.id, selectedQty, app.permissions.canSmsCredits)">
+                  <button id="purchase-submit" href="" class="btn btn-standart btn-green btn-medium btn-margin pull-right" ng-click="sms.checkout(smsCredit.addon.id, selectedQty, app.permissions.canSmsCredits)" ng-disabled='sms.checkoutButtonDisabled'>
                     Purchase
-                  </a>
+                  </button>
                 </td>
               </tr>
             </tbody>
