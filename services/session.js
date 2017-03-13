@@ -350,11 +350,9 @@ function copySession(sessionId, accountId) {
             },
             function(callback) {
               sessionSurvey.copySurveys(sessionId, session.id, accountId).then(() => {
-                console.log("----success copying survey");
                 callback();
               }).catch((e) => {
                 callback();
-                console.log("----failed copying survey", e);
               })
             }
             //  NOTE: right now we need to disable this functionality.
