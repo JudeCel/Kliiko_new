@@ -27,7 +27,6 @@ function getSurveyConstants(type) {
 }
 
 let baseSurveySetup = {
-  minQuestions: 3,
   minsMaxs: {
     input: {
       min: 1,

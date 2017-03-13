@@ -1,6 +1,7 @@
 var ageOptions = require('./ageOptions')
 
 module.exports = {
+  minQuestions: 1,
   contactDetails: [
     {
       model: 'firstName',
