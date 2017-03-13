@@ -178,15 +178,16 @@
       if(vm.manageForm.$valid) {
         var selected = findSelected();
         if(publish && selected.length < vm.minQuestions) {
+          deferred = $q.defer().promise;
           vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
         } else {
           delete vm.submitError;
           var object = JSON.parse(JSON.stringify(vm.survey));
           object.SurveyQuestions = selected;
           if (!object.id) {
-            deferred = finishCreate(object, autoSave, publish);
+            return finishCreate(object, autoSave, publish);
           } else {
-            deferred = finishEdit(object, autoSave, publish);
+            return finishEdit(object, autoSave, publish);
           }
         }
       } else if (!autoSave) {

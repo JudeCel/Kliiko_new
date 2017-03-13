@@ -2,6 +2,9 @@ var models = require('./../models');
 var surveyService = require('./survey');
 var constants = require('../util/constants');
 var Bluebird = require('bluebird');
+var _ = require('lodash');
+var surveyService = require('./survey');
+var async = require('async');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
@@ -21,7 +24,7 @@ function addSurveyToSession(sessionId, surveyId) {
     let data = {
       sessionId:  sessionId,
       surveyId:   surveyId,
-      active:    true
+      active:     true
     }
     isSurveyAttached(sessionId, surveyId).then(function() {
       resolve();
@@ -49,34 +52,106 @@ function setSurveyEnabled(sessionId, surveyId, active) {
 
 function sessionSurveys(sessionId) {
   return new Bluebird((resolve, reject) => {
-    models.SessionSurvey.findAll({
-        where: { sessionId: sessionId},
-        include: [{
-          model:      models.Survey,
-          attributes: ['surveyType']
-        }]
-      })
-      .then((result) => {
+    models.Session.findOne({
+      where: { id: sessionId },
+    }).then((session) => {
         let items = [];
-        if (result && result.length) {
-          items = result.map((item) => {
-            return {
-              surveyId: item.surveyId,
-              active: item.active,
-              surveyType: item.Survey.surveyType
-            }
+        if (session) {
+          session.getSurveys({joinTableAttributes:['active']}).then(function(result) {
+            items = result.map((item) => {
+              return {
+                surveyId: item.id,
+                active: item.SessionSurvey.active,
+                surveyType: item.surveyType
+              }
+            });
+            resolve(items);
           });
+        } else {
+          resolve(items);
         }
-        resolve(items);
-      }).catch(function(e) {
-        reject(e);
-      });
+    }).catch(function(e) {
+      reject(e);
+    });
   });
 }
 
+function removeSurveys(sessionId) {
+  return new Bluebird((resolve, reject) => {
+    models.Session.findOne({
+        where: { id: sessionId}
+    }).then((session) => {
+      if (session) {
+        return session.getSurveys({attributes: ['id']});
+      } else {
+        resolve();
+      }
+    }).then((surveys) => {
+      let ids = _.map(surveys, 'id');
+      return models.Survey.destroy({
+        where: {
+          id: { $in: ids }
+        }
+      });
+    }).then(() => {
+      resolve();
+    }).catch(()=> {
+      reject();
+    });
+  });
+}
+
+function copySurveysWithIds(ids, accountId, toSessionId) {
+  return new Bluebird((resolve, reject) => {
+    async.waterfall(ids.map((id) => {
+      return function (nextCallback) {
+        surveyService.copySurvey({id: id}, {id: accountId}).then((survey) => {
+          return addSurveyToSession(toSessionId, survey.data.id);
+        }).then(() => {
+          nextCallback();
+        }).catch((e) => {
+          nextCallback(e);
+        });
+      }
+    }), function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+function copySurveys(fromSessionId, toSessionId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    models.Session.findOne({
+      where: { id: fromSessionId }
+    }).then((session) => {
+      if (session) {
+        return session.getSurveys();
+      } else {
+        resolve();
+      }
+    }).then((surveys) => {
+      let surveyList = _.map(surveys, 'id');
+      if (surveyList.length) {
+        return copySurveysWithIds(surveyList, accountId, toSessionId);
+      } else {
+        resolve();
+      }
+    }).then(() => {
+      resolve();
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+}
 
 module.exports = {
   addSurveyToSession: addSurveyToSession,
   sessionSurveys: sessionSurveys,
-  setSurveyEnabled: setSurveyEnabled
+  setSurveyEnabled: setSurveyEnabled,
+  removeSurveys: removeSurveys,
+  copySurveys: copySurveys
 }
