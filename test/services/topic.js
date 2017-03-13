@@ -113,6 +113,46 @@ describe('Topic Service', function() {
 
   });
 
+  describe("#getAll", function() {
+    beforeEach(function(done) {
+      let attrs = getTopicParams();
+      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
+        topicService.create(attrs, true).then(function(topic){
+          attrs.inviteAgain = true;
+          attrs.name = "Invite Again";
+          topicService.create(attrs, true).then(function(topic){
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      }, function(error) {
+        done(error);
+      });
+    })
+
+    it("with InviteAgain", function(done) {
+      topicService.getAll(testAccount.id, null).then(function(topics) {
+        assert.equal(topics.length, 3);
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+    it("without InviteAgain", function(done) {
+      topicService.getAll(testAccount.id, "focus").then(function(topics) {
+        assert.equal(topics.length, 2);
+        done();
+      }, function(error) {
+        done(error);
+      });
+    });
+
+  });
+
   describe("with Session", function() {
     var testSession = null;
     beforeEach(function(done) {
