@@ -113,7 +113,7 @@ router.post('/contactListsUsersToRemove', PERMISSIONS.facilitatorManagerAdmin, c
 router.put('/contactListsUser/:id', PERMISSIONS.facilitatorManagerAdmin, contactListUser.update);
 router.post('/contactListsUser/comments', PERMISSIONS.facilitatorManagerAdmin, contactListUser.comments);
 
-router.get('/topics', PERMISSIONS.facilitatorManagerAdmin, topic.get);
+router.get('/topics/:sessionType?', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);
 router.put('/topic/updateSessionTopic', PERMISSIONS.facilitatorManagerAdmin, topic.updateSessionTopic);
 router.put('/topic/:id', PERMISSIONS.facilitatorManagerAdmin, topic.updateById);

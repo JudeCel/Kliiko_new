@@ -74,6 +74,20 @@ function defaultTopicParams(session, topic) {
   };
 }
 
+function inviteAgainTopicParams(session, topic) {
+  return {
+    topicId: topic.id,
+    sessionId: session.id,
+    order: 1,
+    active: true,
+    landing: true,
+    boardMessage: topic.boardMessage,
+    name: topic.name,
+    sign: topic.sign,
+    lastSign: null
+  };
+}
+
 function defaultVideoParams(resource, topic) {
   return {
     sessionTopicId: topic.id,
@@ -105,6 +119,19 @@ function addDefaultTopicVideo(session) {
         }
       });
     }
+  });
+}
+
+function addInviteAgainTopic(session) {
+  return validators.subscription(session.accountId, 'contactList', 1).then(function() {
+    models.Topic.find({ where: { inviteAgain: true, stock: true } }).then(function(topic) {
+      if (topic) {
+        let topicParams = inviteAgainTopicParams(session, topic);
+        models.SessionTopics.update({ landing: false }, { where: { sessionId: session.id } }).then(function() {
+          models.SessionTopics.create(topicParams);
+        });
+      }
+    });
   });
 }
 
@@ -293,6 +320,9 @@ function doUpdate(originalSession, params) {
       updatedSession = result;
       if (params["type"]) {
         addDefaultTopicVideo(result);
+        if (sessionTypesConstants[params["type"]].features.inviteAgainTopic.enabled) {
+          addInviteAgainTopic(result);
+        }
       }
       return sessionBuilderObject(updatedSession);
     }).then(function(sessionObject) {
@@ -1104,23 +1134,24 @@ function step2Queries(session, step) {
       }).catch(function(error) {
         cb(filters.errors(error));
       });
-    }
-  , function(cb) {
-    let sessionSurveyEnabled = sessionSurveysAvailable(session);
-    if (sessionSurveyEnabled) {
-      sessionSurvey.sessionSurveys(session.id).then(function(result) {
-        step.surveys = result;
+    }, 
+    function(cb) {
+      let sessionSurveyEnabled = sessionSurveysAvailable(session);
+      if (sessionSurveyEnabled) {
+        sessionSurvey.sessionSurveys(session.id).then(function(result) {
+          step.surveys = result;
+          step.sessionSurveyEnabled = sessionSurveyEnabled;
+          cb();
+        }, function(e) {
+          filters.errors(e)
+        });
+      } else {
+        step.surveys = [];
         step.sessionSurveyEnabled = sessionSurveyEnabled;
         cb();
-      }, function(e) {
-        filters.errors(e)
-      });
-    } else {
-      step.surveys = [];
-      step.sessionSurveyEnabled = sessionSurveyEnabled;
-      cb();
+      }
     }
-  }];
+  ];
 }
 
 function sessionSurveysAvailable(session) {
@@ -1490,7 +1521,6 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   return deferred.promise;
 }
 
-
 function publish(sessionId, accountId) {
   return new Bluebird((resolve, reject) => {
     Session.find({
@@ -1503,8 +1533,14 @@ function publish(sessionId, accountId) {
         if (session.publicUid) {
           resolve({ id: session.id, publicUid: session.publicUid });
         } else {
-          session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
-            resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+          getRelatedInviteAgainTopic(sessionId).then(function(topic) {
+            if (topic) {
+              generatePublicUid(session, resolve, reject);
+            } else {
+              validators.subscription(accountId, 'session', 1, { sessionId: sessionId }).then(function() {
+                generatePublicUid(session, resolve, reject);
+              });
+            }
           });
         }
       } else {
@@ -1514,4 +1550,24 @@ function publish(sessionId, accountId) {
       reject(filters.errors(error));
     });
   });
+
+  function generatePublicUid(session, resolve, reject) {
+    session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
+      resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+    });
+  }
+
+  function getRelatedInviteAgainTopic(sessionId) {
+    return models.Topic.find({
+      where: {
+        inviteAgain: true
+      },
+      include: [{
+        model: models.SessionTopics,
+        where: {
+          sessionId: sessionId
+        }
+      }]
+    });
+  }
 }
