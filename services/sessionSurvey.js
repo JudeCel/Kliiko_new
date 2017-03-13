@@ -53,9 +53,8 @@ function setSurveyEnabled(sessionId, surveyId, active) {
 function sessionSurveys(sessionId) {
   return new Bluebird((resolve, reject) => {
     models.Session.findOne({
-        where: { id: sessionId},
-    })
-    .then((session) => {
+      where: { id: sessionId },
+    }).then((session) => {
         let items = [];
         if (session) {
           session.getSurveys({joinTableAttributes:['active']}).then(function(result) {
@@ -79,29 +78,24 @@ function sessionSurveys(sessionId) {
 
 function removeSurveys(sessionId) {
   return new Bluebird((resolve, reject) => {
-
     models.Session.findOne({
         where: { id: sessionId}
-    })
-    .then((session) => {
+    }).then((session) => {
       if (session) {
         return session.getSurveys({attributes: ['id']});
       } else {
         resolve();
       }
-    })
-    .then((surveys) => {
+    }).then((surveys) => {
       let ids = _.map(surveys, 'id');
       return models.Survey.destroy({
         where: {
           id: { $in: ids }
         }
       });
-    })
-    .then(() => {
+    }).then(() => {
       resolve();
-    })
-    .catch(()=> {
+    }).catch(()=> {
       reject();
     });
   });
@@ -111,14 +105,11 @@ function copySurveysWithIds(ids, accountId, toSessionId) {
   return new Bluebird((resolve, reject) => {
     async.waterfall(ids.map((id) => {
       return function (nextCallback) {
-        surveyService.copySurvey({id: id}, {id: accountId})
-        .then((survey) => {
+        surveyService.copySurvey({id: id}, {id: accountId}).then((survey) => {
           return addSurveyToSession(toSessionId, survey.data.id);
-        })
-        .then(() => {
+        }).then(() => {
           nextCallback();
-        })
-        .catch((e) => {
+        }).catch((e) => {
           nextCallback(e);
         });
       }
@@ -136,8 +127,7 @@ function copySurveys(fromSessionId, toSessionId, accountId) {
   return new Bluebird((resolve, reject) => {
     models.Session.findOne({
       where: { id: fromSessionId }
-    })
-    .then((session) => {
+    }).then((session) => {
       if (session) {
         return session.getSurveys();
       } else {
@@ -150,11 +140,9 @@ function copySurveys(fromSessionId, toSessionId, accountId) {
       } else {
         resolve();
       }
-    })
-    .then(() => {
+    }).then(() => {
       resolve();
-    })
-    .catch((e) => {
+    }).catch((e) => {
       reject(e);
     });
   });
