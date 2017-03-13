@@ -12,6 +12,7 @@
     var vm =  this;
 
     vm.currentSmsCreditCount = 0;
+    vm.checkoutButtonDisabled = false;
     vm.creditList = [];
     vm.addonQty = [
       { value: 1 },
@@ -63,19 +64,20 @@
       if(!permission) {
         return domServices.modal('smsCreditsModal');
       }
+      vm.checkoutButtonDisabled = false;
 
-      var button = $('#purchase-submit');
       SmsCreditService.checkout().then(function(result){
         ChargeBee.bootStrapModal(result.hosted_page.url, result.hosted_page.site_name, "paymentModal").load({
           onLoad: function() {
-            button.attr('disabled', 'disabled');
+            vm.checkoutButtonDisabled = true;
           },
           onSuccess: function(a, b) {
+            vm.checkoutButtonDisabled = false;
             return purchaseCredits(id, selectedQty);
           },
           onCancel: function() {
             $(".alert-danger").show().text("Payment Aborted !!");
-            button.removeAttr('disabled');
+            vm.checkoutButtonDisabled = false;
           }
         });
       });
@@ -94,7 +96,6 @@
             messenger.error(result.error);
           }
         }else{
-          $('#purchase-submit').removeAttr("disabled");
           vm.currentSmsCreditCount = result.smsCretiCount;
           messenger.ok(result.message);
         }
