@@ -181,7 +181,8 @@
 
     function initRowClass(session) {
       var highlightId = getURLParameter("highlight");
-      if (highlightId && highlightId == session.id) {
+      var showStatus = session.showStatus.toLowerCase();
+      if (showStatus != "closed" && highlightId && highlightId == session.id) {
         session.rowClass = 'session-highlight';
       } else {
         session.rowClass = 'session-' + session.showStatus.toLowerCase();
