@@ -47,11 +47,11 @@
     vm.setType = setType;
     vm.isCopy = isCopy;
     vm.prepareCurrentPageItems = prepareCurrentPageItems;
-
-    init();
+    vm.init = init;
 
     function init() {
-      topicsAndSessions.getAllTopics().then(
+      var sessionType = vm.session && vm.session.steps.step1.type;
+      topicsAndSessions.getAllTopics(sessionType).then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
           vm.list = res.topics;
@@ -122,8 +122,9 @@
         setCreateData();
       }
       else if(vm.modalAction == 'sessionTopic') {
-        vm.originalReference = topic;
-        angular.copy(topic, vm.topicData);
+        vm.originalReference = topic.sessionTopic;
+        angular.copy(topic.sessionTopic, vm.topicData);
+        vm.topicData.inviteAgain = topic.inviteAgain;
         setEditData();
       }
     };
@@ -247,7 +248,7 @@
     }
 
     function canDelete(topic, isAdmin) {
-      return !topic.default && (!topic.stock || isAdmin);
+      return !topic.default && !(topic.inviteAgain && topic.stock) && (!topic.stock || isAdmin);
     }
 
     function deleteTopic(id) {

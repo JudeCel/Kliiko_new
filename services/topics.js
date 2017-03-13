@@ -6,6 +6,7 @@ var validators = require('./../services/validators/subscription');
 var filters = require('./../models/filters');
 var models = require('./../models');
 var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var Topic = models.Topic;
 var _ = require('lodash');
 let Bluebird = require('bluebird')
@@ -28,29 +29,47 @@ module.exports = {
   updateDefaultTopic: updateDefaultTopic
 };
 
-function getAll(accountId) {
-  let deferred = q.defer();
-  Topic.findAll({
-    order: '"name" ASC',
-    where: {
-      $or: [{
-        accountId: accountId
-      }, {
-        stock: true
-      }]
-    },
-    include: [{
-      model: models.SessionTopics,
-      include: [{
-        model: models.Session
-      }]
-    }]
-  }).then(function(results){
-    deferred.resolve(results);
-  }, function(error) {
-    deferred.reject(filters.errors(error));
+function getAll(accountId, sessionType) {
+  return new Bluebird((resolve, reject) => {
+    includeInviteAgainTopic(accountId, sessionType).then(function(includeInviteAgain) {
+      let where = includeInviteAgain ? 
+        { $or: [{ accountId: accountId }, { stock: true }] } : 
+        { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
+
+      Topic.findAll({
+        order: '"name" ASC',
+        where: where,
+        include: [{
+          model: models.SessionTopics,
+          include: [{
+            model: models.Session
+          }]
+        }]
+      }).then(function(results){
+        resolve(results);
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    });
   });
-  return deferred.promise;
+
+  function includeInviteAgainTopic(accountId, sessionType) {
+    return new Bluebird((resolve, reject) => {
+      if (sessionType) {
+        if (sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled) {
+          validators.validate(accountId, 'contactList', 1).then(function(topic) {
+            resolve(true);
+          }, function() {
+            resolve(false);
+          });
+        } else {
+          resolve(false);
+        }
+      } else {
+        resolve(true);
+      }
+    });
+  }
 }
 
 function updateDefaultTopic(params, isAdmin) {
@@ -139,34 +158,62 @@ function updateSessionTopic(params) {
   return deferred.promise;
 }
 
+function checkInviteAgainTopic(sessionTopic, length, arrayLength) {
+  return new Bluebird(function (resolve, reject) {
+    if (sessionTopic.Topic.inviteAgain && arrayLength < length) {
+      return sessionTopic.update({order: length}).then(() => {
+        sessionTopic.order = length;
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
+    } else {
+      resolve();
+    }
+  });
+}
+
 function updateSessionTopics(sessionId, topicsArray) {
   return new Bluebird(function (resolve, reject) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
     joinToSession(ids, sessionId, topicsArray).then(function(result) {
       Bluebird.each(result.sessionTopics, (sessionTopic) => {
-
+        
         return new Bluebird(function (resolveInternal, rejectInternal) {
-          Bluebird.each(topicsArray, (topic) => {
-            if (topic.id == sessionTopic.topicId) {
-              let params = {
-                order: topic.sessionTopic.order,
-                active: topic.sessionTopic.active,
-                landing: topic.sessionTopic.landing,
-                name: topic.sessionTopic.name,
-                boardMessage: topic.sessionTopic.boardMessage,
-                sign: topic.sessionTopic.sign,
-                lastSign: topic.sessionTopic.lastSign,
+          let inviteAgainTopicUpdated = false;
+          checkInviteAgainTopic(sessionTopic, result.sessionTopics.length, topicsArray.length).then(function() {
+            Bluebird.each(topicsArray, (topic) => {
+
+              if (topic.id == sessionTopic.topicId) {
+                if (sessionTopic.Topic.inviteAgain) {
+                  inviteAgainTopicUpdated = true;
+                }
+                let params = {
+                  order: sessionTopic.Topic.inviteAgain ? result.sessionTopics.length : topic.sessionTopic.order,
+                  active: topic.sessionTopic.active,
+                  landing: topic.sessionTopic.landing,
+                  name: topic.sessionTopic.name,
+                  boardMessage: topic.sessionTopic.boardMessage,
+                  sign: topic.sessionTopic.sign,
+                  lastSign: topic.sessionTopic.lastSign,
+                }
+                return sessionTopic.update(params).then(() =>{
+                  topic.SessionTopics = [sessionTopic];
+                  returning.push(topic);
+                });
               }
 
-              return sessionTopic.update(params).then(() =>{
-                topic.SessionTopics = [sessionTopic];
-                returning.push(topic);
-              });
-            }
-
-          }).then(function() {
-            resolveInternal();
+            }).then(function() {
+              if (!inviteAgainTopicUpdated && sessionTopic.Topic.inviteAgain) {
+                let inviteAgainTopic = Object.assign({}, sessionTopic.Topic.dataValues);
+                inviteAgainTopic.SessionTopics = [sessionTopic];
+                returning.push(inviteAgainTopic);
+              }
+              resolveInternal();
+            }, function(error) {
+              rejectInternal(error);
+            });
           }, function(error) {
             rejectInternal(error);
           });
@@ -294,6 +341,8 @@ function destroy(id, isAdmin) {
   Topic.find({where: { id: id }, include: [{model: models.Session }]}).then(function(topic) {
     if (topic.default) {
       deferred.reject(MessagesUtil.topics.error.default);
+    } else if (topic.stock && topic.inviteAgain) {
+      deferred.reject(MessagesUtil.topics.error.inviteAgain);
     } else if (topic.stock && !isAdmin) {
       deferred.reject(MessagesUtil.topics.error.stock);
     } else if (_.isEmpty(topic.Sessions)) {

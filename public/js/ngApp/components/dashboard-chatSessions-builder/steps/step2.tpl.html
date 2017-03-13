@@ -56,8 +56,8 @@
                 <span class="copy-of-stock">{{ step2Controller.isCopy(topic) }}</span> {{ topic.sessionTopic.name }}
               </span>
 
-              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default" src="/icons/dashboardElement_remove.png" title="Delete">
-              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic.sessionTopic)">
+              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default && (!topic.inviteAgain || !step2Controller.session.publicUid)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic)">
 
               <toggle-switch
                 ng-model="topic.sessionTopic.active"
@@ -76,7 +76,7 @@
     </section>
 
     <div ng-if="step2Controller.session.steps.step2.sessionSurveyEnabled" class="session-survey-section">
-      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList">
+      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList" ng-if="step2Controller.inviteAgainTopicAdded()">
         <uib-accordion-group is-open="survey.expanded" class="green-input session-type">
           <uib-accordion-heading>
             <div class="panel-label text-left">
@@ -96,7 +96,7 @@
         </uib-accordion-group>
 
       </uib-accordion>
-      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)'>Save</button>
+      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)' ng-if="step2Controller.inviteAgainTopicAdded()">Save</button>
       <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)' ng-if='!step2Controller.session.publicUid'>Publish</button>
     </div>
   </section>

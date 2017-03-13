@@ -72,7 +72,32 @@ function createDefaultTopicsVideoIfNotExists(accountUser, video, type) {
   });
 }
 
+function createInviteAgainTopic() {
+  return new Bluebird(function (resolve, reject) {
+    models.Topic.find({where: { inviteAgain: true, stock: true } }).then(function(topic) {
+      if (topic) {
+        resolve();
+      } else {
+        return models.AccountUser.find({ where: { role: "admin" } });
+      }
+    }).then(function(adminAccountUser) {
+      let inviteAgainTopicParams = {
+        accountId: adminAccountUser.AccountId,
+        name: "Invite Again",
+        stock: true,
+        inviteAgain: true
+      };
+      return topicsService.create(inviteAgainTopicParams, true);
+    }).then(function() {
+      resolve();
+    }).catch(function(error) {
+      reject(error);
+    });
+  });
+}
+
 module.exports = {
   createDefaultTopics: createDefaultTopics,
   createDefaultTopicsVideo: createDefaultTopicsVideo,
+  createInviteAgainTopic: createInviteAgainTopic
 }

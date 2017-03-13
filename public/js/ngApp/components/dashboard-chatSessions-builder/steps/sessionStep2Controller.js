@@ -17,9 +17,9 @@
     vm.isDragInProgress = false;
 
     vm.sortableOptionsA = {
-      stop : function(e, ui) {
+      stop: function(e, ui) {
         reOrderTopics();
-        saveTopics(vm.sessionTopicsArray);
+        saveTopics(vm.sessionTopicsArray); 
       }
     };
 
@@ -39,6 +39,7 @@
     vm.surveyList = [];
     vm.surveyEditors = [];
     vm.attachedSurveysToSession = {};
+    vm.inviteAgainTopicAdded = inviteAgainTopicAdded;
 
     function surveyWithType(surveyType) {
       var survey;
@@ -100,6 +101,7 @@
       vm.topicController = topicController;
       vm.topicController.session = vm.session;
       vm.topicController.resetSessionTopics = vm.init;
+      vm.topicController.init();
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
@@ -117,18 +119,17 @@
     }
 
     function addSessionTopic(topic) {
-      if(topic.SessionTopics[0]) {
+      if (topic.SessionTopics[0]) {
         var exists = vm.sessionTopicsObject[topic.id];
         vm.sessionTopicsObject[topic.id] = topic;
         vm.sessionTopicsObject[topic.id].sessionTopic = topic.SessionTopics[0];
-        if(!exists) {
+        if (!exists) {
           vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
         vm.sessionTopicsArray = vm.sessionTopicsArray.map(function(item) {
-          if(topic.id == item.id) {
+          if (topic.id == item.id) {
             return topic;
-          }
-          else {
+          } else {
             return item;
           }
         });
@@ -139,6 +140,10 @@
       var can = false, selected = getSelectedTopics();
 
       if (topic.stock || topic.default) {
+        return false;
+      }
+
+      if (topic.inviteAgain && vm.session.publicUid) {
         return false;
       }
 
@@ -214,6 +219,26 @@
     }
 
     function removeTopicFromList(id) {
+      for(var index in vm.sessionTopicsArray) {
+        var topic = vm.sessionTopicsArray[index];
+        if (topic.id == id) {
+          if (topic.inviteAgain) {
+            if (!vm.session.publicUid) {
+              $confirm({ 
+                text: "By deleting this Topic you will not be able to Generate a Contact List. You can however reactivate by dragging from the left-hand column before publishing your Session." 
+              }).then(function() {
+                removeTopicFromListConfirmed(id);
+              });
+            }
+          } else {
+            removeTopicFromListConfirmed(id);
+          }
+          break;
+        }
+      }
+    }
+
+    function removeTopicFromListConfirmed(id) {
       vm.session.removeTopic(id).then(function(res) {
         dbg.log2('topic removed');
         removeTopicFromLocalList(id);
@@ -265,10 +290,10 @@
           orderByFilter(result.data, "id").map(function(topic) {
             addSessionTopic(topic);
           });
+          vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
           if (result.message) {
             $confirm({ text: result.message, closeOnly: true, title: null });
           }
-
         }
       }, function(error) {
         messenger.error(error);
@@ -292,7 +317,20 @@
       }
     }
 
+    function inviteAgainTopicAdded() {
+      for (var index in vm.sessionTopicsArray) {
+        if (vm.sessionTopicsArray[index].inviteAgain) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     function addTopics(topic, list) {
+      if (topic.inviteAgain && inviteAgainTopicAdded()) {
+        return;
+      }
+
       if(!vm.sessionTopicsObject[topic.id]) {
         topic.sessionTopic = {
           order: vm.sessionTopicsArray.length,
@@ -348,11 +386,25 @@
     }
 
     vm.saveSurveys = function(autoSave, publish) {
+      if (publish) {
+        $confirm({ text: "Once you have Published, you cannot change your Generate Contact List response." }).then(function() {
+          saveSurveysConfirmed(false, publish);
+        });
+      } else {
+        saveSurveysConfirmed(autoSave, false);
+      }
+    }
+
+    function saveSurveysConfirmed(autoSave, publish) {
       vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
         vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
           if (publish) {
-            sessionBuilderControllerServices.publish(vm.session.id).then(function() {
-              openSessionsListAndHighlight();
+            sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
+              if (res.error) {
+                messenger.error(res.error);
+              } else {
+                openSessionsListAndHighlight();
+              }
             });
           } else if (!autoSave) {
             openSessionsListAndHighlight();

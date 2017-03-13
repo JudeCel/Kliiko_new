@@ -28,7 +28,8 @@
     "prepareLoadTest": "node ./tasks/prepareLoadTest.js",
     "updateSubscriptions": "node ./tasks/updateSubscriptions.js",
     "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js",
-    "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js"
+    "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js",
+    "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js"
   },
   "engineStrict": true,
   "engine": {
