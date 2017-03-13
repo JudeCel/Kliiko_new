@@ -225,7 +225,7 @@
           if (topic.inviteAgain) {
             if (!vm.session.publicUid) {
               $confirm({ 
-                text: "By deleting this Topic ypu will not be able to Generate a Contact List. You can however reactivate by dragging from the left-hand column before publishing your Session." 
+                text: "By deleting this Topic you will not be able to Generate a Contact List. You can however reactivate by dragging from the left-hand column before publishing your Session." 
               }).then(function() {
                 removeTopicFromListConfirmed(id);
               });

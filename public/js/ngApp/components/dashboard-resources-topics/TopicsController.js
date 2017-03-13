@@ -50,7 +50,7 @@
     vm.init = init;
 
     function init() {
-      var sessionType = vm.session ? vm.session.steps.step1.type : null;
+      var sessionType = vm.session && vm.session.steps.step1.type;
       topicsAndSessions.getAllTopics(sessionType).then(
         function(res) {
           dbg.log2('#TopicsController > getAllTopics > success > ', res);
