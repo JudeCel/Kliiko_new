@@ -15,9 +15,9 @@
   }
 
   angular.module('KliikoApp.Root').controller('SurveyClientController', SurveyClientController);
-  SurveyClientController.$inject = ['dbg', 'surveyServices', 'GalleryServices', 'messenger', '$timeout', 'messagesUtil', '$location'];
+  SurveyClientController.$inject = ['dbg', 'surveyServices', 'GalleryServices', 'messenger', '$timeout', 'messagesUtil'];
 
-  function SurveyClientController(dbg, surveyServices, GalleryServices, messenger, $timeout, messagesUtil, $location) {
+  function SurveyClientController(dbg, surveyServices, GalleryServices, messenger, $timeout, messagesUtil) {
     dbg.log2('#SurveyClientController started');
 
     var vm = this;
@@ -38,8 +38,9 @@
       });
     };
 
-    function init(surveyId) {
-      surveyServices.findSurvey({ id: surveyId, token: $location.search().token }).then(function(res) {
+    function init(surveyId, chatUrl) {
+      vm.chatUrl = chatUrl;
+      surveyServices.findSurvey({ id: surveyId }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
         if(res.error) {
@@ -47,7 +48,6 @@
         }
         else {
           vm.status = res.status;
-          vm.chatUrl = res.chatUrl;
           vm.survey = res.data;
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);

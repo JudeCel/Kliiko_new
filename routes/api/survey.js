@@ -91,13 +91,9 @@ function getResponses(req, res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat, status: result.status, chatUrl: chatUrl(req.query.token) });
+      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat, status: result.status });
     }
   };
-}
-
-function chatUrl(token) {
-  return process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT + "/?ghost_token=" + token;
 }
 
 module.exports = {
