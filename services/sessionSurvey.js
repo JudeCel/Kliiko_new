@@ -8,7 +8,7 @@ var async = require('async');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
-    models.SessionSurvey.find({where: { SurveyId: surveyId, SessionId: sessionId} })
+    models.SessionSurvey.find({where: { surveyId: surveyId, sessionId: sessionId} })
       .then((result) => {
         if (result) {
           resolve();
@@ -22,9 +22,9 @@ function isSurveyAttached(sessionId, surveyId) {
 function addSurveyToSession(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
     let data = {
-      SessionId:  sessionId,
-      SurveyId:   surveyId,
-      active:    true
+      sessionId:  sessionId,
+      surveyId:   surveyId,
+      active:     true
     }
     isSurveyAttached(sessionId, surveyId).then(function() {
       resolve();
@@ -41,7 +41,7 @@ function addSurveyToSession(sessionId, surveyId) {
 function setSurveyEnabled(sessionId, surveyId, active) {
   return new Bluebird((resolve, reject) => {
       let data = {active: active};
-      models.SessionSurvey.update(data, {where: { SurveyId: surveyId, SessionId: sessionId} })
+      models.SessionSurvey.update(data, {where: { surveyId: surveyId, sessionId: sessionId} })
       .then(function(result) {
         resolve();
       }).catch(function(e) {
