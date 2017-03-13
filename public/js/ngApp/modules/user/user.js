@@ -4,7 +4,7 @@
 
   usersFactory.$inject = ['$q', '$resource', 'dbg'];
   function usersFactory($q, $resource, dbg) {
-    var usersRestApi = $resource('/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}});
+    var usersRestApi = $resource('/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}, permissions: {method: 'PATCH'}});
 
     var UserService = {};
     UserService.app = {};
@@ -14,6 +14,7 @@
     UserService.getUserData = getUserData;
     UserService.changeUserPassword = changeUserPassword;
     UserService.updateUserData = updateUserData;
+    UserService.reloadPermissions = reloadPermissions;
     return UserService;
 
     function getUserData(app) {
@@ -40,7 +41,7 @@
 
       return deferred.promise;
     }
-    
+
     function changeUserPassword(data){
       var deferred = $q.defer();
 
@@ -66,6 +67,21 @@
           for (var field in res.user) {
             UserService.app.accountUser[field] = res.user[field];
           }
+          deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function reloadPermissions() {
+      var deferred = $q.defer();
+
+      usersRestApi.permissions({}, function (res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          UserService.app.permissions = res.permissions;
           deferred.resolve(res);
         }
       });

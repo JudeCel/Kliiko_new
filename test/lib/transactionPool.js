@@ -18,7 +18,7 @@ describe("TransactionPool", () => {
             let options = {concurrentCount: 20, timeout: 12};
             let transactionPool = new TransactionPool(options);
             assert.equal(transactionPool.concurrentCount, options.concurrentCount);
-            assert.equal(transactionPool.timeout, options.timeout);
+            assert.equal(transactionPool.timeout, options.timeout * 1.2);
         });
     });
 

@@ -6,7 +6,8 @@
   function SmsCreditService($q, $resource, dbg) {
     var smsCreditServiceRestApi = $resource('/subscriptionSmsCredits/:path', null, {
       puchaseCredits: { method: 'POST', params: { path: 'puchaseCredits' } },
-      creditCount: { method: 'GET', params: { path: 'creditCount' } }
+      creditCount: { method: 'GET', params: { path: 'creditCount' } },
+      checkout: { method: 'GET', params: { path: 'checkout' } }
     });
 
     var scService = {};
@@ -14,6 +15,7 @@
     scService.getAllCreditPlans = getAllCreditPlans;
     scService.puchaseCredits = puchaseCredits;
     scService.creditCount = creditCount;
+    scService.checkout = checkout;
 
     return scService;
 
@@ -27,6 +29,15 @@
       return deferred.promise;
     };
 
+    function checkout() {
+      var deferred = $q.defer();
+      dbg.log2('#SubscriptionPlanService > creditCount > make rest call');
+      smsCreditServiceRestApi.checkout({}, function(res) {
+        dbg.log2('#SubscriptionPlanService > checkout > rest call responds');
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    }
     function creditCount() {
       var deferred = $q.defer();
       dbg.log2('#SubscriptionPlanService > creditCount > make rest call');

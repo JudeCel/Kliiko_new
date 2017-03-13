@@ -81,13 +81,14 @@ describe('MONITORING - Channel', () => {
 
         channel.on("outgoingMessage", (payload) => {
             let resp = {ref: payload.ref, event: "phx_reply", payload: {status: "ok"} }
+
             process.nextTick(() => {
                 channel.emit("incomingMessage", resp);
             })
         });
 
         let messageResp = channel.push("newEntry", {});
-        messageResp.once("ok", (resp) => {
+        messageResp.once("resolve", (resp) => {
             done();
         })
 

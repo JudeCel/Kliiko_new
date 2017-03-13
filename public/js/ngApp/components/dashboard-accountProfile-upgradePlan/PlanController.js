@@ -161,6 +161,7 @@
           vm.purchaseWasSuccessfull = false;
           messenger.error(result.error);
         }else{
+          user.reloadPermissions();
           messenger.ok(result.message);
         }
       })
