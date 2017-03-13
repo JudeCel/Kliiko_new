@@ -439,9 +439,9 @@ function answerSurvey(params) {
 
   models.sequelize.transaction((t) => {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
-      const answer = findAnswer(validParams, survey, 'interest');
-      if(survey.surveyType === 'sessionPrizeDraw' && answer.value === 1) {
-        return survey;
+      if(survey.surveyType === 'sessionPrizeDraw') {
+        const answer = findAnswer(validParams, survey, 'interest');
+        if(answer.value === 1) return survey;
       }
 
       return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
@@ -462,6 +462,7 @@ function answerSurvey(params) {
                     return survey;
                   }
                   else {
+                    const answer = findAnswer(validParams, survey, 'interest');
                     if(answer.value === 1) {
                       return survey;
                     }
