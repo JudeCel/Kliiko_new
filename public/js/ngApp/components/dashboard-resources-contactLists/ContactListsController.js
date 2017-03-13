@@ -115,7 +115,7 @@
         if (vm.lists.activeList.active) {
           return('Deactivate Contact List');
         }else{
-          return('Reactive Contact list');
+          return('Reactivate Contact List');
         }
       }
     }
