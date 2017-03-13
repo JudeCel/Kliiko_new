@@ -383,7 +383,7 @@ describe('SERVICE - Survey', function() {
 
   describe('#findAllSurveys', function() {
     it('should succeed on finding 0 surveys', function (done) {
-      surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
+      surveyServices.findAllSurveys(testData.account, {surveyType: constants.surveyTypes.recruiter}).then(function(result) {
         assert.deepEqual(result.data, []);
         done();
       }, function(error) {
@@ -397,7 +397,7 @@ describe('SERVICE - Survey', function() {
       surveyServices.createSurveyWithQuestions(params, testData.account).then(function(result) {
         let survey = result.data;
 
-        surveyServices.findAllSurveys(testData.account, {type: constants.surveyTypes.recruiter}).then(function(result) {
+        surveyServices.findAllSurveys(testData.account, {surveyType: constants.surveyTypes.recruiter}).then(function(result) {
           assert.equal(result.data[0].id, survey.id);
           done();
         }, function(error) {
@@ -732,7 +732,7 @@ describe('SERVICE - Survey', function() {
             answerParams.surveyId = survey.id;
 
             surveyServices.answerSurvey(answerParams).then(function(result) {
-              assert.equal(result.message, surveyServices.messages.completed);
+              assert.equal(result.status, 100);
 
               SurveyAnswer.count().then(function(c) {
                 assert.equal(c, 1);
@@ -763,7 +763,7 @@ describe('SERVICE - Survey', function() {
                   SurveyAnswer.count({where: {surveyId: survey.id}}).then((surveyAnswerCount) => {
                     ContactListUser.count({where: {accountUserId: {$ne: testData.accountUser.id}}}).then((contactListUserCount) => {
                       try {
-                        assert.equal(result.message, surveyServices.messages.completed);
+                        assert.equal(result.status, 100);
                         assert.equal(surveyAnswerCount, 1);
                         assert.equal(contactListUserCount, 0);
                         done();
@@ -799,7 +799,7 @@ describe('SERVICE - Survey', function() {
                 SurveyAnswer.count().then(function(surveyAnswercCount) {
                   ContactListUser.count().then(function(contactListUserCount) {
                     try {
-                      assert.equal(result.message, surveyServices.messages.completed);
+                      assert.equal(result.status, 100);
                       assert.equal(surveyAnswercCount, 1);
                       assert.equal(contactListUserCount, 2);
                       done();
