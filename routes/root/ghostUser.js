@@ -28,6 +28,9 @@ function post(req, res, next) {
   }).then(function(sessionMember) {
     res.redirect(chatUrl(sessionMember.token));
   }).catch(function(error) {
+    if (error == "The response parameter is missing.") {
+      error = "Captcha not confirmed";
+    }
     res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error, captcha: captcha.formElement() });
   });
 }

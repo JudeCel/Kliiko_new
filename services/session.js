@@ -587,7 +587,7 @@ function checkSessionByPublicUid(uid) {
         if (session.status == "open") {
           resolve(session);
         } else {
-          reject(MessagesUtil.session.closed.replace("sessionName", session.name));
+          reject(MessagesUtil.session.closed.replace("{sessionName}", session.name));
         }
       } else {
         reject(MessagesUtil.session.notFound);
