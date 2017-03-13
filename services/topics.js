@@ -30,29 +30,46 @@ module.exports = {
 };
 
 function getAll(accountId, sessionType) {
-  let deferred = q.defer();
+  return new Bluebird((resolve, reject) => {
+    includeInviteAgainTopic(accountId, sessionType).then(function(includeInviteAgain) {
+      let where = includeInviteAgain ? 
+        { $or: [{ accountId: accountId }, { stock: true }] } : 
+        { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
 
-  let includeInviteAgainTopic = !sessionType || sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled;
-  let where = includeInviteAgainTopic ? 
-    { $or: [{ accountId: accountId }, { stock: true }] } : 
-    { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
-
-  Topic.findAll({
-    order: '"name" ASC',
-    where: where,
-    include: [{
-      model: models.SessionTopics,
-      include: [{
-        model: models.Session
-      }]
-    }]
-  }).then(function(results){
-    deferred.resolve(results);
-  }, function(error) {
-    deferred.reject(filters.errors(error));
+      Topic.findAll({
+        order: '"name" ASC',
+        where: where,
+        include: [{
+          model: models.SessionTopics,
+          include: [{
+            model: models.Session
+          }]
+        }]
+      }).then(function(results){
+        resolve(results);
+      }, function(error) {
+        reject(filters.errors(error));
+      });
+    });
   });
 
-  return deferred.promise;
+  function includeInviteAgainTopic(accountId, sessionType) {
+    return new Bluebird((resolve, reject) => {
+      if (sessionType) {
+        if (sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled) {
+          validators.validate(accountId, 'contactList', 1).then(function(topic) {
+            resolve(true);
+          }, function() {
+            resolve(false);
+          });
+        } else {
+          resolve(false);
+        }
+      } else {
+        resolve(true);
+      }
+    });
+  }
 }
 
 function updateDefaultTopic(params, isAdmin) {

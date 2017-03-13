@@ -1521,7 +1521,6 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   return deferred.promise;
 }
 
-
 function publish(sessionId, accountId) {
   return new Bluebird((resolve, reject) => {
     Session.find({
@@ -1534,8 +1533,14 @@ function publish(sessionId, accountId) {
         if (session.publicUid) {
           resolve({ id: session.id, publicUid: session.publicUid });
         } else {
-          session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
-            resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+          getRelatedInviteAgainTopic(sessionId).then(function(topic) {
+            if (topic) {
+              generatePublicUid(session, resolve, reject);
+            } else {
+              validators.subscription(accountId, 'session', 1, { sessionId: sessionId }).then(function() {
+                generatePublicUid(session, resolve, reject);
+              });
+            }
           });
         }
       } else {
@@ -1545,4 +1550,24 @@ function publish(sessionId, accountId) {
       reject(filters.errors(error));
     });
   });
+
+  function generatePublicUid(session, resolve, reject) {
+    session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
+      resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+    });
+  }
+
+  function getRelatedInviteAgainTopic(sessionId) {
+    return models.Topic.find({
+      where: {
+        inviteAgain: true
+      },
+      include: [{
+        model: models.SessionTopics,
+        where: {
+          sessionId: sessionId
+        }
+      }]
+    });
+  }
 }
