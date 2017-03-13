@@ -16,7 +16,8 @@ var MessagesUtil = require('./../../util/messages');
 module.exports = {
   userGet: userGet,
   userPost: userPost,
-  changePassword:changePassword
+  changePassword:changePassword,
+  reloadPermissions:reloadPermissions,
 };
 
 function userPost(req, res, next) {
@@ -46,4 +47,9 @@ function changePassword(req, res, next) {
       res.send({ message: message });
     }
   });
+}
+
+function reloadPermissions(req, res, next) {
+  const data = req.currentResources;
+  AccountUserService.getPermissions(req.currentResources).then((permissions) => res.send({ permissions }));
 }

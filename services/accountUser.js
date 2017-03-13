@@ -12,6 +12,7 @@ var _ = require('lodash');
 var q = require('q');
 var Bluebird = require('bluebird');
 var sessionMemberService = require('./sessionMember');
+const perrmissions = require("./permissions")
 
 const VALID_ATTRIBUTES = {
   accountUser: [
@@ -24,6 +25,21 @@ const VALID_ATTRIBUTES = {
     'sessionId'
   ]
 };
+
+function getPermissions(data) {
+  return models.Account.find({
+    where: { id: data.account.id },
+    include: [{
+      model: models.AccountUser,
+      where: { id: data.accountUser.id }
+    }, {
+      model: models.Subscription,
+      include: [models.SubscriptionPreference]
+    }]
+  }).then((account) => {
+    return perrmissions.forAccount(account, account.AccountUsers[0], account.Subscription.SubscriptionPreference.data);
+  });
+}
 
 function deleteOrRecalculate(id, addRole, removeRole, transaction) {
   return new Bluebird((resolve, reject) => {
@@ -442,5 +458,6 @@ module.exports = {
   updateInfo: updateInfo,
   deleteOrRecalculate: deleteOrRecalculate,
   recalculateRole: recalculateRole,
+  getPermissions: getPermissions,
   updateNotInFutureInfo: updateNotInFutureInfo
 }

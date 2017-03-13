@@ -112,6 +112,13 @@ function findSurvey(params, skipValidations) {
         else if(!survey.confirmedAt) {
           deferred.reject(MessagesUtil.survey.notConfirmed);
         }
+        else if(survey.surveyType !== 'recruiter') {
+          models.SessionSurvey.find({ where: { surveyId: survey.id } }).then((sessionSurvey) => {
+            const params = simpleParams(survey);
+            if(!sessionSurvey.active) params.status = ANSWER_RESPONSES.notActive;
+            deferred.resolve(params);
+          });
+        }
         else {
           deferred.resolve(simpleParams(survey));
         }
@@ -432,6 +439,11 @@ function answerSurvey(params) {
 
   models.sequelize.transaction((t) => {
     return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
+      if(survey.surveyType === 'sessionPrizeDraw') {
+        const answer = findAnswer(validParams, survey, 'interest');
+        if(answer.value === 1) return survey;
+      }
+
       return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
          return tryFindContactList(survey, t).then((contactList) => {
           if(!contactList) { return survey }
@@ -442,11 +454,30 @@ function answerSurvey(params) {
                 if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
                   clParams.contactListId = contactList.id;
                   clParams.accountId = survey.accountId;
-                  return contactListUserServices.create(clParams).then((result) => {
+
+                  if(survey.surveyType === 'recruiter') {
+                    return createContactListUser(survey, clParams);
+                  }
+                  else if(survey.surveyType === 'sessionPrizeDraw') {
                     return survey;
-                  }, (error)  => {
-                    throw error;
-                  });
+                  }
+                  else {
+                    const answer = findAnswer(validParams, survey, 'interest');
+                    if(answer.value === 1) {
+                      return survey;
+                    }
+                    else {
+                      const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
+                      return models.AccountUser.find({ where: { AccountId: survey.accountId, email: contactDetails.email } }).then((accountUser) => {
+                        if(accountUser) {
+                          return survey;
+                        }
+                        else {
+                          return createContactListUser(survey, clParams);
+                        }
+                      });
+                    }
+                  }
                 } else {
                   return survey;
                 }
@@ -462,7 +493,7 @@ function answerSurvey(params) {
       });
     })
   }).then((survey) =>{
-    deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
+    deferred.resolve({ status: correctSurveyAnsweredMessage(validParams, survey) });
   }).catch(SurveyAnswer.sequelize.ValidationError, (error) => {
     deferred.reject(filters.errors(error));
   }).catch((error) => {
@@ -471,6 +502,62 @@ function answerSurvey(params) {
 
   return deferred.promise;
 };
+
+function createContactListUser(survey, clParams) {
+  return contactListUserServices.create(clParams).then((result) => {
+    return survey;
+  }, (error)  => {
+    throw error;
+  });
+}
+
+const ANSWER_RESPONSES = {
+  recruiter: 100,
+  sessionContactList: {
+    interested: 200,
+    notInterested: 201,
+  },
+  sessionPrizeDraw: {
+    interested: 300,
+    notInterested: 301,
+  },
+  notActive: 400
+};
+
+function correctSurveyAnsweredMessage(params, survey) {
+  if(survey.surveyType === 'recruiter') {
+    return ANSWER_RESPONSES.recruiter;
+  }
+  else {
+    const answer = findAnswer(params, survey, 'interest');
+    if(answer.value === 0) {
+      return ANSWER_RESPONSES[survey.surveyType].interested;
+    }
+    else {
+      return ANSWER_RESPONSES[survey.surveyType].notInterested;
+    }
+  }
+}
+
+function findAnswer(params, survey, type) {
+  let question;
+  if(type === 'contact') {
+    question = findContactQuestion(survey.SurveyQuestions);
+  }
+  else {
+    question = findInterestQuestion(survey.SurveyQuestions);
+  }
+
+  return params.answers[question.id.toString()];
+}
+
+function findContactQuestion(questions) {
+  return questions.find((item) => item.name === 'Contact Details');
+}
+
+function findInterestQuestion(questions) {
+  return questions.find((item) => item.name === 'Interest');
+}
 
 function findContactListAnswers(contactList, answers) {
   let values;

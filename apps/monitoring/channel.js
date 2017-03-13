@@ -25,7 +25,7 @@ class Channel extends EventEmitter2 {
     constructor(name, options){
       super({verboseMemoryLeak: true});
       this.topic =  name;
-      this.options = options;
+      this.options = options || {};
       this.state =  CHANNEL_STATES.set;
       this.messages =  new Store();
       this.on('incomingMessage', (message) => { this.incomingMessage(message)});

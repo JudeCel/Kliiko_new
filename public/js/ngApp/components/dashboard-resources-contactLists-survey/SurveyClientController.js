@@ -38,7 +38,8 @@
       });
     };
 
-    function init(surveyId) {
+    function init(surveyId, chatUrl) {
+      vm.chatUrl = chatUrl;
       surveyServices.findSurvey({ id: surveyId }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
@@ -46,6 +47,7 @@
           vm.message = res.error;
         }
         else {
+          vm.status = res.status;
           vm.survey = res.data;
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
@@ -72,7 +74,7 @@
               messenger.error(res.error);
             }
             else {
-              vm.message = res.message;
+              vm.status = res.status;
             }
           });
         }
