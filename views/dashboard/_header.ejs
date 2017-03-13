@@ -59,11 +59,11 @@
         <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canPaymentDetails')">
           <a href='/account-hub/paymentDetails' target="_blank">Payment Details<img class="my-details-container" src='/icons/payment_green.png' alt='' /></a>
         </li>
-        <!-- NOTE: Right now we need to disable this, while Judy is deciding what we will do with SMS credit purchasing. -->
-        <!-- <li role="separator" class="divider" ng-if="app.hasPermissions('canSmsCredits')"></li> -->
-        <!-- <li class='text-right text-size-dashboard' ng-if="app.hasPermissions('canSmsCredits')">
+
+        <li role="separator" class="divider"></li>
+        <li class='text-right text-size-dashboard'>
           <a href="/account-hub#/smsCredits">Get SMS credits</a>
-        </li> -->
+        </li>
         <li role="separator" class="divider"></li>
         <li class='text-right text-size-dashboard'><a href='/logout'>Logout<img class="my-details-container" src='/icons/logout_yellow.png' alt='' /></a></li>
       </ul>
