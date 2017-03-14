@@ -30,7 +30,7 @@ module.exports = {
     "availableOnTabletAndMobilePlatforms": true,
     "customEmailInvitationAndReminderMessages": true,
     "topicCount": 10,
-    "priority": -1,
+    "priority": 5, // This is only for front end.
     "surveyCount": 1,
     "secureSsl": true
   }

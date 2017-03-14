@@ -20,7 +20,7 @@ var Bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
 var constants = require('../util/constants');
 
-const surveyTypesWithoutContactList = [constants.surveyTypes.sessionPrizeDraw];
+const surveyTypesWithoutValidation = [constants.surveyTypes.sessionPrizeDraw];
 
 const VALID_ATTRIBUTES = {
   manage: [
@@ -190,7 +190,7 @@ function updateContactList(contactList, survey, fields, t){
 }
 function createContactList(survey, fields, t){
   return new Bluebird((resolve, reject) => {
-    if (_.includes(surveyTypesWithoutContactList, survey.surveyType)) {
+    if (_.includes(surveyTypesWithoutValidation, survey.surveyType)) {
       resolve();
     } else {
       let contactList = ContactList.build({
@@ -598,30 +598,59 @@ function findContactListAnswers(contactList, answers) {
   }
 }
 
+function confirmSurveyDefered(params, account, deferred) {
+  Survey.update({ confirmedAt: new Date() }, {
+    where: { id: params.id, accountId: account.id },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject(MessagesUtil.survey.notFound);
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(filters.errors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
+function getSurveyType(params) {
+  return new Bluebird(function (resolve, reject) {
+    let deferred = q.defer();
+    Survey.find({
+      where: { id: params.id },
+      attributes: ['surveyType'],
+    }).then(function(survey) {
+      if(survey) {
+        resolve(survey.surveyType);
+      } else {
+        reject();
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
 function confirmSurvey(params, account) {
   let deferred = q.defer();
 
-  validators.subscription(account.id, 'survey', 1).then(function() {
-    Survey.update({ confirmedAt: new Date() }, {
-      where: { id: params.id, accountId: account.id },
-      returning: true
-    }).then(function(result) {
-      if(result[0] == 0) {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-      else {
-        let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
-      }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
+  getSurveyType(params).then((type) => {
+    if (_.includes(surveyTypesWithoutValidation, type)) {
+      confirmSurveyDefered(params, account, deferred);
+    } else {
+      validators.subscription(account.id, 'survey', 1).then(function() {
+        confirmSurveyDefered(params, account, deferred);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
+  }, (error) => {
     deferred.reject(error);
   });
-
   return deferred.promise;
 };
 

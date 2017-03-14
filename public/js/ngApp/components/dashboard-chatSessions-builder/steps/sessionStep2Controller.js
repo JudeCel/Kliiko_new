@@ -328,6 +328,7 @@
 
     function addTopics(topic, list) {
       if (topic.inviteAgain && inviteAgainTopicAdded()) {
+        $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
         return;
       }
 
@@ -396,22 +397,30 @@
     }
 
     function saveSurveysConfirmed(autoSave, publish) {
-      vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
-        vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
-          if (publish) {
-            sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
-              if (res.error) {
-                messenger.error(res.error);
-              } else {
-                openSessionsListAndHighlight();
-              }
-            });
-          } else if (!autoSave) {
-            openSessionsListAndHighlight();
-          }
+      if (inviteAgainTopicAdded()) {
+        vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
+            if (publish) {
+              publishSession();
+            } else if (!autoSave) {
+              openSessionsListAndHighlight();
+            }
+          });
+        }).catch(function(e) {
+          messenger.error(e);
         });
-      }).catch(function(e) {
-        messenger.error(e);
+      } else {
+        publishSession();
+      }
+    }
+
+    function publishSession() {
+      sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          openSessionsListAndHighlight();
+        }
       });
     }
 

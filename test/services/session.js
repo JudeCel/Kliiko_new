@@ -127,7 +127,7 @@ describe('SERVICE - Session', function() {
           sessionServices.checkSessionByPublicUid("test-uid").then(function(result) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error, sessionServices.messages.closed.replace("sessionName", testData.session.name));
+            assert.equal(error, sessionServices.messages.closed.replace("{sessionName}", testData.session.name));
             done();
           });
         }, function(error) {
