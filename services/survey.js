@@ -18,6 +18,9 @@ var q = require('q');
 var _ = require('lodash');
 var Bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
+var constants = require('../util/constants');
+
+const surveyTypesWithoutContactList = [constants.surveyTypes.sessionPrizeDraw];
 
 const VALID_ATTRIBUTES = {
   manage: [
@@ -187,22 +190,26 @@ function updateContactList(contactList, survey, fields, t){
 }
 function createContactList(survey, fields, t){
   return new Bluebird((resolve, reject) => {
-    let contactList = ContactList.build({
-        name: survey.name,
-        accountId: survey.accountId,
-        editable: true,
-      }, { transaction: t });
+    if (_.includes(surveyTypesWithoutContactList, survey.surveyType)) {
+      resolve();
+    } else {
+      let contactList = ContactList.build({
+          name: survey.name,
+          accountId: survey.accountId,
+          editable: true,
+        }, { transaction: t });
 
-      fillCustomFields(fields, contactList);
-      contactListServices.create(contactList.dataValues, t).then((contactList) => {
-        survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
-          resolve(contactList);
+        fillCustomFields(fields, contactList);
+        contactListServices.create(contactList.dataValues, t).then((contactList) => {
+          survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
+            resolve(contactList);
+          }, (error) => {
+            reject(filters.errors(error));
+          })
         }, (error) => {
-          reject(filters.errors(error));
-        })
-      }, (error) => {
-        reject(filters.errors(error))
-      });
+          reject(filters.errors(error))
+        });
+      }
   })
 }
 

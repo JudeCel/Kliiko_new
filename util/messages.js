@@ -100,7 +100,7 @@ module.exports = {
     sessionNotClosed: "You can't rate or comment participants because session in not closed",
     cantSendSMS: "You can't send SMS for this session",
     actionNotAllowed: "Action not allowed",
-    closed: "Sorry, \"{sessionName}\", has now closed. Thank you for interest!"
+    closed: "Sorry, \"{sessionName}\" has now closed. Thanks for your interest!"
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
