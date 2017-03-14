@@ -12,7 +12,7 @@
       <form method="post" action="/session/<%= uid %>" novalidate="" id="signup">
         <p>
           <h4>Introducing...</h4>
-          <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="">
+          <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="" maxlength="20">
         </p>
         <p>
           <%- captcha %>
