@@ -1539,6 +1539,8 @@ function publish(sessionId, accountId) {
             } else {
               validators.subscription(accountId, 'session', 1, { sessionId: sessionId }).then(function() {
                 generatePublicUid(session, resolve, reject);
+              }, function(reason) {
+                reject(reason);
               });
             }
           });
