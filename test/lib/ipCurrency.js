@@ -3,7 +3,7 @@
 const assert = require('chai').assert;
 const ipCurrency = require('./../../lib/ipCurrency');
 
-describe.only('LIB - IPCurrency', function() {
+describe('LIB - IPCurrency', function() {
   describe('#get', function() {
     it('can get currency data from IP', function(done) {
       const params = {
