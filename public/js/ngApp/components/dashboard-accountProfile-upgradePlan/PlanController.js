@@ -24,6 +24,15 @@
     vm.monthlyPlans = [];
     vm.annualPlans = [];
 
+    vm.currencySymbols = {
+      AUD: '$',
+      USD: '$',
+      CAD: '$',
+      NZD: '$',
+      GBP: '£',
+      EUR: '€',
+    };
+
     vm.pricePerEnding = {
       monthly: 'MONTH',
       annual: 'YEAR'
@@ -76,7 +85,6 @@
     vm.isCurrentPlan = isCurrentPlan;
     vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
-    vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
     vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
@@ -87,6 +95,7 @@
     vm.upgradePlanText = upgradePlanText;
     vm.displayFeatureValue = displayFeatureValue;
     vm.finishedRenderingPlans = finishedRenderingPlans;
+    vm.fullPrice = fullPrice;
 
     init();
     vm.setup = function() {
@@ -145,10 +154,23 @@
           vm.annualOrMonthly = 'monthly';
           vm.subPlans = vm.monthlyPlans;
 
+          vm.currencyData = result.currencyData;
+          vm.currentCurrency = vm.currencyData.client;
+          vm.currencyList = Object.keys(vm.currencyData.rates);
+          vm.currencyList.unshift(vm.currencyData.base);
+
           vm.currentPlan = result.currentPlan;
           vm.features = result.features;
         }
       })
+    }
+
+    function fullPrice(price) {
+      if(vm.currentCurrency !== vm.currencyData.base) {
+        price *= vm.currencyData.rates[vm.currentCurrency];
+      }
+
+      return price;
     }
 
     function canPush(period, subPlan) {
@@ -218,6 +240,7 @@
     }
 
     function previouseStep() {
+      vm.selectedPlan = null;
       return --vm.currentStep;
     }
 
@@ -263,10 +286,6 @@
 
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
-    }
-
-    function showCalculatedPrice(price) {
-      return price / 100;
     }
 
     function openGetQuoteModal(user) {

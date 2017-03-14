@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-if='up.selectedPlan'>
   <div class="col-md-12 caption">
     Order Summary
   </div>
@@ -45,10 +45,10 @@
         {{ up.selectedPlan.plan.period_unit }}
       </div>
       <div class="col-sm-3">
-        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.amount_due) | currency:"$":0 }}
+        {{ up.fullPrice(up.selectedPlan.chargeEstimate.amount_due) | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
       <div class="col-sm-2">
-        {{ up.showCalculatedPrice(up.selectedPlan.chargeEstimate.credits_applied) | currency:"$":0 }}
+        {{ up.fullPrice(up.selectedPlan.chargeEstimate.credits_applied) | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
     </div>
   </div>

@@ -1,11 +1,20 @@
 <section id="step-1">
   <h2>Choose a plan:</h2>
   <section class="plans-table" ng-if="up.subPlans.length">
+    <!-- <pre class='text-left'>{{ up.currencyData | json }}</pre>
+    <pre class='text-left'>{{ up.selectedPlan | json }}</pre> -->
       <table>
         <!-- Table headers-->
         <tr>
-          <!-- compensate first column for monthly/yearly buttons-->
-          <th></th>
+          <th>
+            <select class='form-control border-radius-none' ng-model='up.currentCurrency'>
+              <option ng-repeat='currency in up.currencyList' value='{{currency}}' ng-selected='up.currentCurrency === currency'>
+                {{ currency }}
+              </option>
+            </select>
+            <h5><span class='text-red-dark'>*</span>Price may be different on the payment page due to variance in currency exchange rates.</h5>
+          </th>
+
           <th ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
             <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
             <div class="col-sm-1 pull-right">
@@ -32,7 +41,7 @@
             <div class="plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
               <div class="price-label" ng-if= "subscriptionPlan.plan.price">
                 <h5 class="outline">
-                  ${{subscriptionPlan.plan.price | price:'':0 }}
+                  {{ up.fullPrice(subscriptionPlan.plan.price) | price:up.currencySymbols[up.currentCurrency]:0 }}
                   <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
                 </h5>
                 <p>Get 2 Months FREE on all annual plans</p>

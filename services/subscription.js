@@ -15,6 +15,7 @@ var chargebee = require('./../lib/chargebee').instance;
 const PLAN_CONSTANTS = require('./../util/planConstants');
 var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
+var ipCurrency = require('../lib/ipCurrency');
 var MessagesUtil = require('./../util/messages');
 var moment = require('moment-timezone');
 
@@ -102,36 +103,30 @@ function getChargebeeSubscription(subscriptionId, provider) {
   return deferred.promise;
 }
 
-function getAllPlans(accountId) {
+function getAllPlans(accountId, ip) {
   let deferred = q.defer();
-  let currentPlan = {};
 
-  chargebee.plan.list({limit: 20, "status[is]" : "active"}).request(function(error, result){
+  chargebee.plan.list({ limit: 20 }).request(function(error, result) {
     if (error) {
       deferred.reject(error);
     } else {
-      //according to API manual "status[is]" : "active" is enought to show only active plans, but this doesn't work
-      var plans = []
-      for (var i=0; i<result.list.length; i++) {
-        var plan = result.list[i];
-        if (plan.plan.status == "active") {
-          plans.push(plan);
-        }
-      }
+      const plans = result.list.filter((item) => item.plan.status === 'active');
 
       if (accountId) {
-        findAndProcessSubscription(accountId).then(function(currentSub) {
-          if(currentSub && currentSub.active){
-            currentPlan = currentSub.SubscriptionPlan;
-          }
-          addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features});
-          })
-        }, function(error) {
+        let currentPlan, currencyData;
+        ipCurrency.get({ ip }).then((data) => {
+          currencyData = data;
+          return findAndProcessSubscription(accountId);
+        }).then((currentSub) => {
+          currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+          return addPlanEstimateChargeAndConstants(plans, accountId);
+        }).then(function(planWithConstsAndEstimates) {
+          deferred.resolve({ currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features, currencyData });
+        }).catch((error) => {
           deferred.reject(filters.errors(error));
-        })
+        });
       } else {
-        deferred.resolve(plans)
+        deferred.resolve(plans);
       }
     }
   });
