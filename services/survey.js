@@ -711,8 +711,25 @@ function getSurveyStats(id, account) {
 
 function getSurveyListStats(ids, account) {
   return new Bluebird(function (resolve, reject) {
+    let allStats = [];
     canExportSurveyStats(account).then(function() {
-      resolve(ids);
+      async.waterfall(ids.map((id) => {
+        return function (nextCallback) {
+          getSurveyData(id, account.id).then(function(survey) {
+            let stats = createStats(survey);
+            allStats[id] = simpleParams(stats);
+            nextCallback(null);
+          }, function(error) {
+            nextCallback(error);
+          });
+        }
+      }), function(error) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(allStats);
+        }
+      });
     }, function(error) {
       reject(error);
     });
@@ -947,9 +964,12 @@ function populateStatsWithAnswerIfNotExists(questions, question, answer) {
   if (answer.contactDetails) {
     CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
       let questionKey = question.id + field;
-      answer.contactDetails[field].options.forEach(function(option) {
-        setObjectKeyValueIfNotExists(questions[questionKey].answers, option, { name: option, count: 0, percent: 0 });
-      });
+      let contactDetailsFields = answer.contactDetails[field];
+      if (contactDetailsFields) {
+        answer.contactDetails[field].options.forEach(function(option) {
+          setObjectKeyValueIfNotExists(questions[questionKey].answers, option, { name: option, count: 0, percent: 0 });
+        });
+      }
     });
   } else if (question.type != "textarea") {
     setObjectKeyValueIfNotExists(questions[question.id].answers, answer.order, { name: answer.name, count: 0, percent: 0 });

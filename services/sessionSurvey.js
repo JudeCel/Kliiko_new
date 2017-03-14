@@ -1,5 +1,4 @@
 var models = require('./../models');
-var surveyService = require('./survey');
 var constants = require('../util/constants');
 var Bluebird = require('bluebird');
 var _ = require('lodash');
