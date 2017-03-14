@@ -177,7 +177,7 @@ function updateSessionTopics(sessionId, topicsArray) {
   return new Bluebird(function (resolve, reject) {
     let ids = _.map(topicsArray, 'id');
     let returning = [];
-    joinToSession(ids, sessionId, topicsArray).then(function(result) {
+    joinToSession(ids, sessionId).then(function(result) {
       Bluebird.each(result.sessionTopics, (sessionTopic) => {
         
         return new Bluebird(function (resolveInternal, rejectInternal) {
@@ -232,8 +232,13 @@ function updateSessionTopics(sessionId, topicsArray) {
 
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
-  Session.find({where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({where: {id: ids, stock: false}}).then(function(results) {
+  Session.find({ where: { id: sessionId } }).then(function(session) {
+    Topic.findAll({
+      where: { 
+        id: ids, 
+        stock: false
+      }
+    }).then(function(results) {
       session.addTopics(results).then(function(result) {
         models.SessionTopics.findAll({
           where: {
@@ -242,7 +247,7 @@ function joinToSession(ids, sessionId) {
           order: '"order" ASC',
           include: [Topic]
         }).then( function(sessionTopics) {
-          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length, session });
+          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length && sessionTopics.length != ids.length, session });
         });
       }, function(error) {
         deferred.reject(filters.errors(error));
