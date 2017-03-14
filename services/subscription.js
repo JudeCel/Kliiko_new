@@ -439,7 +439,6 @@ function updateSubscription(params, providers) {
 
   gatherInformation(params.accountId, params.newPlanId).then(function(result) {
     canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
-
         if(params.skipCardCheck) {
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
             updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription)).then(function(result_1) {
@@ -761,8 +760,8 @@ function prepareRecurringParams(plan, preference) {
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
-  if(currentPlan.priority < newPlan.priority){
     let functionArray = [
+      validateIfNotCurrentPlan(accountId, newPlan),
       validateSessionCount(accountId, newPlan),
       validateSurveyCount(accountId, newPlan),
       validateContactListCount(accountId, newPlan)
@@ -778,38 +777,31 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
         }
       }
     });
-  }else if(validatePlanPriority(newPlan.priority, currentPlan.priority)){
-    deferred.resolve();
-  }
-  else if(newPlan.priority == currentPlan.priority && newPlan.priority == -1 && newPlan.chargebeePlanId != currentPlan.chargebeePlanId) {
-    deferred.resolve();
-  }else{
-    findSubscription(accountId).then(function(subscription) {
-      if(subscription.active){
-        deferred.reject(MessagesUtil.subscription.cantSwitchPlan);
-      }else{
-        deferred.resolve();
-      }
-    })
-  }
 
   return deferred.promise;
 }
 
-function validatePlanPriority(newPlanPriority, currentPlanPriority) {
-  if(newPlanPriority == currentPlanPriority) {
-    return false;
-  }else if(newPlanPriority == -1) {
-    return true;
-  }else if(currentPlanPriority > newPlanPriority){
-    return true;
-  }else{
-    return false;
+function validateIfNotCurrentPlan(accountId, newPlan) {
+  return function(cb) {
+    models.Subscription.find({
+      where: {
+        accountId: accountId
+      },
+      include: [SubscriptionPlan, SubscriptionPreference, Account]
+    }).then(function(subscription) {
+      if(subscription.planId == newPlan.chargebeePlanId){
+        cb(null, {plan: MessagesUtil.subscription.cantSwitchPlan});
+      }else{
+        cb(null, {});
+      }
+    }, function(error) {
+      cb(error);
+    });
   }
 }
 
 function validateSessionCount(accountId, newPlan) {
-  return function(cb) {
+  return function(errors, cb) {
     models.Session.count({
       where: {
         accountId: accountId,
@@ -819,12 +811,15 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
+      errors = errors || {};
+
       if(newPlan.sessionCount == -1) {
-        cb(null, {});
+        cb(null, errors);
       } else if(newPlan.sessionCount < c){
-        cb(null, {session: MessagesUtil.subscription.validation.session});
+        errors.session = MessagesUtil.subscription.validation.session
+        cb(null, errors);
       }else{
-        cb(null, {});
+        cb(null, errors);
       }
     }, function(error) {
       cb(error);
@@ -842,8 +837,7 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-
-      if(newPlan.sessionCount == -1) {
+      if(newPlan.surveyCount == -1) {
         cb(null, errors);
       } else if(newPlan.sessionCount < c){
         errors.survey = MessagesUtil.subscription.validation.survey;

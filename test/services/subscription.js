@@ -135,7 +135,7 @@ describe('SERVICE - Subscription', function() {
           request: function(callback) {
             callback(null, {
               id: params.id,
-              plan_id: params.plan_id, 
+              plan_id: params.plan_id,
               current_term_end: new Date()
             });
           }
@@ -214,23 +214,6 @@ describe('SERVICE - Subscription', function() {
           done(error);
         });
       });
-
-      it('should succeed on updating subscription with valid credit card', function(done) {
-        let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
-        let providers = {
-          creditCard: validCreditCardProvider(),
-          updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
-        }
-        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(result) {
-          assert.isNotNull(result.subscription);
-          assert.isNotNull(result.subscription.SubscriptionPreference);
-          assert.equal(result.subscription.accountId, testData.account.id);
-          assert.equal(result.subscription.planId, testData.subscriptionPlan.chargebeePlanId);
-          done();
-        }, function(error) {
-          done(error);
-        });
-      });
     });
 
     describe('sad path', function() {
@@ -290,7 +273,7 @@ describe('SERVICE - Subscription', function() {
           subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: subscription.SubscriptionPlan.chargebeePlanId}, providers).then(function(subscription) {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error, "Can't switch to current plan");
+            assert.equal(error.plan, "Can't switch to current plan");
             done();
           });
         })
@@ -303,7 +286,7 @@ describe('SERVICE - Subscription', function() {
             updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
            }
           return function(cb) {
-            subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(subscription) {
+            subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(subscription) {
               cb();
             }, function(error) {
               cb(error);
@@ -323,10 +306,10 @@ describe('SERVICE - Subscription', function() {
               } else {
                 let providers = {
                   creditCard: validCreditCardProvider(),
-                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
+                  updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId})
                  }
 
-                subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId}, providers).then(function(result) {
+                subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(result) {
                   assert.equal(result.subscription.planId, testData.lowerPlan.chargebeePlanId);
                   done();
                 }, function(error) {
@@ -572,7 +555,7 @@ describe('SERVICE - Subscription', function() {
           request: function(callback) {
             callback(null, {
               id: params.id,
-              plan_id: params.plan_id, 
+              plan_id: params.plan_id,
               current_term_end: new Date()
             });
           }
