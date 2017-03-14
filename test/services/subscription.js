@@ -214,23 +214,6 @@ describe('SERVICE - Subscription', function() {
           done(error);
         });
       });
-
-      // it('should succeed on updating subscription with valid credit card', function(done) {
-      //   let smsCount = 650; // sms count that is expected when updating from "free" plan to "unlimited" plan!
-      //   let providers = {
-      //     creditCard: validCreditCardProvider(),
-      //     updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
-      //   }
-      //   subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(result) {
-      //     assert.isNotNull(result.subscription);
-      //     assert.isNotNull(result.subscription.SubscriptionPreference);
-      //     assert.equal(result.subscription.accountId, testData.account.id);
-      //     assert.equal(result.subscription.planId, testData.subscriptionPlan.chargebeePlanId);
-      //     done();
-      //   }, function(error) {
-      //     done(error);
-      //   });
-      // });
     });
 
     describe('sad path', function() {

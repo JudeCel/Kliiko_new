@@ -760,7 +760,6 @@ function prepareRecurringParams(plan, preference) {
 function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
-  // if(currentPlan.priority < newPlan.priority){
     let functionArray = [
       validateIfNotCurrentPlan(accountId, newPlan),
       validateSessionCount(accountId, newPlan),
@@ -779,35 +778,8 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
       }
     });
 
-  // }else if(validatePlanPriority(newPlan.priority, currentPlan.priority)){
-  //   deferred.resolve();
-  // }
-  // else if(newPlan.priority == currentPlan.priority && newPlan.priority == -1 && newPlan.chargebeePlanId != currentPlan.chargebeePlanId) {
-  //   deferred.resolve();
-  // }else{
-  //   findSubscription(accountId).then(function(subscription) {
-  //     if(subscription.active){
-  //       deferred.reject(MessagesUtil.subscription.cantSwitchPlan);
-  //     }else{
-  //       deferred.resolve();
-  //     }
-  //   })
-  // }
-
   return deferred.promise;
 }
-
-// function validatePlanPriority(newPlanPriority, currentPlanPriority) {
-//   if(newPlanPriority == currentPlanPriority) {
-//     return false;
-//   }else if(newPlanPriority == -1) {
-//     return true;
-//   }else if(currentPlanPriority > newPlanPriority){
-//     return true;
-//   }else{
-//     return false;
-//   }
-// }
 
 function validateIfNotCurrentPlan(accountId, newPlan) {
   return function(cb) {
