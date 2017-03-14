@@ -328,6 +328,7 @@
 
     function addTopics(topic, list) {
       if (topic.inviteAgain && inviteAgainTopicAdded()) {
+        $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
         return;
       }
 
