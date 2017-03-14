@@ -811,6 +811,8 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
+      errors = errors || {};
+
       if(newPlan.sessionCount == -1) {
         cb(null, errors);
       } else if(newPlan.sessionCount < c){
