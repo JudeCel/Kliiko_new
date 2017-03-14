@@ -709,6 +709,16 @@ function getSurveyStats(id, account) {
   });
 }
 
+function getSurveyListStats(ids, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyStats(account).then(function() {
+      resolve(ids);
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
 function canExportSurveyStats(account) {
   return new Bluebird(function (resolve, reject) {
     validators.planAllowsToDoIt(account.id, 'exportRecruiterStats').then(function() {
@@ -896,7 +906,10 @@ function createStats(survey) {
         case 'object':
           if (answer.contactDetails) {
             CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
-              res.questions[surveyQuestion.id + field].answers[answer.contactDetails[field]].count++;
+              let answerField = res.questions[surveyQuestion.id + field].answers[answer.contactDetails[field]];
+              if (answerField) {
+                answerField.count++;
+              }
             });
           }
           break;
@@ -997,5 +1010,6 @@ module.exports = {
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
   canExportSurveyData: canExportSurveyData,
-  getSurveyStats: getSurveyStats
+  getSurveyStats: getSurveyStats,
+  getSurveyListStats: getSurveyListStats
 };

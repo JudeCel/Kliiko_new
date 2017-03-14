@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
 
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices', '$confirm'];
-  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices, $confirm){
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices', '$confirm', 'surveyServices'];
+  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices, $confirm, surveyServices){
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -238,8 +238,14 @@
     }
 
     function showStats(session) {
-      //todo:
-      //will be implemented in TA1592
+      chatSessionsServices.getSessionSurveyStats(session.id).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          vm.stats = res.data;
+          domServices.modal('statsModal');
+        }
+      });
     }
 
     function showPublicUrl(session) {
@@ -250,7 +256,7 @@
     }
 
     function initShouldShowStatusLabel(session) {
-      if (session.SessionType && session.SessionType.properties.features.closeSessionToggle.enabled && 
+      if (session.SessionType && session.SessionType.properties.features.closeSessionToggle.enabled &&
           (!session.SessionType.properties.features.publish.enabled || session.publicUid)) {
         session.showStatusLabel = false;
         initIsOpen(session);

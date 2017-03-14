@@ -134,7 +134,7 @@ router.get('/session/list', PERMISSIONS.facilitatorManagerAdmin, session.get);
 router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
-
+router.get('/session/surveyStats/:id',  PERMISSIONS.facilitatorManagerAdmin, session.getSessionSurveyStats);
 
 // Session Member
 router.post('/sessionMember/comment/:id', PERMISSIONS.facilitatorManagerAdmin, session.comment);
