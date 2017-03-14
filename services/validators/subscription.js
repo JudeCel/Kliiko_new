@@ -4,6 +4,7 @@ var MessagesUtil = require('./../../util/messages');
 var models = require('./../../models');
 var filters = require('./../../models/filters');
 let subscriptionValidator = require('./hasValidSubscription');
+var constants = require('./../../util/constants');
 
 var Subscription = models.Subscription;
 var SubscriptionPreference = models.SubscriptionPreference;
@@ -43,7 +44,7 @@ const DEPENDENCIES = {
     key: 'surveyCount',
     model: models.Survey,
     params: function(accountId) {
-      return { where: { accountId: accountId, closed: false, confirmedAt: {$ne: null} } };
+      return { where: { accountId: accountId, closed: false, confirmedAt: {$ne: null}, surveyType: {$ne: constants.surveyTypes.sessionPrizeDraw} } };
     },
     countMessage: countRecruiterMessage
   },
