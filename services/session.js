@@ -334,6 +334,8 @@ function copySession(sessionId, accountId) {
       delete result.data.dataValues.brandProjectPreferenceId;
       delete result.data.dataValues.startTime;
       delete result.data.dataValues.endTime;
+      delete result.data.dataValues.type;
+      delete result.data.dataValues.publicUid;
       delete result.data.dataValues.isVisited;
       result.data.dataValues.isInactive = true;
       result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";
