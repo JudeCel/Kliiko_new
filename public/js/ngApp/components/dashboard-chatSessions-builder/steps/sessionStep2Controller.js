@@ -250,13 +250,16 @@
     function topicsOnDropComplete(dragTopic) {
       var list = [];
       var selected = getSelectedTopics();
+      var flags = {
+        inviteAgainTopicMessage: false
+      };
 
-      if(selected.length) {
+      if (selected.length) {
         selected.map(function(topic) {
-          addTopics(topic, list);
+          addTopics(topic, list, flags);
         });
       } else {
-        addTopics(dragTopic, list);
+        addTopics(dragTopic, list, flags);
       }
 
       if (list.length) {
@@ -326,13 +329,16 @@
       return false;
     }
 
-    function addTopics(topic, list) {
+    function addTopics(topic, list, flags) {
       if (topic.inviteAgain && inviteAgainTopicAdded()) {
-        $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
+        if (!flags.inviteAgainTopicMessage) {
+          flags.inviteAgainTopicMessage = true;
+          $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
+        }
         return;
       }
 
-      if(!vm.sessionTopicsObject[topic.id]) {
+      if (!vm.sessionTopicsObject[topic.id]) {
         topic.sessionTopic = {
           order: vm.sessionTopicsArray.length,
           active: true,
@@ -342,7 +348,7 @@
           sign: topic.sign,
           lastSign: null
         }
-        if(list) {
+        if (list) {
           list.push(topic);
         }
       }
