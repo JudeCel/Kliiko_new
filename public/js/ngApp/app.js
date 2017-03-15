@@ -40,6 +40,7 @@
     'KliikoApp.mailTemplate',
     'KliikoApp.sessionExpire',
     'KliikoApp.propertyDisabler',
+    'KliikoApp.appEvents',
     'angulartics',
     'angulartics.mixpanel'
   ];
