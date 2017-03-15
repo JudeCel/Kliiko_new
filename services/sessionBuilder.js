@@ -80,7 +80,7 @@ function inviteAgainTopicParams(session, topic) {
     sessionId: session.id,
     order: 1,
     active: true,
-    landing: true,
+    landing: false,
     boardMessage: topic.boardMessage,
     name: topic.name,
     sign: topic.sign,
