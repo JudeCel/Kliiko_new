@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger', 'appEvents'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger, appEvents){
     dbg.log2('#AccountManagerController started');
     var vm = this;
     vm.maxLength = { normal: 20, email: 40 };
@@ -33,6 +33,11 @@
     vm.modalPath = "/js/ngApp/components/dashboard-accountProfile-accountManagers/modal.html";
 
     function init() {
+      getAllManagers();
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, getAllManagers);
+    };
+
+    function getAllManagers() {
       accountManagerServices.getAllManagersList().then(function(res) {
         if(res.error){
           errorMessenger.showError(res.error);
@@ -41,7 +46,6 @@
         }
       });
     };
-
 
     function openModal(modalTitle, action, accountUser) {
       vm.userIndex = vm.accountUsers.indexOf(accountUser);
