@@ -404,8 +404,8 @@
 
     function saveSurveysConfirmed(autoSave, publish) {
       if (inviteAgainTopicAdded()) {
-        vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
-          vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
+        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function(res) {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function(res) {
             if (publish) {
               publishSession();
             } else if (!autoSave) {
@@ -432,6 +432,7 @@
 
     function openSessionsListAndHighlight() {
       location.href = "#/chatSessions?highlight=" + vm.session.id;
+      messenger.ok('Successfully updated session!');
     }
 
     vm.blockSurvey = function(survey) {
