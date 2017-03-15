@@ -12,46 +12,35 @@
     vm.events = {
       contactDetailsUpdated: "ContactDetailsUpdated"
     }
+    vm.registeredEvents = {};
     init();
     return vm;
 
-    function getElement(name, initNew) {
-      var id = "appEventElement" + name;
-      var element = document.getElementById(id);
-      if (initNew) {
-        if (element) {
-          document.body.removeChild(element);
-        }
-        element = document.createElement("div");
-        element.id = id;
-        document.body.appendChild(element);
-      }
-      return element;
-    }
-
     function addEventListener(name, func) {
-      var element = getElement(name, true);
-      element.addEventListener(name, function(e) {
-        dbg.log2('Event function call for "' + name + '"');
-        func();
-      });
+      if (!vm.registeredEvents[name]) {
+        vm.registeredEvents[name] = new Event(name);
+      }
+      vm.registeredEvents[name].callbacks.push(func);
     }
     
     function dispatchEvent(name) {
-      var element = getElement(name, false);
-      if (element) {
-        var event = new CustomEvent(name);
-        element.dispatchEvent(event);
+      if (vm.registeredEvents[name]) {
+        vm.registeredEvents[name].callbacks.forEach(function(callback){
+          dbg.log2('Event function call for "' + name + '"');
+          callback();
+        });
       }
     }
 
     function init() {
       $rootScope.$on('$stateChangeStart',  function(){
-        var elements = document.querySelectorAll("div[id^='appEventElement']");
-        for (var i=0; i<elements.length; i++) {
-          document.body.removeChild(elements[i]);
-        }
+        vm.registeredEvents = {};
       });
+    }
+
+    function Event(name) {
+      this.name = name;
+      this.callbacks = [];
     }
 
   }

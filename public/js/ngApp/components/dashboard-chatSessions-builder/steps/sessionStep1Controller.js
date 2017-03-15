@@ -232,7 +232,10 @@
       vm.step1.ngModalOptions = { timezone: 'UTC' };
       initStep(null, 'initial');
       getAllContacts();
-      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, getAllContacts);
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, function() {
+        vm.session.getRemoteData();
+        getAllContacts();
+      });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
       vm.anonymous = vm.session.steps.step1.anonymous.toString();
