@@ -198,6 +198,7 @@
         }
       });
 
+      $(".planHint").hide();
       nextStep();
     }
 
