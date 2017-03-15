@@ -242,8 +242,8 @@
         if (res.error) {
           messenger.error(res.error);
         } else {
-          vm.stats = res.data;
-          domServices.modal('statsModal');
+          vm.stats = res;
+          domServices.modal('statsListModal');
         }
       });
     }

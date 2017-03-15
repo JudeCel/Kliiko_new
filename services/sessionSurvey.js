@@ -165,10 +165,8 @@ function getSurveyStatsForSession(id, account) {
   return new Bluebird((resolve, reject) => {
     getSessionSurveyIds(id).then((list) => {
       return surveyService.getSurveyListStats(list, account).then((res) => {
-        resolve({ list: res});
-      }).catch((e) => {
-        resolve({ surveyList: e});
-      });
+        resolve({ surveys: res});
+      })
     }).catch((e) => {
       reject(e);
     });

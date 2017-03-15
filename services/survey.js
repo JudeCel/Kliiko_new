@@ -717,7 +717,9 @@ function getSurveyListStats(ids, account) {
         return function (nextCallback) {
           getSurveyData(id, account.id).then(function(survey) {
             let stats = createStats(survey);
-            allStats[id] = simpleParams(stats);
+            if (stats) {
+              allStats.push(simpleParams(stats));
+            }
             nextCallback(null);
           }, function(error) {
             nextCallback(error);
