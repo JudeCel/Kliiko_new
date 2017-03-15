@@ -139,5 +139,31 @@
         </div>
     </section>
 
+    <section>
+      <div class='modal fade' id='sessionDeleted' role='dialog'>
+        <div class='modal-dialog' style="width: 800px">
+          <div class='modal-content border-green border-radius-none'>
+            <div class='modal-header'>
+              <button type='button' class='close' data-dismiss='modal'>&times;</button>
+              <h1 class='modal-title text-center'>Yikes!</h1>
+            </div>
+
+            <div class='modal-body'>
+              What are the odds... this Session has been Deleted by<br />
+              someone else, your changes will not be saved.
+              <br /><br />
+              You'll be redirected to Session List
+            </div>
+
+            <div class='modal-footer'>
+              <div type='button' data-dismiss='modal' class='pull-right btn btn-standart btn-green btn-large'>
+                OK
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </section> <!-- eof  ng-controller='SurveyController as sc'-->
 </section> <!-- eof id="session-builder-content" ng-controller="SessionBuilderController as sbc"-->

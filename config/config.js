@@ -13,7 +13,7 @@ var config = {
     pool: {
       max: 10,
       min: 0,
-      idle: 2000,
+      idle: 20000,
       handleDisconnects: true
     },
     benchmark: false,
@@ -29,7 +29,7 @@ var config = {
     pool: {
       max: 10,
       min: 0,
-      idle: 2000,
+      idle: 20000,
       handleDisconnects: true
     },
     benchmark: false,
@@ -45,7 +45,7 @@ var config = {
     pool: {
       max: 10,
       min: 0,
-      idle: 2000,
+      idle: 20000,
       handleDisconnects: true
     },
     benchmark: false,

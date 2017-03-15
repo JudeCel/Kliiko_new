@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -205,12 +205,15 @@
           if (result.name == "Hosts") {
             vm.facilitatorContactListId = result.id;
           }
-          result.members.map(function(member) {
-            member.id = member.accountUserId;
-            member.role = result.role;
-            member.listName = result.name;
-            vm.allContacts.push(member);
-          });
+          if (result.members.length) {
+            vm.allContacts = [];
+            result.members.map(function(member) {
+              member.id = member.accountUserId;
+              member.role = result.role;
+              member.listName = result.name;
+              vm.allContacts.push(member);
+            });
+          }
         });
       }, function(error) {
         messenger.error(error);
@@ -229,6 +232,10 @@
       vm.step1.ngModalOptions = { timezone: 'UTC' };
       initStep(null, 'initial');
       getAllContacts();
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, function() {
+        vm.session.getRemoteData();
+        getAllContacts();
+      });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
       vm.anonymous = vm.session.steps.step1.anonymous.toString();
