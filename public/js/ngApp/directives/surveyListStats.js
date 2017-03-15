@@ -1,8 +1,8 @@
 angular
     .module('KliikoApp')
-    .directive('surveyListStats', surveyListStats);
+    .directive('surveyListStats', ['surveyServices', surveyListStats]);
 
-function surveyListStats() {
+function surveyListStats(surveyServices) {
   var directive = {
     restrict: 'E',
     scope: {
@@ -13,6 +13,15 @@ function surveyListStats() {
       scope.$watch('stats', function() {
         getTitle(scope);
       });
+
+      scope.exportSurveyList = function(format) {
+        if (scope.stats && scope.stats.surveys) {
+          var list = scope.stats.surveys.map(function(item) {
+            return item.data.survey.id;
+          });
+          return surveyServices.exportSurveyListStatsUrl(list, format);
+        }
+      }
     }
   };
 
