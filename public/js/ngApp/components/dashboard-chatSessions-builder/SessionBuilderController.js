@@ -122,6 +122,13 @@
           syncDiff(diff);
         });
 
+        channel.on("session_deleted", function(diff) {
+          $('#sessionDeleted').on('hidden.bs.modal', function() {
+            document.location.href = '/account-hub#/chatSessions';
+          });
+          domServices.modal('sessionDeleted');
+        });
+
       });
     }
 
