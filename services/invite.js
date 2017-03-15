@@ -128,7 +128,7 @@ function createInvite(params, transaction) {
       sentAt: new Date(),
       role: params.role
     }
-    
+
     buildTransaction(transaction).then((transaction, transactionPool) => {
       Invite.build(buildAttrs).validate().done(() => {
         sql.transaction = transaction;
@@ -709,38 +709,63 @@ function updateAditionalInfo (invite, transaction) {
 
 function acceptSessionInvite(token) {
   return new Bluebird((resolve, reject) => {
-    findInvite(token).then((invite) => {
-      invite.update({ token: uuid.v1(), status: 'inProgress' }, { returning: true }).then((invite) => {
-        resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
-      }, (error) => {
-        reject(filters.errors(error));
-      });
-    }, (error) => {
-      reject(error);
-    })
+    Invite.count(usedInviteQuery(token)).then(function(count) {
+      if(count > 0) {
+        resolve({ message: MessagesUtil.invite.alreadyUsed, invite: null });
+      } else {
+        findInvite(token).then((invite) => {
+          invite.update({ status: 'inProgress' }, { returning: true }).then((invite) => {
+            resolve({ message: MessagesUtil.invite.confirmed, invite: invite });
+          }, (error) => {
+            reject(filters.errors(error));
+          });
+        }, (error) => {
+          reject(error);
+        });
+      }
+    });
   });
 }
 
 function declineSessionInvite(token, status) {
   return new Bluebird((resolve, reject) => {
-    findInvite(token).then((invite) => {
-      invite.update({ status: status }).then(() => {
-        sendEmail(status, invite).then(() =>  {
-          resolve({ message: MessagesUtil.invite.declined, invite: invite });
+    Invite.count(usedInviteQuery(token)).then(function(count) {
+      if(count > 0) {
+        resolve({ message: MessagesUtil.invite.alreadyUsed, invite: null });
+      } else {
+        findInvite(token).then((invite) => {
+          invite.update({ status: status }).then(() => {
+            sendEmail(status, invite).then(() =>  {
+              resolve({ message: MessagesUtil.invite.declined, invite: invite });
+            }, (error) => {
+              reject(error);
+            });
+            let preparedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+            accountUserService.updateInfo(invite.accountUserId, preparedStatus, null);
+          }, function(error) {
+            deferred.reject(filters.errors(error));
+          }, (error) =>  {
+            reject(filters.errors(error));
+          });
         }, (error) => {
           reject(error);
         });
-        let preparedStatus = status.charAt(0).toUpperCase() + status.slice(1);
-        accountUserService.updateInfo(invite.accountUserId, preparedStatus, null);
-      }, function(error) {
-        deferred.reject(filters.errors(error));
-      }, (error) =>  {
-        reject(filters.errors(error));
-      });
-    }, (error) => {
-      reject(error);
+      }
     });
   });
+}
+
+function usedInviteQuery(token) {
+  return {
+    where: {
+      token: token,
+      $or: [
+        { status: 'confirmed' },
+        { status: 'notThisTime' },
+        { status: 'notAtAll' }
+      ]
+    }
+  };
 }
 
 function sendEmail(status, invite) {

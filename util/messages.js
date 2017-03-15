@@ -65,6 +65,7 @@ module.exports = {
     }
   },
   invite: {
+    alreadyUsed: 'Invite already used.',
     confirmed: 'You have successfully accepted Invite. Please login using your invite e-mail and password.',
     removed: 'Successfully removed Invite',
     cantRemove: "Can't remove this invite",
