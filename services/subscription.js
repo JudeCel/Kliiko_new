@@ -110,7 +110,7 @@ function getAllPlans(accountId, ip) {
     if (error) {
       deferred.reject(error);
     } else {
-      const plans = result.list.filter((item) => item.plan.status === 'active');
+      let plans = result.list.filter((item) => item.plan.status === 'active');
 
       if (accountId) {
         let currentPlan, currencyData;
@@ -121,7 +121,9 @@ function getAllPlans(accountId, ip) {
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
-          deferred.resolve({ currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features, currencyData });
+          const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+          plans = mapPlans(planWithConstsAndEstimates);
+          deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
         }).catch((error) => {
           deferred.reject(filters.errors(error));
         });
@@ -134,21 +136,35 @@ function getAllPlans(accountId, ip) {
   return deferred.promise;
 }
 
+function getFreeAccountRemoveTrial(plans) {
+  const free = _.remove(plans, (item) => ['free_trial', 'free_account'].includes(item.plan.id)); // remove free plans
+  return free.find((item) => item.plan.id === 'free_account');
+}
+
+function mapPlans(plans) {
+  plans = _.groupBy(plans, (item) => item.plan.currency_code); // group by currency
+  constants.supportedCurrencies.forEach((currency) => {
+    plans[currency] = _.orderBy(plans[currency], (item) => PLAN_CONSTANTS[item.plan.preference].priority, ['asc']); // order by priority
+    plans[currency] = _.groupBy(plans[currency], (item) => item.plan.period_unit); // group by period
+  });
+  return plans;
+}
+
 function addPlanEstimateChargeAndConstants(plans, accountId) {
   let deferred = q.defer();
   let plansWithAllInfo = [];
 
   findSubscription(accountId).then(function(accountSubscription) {
     async.each(plans, function(plan, callback) {
-      const preferenceName = accountSubscription.SubscriptionPlan.preferenceName;
+      const preferenceName = PLAN_CONSTANTS.preferenceName(plan.plan.id);
       // TODO Refacture to one function
       if(notNeedEstimatePrice(preferenceName, accountSubscription)){
-        plan.additionalParams = PLAN_CONSTANTS[preferenceName];
+        plan.plan.preference = preferenceName;
         plansWithAllInfo.push(plan);
         callback();
       }else if(needEstimatePrice(preferenceName, accountSubscription)){
         getEstimateCharge(plan, accountSubscription).then(function(planWithEstimate) {
-          planWithEstimate.additionalParams = PLAN_CONSTANTS[preferenceName];
+          planWithEstimate.plan.preference = preferenceName;
           plansWithAllInfo.push(planWithEstimate);
           callback();
         }, function(error) {

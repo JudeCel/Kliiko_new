@@ -1,24 +1,20 @@
 <section id="step-1">
   <h2>Choose a plan:</h2>
-  <section class="plans-table" ng-if="up.subPlans.length">
+  <section class="plans-table" ng-if="up.plansList">
+      <!-- <pre class='text-left'>{{ up.plansList | json }}</pre> -->
       <table>
         <!-- Table headers-->
         <tr>
-          <th>
-            <select class='form-control border-radius-none' ng-model='up.currentCurrency'>
-              <option ng-repeat='currency in up.currencyList' value='{{currency}}' ng-selected='up.currentCurrency === currency'>
-                {{ currency }}
-              </option>
-            </select>
-            <h5><span class='text-red-dark'>*</span>Price may be different on the payment page due to variance in currency exchange rates.</h5>
+          <th class='currency-dropdown'>
+            <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList' ng-model='up.currentCurrency' ng-change='up.changePlanList()' />
           </th>
 
-          <th ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
+          <th ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
             <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
             <div class="col-sm-1 pull-right">
-              <div ng-if="up.mostPopular(subscriptionPlan.plan.id)" class="most-popular pull-right"></div>
+              <div ng-if="up.mostPopular(subscriptionPlan.plan.preference)" class="most-popular pull-right"></div>
             </div>
-            <div class="plan-block {{ subscriptionPlan.plan.id }}" ng-if="up.showPlanInList(subscriptionPlan)">
+            <div class="plan-block {{ subscriptionPlan.plan.preference }}">
               <div class="list-group-item-heading" ng-if= "subscriptionPlan.plan.price">
                 <h4>{{subscriptionPlan.plan.name}}</h4>
                 <div ng-include="'upgradePlanButton.html'"></div>
@@ -30,22 +26,22 @@
           <th>
             <div class="plan-option-list plan-option-feature">
               <div class='flex-box'>
-                <div class="flex-el {{ up.buttonClassName('monthly') }}" ng-click="up.switchPlanView('monthly')">Monthly</div>
-                <div class="flex-el {{ up.buttonClassName('annual') }}" ng-click="up.switchPlanView('annual')">Annual</div>
+                <div class="flex-el {{ up.buttonClassName('month') }}" ng-click="up.switchPlanView('month')">Monthly</div>
+                <div class="flex-el {{ up.buttonClassName('year') }}" ng-click="up.switchPlanView('year')">Annual</div>
               </div>
             </div>
           </th>
-          <th class="plan-option-price-block {{ subscriptionPlan.plan.id + '_header' }}" ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' ">
-            <div class="plan-block" ng-if="up.showPlanInList(subscriptionPlan)">
+          <th class="plan-option-price-block {{ subscriptionPlan.plan.preference + '_header' }}" ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
+            <div class="plan-block">
               <div class="price-label" ng-if= "subscriptionPlan.plan.price">
                 <h5 class="outline">
-                  {{ up.fullPrice(subscriptionPlan.plan.price) | price:up.currencySymbols[up.currentCurrency]:0 }}
+                  {{ subscriptionPlan.plan.price | price:up.currencySymbols[up.currentCurrency]:0 }}
                   <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
                 </h5>
                 <p>Get 2 Months FREE on all annual plans</p>
               </div>
 
-              <div class="{{ subscriptionPlan.plan.id + '_header' }} list-group-item-heading" ng-if= "!subscriptionPlan.plan.price">
+              <div class="{{ subscriptionPlan.plan.preference + '_header' }} list-group-item-heading" ng-if= "!subscriptionPlan.plan.price">
                 <h4>{{subscriptionPlan.plan.name}}</h4>
                 <div ng-include="'upgradePlanButton.html'"></div>
               </div>
@@ -54,18 +50,18 @@
           </th>
         </tr>
         <!-- Table content-->
-        <tr ng-repeat="feature in up.features">
+        <tr ng-repeat="feature in up.features track by feature.key">
           <!-- row title -->
           <td class="plan-option-feature align-vertical-child white-space-pre-line" id='{{ feature.key }}'>
             {{feature.title}}
           </td>
           <!-- row content -->
-          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}">
+          <td ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id" class="{{ subscriptionPlan.plan.preference }}">
             <span class="align-vertical-child">
               <span ng-if="up.showNumber(feature)">
-                {{up.displayFeatureValue(feature, subscriptionPlan)}}
+                {{up.displayFeatureValue(feature, subscriptionPlan.plan)}}
               </span>
-              <span ng-if="up.showBoolean(feature, subscriptionPlan)" class="glyphicon glyphicon-ok">
+              <span ng-if="up.showBoolean(feature, subscriptionPlan.plan)" class="glyphicon glyphicon-ok">
               </span>
             </span>
           </td>
@@ -74,7 +70,7 @@
         <!-- feature buy buttons -->
         <tr>
           <td/>
-          <td ng-repeat="subscriptionPlan in up.subPlans | orderBy:'additionalParams.priority' " class="{{ subscriptionPlan.plan.id }}" on-finish-render="up.finishedRenderingPlans()">
+          <td ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id" class="{{ subscriptionPlan.plan.preference }}" on-finish-render="up.finishedRenderingPlans()">
             <div ng-include="'upgradePlanButton.html'"></div>
           </td>
         </tr>
@@ -83,7 +79,7 @@
 
     <script type="text/ng-template" id="upgradePlanButton.html">
       <div class="list-group-item-text buttons-area" >
-        <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.id) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
+        <div class="{{ up.selectPlanBtnColor(subscriptionPlan.plan.preference) }} btn-dashboard-plans want" ng-click="up.wantThisPlan(subscriptionPlan)">
           {{up.upgradePlanText(subscriptionPlan.plan)}}
         </div>
       </div>
