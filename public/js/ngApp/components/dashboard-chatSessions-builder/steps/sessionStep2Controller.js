@@ -320,17 +320,24 @@
       }
     }
 
-    function inviteAgainTopicAdded() {
+    function inviteAgainTopicAdded(list) {
       for (var index in vm.sessionTopicsArray) {
         if (vm.sessionTopicsArray[index].inviteAgain) {
           return true;
+        }
+      }
+      if (list) {
+        for (var index in list) {
+          if (list[index].inviteAgain) {
+            return true;
+          }
         }
       }
       return false;
     }
 
     function addTopics(topic, list, flags) {
-      if (topic.inviteAgain && inviteAgainTopicAdded()) {
+      if (topic.inviteAgain && inviteAgainTopicAdded(list)) {
         if (!flags.inviteAgainTopicMessage) {
           flags.inviteAgainTopicMessage = true;
           $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
