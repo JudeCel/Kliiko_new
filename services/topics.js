@@ -222,7 +222,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({ where: { id: sessionId } }).then(function(session) {    
-    canAddInviteAgainTopic(session.AccountId).then(function(canAddInviteAgain) {
+    canAddInviteAgainTopic(session.accountId).then(function(canAddInviteAgain) {
       let where = canAddInviteAgain ? { id: ids, stock: false } : { id: ids, stock: false, inviteAgain: false };
       Topic.findAll({ where: where }).then(function(results) {
         session.addTopics(results).then(function(result) {
