@@ -119,7 +119,7 @@ describe('Topic Service', function() {
       subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function() {
         topicService.create(attrs, true).then(function(topic){
           attrs.inviteAgain = true;
-          attrs.name = "Invite Again";
+          attrs.name = "It's A Wrap";
           topicService.create(attrs, true).then(function(topic){
             done();
           }, function(error) {
@@ -135,7 +135,7 @@ describe('Topic Service', function() {
 
     it("with InviteAgain", function(done) {
       topicService.getAll(testAccount.id, null).then(function(topics) {
-        assert.equal(topics.length, 3);
+        assert.equal(topics.topics.length, 3);
         done();
       }, function(error) {
         done(error);
@@ -144,7 +144,7 @@ describe('Topic Service', function() {
 
     it("without InviteAgain", function(done) {
       topicService.getAll(testAccount.id, "focus").then(function(topics) {
-        assert.equal(topics.length, 2);
+        assert.equal(topics.topics.length, 2);
         done();
       }, function(error) {
         done(error);

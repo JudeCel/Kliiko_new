@@ -177,7 +177,7 @@
 
     function showTimeBlockedMessage() {
       if (vm.session.steps.step1.type && !vm.session.properties.features.dateAndTime.enabled) {
-        $confirm({ text: vm.session.properties.features.dateAndTime.message, title: null, closeOnly: true, showAsError: false });
+        $confirm({ text: vm.session.properties.features.dateAndTime.message, htmlText: $sce.trustAsHtml(vm.session.properties.features.dateAndTime.message), title: null, closeOnly: true, showAsError: false });
       } else if (vm.session.steps.step1.canEditTime == false) {
         $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
       }

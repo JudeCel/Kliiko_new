@@ -5,8 +5,8 @@
     module('KliikoApp').
     controller('TopicsController', TopicsController);
 
-  TopicsController.$inject = ['dbg', 'domServices', 'topicsAndSessions', 'messenger'];
-  function TopicsController(dbg, domServices, topicsAndSessions, messenger) {
+  TopicsController.$inject = ['dbg', 'domServices', 'topicsAndSessions', 'messenger', '$confirm', '$sce'];
+  function TopicsController(dbg, domServices, topicsAndSessions, messenger, $confirm, $sce) {
     dbg.log2('#TopicsController controller started');
 
     var vm = this;
@@ -57,6 +57,9 @@
           vm.list = res.topics;
           vm.validations = res.validations;
           vm.prepareCurrentPageItems();
+          if (res.message) {
+            $confirm({ text: res.message, htmlText: $sce.trustAsHtml(res.message), title: null, choice: true, closeOnly: true, showAsError: false, close: "Continue" });
+          }
         },
         function(err) {
           dbg.error('#TopicsController > getAllTopics > error:', err);

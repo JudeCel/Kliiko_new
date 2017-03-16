@@ -298,7 +298,7 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
   let deferred = q.defer();
   topicsService.getAll(accountId).then(function(allTopics) {
     let topicsArray = [];
-    allTopics.map(function(topic) {
+    allTopics.topics.map(function(topic) {
       topic.SessionTopics.map(function(sessionTopic) {
         if (fromSessionId == sessionTopic.sessionId) {
           topic.sessionTopic = sessionTopic;

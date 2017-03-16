@@ -31,45 +31,34 @@ module.exports = {
 
 function getAll(accountId, sessionType) {
   return new Bluebird((resolve, reject) => {
-    includeInviteAgainTopic(accountId, sessionType).then(function(includeInviteAgain) {
-      let where = includeInviteAgain ? 
-        { $or: [{ accountId: accountId }, { stock: true }] } : 
-        { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
+    let includeInviteAgainTopic = !sessionType || sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled;
+    let where = includeInviteAgainTopic ? 
+      { $or: [{ accountId: accountId }, { stock: true }] } : 
+      { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
 
-      Topic.findAll({
-        order: '"name" ASC',
-        where: where,
+    Topic.findAll({
+      order: '"name" ASC',
+      where: where,
+      include: [{
+        model: models.SessionTopics,
         include: [{
-          model: models.SessionTopics,
-          include: [{
-            model: models.Session
-          }]
+          model: models.Session
         }]
-      }).then(function(results){
-        resolve(results);
-      }, function(error) {
-        reject(filters.errors(error));
-      });
+      }]
+    }).then(function(results) {
+      if (sessionType && includeInviteAgainTopic) {
+        validators.validate(accountId, 'contactList', 1).then(function(topic) {
+          resolve({ topics: results });
+        }, function() {
+          resolve({ topics: results, message: MessagesUtil.session.contactListLimit });
+        });
+      } else {
+        resolve({ topics: results });
+      }
+    }, function(error) {
+      reject(filters.errors(error));
     });
   });
-
-  function includeInviteAgainTopic(accountId, sessionType) {
-    return new Bluebird((resolve, reject) => {
-      if (sessionType) {
-        if (sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled) {
-          validators.validate(accountId, 'contactList', 1).then(function(topic) {
-            resolve(true);
-          }, function() {
-            resolve(false);
-          });
-        } else {
-          resolve(false);
-        }
-      } else {
-        resolve(true);
-      }
-    });
-  }
 }
 
 function updateDefaultTopic(params, isAdmin) {
@@ -232,22 +221,22 @@ function updateSessionTopics(sessionId, topicsArray) {
 
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
-  Session.find({ where: { id: sessionId } }).then(function(session) {
-    Topic.findAll({
-      where: { 
-        id: ids, 
-        stock: false
-      }
-    }).then(function(results) {
-      session.addTopics(results).then(function(result) {
-        models.SessionTopics.findAll({
-          where: {
-            sessionId: sessionId
-          },
-          order: '"order" ASC',
-          include: [Topic]
-        }).then( function(sessionTopics) {
-          deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length && sessionTopics.length != ids.length, session });
+  Session.find({ where: { id: sessionId } }).then(function(session) {    
+    canAddInviteAgainTopic(session.AccountId).then(function(canAddInviteAgain) {
+      let where = canAddInviteAgain ? { id: ids, stock: false } : { id: ids, stock: false, inviteAgain: false };
+      Topic.findAll({ where: where }).then(function(results) {
+        session.addTopics(results).then(function(result) {
+          models.SessionTopics.findAll({
+            where: {
+              sessionId: sessionId
+            },
+            order: '"order" ASC',
+            include: [Topic]
+          }).then( function(sessionTopics) {
+            deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length && sessionTopics.length != ids.length, session });
+          });
+        }, function(error) {
+          deferred.reject(filters.errors(error));
         });
       }, function(error) {
         deferred.reject(filters.errors(error));
@@ -255,11 +244,19 @@ function joinToSession(ids, sessionId) {
     }, function(error) {
       deferred.reject(filters.errors(error));
     });
-  }, function(error) {
-    deferred.reject(filters.errors(error));
   });
 
   return deferred.promise;
+
+  function canAddInviteAgainTopic(accountId) {
+    return new Bluebird(function (resolve, reject) {
+      validators.validate(accountId, 'contactList', 1).then(function(topic) {
+        resolve(true);
+      }, function() {
+        resolve(false);
+      });
+    });
+  }
 }
 
 function removeFromSession(ids, sessionId) {
