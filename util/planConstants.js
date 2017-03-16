@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const plans = require('./plans');
+const constants = require('./constants');
 
 const keys = Object.keys(plans);
 const mand_keys = [
@@ -45,6 +46,11 @@ keys.forEach((plan_key) => {
   }
 });
 
+function preferenceName(chargebeePlanId) {
+  const currencies = constants.supportedCurrencies.join('|');
+  return chargebeePlanId.replace(new RegExp(`_(${currencies})`), '');
+}
+
 module.exports = {
   free_trial:     plans.trial,
   free_account:   plans.account,
@@ -54,4 +60,5 @@ module.exports = {
   core_yearly:    plans.core,
   junior_monthly: plans.junior,
   junior_yearly:  plans.junior,
+  preferenceName
 }

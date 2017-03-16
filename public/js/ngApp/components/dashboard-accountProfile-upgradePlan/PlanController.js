@@ -258,7 +258,7 @@
     }
 
     function isCurrentPlan(subPlan) {
-      return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
+      return subPlan.plan.id.includes(vm.currentPlan.preferenceName);
     }
 
     function stepIsActive(step, additionalStyle) {
@@ -315,7 +315,7 @@
         vm.subPlans = vm.monthlyPlans;
       }
       setTimeout(function () {
-        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
       });
     }
 
@@ -385,7 +385,7 @@
 
     function finishedRenderingPlans() {
       setTimeout(function () {
-        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
       });
     }
   }
