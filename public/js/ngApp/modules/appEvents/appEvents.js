@@ -10,7 +10,8 @@
     vm.addEventListener = addEventListener;
     vm.dispatchEvent = dispatchEvent;
     vm.events = {
-      contactDetailsUpdated: "ContactDetailsUpdated"
+      contactDetailsUpdated: "ContactDetailsUpdated",
+      contactUpdated: "contactUpdated"
     }
     vm.registeredEvents = {};
     init();
