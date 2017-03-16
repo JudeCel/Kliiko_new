@@ -39,7 +39,6 @@ function accept(req, res, next) {
     inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
       loginUser(req, res, next, user);
     }, (error) => {
-      console.log(error);
       if (error == MessagesUtil.invite.sessionIsFull) {
         res.render(views_path('sessionFull'), {title: "Session Full"});
       } else {
@@ -91,7 +90,10 @@ function processedErrosMessage(errors) {
 
 function sessionAccept(req, res, next) {
   inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
-    if (invite.AccountUser.UserId) {
+    if(!invite) {
+      req.flash('message', message);
+      res.redirect("/login");
+    } else if (invite.AccountUser.UserId) {
       req.params.token = invite.token;
       accept(req, res, next);
     } else {
@@ -104,7 +106,12 @@ function sessionAccept(req, res, next) {
 
 function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
-    res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    if(!result.invite) {
+      req.flash('message', result.message);
+      res.redirect("/login");
+    } else {
+      res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    }
   }, function(error) {
     res.render(views_path('notFound'), {title: "Invite", error: error});
   });
@@ -112,7 +119,12 @@ function sessionNotThisTime(req, res, next) {
 
 function sessionNotAtAll(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notAtAll').then((result) => {
-    res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    if(!result.invite) {
+      req.flash('message', result.message);
+      res.redirect("/login");
+    } else {
+      res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    }
   }, (error) => {
     res.render(views_path('notFound'), {title: "Invite", error: error});
   });

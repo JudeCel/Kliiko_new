@@ -172,7 +172,7 @@
       }, 60000, 0, false);
     }
 
-    function saveSurvey(autoSave, publish) {
+    function saveSurvey(autoSave, publish, skipMessage) {
       var deferred;
       vm.submitedForm = true;
       if(vm.manageForm.$valid) {
@@ -185,9 +185,9 @@
           var object = JSON.parse(JSON.stringify(vm.survey));
           object.SurveyQuestions = selected;
           if (!object.id) {
-            return finishCreate(object, autoSave, publish);
+            return finishCreate(object, autoSave, publish, skipMessage);
           } else {
-            return finishEdit(object, autoSave, publish);
+            return finishEdit(object, autoSave, publish, skipMessage);
           }
         }
       } else if (!autoSave) {
@@ -222,7 +222,7 @@
       }
     }
 
-    function finishCreate(survey, autoSave, publish) {
+    function finishCreate(survey, autoSave, publish, skipMessage) {
       vm.submitingForm = true;
       return surveyServices.createSurvey(survey).then(function(res) {
         vm.submitingForm = false;
@@ -236,7 +236,7 @@
           survey.id = res.data.id;
           vm.survey.id = res.data.id;
           if (publish) {
-            confirmSurvey(survey);
+            confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
             messenger.ok(res.message);
             onSaved();
@@ -245,7 +245,7 @@
       });
     };
 
-    function finishEdit(survey, autoSave, publish) {
+    function finishEdit(survey, autoSave, publish, skipMessage) {
       vm.submitingForm = true;
       return surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
@@ -256,7 +256,7 @@
           }
         } else {
           if (publish) {
-            return confirmSurvey(survey);
+            return confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
             messenger.ok(res.message);
             onSaved();
@@ -265,7 +265,7 @@
       });
     };
 
-    function confirmSurvey(survey) {
+    function confirmSurvey(survey, skipMessage) {
       return surveyServices.confirmSurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > confirmSurvey > res ', res);
 
@@ -273,7 +273,7 @@
           errorMessenger.showError(res.error);
         } else {
           survey.confirmedAt = res.data.confirmedAt;
-          messenger.ok(res.message);
+          if(!skipMessage) messenger.ok(res.message);
           onSaved();
           quitEditor();
         }

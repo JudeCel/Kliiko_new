@@ -220,6 +220,7 @@
         }
       });
 
+      $(".planHint").hide();
       nextStep();
     }
 

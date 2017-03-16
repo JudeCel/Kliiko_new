@@ -80,7 +80,7 @@ function inviteAgainTopicParams(session, topic) {
     sessionId: session.id,
     order: 1,
     active: true,
-    landing: true,
+    landing: false,
     boardMessage: topic.boardMessage,
     name: topic.name,
     sign: topic.sign,
@@ -127,9 +127,7 @@ function addInviteAgainTopic(session) {
     models.Topic.find({ where: { inviteAgain: true, stock: true } }).then(function(topic) {
       if (topic) {
         let topicParams = inviteAgainTopicParams(session, topic);
-        models.SessionTopics.update({ landing: false }, { where: { sessionId: session.id } }).then(function() {
-          models.SessionTopics.create(topicParams);
-        });
+        models.SessionTopics.create(topicParams);
       }
     });
   });

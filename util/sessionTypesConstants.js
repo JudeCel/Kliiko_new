@@ -193,7 +193,7 @@ module.exports = {
       },
       "dateAndTime": {
         "enabled": false,
-        "message": "Yay! One less thing you have to do. Start & End Date isn't required with Social Forum"
+        "message": "Yay! One less thing you have to do.<br/>Start & End Date isn't required<br/>with Social Forum"
       },
       "anonymous": {
         "enabled": false

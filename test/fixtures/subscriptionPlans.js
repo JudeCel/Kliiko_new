@@ -48,7 +48,9 @@ function create(plan) {
       deferred.reject(filters.errors(error));
     });
   }else {
-    deferred.reject("Can't find plan in constants!");
+    //todo: temp solution because of new added plans
+    deferred.resolve();
+    //deferred.reject("Can't find plan in constants!");
   }
 
   return deferred.promise;

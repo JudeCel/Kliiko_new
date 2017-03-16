@@ -65,6 +65,7 @@ module.exports = {
     }
   },
   invite: {
+    alreadyUsed: 'Invite already used.',
     confirmed: 'You have successfully accepted Invite. Please login using your invite e-mail and password.',
     removed: 'Successfully removed Invite',
     cantRemove: "Can't remove this invite",
@@ -100,7 +101,8 @@ module.exports = {
     sessionNotClosed: "You can't rate or comment participants because session in not closed",
     cantSendSMS: "You can't send SMS for this session",
     actionNotAllowed: "Action not allowed",
-    closed: "Sorry, \"{sessionName}\" has now closed. Thanks for your interest!"
+    closed: "Sorry, \"{sessionName}\" has now closed. Thanks for your interest!",
+    contactListLimit: "You have reached your Contact List limit.<br/>If you want to create a new Contact List, you will need to Deactivate one of your existing Lists.<br/>Or upgrade your Plan.<br/><br/>Currently your Social Forum Session, will <u>not</u> include 'It's A Wrap' Topic."
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
@@ -223,7 +225,7 @@ module.exports = {
       default: "Can't delete default topic",
       stock: "Can't delete stock topic",
       notFound: "No topic found",
-      inviteAgain: "Can't delete Invite Again stock topic"
+      inviteAgain: "Can't delete \"It's A Wrap\" stock topic"
     }
   },
   users: {

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices', 'appEvents'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices, appEvents) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -129,6 +129,11 @@
     }
 
     function initLists(listType) {
+      initListsFunction(listType);
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, initListsFunction);
+    }
+
+    function initListsFunction(listType) {
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
 
