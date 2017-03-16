@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger', 'appEvents'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger, appEvents){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger', 'appEvents', 'user'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger, appEvents, user){
     dbg.log2('#AccountManagerController started');
     var vm = this;
     vm.maxLength = { normal: 20, email: 40 };
@@ -150,6 +150,19 @@
         }else{
           vm.accountUsers[vm.userIndex] = result.accountManager;
           onSuccess(result.message);
+          if (user.app.accountUser.AccountId == result.accountManager.AccountId) {
+            user.app.accountUser.city = result.accountManager.city;
+            user.app.accountUser.firstName = result.accountManager.firstName;
+            user.app.accountUser.lastName = result.accountManager.lastName;
+            user.app.accountUser.landlineNumber = result.accountManager.landlineNumber;
+            user.app.accountUser.landlineNumberCountryData = result.accountManager.landlineNumberCountryData;
+            user.app.accountUser.mobile = result.accountManager.mobile;
+            user.app.accountUser.phoneCountryData = result.accountManager.phoneCountryData;
+            user.app.accountUser.postCode = result.accountManager.postCode;
+            user.app.accountUser.postalAddress = result.accountManager.postalAddress;
+            user.app.accountUser.state = result.accountManager.state;
+            user.app.accountUser.country = result.accountManager.country;
+          }
         }
       })
     }
