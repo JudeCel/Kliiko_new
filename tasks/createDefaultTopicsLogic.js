@@ -84,7 +84,7 @@ function createInviteAgainTopic() {
       let inviteAgainTopicParams = {
         accountId: adminAccountUser.AccountId,
         name: "Invite Again",
-        boardMessage: "Thanks for all your help! I have lots to take tith me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
+        boardMessage: "Thanks for all your help! I have lots to take with me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
         stock: true,
         inviteAgain: true
       };
