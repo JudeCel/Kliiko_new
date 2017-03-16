@@ -98,7 +98,7 @@ function saveMailTemplatePost(req, res, next) {
   let sessionId = req.body.mailTemplate.properties && req.body.mailTemplate.properties.sessionId;
   let makeCopy = isAdmin && !sessionId ? false : req.body.copy;
   let accountId = isAdmin && !sessionId ? null : req.currentResources.account.id;
-  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, isAdmin, function(error, result) {
+  MailTemplateService.saveMailTemplate(req.body.mailTemplate, makeCopy, accountId, isAdmin, req.body.sessionId, function(error, result) {
     if (result && result.validation && !result.validation.isValid) {
       res.send(result);
     } else if (error) {

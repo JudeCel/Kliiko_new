@@ -83,10 +83,10 @@
       return deferred.promise;
     }
 
-    function saveMailTemplate(mTemplate, createCopy) {
+    function saveMailTemplate(mTemplate, createCopy, sessionId) {
       dbg.log2('#KliikoApp.mailTemplate > save mail template', mTemplate);
       var deferred = $q.defer();
-      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
+      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy, sessionId: sessionId}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >');
         if (res.validation && !res.validation.isValid) {
           changesValidation.validationConfirmAlternative(res, saveMailTemplate, mTemplate, createCopy).then(function(newRes) {

@@ -73,7 +73,7 @@
 
     vm.modifyAndSave = function(createCopy, addSessionInfo) {
       //null - will pickup current template
-      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd, true).then(function() {
+      vm.editor.modifyAndSave(createCopy, null ,addSessionInfo, vm.templateNameAdd, true, vm.session.id).then(function() {
         domServices.modal('applyTemplateModal', 'close');
         vm.getPreparedMailTemplateList();
       }, function() {

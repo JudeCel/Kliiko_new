@@ -113,24 +113,41 @@ function create(params, callback) {
   transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
-function update(id, parameters, callback){
-  models.sequelize.transaction().then(function(transaction) {
-    MailTemplate.update(parameters, {
-        where: {id: id},
-        transaction: transaction
-    }).then(function(result) {
-      setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
-        transaction.commit().then(function() {
-          callback(null, result);
+function update(id, parameters, sessionId, callback){
+  parameters.sessionId = sessionId;
+
+  MailTemplate.findAll({
+    where: {
+      sessionId: sessionId,
+      isCopy: true,
+      required: true
+    }
+  }).then(function(templates) {
+    let ids = [];
+    if (templates && templates.length > 0) {
+      ids = _.map(templates, 'id');
+    }
+
+    removeTemplatesFromSession(ids, function() {
+      models.sequelize.transaction().then(function(transaction) {
+        MailTemplate.update(parameters, {
+            where: {id: id},
+            transaction: transaction
+        }).then(function(result) {
+          setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
+            transaction.commit().then(function() {
+              callback(null, result);
+            });
+          }, function(error) {
+            transaction.rollback().then(function() {
+              callback(filters.errors(error));
+            });
+          });
+        }).catch(function(error) {
+          transaction.rollback().then(function() {
+            callback(filters.errors(error));
+          });
         });
-      }, function(error) {
-        transaction.rollback().then(function() {
-          callback(filters.errors(error));
-        });
-      });
-    }).catch(function(error) {
-      transaction.rollback().then(function() {
-        callback(filters.errors(error));
       });
     });
   });
@@ -149,22 +166,22 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, tr
 
     //remove old MailTemplateResources
     if (ids.length > 0) {
-      models.MailTemplateResource.destroy({ 
-        where: { 
-          mailTemplateId: mailTemplateId, 
-          resourceId: { $notIn: ids } 
+      models.MailTemplateResource.destroy({
+        where: {
+          mailTemplateId: mailTemplateId,
+          resourceId: { $notIn: ids }
         },
         transaction: transaction
       });
     } else {
-      models.MailTemplateResource.destroy({ 
-        where: { 
-          mailTemplateId: mailTemplateId 
+      models.MailTemplateResource.destroy({
+        where: {
+          mailTemplateId: mailTemplateId
         },
         transaction: transaction
       });
     }
-    
+
     //add new MailTemplateResources
     models.Resource.findAll({
       attributes: ["id"],
@@ -705,7 +722,7 @@ function validateTemplateSnapshot(shouldCreateTemplateCopy, snapshot, templateOb
   }
 }
 
-function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
+function saveMailTemplate(template, createCopy, accountId, isAdmin, sessionId, callback) {
   if (template) {
     validateTemplate(template).then(function() {
 
@@ -745,7 +762,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
                 });
 
               } else {
-                update(templateObject.id, templateObject.template, function(error, result) {
+                update(templateObject.id, templateObject.template, sessionId, function(error, result) {
                   if (error) {
                     callback(error);
                   } else {
@@ -757,7 +774,7 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, callback) {
           });//getMailTemplateForSession
 
         }
-      });      
+      });
 
     }, function(error) {
       callback(error);
