@@ -11,6 +11,9 @@
   }
 
   thead { background: $green; }
+  thead th { background: $green; }
+  thead th:active { background: transparent; }  /* selected link */
+
   .druggable {
     cursor: ew-resize;
     .th-name {

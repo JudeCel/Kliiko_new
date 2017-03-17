@@ -222,7 +222,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
   Session.find({ where: { id: sessionId } }).then(function(session) {    
-    canAddInviteAgainTopic(session.AccountId).then(function(canAddInviteAgain) {
+    canAddInviteAgainTopic(session.accountId).then(function(canAddInviteAgain) {
       let where = canAddInviteAgain ? { id: ids, stock: false } : { id: ids, stock: false, inviteAgain: false };
       Topic.findAll({ where: where }).then(function(results) {
         session.addTopics(results).then(function(result) {
@@ -233,7 +233,12 @@ function joinToSession(ids, sessionId) {
             order: '"order" ASC',
             include: [Topic]
           }).then( function(sessionTopics) {
-            deferred.resolve({sessionTopics: sessionTopics, skipedStock: results.length < ids.length && sessionTopics.length != ids.length, session });
+            let skiped = results.length < ids.length && sessionTopics.length != ids.length;
+            skipedStock(ids, skiped).then(function(skiped) {
+              deferred.resolve({sessionTopics: sessionTopics, skipedStock: skiped, session });
+            }, function() {
+              deferred.reject(filters.errors(error));
+            });
           });
         }, function(error) {
           deferred.reject(filters.errors(error));
@@ -247,6 +252,20 @@ function joinToSession(ids, sessionId) {
   });
 
   return deferred.promise;
+
+  function skipedStock(ids, skiped) {
+    return new Bluebird(function (resolve, reject) {
+      if (skiped) {
+        Topic.count({ where: { id: ids, stock: true } }).then(function(c) {
+          resolve(c > 0);
+        }, function() {
+          reject();
+        });
+      } else {
+        resolve(false);
+      }
+    });
+  }
 
   function canAddInviteAgainTopic(accountId) {
     return new Bluebird(function (resolve, reject) {

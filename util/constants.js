@@ -110,6 +110,10 @@ module.exports = {
       forum: {
         source: 'vimeo',
         link: '187585089'
+      },
+      socialForum: {
+        source: 'vimeo',
+        link: '187585089'
       }
     }
   },

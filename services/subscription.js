@@ -338,7 +338,9 @@ function createSubscription(accountId, userId, provider, plan) {
         return deferredTransactionPool.promise;
 
       } else {
-        deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
+        //todo: temp solution because of new added plans
+        deferred.resolve(null);
+        //deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
   }).then(function(subscription) {

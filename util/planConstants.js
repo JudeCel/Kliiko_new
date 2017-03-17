@@ -58,7 +58,8 @@ module.exports = {
   senior_yearly:  plans.senior,
   core_monthly:   plans.core,
   core_yearly:    plans.core,
-  junior_monthly: plans.junior,
+  //todo: temp solution because of new added plans
+  junior_monthly_USD: plans.junior,
   junior_yearly:  plans.junior,
   preferenceName
 }
