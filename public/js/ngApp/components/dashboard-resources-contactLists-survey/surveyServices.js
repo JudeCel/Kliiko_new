@@ -35,6 +35,7 @@
     upServices.getSurveyStats = getSurveyStats;
     upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
     upServices.exportSurveyListStatsUrl = exportSurveyListStatsUrl;
+    upServices.exportSessionStatsUrl = exportSessionStatsUrl;
     return upServices;
 
     function getConstants(type) {
@@ -65,12 +66,13 @@
     }
 
     function exportSurveyListStatsUrl(surveyIdList, format) {
-      // var apiUrl = '/api/surveys/list_report/'+surveyIdList+'/'+format+'/';
-      // return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
-      console.log("asdasdas");
       var apiUrl = '/api/surveys/list_report/'+format+'/';
       return (globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken") +"?ids="+surveyIdList);
+    }
 
+    function exportSessionStatsUrl(sessionId, format) {
+      var apiUrl = '/api/surveys/session_report/'+sessionId+'/'+format+'/';
+      return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
     }
 
     function getSurveyStats(id) {

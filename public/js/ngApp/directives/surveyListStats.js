@@ -19,8 +19,12 @@ function surveyListStats(surveyServices) {
           var list = scope.stats.surveys.map(function(item) {
             return item.data.survey.id;
           });
-          return surveyServices.exportSurveyListStatsUrl(list, format);
+          return surveyServices.exportSessionStatsUrl(list, format);
         }
+      }
+
+      scope.exportSessionUrl = function(format) {
+        return scope.stats ? surveyServices.exportSessionStatsUrl(scope.stats.sessionId, format) : "";
       }
     }
   };

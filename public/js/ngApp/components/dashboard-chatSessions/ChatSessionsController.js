@@ -243,6 +243,7 @@
           messenger.error(res.error);
         } else {
           vm.stats = res;
+          vm.stats.sessionId = session.id;
           domServices.modal('statsListModal');
         }
       });
