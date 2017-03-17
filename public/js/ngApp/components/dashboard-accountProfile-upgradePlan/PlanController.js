@@ -152,7 +152,7 @@
     }
 
     function canPush(period, subPlan) {
-      return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
+      return subPlan.plan.period_unit == period && subPlan.additionalParams && subPlan.additionalParams.priority > 0;
     }
 
     function succeededCheckout(params) {
@@ -198,6 +198,7 @@
         }
       });
 
+      $(".planHint").hide();
       nextStep();
     }
 

@@ -98,15 +98,15 @@
             <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToPreviousStep()"  ng-hide="sbc.stepsClassIsActive(1)" messages-directive='clear'>
               Previous step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep || sbc.session.properties.steps[sbc.session.sessionData.step].hideNext" messages-directive='clear'>
+            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large margin-left-10" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep || sbc.session.properties.steps[sbc.session.sessionData.step].hideNext" messages-directive='clear'>
               Next step
             </div>
             <div ng-show="sbc.lastStep">
-              <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
+              <div class="col-md-2 btn btn-standart pull-right btn-green btn-large margin-left-10" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
                 Finish with builder
               </div>
             </div>
-            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
+            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
               Enter Chat Room
             </div>
         </div>
@@ -137,6 +137,32 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <section>
+      <div class='modal fade' id='sessionDeleted' role='dialog'>
+        <div class='modal-dialog' style="width: 800px">
+          <div class='modal-content border-green border-radius-none'>
+            <div class='modal-header'>
+              <button type='button' class='close' data-dismiss='modal'>&times;</button>
+              <h1 class='modal-title text-center'>Yikes!</h1>
+            </div>
+
+            <div class='modal-body'>
+              What are the odds... this Session has been Deleted by<br />
+              someone else, your changes will not be saved.
+              <br /><br />
+              You'll be redirected to Session List
+            </div>
+
+            <div class='modal-footer'>
+              <div type='button' data-dismiss='modal' class='pull-right btn btn-standart btn-green btn-large'>
+                OK
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </section> <!-- eof  ng-controller='SurveyController as sc'-->

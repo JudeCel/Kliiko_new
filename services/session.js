@@ -298,7 +298,7 @@ function copySessionTopics(accountId, fromSessionId, toSessionId) {
   let deferred = q.defer();
   topicsService.getAll(accountId).then(function(allTopics) {
     let topicsArray = [];
-    allTopics.map(function(topic) {
+    allTopics.topics.map(function(topic) {
       topic.SessionTopics.map(function(sessionTopic) {
         if (fromSessionId == sessionTopic.sessionId) {
           topic.sessionTopic = sessionTopic;
@@ -334,6 +334,8 @@ function copySession(sessionId, accountId) {
       delete result.data.dataValues.brandProjectPreferenceId;
       delete result.data.dataValues.startTime;
       delete result.data.dataValues.endTime;
+      delete result.data.dataValues.type;
+      delete result.data.dataValues.publicUid;
       delete result.data.dataValues.isVisited;
       result.data.dataValues.isInactive = true;
       result.data.dataValues.name = "Copy of (" + result.data.dataValues.name + ")";

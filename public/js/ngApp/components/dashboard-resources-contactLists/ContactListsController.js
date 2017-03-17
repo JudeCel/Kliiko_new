@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices', 'appEvents', 'user'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices, appEvents, user) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -129,6 +129,11 @@
     }
 
     function initLists(listType) {
+      initListsFunction(listType);
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, initListsFunction);
+    }
+
+    function initListsFunction(listType) {
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
 
@@ -498,6 +503,23 @@
         domServices.modal('contactList-addContactManual', 'close');
         vm.modalErrors = {};
         messenger.ok(res.message);
+        if (user.app.accountUser.AccountId == res.data.id) {
+          user.app.accountUser.city = res.data.city;
+          user.app.accountUser.firstName = res.data.firstName;
+          user.app.accountUser.lastName = res.data.lastName;
+          user.app.accountUser.landlineNumber = res.data.landlineNumber;
+          if (res.data.landlineNumberCountryData) {
+            user.app.accountUser.landlineNumberCountryData = res.data.landlineNumberCountryData;
+          }
+          user.app.accountUser.mobile = res.data.mobile;
+          if (res.data.phoneCountryData) {
+            user.app.accountUser.phoneCountryData = res.data.phoneCountryData;
+          }
+          user.app.accountUser.postCode = res.data.postCode;
+          user.app.accountUser.postalAddress = res.data.postalAddress;
+          user.app.accountUser.state = res.data.state;
+          user.app.accountUser.country = res.data.country;
+        }
       },
       function (err) {
         vm.modalErrors = err;
@@ -693,8 +715,11 @@
         messenger.error(messagesUtil.contactList.import.remapFailed);
       });
 
-      domServices.modal('contactList-addNewListFieldsModal', 'close');
-      domServices.modal('modals-import-preview');
+
+      domServices.modal('contactList-addNewListFieldsModal', function() {
+        domServices.modal('modals-import-preview');
+      });
+
     }
 
     vm.clearDoppedItem = function(item) {
@@ -750,8 +775,13 @@
       vm.importErrorMessage = null;
     }
     function reUpload() {
-      domServices.modal('modals-import-preview','close');
-      domServices.modal('contactList-addNewListFieldsModal','close');
+      // domServices.modal('modals-import-preview','close');
+
+      domServices.modal('modals-import-preview','close', function() {
+        domServices.modal('contactList-addNewListFieldsModal');
+      });
+
+      // domServices.modal('contactList-addNewListFieldsModal','close');
       // timeout is to wait fade effects
       setTimeout(function() {
         var type;
@@ -762,7 +792,10 @@
       clearImportErrors();
     }
     function reMap() {
-      domServices.modal('modals-import-preview', 'close');
+      domServices.modal('contactList-addNewListFieldsModal','close', function() {
+        domServices.modal('modals-import-preview');
+      });
+      // domServices.modal('modals-import-preview', 'close');
       prepareCustomFields();
       vm.addNewListFieldMapping();
     }

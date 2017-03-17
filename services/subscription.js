@@ -106,7 +106,7 @@ function getAllPlans(accountId) {
   let deferred = q.defer();
   let currentPlan = {};
 
-  chargebee.plan.list({limit: 20, "status[is]" : "active"}).request(function(error, result){
+  chargebee.plan.list({limit: 100, "status[is]" : "active"}).request(function(error, result){
     if (error) {
       deferred.reject(error);
     } else {
@@ -326,7 +326,9 @@ function createSubscription(accountId, userId, provider, plan) {
         return deferredTransactionPool.promise;
 
       } else {
-        deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
+        //todo: temp solution because of new added plans
+        deferred.resolve(null);
+        //deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
   }).then(function(subscription) {
@@ -812,15 +814,11 @@ function validateSessionCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-
-      if(newPlan.sessionCount == -1) {
-        cb(null, errors);
-      } else if(newPlan.sessionCount < c){
-        errors.session = MessagesUtil.subscription.validation.session
-        cb(null, errors);
-      }else{
-        cb(null, errors);
+      if(newPlan.sessionCount !== -1 && newPlan.sessionCount < c) {
+        errors.session = MessagesUtil.subscription.validation.session;
       }
+
+      cb(null, errors);
     }, function(error) {
       cb(error);
     });
@@ -837,14 +835,11 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      if(newPlan.surveyCount == -1) {
-        cb(null, errors);
-      } else if(newPlan.sessionCount < c){
+      if(newPlan.surveyCount !== -1 && newPlan.sessionCount < c) {
         errors.survey = MessagesUtil.subscription.validation.survey;
-        cb(null, errors);
-      }else{
-        cb(null, errors);
       }
+
+      cb(null, errors);
     }, function(error) {
       cb(error);
     });
@@ -856,13 +851,12 @@ function validateContactListCount(accountId, newPlan) {
     models.ContactList.count({
       where: {
         accountId: accountId,
-        active: true
+        active: true,
+        editable: true
       }
     }).then(function(c) {
       errors = errors || {};
-      // TODO WTF!!!
-      let defaultListCount = 4; // By default each user has 4 contact lists: Account Managers, Hosts, Spectators and Guests
-      if((defaultListCount + newPlan.contactListCount) < c){
+      if(newPlan.contactListCount !== -1 && newPlan.contactListCount < c) {
         errors.contactList = MessagesUtil.subscription.validation.contactList;
       }
 

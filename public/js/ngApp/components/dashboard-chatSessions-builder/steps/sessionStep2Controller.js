@@ -250,13 +250,16 @@
     function topicsOnDropComplete(dragTopic) {
       var list = [];
       var selected = getSelectedTopics();
+      var flags = {
+        inviteAgainTopicMessage: false
+      };
 
-      if(selected.length) {
+      if (selected.length) {
         selected.map(function(topic) {
-          addTopics(topic, list);
+          addTopics(topic, list, flags);
         });
       } else {
-        addTopics(dragTopic, list);
+        addTopics(dragTopic, list, flags);
       }
 
       if (list.length) {
@@ -317,22 +320,32 @@
       }
     }
 
-    function inviteAgainTopicAdded() {
+    function inviteAgainTopicAdded(list) {
       for (var index in vm.sessionTopicsArray) {
         if (vm.sessionTopicsArray[index].inviteAgain) {
           return true;
         }
       }
+      if (list) {
+        for (var index in list) {
+          if (list[index].inviteAgain) {
+            return true;
+          }
+        }
+      }
       return false;
     }
 
-    function addTopics(topic, list) {
-      if (topic.inviteAgain && inviteAgainTopicAdded()) {
-        $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
+    function addTopics(topic, list, flags) {
+      if (topic.inviteAgain && inviteAgainTopicAdded(list)) {
+        if (!flags.inviteAgainTopicMessage) {
+          flags.inviteAgainTopicMessage = true;
+          $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
+        }
         return;
       }
 
-      if(!vm.sessionTopicsObject[topic.id]) {
+      if (!vm.sessionTopicsObject[topic.id]) {
         topic.sessionTopic = {
           order: vm.sessionTopicsArray.length,
           active: true,
@@ -342,7 +355,7 @@
           sign: topic.sign,
           lastSign: null
         }
-        if(list) {
+        if (list) {
           list.push(topic);
         }
       }
@@ -398,8 +411,8 @@
 
     function saveSurveysConfirmed(autoSave, publish) {
       if (inviteAgainTopicAdded()) {
-        vm.surveyEditors[0].saveSurvey(autoSave, publish).then(function(res) {
-          vm.surveyEditors[1].saveSurvey(autoSave, publish).then(function(res) {
+        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function(res) {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function(res) {
             if (publish) {
               publishSession();
             } else if (!autoSave) {
@@ -426,6 +439,7 @@
 
     function openSessionsListAndHighlight() {
       location.href = "#/chatSessions?highlight=" + vm.session.id;
+      messenger.ok('Successfully updated session!');
     }
 
     vm.blockSurvey = function(survey) {

@@ -40,7 +40,8 @@ function createAdmin(callback) {
             resourcesService.addDefaultTopicVideo(account, Constants.defaultTopic.video.forum, "Forum").then(function() {
               let inviteAgainTopicParams = {
                 accountId: account.id,
-                name: "Invite Again",
+                name: "It's A Wrap",
+                boardMessage: "Thanks for all your help! I have lots to take with me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
                 stock: true,
                 inviteAgain: true
               };

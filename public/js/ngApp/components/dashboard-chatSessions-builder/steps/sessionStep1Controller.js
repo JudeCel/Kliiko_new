@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -177,7 +177,7 @@
 
     function showTimeBlockedMessage() {
       if (vm.session.steps.step1.type && !vm.session.properties.features.dateAndTime.enabled) {
-        $confirm({ text: vm.session.properties.features.dateAndTime.message, title: null, closeOnly: true, showAsError: false });
+        $confirm({ text: vm.session.properties.features.dateAndTime.message, htmlText: $sce.trustAsHtml(vm.session.properties.features.dateAndTime.message), title: null, closeOnly: true, showAsError: false });
       } else if (vm.session.steps.step1.canEditTime == false) {
         $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
       }
@@ -205,12 +205,15 @@
           if (result.name == "Hosts") {
             vm.facilitatorContactListId = result.id;
           }
-          result.members.map(function(member) {
-            member.id = member.accountUserId;
-            member.role = result.role;
-            member.listName = result.name;
-            vm.allContacts.push(member);
-          });
+          if (result.members.length) {
+            vm.allContacts = [];
+            result.members.map(function(member) {
+              member.id = member.accountUserId;
+              member.role = result.role;
+              member.listName = result.name;
+              vm.allContacts.push(member);
+            });
+          }
         });
       }, function(error) {
         messenger.error(error);
@@ -229,6 +232,10 @@
       vm.step1.ngModalOptions = { timezone: 'UTC' };
       initStep(null, 'initial');
       getAllContacts();
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, function() {
+        vm.session.getRemoteData();
+        getAllContacts();
+      });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
       vm.anonymous = vm.session.steps.step1.anonymous.toString();

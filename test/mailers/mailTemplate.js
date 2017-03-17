@@ -76,7 +76,7 @@ describe('send MailTemplates',  () => {
         raw: true
       }).then((result) => {
         try {
-          mailTemplateService.saveMailTemplate(result, false, accountId, false, (error, saveResult) => {
+          mailTemplateService.saveMailTemplate(result, false, accountId, false, null, (error, saveResult) => {
             assert.isNull(error);
             assert.notEqual(saveResult.id, result.id, 'should not overwrite original mail');
             done();

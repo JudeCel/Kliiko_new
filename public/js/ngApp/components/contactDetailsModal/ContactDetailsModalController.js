@@ -4,8 +4,8 @@
   angular.module('KliikoApp').controller('ContactDetailsModalController', ContactDetailsModalController)
   angular.module('KliikoApp.Root').controller('ContactDetailsModalController', ContactDetailsModalController)
 
-  ContactDetailsModalController.$inject = ['dbg', 'user', 'domServices', 'messenger', '$scope'];
-  function ContactDetailsModalController(dbg, user, domServices, messenger, $scope) {
+  ContactDetailsModalController.$inject = ['dbg', 'user', 'domServices', 'messenger', '$scope', 'appEvents'];
+  function ContactDetailsModalController(dbg, user, domServices, messenger, $scope, appEvents) {
     dbg.log2('#ContactDetailsModalController started');
 
     var vm = this;
@@ -32,6 +32,7 @@
         vm.errors = {};
         messenger.ok(res.message);
         domServices.modal('contactDetailsModal', 'close');
+        appEvents.dispatchEvent(appEvents.events.contactDetailsUpdated);
       }, function(error) {
         vm.errors = error;
       });
