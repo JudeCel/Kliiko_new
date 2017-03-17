@@ -19,8 +19,7 @@ function successProvider(params) {
     return {
       request: function(callback) {
         callback(null, {
-          //todo: temp solution because of new added plans
-          subscription: { id: params.id, plan_id: 'junior_monthly_USD', current_term_end: new Date() },
+          subscription: { id: params.id, plan_id: 'junior_monthly', current_term_end: new Date() },
           customer: { id: params.id }
         });
       }
