@@ -57,7 +57,7 @@
           vm.list = res.topics;
           vm.validations = res.validations;
           vm.prepareCurrentPageItems();
-          if (res.message) {
+          if (res.message && !(vm.session && vm.session.publicUid)) {
             $confirm({ text: res.message, htmlText: $sce.trustAsHtml(res.message), title: null, choice: true, closeOnly: true, showAsError: false, close: "Continue" });
           }
         },
