@@ -14,15 +14,6 @@ function surveyListStats(surveyServices) {
         getTitle(scope);
       });
 
-      scope.exportSurveyList = function(format) {
-        if (scope.stats && scope.stats.surveys) {
-          var list = scope.stats.surveys.map(function(item) {
-            return item.data.survey.id;
-          });
-          return surveyServices.exportSessionStatsUrl(list, format);
-        }
-      }
-
       scope.exportSessionUrl = function(format) {
         return scope.stats ? surveyServices.exportSessionStatsUrl(scope.stats.sessionId, format) : "";
       }

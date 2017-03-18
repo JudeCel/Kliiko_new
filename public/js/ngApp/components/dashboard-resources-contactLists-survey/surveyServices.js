@@ -34,7 +34,6 @@
     upServices.canExportSurveyData = canExportSurveyData;
     upServices.getSurveyStats = getSurveyStats;
     upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
-    upServices.exportSurveyListStatsUrl = exportSurveyListStatsUrl;
     upServices.exportSessionStatsUrl = exportSessionStatsUrl;
     return upServices;
 
@@ -60,14 +59,10 @@
 
       return deferred.promise;
     }
+    
     function exportSurveyStatsUrl(surveyId, format) {
       var apiUrl = '/api/surveys/report/'+surveyId+'/'+format+'/';
       return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
-    }
-
-    function exportSurveyListStatsUrl(surveyIdList, format) {
-      var apiUrl = '/api/surveys/list_report/'+format+'/';
-      return (globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken") +"?ids="+surveyIdList);
     }
 
     function exportSessionStatsUrl(sessionId, format) {
