@@ -34,6 +34,7 @@
     upServices.canExportSurveyData = canExportSurveyData;
     upServices.getSurveyStats = getSurveyStats;
     upServices.exportSurveyStatsUrl = exportSurveyStatsUrl;
+    upServices.exportSessionStatsUrl = exportSessionStatsUrl;
     return upServices;
 
     function getConstants(type) {
@@ -58,8 +59,14 @@
 
       return deferred.promise;
     }
+    
     function exportSurveyStatsUrl(surveyId, format) {
       var apiUrl = '/api/surveys/report/'+surveyId+'/'+format+'/';
+      return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
+    }
+
+    function exportSessionStatsUrl(sessionId, format) {
+      var apiUrl = '/api/surveys/session_report/'+sessionId+'/'+format+'/';
       return(globalSettings.serverChatDomainUrl + apiUrl + $window.localStorage.getItem("jwtToken"));
     }
 
