@@ -25,6 +25,7 @@ module.exports = (Sequelize, DataTypes) => {
     signInCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     tipsAndUpdate: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     selectedPlanOnRegistration: { type: DataTypes.STRING, allowNull: true },
+    infusionEmail: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
   }, {
     indexes: [{
         name: 'userUniqueEmail',

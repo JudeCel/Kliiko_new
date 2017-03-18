@@ -149,6 +149,7 @@ function prepareUrlParams(parameters, query) {
       }
     }
     else if(query.selectedPlanOnRegistration) {
+      parameters.infusionEmail = query.infusionEmail;
       parameters.selectedPlanOnRegistration = query.selectedPlanOnRegistration;
     }
   }

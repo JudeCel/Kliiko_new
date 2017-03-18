@@ -13,6 +13,8 @@ var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
 var constants = require('./../util/constants');
+var infusionsoft = require('./../lib/infusionsoft');
+var Bluebird = require('bluebird');
 
 module.exports = {
   create: create,
@@ -65,7 +67,11 @@ function create(params, callback) {
         if (error) {
           callback(error);
         } else {
-          callback(null, result);
+          infusionEmail(result).then(() => {
+            callback(null, result);
+          }, (error) => {
+            callback(error);
+          });
         }
       });
     }
@@ -77,6 +83,23 @@ function create(params, callback) {
     return callback(error);
   });
 };
+
+function infusionEmail(user) {
+  return new Bluebird((resolve, reject) => {
+    if(!user.infusionEmail) return resolve();
+
+    infusionsoft.contact.find({ Email: user.email }).then((contact) => {
+      if(contact) {
+        infusionsoft.contact.tagRemove(contact.Id, infusionsoft.TAGS.optIn).then((tag) => {
+          resolve();
+        });
+      }
+      else {
+        resolve();
+      }
+    }).catch(reject);
+  });
+}
 
 function update(req, callback){
   User.update(req.body, {
@@ -130,7 +153,7 @@ function createUser(params, callback) {
       }
     })
   });
-  
+
   transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
     callback("Server Timeoute");
   });
