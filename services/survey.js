@@ -116,10 +116,22 @@ function findSurvey(params, skipValidations) {
           deferred.reject(MessagesUtil.survey.notConfirmed);
         }
         else if(survey.surveyType !== 'recruiter') {
+          const newParams = simpleParams(survey);
           models.SessionSurvey.find({ where: { surveyId: survey.id } }).then((sessionSurvey) => {
-            const params = simpleParams(survey);
-            if(!sessionSurvey.active) params.status = ANSWER_RESPONSES.notActive;
-            deferred.resolve(params);
+            if(!sessionSurvey.active) newParams.status = ANSWER_RESPONSES.notActive;
+            return models.SessionMember.find({
+              where: { token: params.token },
+              include: [{
+                model: models.Session,
+                include: [{
+                  model: models.Survey,
+                  where: { id: survey.id }
+                }]
+              }]
+            });
+          }).then((member) => {
+            newParams.isFacilitator = member && member.role === 'facilitator';
+            deferred.resolve(newParams);
           });
         }
         else {

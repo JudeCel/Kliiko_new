@@ -38,9 +38,10 @@
       });
     };
 
-    function init(surveyId, chatUrl) {
+    function init(surveyId, chatUrl, token) {
       vm.chatUrl = chatUrl;
-      surveyServices.findSurvey({ id: surveyId }).then(function(res) {
+      vm.token = token;
+      surveyServices.findSurvey({ id: surveyId, token: token }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
         if(res.error) {
@@ -49,6 +50,7 @@
         else {
           vm.status = res.status;
           vm.survey = res.data;
+          vm.isFacilitator = res.isFacilitator;
           $('#GalleryController').removeClass('hidden');
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
@@ -60,6 +62,8 @@
     };
 
     function submitSurvey() {
+      if(vm.isFacilitator) return messenger.error('Only Guests can answer these questions');
+
       vm.submitedSurvey = true;
       vm.submitingSurvey = true;
 
