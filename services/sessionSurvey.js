@@ -1,5 +1,4 @@
 var models = require('./../models');
-var surveyService = require('./survey');
 var constants = require('../util/constants');
 var Bluebird = require('bluebird');
 var _ = require('lodash');
@@ -78,21 +77,16 @@ function sessionSurveys(sessionId) {
 
 function removeSurveys(sessionId) {
   return new Bluebird((resolve, reject) => {
-    models.Session.findOne({
-        where: { id: sessionId}
-    }).then((session) => {
-      if (session) {
-        return session.getSurveys({attributes: ['id']});
+    getSessionSurveyIds(sessionId).then((list) => {
+      if (list && list.length) {
+        return models.Survey.destroy({
+          where: {
+            id: { $in: list }
+          }
+        });
       } else {
         resolve();
       }
-    }).then((surveys) => {
-      let ids = _.map(surveys, 'id');
-      return models.Survey.destroy({
-        where: {
-          id: { $in: ids }
-        }
-      });
     }).then(() => {
       resolve();
     }).catch(()=> {
@@ -148,10 +142,43 @@ function copySurveys(fromSessionId, toSessionId, accountId) {
   });
 }
 
+function getSessionSurveyIds(sessionId) {
+  return new Bluebird((resolve, reject) => {
+    models.Session.findOne({
+        where: { id: sessionId}
+    }).then((session) => {
+      if (session) {
+        return session.getSurveys({attributes: ['id']});
+      } else {
+        resolve([]);
+      }
+    }).then((surveys) => {
+      let ids = _.map(surveys, 'id');
+      resolve(ids);
+    }).catch((e)=> {
+      reject(e);
+    });
+  });
+}
+
+function getSurveyStatsForSession(id, account) {
+  return new Bluebird((resolve, reject) => {
+    getSessionSurveyIds(id).then((list) => {
+      return surveyService.getSurveyListStats(list, account).then((res) => {
+        resolve({ surveys: res});
+      })
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+}
+
+
 module.exports = {
   addSurveyToSession: addSurveyToSession,
   sessionSurveys: sessionSurveys,
   setSurveyEnabled: setSurveyEnabled,
   removeSurveys: removeSurveys,
-  copySurveys: copySurveys
+  copySurveys: copySurveys,
+  getSurveyStatsForSession: getSurveyStatsForSession
 }

@@ -2,6 +2,8 @@
 
 var constants = require('../../util/constants');
 var sessionServices = require('./../../services/session');
+var Services = require('./../../services/session');
+var sessionSurvey = require('./../../services/sessionSurvey');
 
 module.exports = {
   get: get,
@@ -11,7 +13,8 @@ module.exports = {
   updateRating: updateRating,
   getAllSessionRatings: getAllSessionRatings,
   getSessionByInvite: getSessionByInvite,
-  setOpen: setOpen
+  setOpen: setOpen,
+  getSessionSurveyStats: getSessionSurveyStats
 };
 
 function setOpen(req, res, next) {
@@ -88,6 +91,17 @@ function getSessionByInvite(req, res, next) {
   sessionServices.getSessionByInvite(req.body.token).then(
     function(resp) {
       res.send(resp.Session);
+    },
+    function(err) {
+      res.send({ error: err });
+    }
+  );
+}
+
+function getSessionSurveyStats(req, res, next) {
+  sessionSurvey.getSurveyStatsForSession(req.params.id, req.currentResources.account).then(
+    function(resp) {
+      res.send(resp);
     },
     function(err) {
       res.send({ error: err });

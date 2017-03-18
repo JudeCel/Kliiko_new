@@ -209,7 +209,13 @@ function updateSessionTopics(sessionId, topicsArray) {
         });
 
       }).then(function() {
-        resolve({ data: returning, message: result.skipedStock ? MessagesUtil.sessionBuilder.errors.secondStep.stock : null });
+        let message = null;
+        if (result.skipedStock) {
+          message = MessagesUtil.sessionBuilder.errors.secondStep.stock;
+        } else if (result.skipedInviteAgain) {
+          message = MessagesUtil.session.contactListLimit;
+        }
+        resolve({ data: returning, message: message });
       }, function(error) {
         reject(filters.errors(error));
       });
@@ -233,9 +239,9 @@ function joinToSession(ids, sessionId) {
             order: '"order" ASC',
             include: [Topic]
           }).then( function(sessionTopics) {
-            let skiped = results.length < ids.length && sessionTopics.length != ids.length;
-            skipedStock(ids, skiped).then(function(skiped) {
-              deferred.resolve({sessionTopics: sessionTopics, skipedStock: skiped, session });
+            let skiped = results.length < ids.length;
+            skipedStock(ids, skiped).then(function(skipedStockTopics) {
+              deferred.resolve({sessionTopics: sessionTopics, skipedStock: skipedStockTopics, skipedInviteAgain: skiped && !skipedStockTopics, session });
             }, function() {
               deferred.reject(filters.errors(error));
             });

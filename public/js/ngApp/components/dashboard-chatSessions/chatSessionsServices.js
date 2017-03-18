@@ -8,7 +8,8 @@
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } },
-      put: { method: 'put', params: { id: '@id' } }
+      put: { method: 'put', params: { id: '@id' } },
+
     });
 
    var sessionMemberApi = $resource('/sessionMember/:path/:id', null, {
@@ -16,11 +17,16 @@
       rate: { method: 'post', params: { id: '@id', path: 'rate' } }
     });
 
+    var sessionSurveyApi = $resource('/session/surveyStats/:id', null, {
+      surveyStats: { method: 'get', params: { id: '@id'} }
+    });
+
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
     csServices.setOpen = setOpen;
+    csServices.getSessionSurveyStats = getSessionSurveyStats;
     return csServices;
 
     function findAllSessions() {
@@ -71,5 +77,15 @@
       return deferred.promise;
     }
 
+    function getSessionSurveyStats(id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#ChatSessions > findAllSessions > make rest call');
+      sessionSurveyApi.surveyStats({id: id}, function(res) {
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
   };
 })();
