@@ -201,12 +201,12 @@
 
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
+        vm.allContacts = [];
         results.map(function(result) {
           if (result.name == "Hosts") {
             vm.facilitatorContactListId = result.id;
           }
           if (result.members.length) {
-            vm.allContacts = [];
             result.members.map(function(member) {
               member.id = member.accountUserId;
               member.role = result.role;

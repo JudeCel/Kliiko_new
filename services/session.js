@@ -2,7 +2,7 @@
 
 var MessagesUtil = require('./../util/messages');
 var policy = require('./../middleware/policy');
-var { Subscription, Session, Invite, SessionMember, AccountUser, Account, SessionType } = require('./../models');
+var { Subscription, Session, Invite, SessionMember, AccountUser, Account, SessionType, Survey } = require('./../models');
 var filters = require('./../models/filters');
 var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
@@ -98,13 +98,23 @@ function setOpen(sessionId, open, accountId) {
       where: {
         id: sessionId,
         accountId: accountId
-      }
-    }).then(function(session) {
+      },
+      include: [{
+        model: Survey,
+        required: false,
+        attributes: ['id']
+      }]
+    }).then(function(session) {      
       if (session) {
         let status = open ? "open" : "closed";
         session.update({ status: status }).then(function(updatedSession) {
-          sessionValidator.addShowStatus(updatedSession);
-          resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
+          let surveyIds = _(session.Surveys).map('dataValues.id').value();
+          Survey.update({ closed: !open }, { where: { id: surveyIds } }).then(function() {
+            sessionValidator.addShowStatus(updatedSession);
+            resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
+          }, function(error) {
+            reject(filters.errors(error));
+          });
         });
       } else {
         reject(MessagesUtil.session.notFound);
