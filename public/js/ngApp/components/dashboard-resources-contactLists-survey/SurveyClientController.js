@@ -49,6 +49,7 @@
         else {
           vm.status = res.status;
           vm.survey = res.data;
+          $('#GalleryController').removeClass('hidden');
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
           }, function() {
