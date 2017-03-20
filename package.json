@@ -29,7 +29,8 @@
     "updateSubscriptions": "node ./tasks/updateSubscriptions.js",
     "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js",
     "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js",
-    "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js"
+    "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",
+    "updatePlanName": "node ./tasks/updatePlanName.js"
   },
   "engineStrict": true,
   "engine": {
