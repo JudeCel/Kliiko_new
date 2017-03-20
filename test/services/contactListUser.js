@@ -52,14 +52,14 @@ describe('SERVICE - ContactListUser', () => {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'senior_monthly', current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: 'senior_monthly_AUD', current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
       }
     }
   }
-  
+
   describe('create',  () => {
     describe("succsess", function() {
       it("create to existing user base", (done) => {

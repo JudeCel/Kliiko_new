@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm', 'domServices'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm, domServices) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm', 'domServices', '$sce'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm, domServices, $sce) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -57,6 +57,7 @@
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
+      surveySection.canDisable = true;
       if (survey) {
         surveySection.id = survey.surveyId;
         vm.attachedSurveysToSession[surveySection.id] = true;
@@ -85,8 +86,20 @@
         onSaved: vm.onSurveySaved,
         showSaveButton: false,
         showPublishButton: false,
-        showPreviewButton: false
+        showPreviewButton: false,
+        disableMessages: true
       }
+    }
+
+    vm.checkCanSaveSurveys = function() {
+      var canSave = true;
+      vm.surveyList.map(function(survey) {
+        if (survey.canDisable && !survey.active) {
+          canSave = false;
+        }
+      });
+
+      return canSave && vm.inviteAgainTopicAdded();
     }
 
     function initSurveys() {
@@ -295,7 +308,8 @@
           });
           vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
           if (result.message) {
-            $confirm({ text: result.message, closeOnly: true, title: null });
+            var isHtml = result.message.indexOf("<") != -1;
+            $confirm({ text: result.message, htmlText: isHtml ? $sce.trustAsHtml(result.message) : null, closeOnly: true, title: null });
           }
         }
       }, function(error) {
@@ -411,8 +425,8 @@
 
     function saveSurveysConfirmed(autoSave, publish) {
       if (inviteAgainTopicAdded()) {
-        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function(res) {
-          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function(res) {
+        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function() {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function() {
             if (publish) {
               publishSession();
             } else if (!autoSave) {
@@ -420,7 +434,9 @@
             }
           });
         }).catch(function(e) {
-          messenger.error(e);
+          if (e) {
+            messenger.error(e);
+          }
         });
       } else {
         publishSession();

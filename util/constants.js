@@ -136,5 +136,6 @@ module.exports = {
     emailNotSent: "No close session emails sent."
   },
   emailNotifications: ['none', 'privateMessages', 'all'],
+  supportedCurrencies: ['AUD', 'USD', 'GBP', 'CAD', 'EUR', 'NZD'],
   loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
 }

@@ -175,11 +175,12 @@
     function saveSurvey(autoSave, publish, skipMessage) {
       var deferred;
       vm.submitedForm = true;
-      if(vm.manageForm.$valid) {
+      if (vm.manageForm.$valid) {
         var selected = findSelected();
-        if(publish && selected.length < vm.minQuestions) {
-          deferred = $q.defer().promise;
+        if (publish && selected.length < vm.minQuestions) {
+          deferred = $q.defer();
           vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
+          deferred.resolve();
         } else {
           delete vm.submitError;
           var object = JSON.parse(JSON.stringify(vm.survey));
@@ -191,12 +192,12 @@
           }
         }
       } else if (!autoSave) {
-        deferred = $q.defer().promise;
+        deferred = $q.defer();
         vm.submitError = vm.constantErrors.default;
         var form = angular.element('#manageForm');
         var elem = form.find('.ng-invalid:first');
         var panel = elem.children('.panel:first');
-        if(panel.length == 0) {
+        if (panel.length == 0) {
           panel = elem.parents('.panel:first');
         }
 
@@ -207,7 +208,7 @@
         deferred.resolve();
         moveBrowserTo(panel[0].id);
       }
-      return deferred;
+      return deferred.promise;
     }
 
     function quitEditor() {
@@ -223,14 +224,16 @@
     }
 
     function finishCreate(survey, autoSave, publish, skipMessage) {
+      var deferred = $q.defer();
       vm.submitingForm = true;
-      return surveyServices.createSurvey(survey).then(function(res) {
+      surveyServices.createSurvey(survey).then(function(res) {
         vm.submitingForm = false;
         dbg.log2('#SurveyController > finishCreate > res ', res);
 
         if (res.error) {
           if (!autoSave) {
             errorMessenger.showError(res.error);
+            deferred.reject();
           }
         } else {
           survey.id = res.data.id;
@@ -238,14 +241,19 @@
           if (publish) {
             confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
-            messenger.ok(res.message);
+            if (!vm.surveySettings.disableMessages) {
+              messenger.ok(res.message);
+            }
             onSaved();
           }
+          deferred.resolve();
         }
       });
+      return deferred.promise;
     };
 
     function finishEdit(survey, autoSave, publish, skipMessage) {
+      var deferred = $q.defer();
       vm.submitingForm = true;
       return surveyServices.updateSurvey(survey).then(function(res) {
         dbg.log2('#SurveyController > finishEdit > res ', res);
@@ -253,16 +261,21 @@
         if (res.error) {
           if (!autoSave) {
             messenger.error(res.error);
+            deferred.reject();
           }
         } else {
           if (publish) {
             return confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
-            messenger.ok(res.message);
+            if (!vm.surveySettings.disableMessages) {
+              messenger.ok(res.message);
+            }
             onSaved();
           }
+          deferred.resolve();
         }
       });
+      return deferred.promise;
     };
 
     function confirmSurvey(survey, skipMessage) {
