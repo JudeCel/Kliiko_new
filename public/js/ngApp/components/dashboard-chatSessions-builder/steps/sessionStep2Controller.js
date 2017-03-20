@@ -85,7 +85,8 @@
         onSaved: vm.onSurveySaved,
         showSaveButton: false,
         showPublishButton: false,
-        showPreviewButton: false
+        showPreviewButton: false,
+        disableMessages: true
       }
     }
 

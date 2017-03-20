@@ -8,7 +8,7 @@
         <form>
           <div class='form-group'>
             <label for='topicName'>Name Your Topic</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name' ng-disabled="topics.topicData.sessionId">
+            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name' ng-disabled="topics.topicData.stock && topics.topicData.sessionId">
             <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
           </div>
 
