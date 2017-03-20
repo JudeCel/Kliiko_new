@@ -652,7 +652,7 @@ function getSurveyType(params) {
       if(survey) {
         resolve(survey.surveyType);
       } else {
-        reject();
+        reject(MessagesUtil.survey.notFound);
       }
     }, function(error) {
       reject(filters.errors(error));
