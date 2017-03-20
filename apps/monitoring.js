@@ -28,8 +28,7 @@ pm2.connect((err, resp) => {
 
       si.currentLoad().then((load) => {
         si.mem().then((mem) => {
-          infoChannel.push("system_info", { load, mem});
-          infoChannel.push("system_metrics", { metrics });
+          infoChannel.push("system_info_metrics", { load, mem, metrics});
         });
       });
     });
