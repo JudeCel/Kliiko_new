@@ -238,7 +238,9 @@
           if (publish) {
             confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
-            messenger.ok(res.message);
+            if (!vm.surveySettings.disableMessages) {
+              messenger.ok(res.message);
+            }
             onSaved();
           }
         }
@@ -258,7 +260,9 @@
           if (publish) {
             return confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {
-            messenger.ok(res.message);
+            if (!vm.surveySettings.disableMessages) {
+              messenger.ok(res.message);
+            }
             onSaved();
           }
         }
