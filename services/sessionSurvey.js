@@ -173,6 +173,21 @@ function getSurveyStatsForSession(id, account) {
   });
 }
 
+function assignContactListToSessionSurveys(clId, sessionId) {
+  return new Bluebird((resolve, reject) => {
+    getSessionSurveyIds(sessionId).then((list) => {
+      models.Survey.update({contactListId: clId}, {where: { id: { $in: list }} }).then(function(result) {
+        resolve();
+      }, function (error) {
+        reject(error);
+      }).catch((e) => {
+        reject(e);
+      });
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+}
 
 module.exports = {
   addSurveyToSession: addSurveyToSession,
@@ -180,5 +195,6 @@ module.exports = {
   setSurveyEnabled: setSurveyEnabled,
   removeSurveys: removeSurveys,
   copySurveys: copySurveys,
-  getSurveyStatsForSession: getSurveyStatsForSession
+  getSurveyStatsForSession: getSurveyStatsForSession,
+  assignContactListToSessionSurveys: assignContactListToSessionSurveys
 }

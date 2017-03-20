@@ -25,6 +25,7 @@ var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidati
 var helpers = require('./../mailers/helpers');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
+var contactList = require('./contactList');
 
 var async = require('async');
 var _ = require('lodash');
@@ -1132,7 +1133,7 @@ function step2Queries(session, step) {
       }).catch(function(error) {
         cb(filters.errors(error));
       });
-    }, 
+    },
     function(cb) {
       let sessionSurveyEnabled = sessionSurveysAvailable(session);
       if (sessionSurveyEnabled) {
@@ -1519,6 +1520,24 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   return deferred.promise;
 }
 
+function addContactListToSession(session, accountId) {
+  return new Bluebird((resolve, reject) => {
+    if (session) {
+      contactList.create({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
+        sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
+          resolve(session);
+        }, function(error) {
+          reject(error);
+        });
+      }, function(error) {
+        reject(error);
+      });
+    } else {
+      reject(MessagesUtil.session.notFound);
+    }
+  });
+}
+
 function publish(sessionId, accountId) {
   return new Bluebird((resolve, reject) => {
     Session.find({
@@ -1526,6 +1545,8 @@ function publish(sessionId, accountId) {
         id: sessionId,
         accountId: accountId
       }
+    }).then(function(session) {
+      return addContactListToSession(session, accountId);
     }).then(function(session) {
       if (session) {
         if (session.publicUid) {
