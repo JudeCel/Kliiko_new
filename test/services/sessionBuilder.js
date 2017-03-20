@@ -24,7 +24,7 @@ describe('SERVICE - SessionBuilder', function() {
         testAccountUser = result.accountUser;
         subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
           subscriptionId = subscription.id;
-          models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
+          models.SubscriptionPreference.update({ 'data.sessionCount': 2, 'data.contactListCount': 2 }, { where: { subscriptionId: subscription.id } }).then(function(result) {
             done();
           }, function(error) {
             done(error);
