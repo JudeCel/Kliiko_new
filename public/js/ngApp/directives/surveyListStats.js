@@ -17,6 +17,10 @@ function surveyListStats(surveyServices) {
       scope.exportSessionUrl = function(format) {
         return scope.stats ? surveyServices.exportSessionStatsUrl(scope.stats.sessionId, format) : "";
       }
+
+      scope.questionHasAnswers = function(question) {
+        return Object.keys(question.answers).length;
+      }
     }
   };
 

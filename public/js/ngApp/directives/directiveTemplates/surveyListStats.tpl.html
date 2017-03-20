@@ -26,7 +26,7 @@
               <td class="data-column-center">100</td>
             </tr>
 
-            <tr class="data-row data-row-bottom-whitespace" ng-repeat="question in surveyItem.data.questions">
+            <tr class="data-row data-row-bottom-whitespace" ng-repeat="question in surveyItem.data.questions" ng-if="questionHasAnswers(question)">
               <td class="data-column-big">{{question.name}}</td>
               <td colspan="3">
 
