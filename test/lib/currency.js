@@ -1,21 +1,20 @@
 'use strict';
 
-const moment = require('moment');
 const assert = require('chai').assert;
 const currency = require('./../../lib/currency');
+const constants = require('./../../util/constants');
 
 describe('LIB - Currency', function() {
   describe('#get', function() {
     it('can get default currency', function(done) {
       const params = {
         base: 'AUD',
-        symbols: ['USD', 'GBP', 'CAD', 'EUR', 'NZD']
+        symbols: constants.supportedCurrencies
       };
 
       currency.get().then((data) => {
         assert.equal(data.base, params.base);
-        assert.equal(data.date, moment().add(-1, 'days').format('YYYY-MM-DD'));
-        assert.deepEqual(Object.keys(data.rates).sort(), params.symbols.sort());
+        assert.deepEqual(['AUD', ...Object.keys(data.rates)].sort(), params.symbols.sort());
         done();
       }).catch(done);
     });
@@ -28,7 +27,6 @@ describe('LIB - Currency', function() {
 
       currency.get(params).then((data) => {
         assert.equal(data.base, params.base);
-        assert.equal(data.date, moment().add(-1, 'days').format('YYYY-MM-DD'));
         assert.deepEqual(Object.keys(data.rates).sort(), params.symbols.sort());
         done();
       }).catch(done);
