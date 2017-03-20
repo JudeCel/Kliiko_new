@@ -6,40 +6,46 @@ module.exports = {
       model: 'firstName',
       name: 'First Name',
       input: true,
-      order: 0
+      order: 0,
+      required: true
     },
     {
       model: 'lastName',
       name: 'Last Name',
       input: true,
-      order: 1
+      order: 1,
+      required: true
     },
     {
       model: 'gender',
       name: 'Gender',
       select: true,
       options: ['male', 'female'],
-      order: 2
+      order: 2,
+      required: true
     },
     {
       model: 'age',
       name: 'Age',
       select: true,
       options: ageOptions.ages,
-      order: 3
+      order: 3,
+      required: true
     },
     {
       model: 'email',
       name: 'Email',
       input: true,
-      order: 4
+      order: 4,
+      required: true
     },
     {
       model: 'mobile',
       name: 'Mobile',
       number: true,
       canDisable: true,
-      order: 5
+      order: 5,
+      required: true
     },
     {
       model: 'landlineNumber',
@@ -47,7 +53,8 @@ module.exports = {
       number: true,
       canDisable: true,
       disabled: true,
-      order: 6
+      order: 6,
+      required: true
     },
     {
       model: 'postalAddress',
@@ -55,7 +62,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 7
+      order: 7,
+      required: true
     },
     {
       model: 'city',
@@ -63,7 +71,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 8
+      order: 8,
+      required: true
     },
     {
       model: 'state',
@@ -71,7 +80,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 9
+      order: 9,
+      required: true
     },
     {
       model: 'postCode',
@@ -79,7 +89,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 10
+      order: 10,
+      required: true
     },
     {
       model: 'country',
@@ -87,7 +98,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 11
+      order: 11,
+      required: true
     },
     {
       model: 'companyName',
@@ -95,7 +107,8 @@ module.exports = {
       input: true,
       canDisable: true,
       disabled: true,
-      order: 12
+      order: 12,
+      required: true
     },
   ],
   defaultQuestions: [
