@@ -94,7 +94,6 @@
                 </br>
               </div>
               <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
-
               <button ng-if="survey.canDisable && !survey.active" class='btn border-radius-none ng-binding btn-success pull-right' ng-click='step2Controller.blockSurvey(survey)'>Enable</button>
               <button ng-if="survey.canDisable && survey.active" class='btn border-radius-none ng-binding btn-danger pull-right' ng-click='step2Controller.blockSurvey(survey)'>Disable</button>
             </div>
@@ -103,7 +102,7 @@
         </uib-accordion-group>
 
       </uib-accordion>
-      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)' ng-if="step2Controller.inviteAgainTopicAdded()">Save</button>
+      <button class='btn btn-standart btn-margin btn-green btn-small pull-left' ng-click='step2Controller.saveSurveys(false, false)' ng-if="step2Controller.checkCanSaveSurveys()">Save</button>
       <button class='btn btn-standart btn-margin btn-green btn-small pull-right' ng-click='step2Controller.saveSurveys(false, true)' ng-if='!step2Controller.session.publicUid'>Publish</button>
     </div>
   </section>

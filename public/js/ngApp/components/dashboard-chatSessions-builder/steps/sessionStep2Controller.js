@@ -57,6 +57,7 @@
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
+      surveySection.canDisable = true;
       if (survey) {
         surveySection.id = survey.surveyId;
         vm.attachedSurveysToSession[surveySection.id] = true;
@@ -88,6 +89,17 @@
         showPreviewButton: false,
         disableMessages: true
       }
+    }
+
+    vm.checkCanSaveSurveys = function() {
+      var canSave = true;
+      vm.surveyList.map(function(survey) {
+        if (survey.canDisable && !survey.active) {
+          canSave = false;
+        }
+      });
+
+      return canSave && vm.inviteAgainTopicAdded();
     }
 
     function initSurveys() {
