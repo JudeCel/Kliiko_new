@@ -425,6 +425,9 @@
 
     function saveSurveysConfirmed(autoSave, publish) {
       if (inviteAgainTopicAdded()) {
+        vm.surveyEditors[0].survey.resourceId = vm.session.sessionData.resourceId;
+        vm.surveyEditors[1].survey.resourceId = vm.session.sessionData.resourceId;
+
         vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function() {
           vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function() {
             if (publish) {
