@@ -276,6 +276,22 @@ function getContactListFields(questions) {
   return array;
 }
 
+
+function setupContactListForSurvey(survey, transaction) {
+  let fields = getContactListFields(survey.SurveyQuestions);
+  return createOrUpdateContactList(survey, fields, transaction).then((contactList) => {
+    if(contactList){
+      return updateContactList(contactList, survey, fields, transaction).then(() => {
+        return survey;
+      });
+    }else{
+      return survey;
+    }
+  }, (error) => {
+    throw error;
+  });
+}
+
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
   validators.hasValidSubscription(account.id).then(function() {
@@ -286,18 +302,11 @@ function createSurveyWithQuestions(params, account) {
       transactionPool.once(tiket, () => {
         models.sequelize.transaction(function (t) {
           return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
-            let fields = getContactListFields(survey.SurveyQuestions);
-            return createOrUpdateContactList(survey, fields, t).then((contactList) => {
-              if(contactList){
-                return updateContactList(contactList, survey, fields, t).then(() => {
-                  return survey;
-                });
-              }else{
-                return survey;
-              }
-            }, (error) => {
-              throw error;
-            });
+            if (survey.surveyType == 'recruiter') {
+              return setupContactListForSurvey(survey, t);
+            } else {
+              return survey;
+            }
           });
         }).then(function(survey) {
           transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
@@ -347,10 +356,14 @@ function updateSurvey(params, account) {
             transaction: t
           }).then(function() {
             return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(() => {
-              let fields = getContactListFields(survey.SurveyQuestions);
-              return createOrUpdateContactList(survey, fields, t).then(() => {
+              if(survey.surveyType == 'recruiter') {
+                let fields = getContactListFields(survey.SurveyQuestions);
+                return createOrUpdateContactList(survey, fields, t).then(() => {
+                  return survey;
+                });
+              } else {
                 return survey;
-              })
+              }
             }, function() {
               t.rollback();
               return survey;
