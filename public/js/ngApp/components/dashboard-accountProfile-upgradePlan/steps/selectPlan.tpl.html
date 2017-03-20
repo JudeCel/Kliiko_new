@@ -5,7 +5,8 @@
         <!-- Table headers-->
         <tr>
           <th class='currency-dropdown'>
-            <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList' ng-model='up.currentCurrency' ng-change='up.changePlanList()' />
+            <!-- TODO: TEMP CURRENCY FIX -->
+            <!-- <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList' ng-model='up.currentCurrency' ng-change='up.changePlanList()' /> -->
           </th>
 
           <th ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
@@ -83,40 +84,5 @@
         </div>
       </div>
     </script>
-
-    <div class="col-sm-'odd''even'">
-      <div class="col-sm-10 col-sm-offset-1">
-        <div class="contact-us">
-          <span>
-            Enterprise Plan
-          </span>
-
-          <div class="btn btn-standart btn-green btn-medium pull-right" ng-click="up.openGetQuoteModal(app.accountUser)">Get A Quote</div>
-
-          <p>
-            klzii Supports organizations large and small. If need more Managers,
-            <br/>
-            Active Sessions, contact lists or recruitment lists, contact our sales team for
-            <br/>
-            assistance.
-          </p>
-        </div>
-      </div>
-
-      <ng-include src="'/js/ngApp/components/dashboard-accountProfile-upgradePlan/steps/getAQuote.tpl.html'"></ng-include>
-    </div>
-
-    <div class="col-sm-8 col-sm-offset-2" id="disclaimer">
-      <p>
-        <b>Please Note:</b> Depending on the nature of your project, you may also need to provide appropriate Incentive-Gifts to your group-Session Guests
-      </p>
-      <p>
-        *You can purchase additional SMS credits as required.
-      </p>
-    </div>
-
-    <div class="col-sm-12">
-      <a href='/account-hub#/smsCredits'><div class="contact-us-btn-red">Buy More SMS Credits</div></a>
-    </div>
   </section>
 </section>

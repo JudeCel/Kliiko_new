@@ -106,11 +106,12 @@ function getChargebeeSubscription(subscriptionId, provider) {
 function getAllPlans(accountId, ip) {
   let deferred = q.defer();
 
-  chargebee.plan.list({ limit: 100 }).request(function(error, result) {
+  chargebee.plan.list({ limit: 100, 'status[is]': 'active' }).request(function(error, result) {
     if (error) {
       deferred.reject(error);
     } else {
-      let plans = result.list.filter((item) => item.plan.status === 'active');
+      // TODO: TEMP CURRENCY FIX
+      let plans = result.list.filter((item) => item.plan.currency_code === 'AUD');
 
       if (accountId) {
         let currentPlan, currencyData;
