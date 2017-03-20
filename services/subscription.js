@@ -93,9 +93,9 @@ function getChargebeeSubscription(subscriptionId, provider) {
   }
 
   provider(subscriptionId).request(function(error,result){
-    if(error){
+    if (error) {
       deferred.reject(error);
-    }else{
+    } else {
       deferred.resolve(result.subscription);
     }
   });
