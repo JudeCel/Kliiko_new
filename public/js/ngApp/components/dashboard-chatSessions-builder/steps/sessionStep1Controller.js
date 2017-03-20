@@ -58,6 +58,10 @@
       startingDay: 1,
     }
 
+    vm.memberNotCurrentUser = function(member, accountUser) {
+      return member.id !== accountUser.id;
+    }
+
     function initCanSelectFacilitator() {
       vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
         && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));

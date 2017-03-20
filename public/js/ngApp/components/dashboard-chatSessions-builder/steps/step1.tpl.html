@@ -57,7 +57,7 @@
 
 
     <!-- Date And Time -->
-    <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input" is-disabled="!step1Controller.session.steps.step1.canEditTime || step1Controller.session.steps.step1.type && !step1Controller.session.properties.features.dateAndTime.enabled" 
+    <uib-accordion-group is-open="step1Controller.accordions.dateAndTime" class="green-input" is-disabled="!step1Controller.session.steps.step1.canEditTime || step1Controller.session.steps.step1.type && !step1Controller.session.properties.features.dateAndTime.enabled"
         ng-click='step1Controller.showTimeBlockedMessage()'>
       <uib-accordion-heading>
         <div class="panel-label">
@@ -223,7 +223,7 @@
                         <td>{{ member.listName }}</td>
                         <td class="row-actions">
                           <img ng-click="step1Controller.editContact(member)"class="pull-right ic" src="/icons/dashboardElement_edit.png" alt="" title="Edit" style="margin: 0 5px 5px 5px;">
-                          <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete" style="margin: 0 5px 5px 5px;">
+                          <img ng-click="step1Controller.deleteContact(member)" class="pull-right ic" src="/icons/dashboardElement_remove.png" alt="" title="Delete" style="margin: 0 5px 5px 5px;" ng-if="step1Controller.memberNotCurrentUser(member, app.accountUser);">
                         </td>
                       </tr>
                   </form>
@@ -292,7 +292,7 @@
 
         <section>
           <div ng-if="!step1Controller.type" class="small">Select type first</div>
-          <div ng-if="step1Controller.session.properties.features.colorScheme.type" class='row' ng-controller='BrandColourController as bcc' 
+          <div ng-if="step1Controller.session.properties.features.colorScheme.type" class='row' ng-controller='BrandColourController as bcc'
               ng-init="bcc.setSelectedId(step1Controller.session.steps.step1.brandProjectPreferenceId); bcc.setType(step1Controller.session.properties.features.colorScheme.type)">
             <div class='col-lg-6 col-md-6 col-sm-6 scale' ng-repeat='scheme in step1Controller.colorsList = bcc.pagination.schemes' ng-show="bcc.schemes.length" data-property='colorScheme'>
               <label for="{{ $index }}-scheme" class="selected-{{step1Controller.colorScheme.id == scheme.id}}">
