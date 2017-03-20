@@ -6,26 +6,30 @@ module.exports = {
       model: 'firstName',
       name: 'First Name',
       input: true,
-      order: 0
+      order: 0,
+      required: true
     },
     {
       model: 'lastName',
       name: 'Last Name',
       input: true,
-      order: 1
+      order: 1,
+      required: true
     },
     {
       model: 'email',
       name: 'Email',
       input: true,
-      order: 2
+      order: 2,
+      required: true
     },
     {
       model: 'mobile',
       name: 'Mobile',
       number: true,
       canDisable: true,
-      order: 3
+      order: 3,
+      required: false
     }
   ],
   defaultQuestions: [

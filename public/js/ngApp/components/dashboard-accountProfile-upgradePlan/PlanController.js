@@ -16,17 +16,21 @@
     vm.selectedPlan = null;
     vm.currentStep = 1;
     vm.currentPlan = null;
-    vm.monthlyPlan = null;
-    vm.yearlyPlan = null;
     vm.purchaseWasSuccessfull = true;
-    vm.subPlans = [];
     vm.contactUsUser = {};
-    vm.monthlyPlans = [];
-    vm.annualPlans = [];
+
+    vm.currencySymbols = {
+      AUD: '$',
+      USD: '$',
+      CAD: '$',
+      NZD: '$',
+      GBP: '£',
+      EUR: '€',
+    };
 
     vm.pricePerEnding = {
-      monthly: 'MONTH',
-      annual: 'YEAR'
+      month: 'MONTH',
+      year: 'YEAR'
     }
 
     vm.stepLayouts = [
@@ -74,9 +78,7 @@
     vm.wantThisPlan = wantThisPlan;
     vm.submitOrder = submitOrder;
     vm.isCurrentPlan = isCurrentPlan;
-    vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
-    vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
     vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
@@ -87,6 +89,7 @@
     vm.upgradePlanText = upgradePlanText;
     vm.displayFeatureValue = displayFeatureValue;
     vm.finishedRenderingPlans = finishedRenderingPlans;
+    vm.changePlanList = changePlanList;
 
     init();
     vm.setup = function() {
@@ -128,22 +131,15 @@
         if(result.error){
           messenger.error(result.error);
         }else {
-          result.plans.map(function (subPlan) {
-            if (canPush('month', subPlan)) {
-              vm.monthlyPlans.push(subPlan);
-            }
-
-            if (canPush('year', subPlan)) {
-              vm.annualPlans.push(subPlan);
-            }
-
-            if (subPlan.plan.id == $stateParams.plan) {
-              vm.selectedPlan = subPlan;
-            }
-          });
-
-          vm.annualOrMonthly = 'monthly';
-          vm.subPlans = vm.monthlyPlans;
+          vm.currencyData = result.currencyData;
+          vm.currentCurrency = vm.currencyData.client;
+          vm.currencyList = Object.keys(vm.currencyData.rates);
+          vm.currencyList.unshift(vm.currencyData.base);
+          vm.annualOrMonthly = 'month';
+          vm.free_account = result.free_account;
+          vm.plans = result.plans;
+          vm.additionalParams = result.additionalParams;
+          changePlanList();
 
           vm.currentPlan = result.currentPlan;
           vm.features = result.features;
@@ -151,8 +147,9 @@
       })
     }
 
-    function canPush(period, subPlan) {
-      return subPlan.plan.period_unit == period && subPlan.additionalParams && subPlan.additionalParams.priority > 0;
+    function changePlanList() {
+      vm.plansList = angular.copy(vm.plans[vm.currentCurrency][vm.annualOrMonthly]);
+      vm.plansList.unshift(vm.free_account);
     }
 
     function succeededCheckout(params) {
@@ -188,15 +185,15 @@
     function wantThisPlan(selectedSubPlan) {
       vm.selectedPlan = selectedSubPlan;
 
-      vm.subPlans.map(function(subPlan) {
-        if(subPlan.plan.id == vm.selectedPlan.plan.id) {
-          vm.monthlyPlan = subPlan;
-        }
-
-        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
-          vm.yearlyPlan = subPlan;
-        }
-      });
+      // vm.subPlans.map(function(subPlan) {
+      //   if(subPlan.plan.id == vm.selectedPlan.plan.id) {
+      //     vm.monthlyPlan = subPlan;
+      //   }
+      //
+      //   if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
+      //     vm.yearlyPlan = subPlan;
+      //   }
+      // });
 
       $(".planHint").hide();
       nextStep();
@@ -219,6 +216,7 @@
     }
 
     function previouseStep() {
+      vm.selectedPlan = null;
       return --vm.currentStep;
     }
 
@@ -235,7 +233,7 @@
     }
 
     function isCurrentPlan(subPlan) {
-      return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
+      return subPlan.plan.id.includes(vm.currentPlan.preferenceName);
     }
 
     function stepIsActive(step, additionalStyle) {
@@ -258,16 +256,8 @@
       domServices.modal('plansModal');
     }
 
-    function showPlanInList(plan){
-      return plan.additionalParams.priority > 0;
-    }
-
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
-    }
-
-    function showCalculatedPrice(price) {
-      return price / 100;
     }
 
     function openGetQuoteModal(user) {
@@ -288,15 +278,9 @@
 
     function switchPlanView(view) {
       vm.annualOrMonthly = view;
-
-      if (view == 'annual') {
-        vm.subPlans = vm.annualPlans;
-      }
-      if (view == 'monthly') {
-        vm.subPlans = vm.monthlyPlans;
-      }
+      changePlanList()
       setTimeout(function () {
-        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
       });
     }
 
@@ -323,11 +307,11 @@
     }
 
     vm.showBoolean = function(feature, plan) {
-      return (feature.type == 'Boolean' && vm.getFeatureValue(feature.key, plan.additionalParams));
+      return (feature.type == 'Boolean' && vm.getFeatureValue(feature.key, plan));
     }
 
-    vm.getFeatureValue = function(key, planParameters) {
-      return planParameters[key];
+    vm.getFeatureValue = function(key, plan) {
+      return vm.additionalParams[plan.preference][key];
     }
 
     vm.showNumber = function(feature) {
@@ -339,7 +323,7 @@
     }
 
     function displayFeatureValue(feature, plan) {
-      var result = checkTheCount(plan.additionalParams[feature.key]);
+      var result = checkTheCount(vm.getFeatureValue(feature.key, plan));
       if (feature.type == 'NumberLimit') {
         result = 'up to ' + result + "/mth";
       }
@@ -366,7 +350,7 @@
 
     function finishedRenderingPlans() {
       setTimeout(function () {
-        updateCurrentPlanStyle(vm.currentPlan.chargebeePlanId);
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
       });
     }
   }

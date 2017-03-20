@@ -84,7 +84,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
             done();
           } catch (e) {
             done(e)
-          } 
+          }
         }
       };
     }
@@ -109,7 +109,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
           request: function(callback) {
             callback(null, {
               id: "",
-              plan_id: params.plan_id, 
+              plan_id: params.plan_id,
               current_term_end: new Date()
             });
           }
@@ -124,7 +124,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
           updateProvider: updateProvider({ id: testSubscription.subscriptionId, plan_id: testSubscription.planId })
         }
 
-        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'core_monthly', skipCardCheck: true}, providers).then(function() {
+        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'core_monthly_AUD', skipCardCheck: true}, providers).then(function() {
           chargebeeRoutes.endPoint(reqObject(testSubscription.subscriptionId), resObject(200, done));
         });
       });

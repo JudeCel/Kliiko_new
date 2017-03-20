@@ -7,26 +7,30 @@ module.exports = {
       model: 'firstName',
       name: 'First Name',
       input: true,
-      order: 0
+      order: 0,
+      required: true
     },
     {
       model: 'lastName',
       name: 'Last Name',
       input: true,
-      order: 1
+      order: 1,
+      required: true
     },
     {
       model: 'email',
       name: 'Email',
       input: true,
-      order: 2
+      order: 2,
+      required: true
     },
     {
       model: 'mobile',
       name: 'Mobile',
       number: true,
       canDisable: true,
-      order: 3
+      order: 3,
+      required: false
     },
     {
       model: 'gender',
@@ -34,7 +38,8 @@ module.exports = {
       select: true,
       options: ['male', 'female'],
       canDisable: true,
-      order: 4
+      order: 4,
+      required: false
     },
     {
       model: 'age',
@@ -42,7 +47,8 @@ module.exports = {
       select: true,
       options: ageOptions.ages,
       canDisable: true,
-      order: 5
+      order: 5,
+      required: false
     }
   ],
   defaultQuestions: [

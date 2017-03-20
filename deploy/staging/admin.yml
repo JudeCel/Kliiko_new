@@ -122,3 +122,7 @@ spec:
           value: "2155b16e-22bb-40f7-8e67-89c9499a7c29"
         - name: MONITORING_SERVER_PROJECT_NAME
           value: "kliiko_prod"
+        - name: INFUSIONSOFT_APP
+          value: "su329"
+        - name: INFUSIONSOFT_KEY
+          value: "75b1411017f205fb92b3898c4e9151bb"

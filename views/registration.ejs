@@ -95,6 +95,9 @@
                     </td>
                     <td>
                       <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
+                      <% if(email && selectedPlanOnRegistration) { %>
+                      <input type="hidden" value="<%= email %>" class="form-control" name="infusionEmail" id="infusionEmail" placeholder="Email">
+                      <% } %>
                     </td>
                     <td class="text-red-dark">
                       <h6>*</h6>
