@@ -9,7 +9,7 @@
       <div class="col-sm-3">Duration</div>
       <div class="col-sm-3">Amount Due</div>
       <div class="col-sm-2">
-        <a href="#" data-toggle="tooltip" title="{{ up.whatIsCredits }}">Credits</a>
+        <a data-toggle="tooltip" title="{{ up.whatIsCredits }}">Credits</a>
       </div>
     </div>
 
@@ -22,7 +22,7 @@
           </div>
           <ul class="dropdown-menu" aria-labelledby="plansDropdownMenu">
               <li class="dropdown-header">Monthly</li>
-              <li ng-repeat="planItem in up.monthlyPlans" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
+              <li ng-repeat="planItem in up.plans[up.currentCurrency].month" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
                 <a ng-click="up.dropdownSelectedPlan(planItem)">
                   {{planItem.plan.name}}
                   <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
@@ -31,7 +31,7 @@
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">Annual</li>
 
-              <li ng-repeat="planItem in up.annualPlans" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
+              <li ng-repeat="planItem in up.plans[up.currentCurrency].year" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
                 <a ng-click="up.dropdownSelectedPlan(planItem)">
                   {{planItem.plan.name}}
                   <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
@@ -45,10 +45,10 @@
         {{ up.selectedPlan.plan.period_unit }}
       </div>
       <div class="col-sm-3">
-        {{ up.fullPrice(up.selectedPlan.chargeEstimate.amount_due) | price:up.currencySymbols[up.currentCurrency]:0 }}
+        {{ up.selectedPlan.chargeEstimate.invoice_estimate.amount_due | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
       <div class="col-sm-2">
-        {{ up.fullPrice(up.selectedPlan.chargeEstimate.credits_applied) | price:up.currencySymbols[up.currentCurrency]:0 }}
+        {{ up.selectedPlan.chargeEstimate.invoice_estimate.credits_applied | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
     </div>
   </div>
