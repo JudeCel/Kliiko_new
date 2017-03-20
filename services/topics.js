@@ -241,7 +241,12 @@ function joinToSession(ids, sessionId) {
           }).then( function(sessionTopics) {
             let skiped = results.length < ids.length;
             skipedStock(ids, skiped).then(function(skipedStockTopics) {
-              deferred.resolve({sessionTopics: sessionTopics, skipedStock: skipedStockTopics, skipedInviteAgain: skiped && !skipedStockTopics, session });
+              deferred.resolve({
+                sessionTopics: sessionTopics, 
+                skipedStock: skipedStockTopics && sessionTopics.length != ids.length, 
+                skipedInviteAgain: skiped && !skipedStockTopics, 
+                session 
+              });
             }, function() {
               deferred.reject(filters.errors(error));
             });
