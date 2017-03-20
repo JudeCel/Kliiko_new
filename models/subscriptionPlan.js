@@ -29,6 +29,13 @@ module.exports = (Sequelize, DataTypes) => {
     surveyCount: { type: DataTypes.INTEGER, allowNull: false },
     canBuySms: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 
+    preferenceName: { type: DataTypes.STRING, allowNull: false, defaultValue: '',
+      validate: {
+        notEmpty: true,
+        isUnique: validations.unique(Sequelize, 'SubscriptionPlan', 'preferenceName')
+      }
+    },
+
     chargebeePlanId: { type: DataTypes.STRING, allowNull: false,
       validate: {
         notEmpty: true,

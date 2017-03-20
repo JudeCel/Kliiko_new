@@ -580,12 +580,12 @@ describe('SERVICE - Subscription', function() {
     var subId = 'SomeUniqueID';
     var providers = {
       creditCard: validCreditCardProvider(),
-      updateProvider: updateProvider({ id: subId, plan_id: "core_monthly" })
+      updateProvider: updateProvider({ id: subId, plan_id: "core_monthly_AUD" })
     }
 
     beforeEach(function(done) {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
-        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: "core_monthly", skipCardCheck: true}, providers).then(function(result) {
+        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: "core_monthly_AUD", skipCardCheck: true}, providers).then(function(result) {
           done();
         }, function(error) {
           done(error);

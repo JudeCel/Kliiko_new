@@ -34,7 +34,7 @@ function planAllowsToDoIt(req, res, next) {
 function getPlans(req, res, next) {
   let accountId = req.currentResources.account.id;
 
-  subscription.getAllPlans(accountId).then(function(result) {
+  subscription.getAllPlans(accountId, req.ip).then(function(result) {
     res.send(result);
   }, function(err) {
     res.send({ error: err.message });

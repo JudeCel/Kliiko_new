@@ -15,6 +15,7 @@ var chargebee = require('./../lib/chargebee').instance;
 const PLAN_CONSTANTS = require('./../util/planConstants');
 var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
+var ipCurrency = require('../lib/ipCurrency');
 var MessagesUtil = require('./../util/messages');
 var moment = require('moment-timezone');
 
@@ -102,41 +103,52 @@ function getChargebeeSubscription(subscriptionId, provider) {
   return deferred.promise;
 }
 
-function getAllPlans(accountId) {
+function getAllPlans(accountId, ip) {
   let deferred = q.defer();
-  let currentPlan = {};
 
-  chargebee.plan.list({limit: 100, "status[is]" : "active"}).request(function(error, result){
+  chargebee.plan.list({ limit: 100, 'status[is]': 'active' }).request(function(error, result) {
     if (error) {
       deferred.reject(error);
     } else {
-      //according to API manual "status[is]" : "active" is enought to show only active plans, but this doesn't work
-      var plans = []
-      for (var i=0; i<result.list.length; i++) {
-        var plan = result.list[i];
-        if (plan.plan.status == "active") {
-          plans.push(plan);
-        }
-      }
+      // TODO: TEMP CURRENCY FIX
+      let plans = result.list.filter((item) => item.plan.currency_code === 'AUD');
 
       if (accountId) {
-        findAndProcessSubscription(accountId).then(function(currentSub) {
-          if(currentSub && currentSub.active){
-            currentPlan = currentSub.SubscriptionPlan;
-          }
-          addPlanEstimateChargeAndConstants(plans, accountId).then(function(planWithConstsAndEstimates) {
-            deferred.resolve({currentPlan: currentPlan, plans: planWithConstsAndEstimates, features: planFeatures.features});
-          })
-        }, function(error) {
+        let currentPlan, currencyData;
+        ipCurrency.get({ ip }).then((data) => {
+          currencyData = data;
+          return findAndProcessSubscription(accountId);
+        }).then((currentSub) => {
+          currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+          return addPlanEstimateChargeAndConstants(plans, accountId);
+        }).then(function(planWithConstsAndEstimates) {
+          const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+          plans = mapPlans(planWithConstsAndEstimates);
+          deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
+        }).catch((error) => {
           deferred.reject(filters.errors(error));
-        })
+        });
       } else {
-        deferred.resolve(plans)
+        deferred.resolve(plans);
       }
     }
   });
 
   return deferred.promise;
+}
+
+function getFreeAccountRemoveTrial(plans) {
+  const free = _.remove(plans, (item) => ['free_trial', 'free_account'].includes(item.plan.id)); // remove free plans
+  return free.find((item) => item.plan.id === 'free_account');
+}
+
+function mapPlans(plans) {
+  plans = _.groupBy(plans, (item) => item.plan.currency_code); // group by currency
+  constants.supportedCurrencies.forEach((currency) => {
+    plans[currency] = _.orderBy(plans[currency], (item) => PLAN_CONSTANTS[item.plan.preference].priority, ['asc']); // order by priority
+    plans[currency] = _.groupBy(plans[currency], (item) => item.plan.period_unit); // group by period
+  });
+  return plans;
 }
 
 function addPlanEstimateChargeAndConstants(plans, accountId) {
@@ -145,14 +157,15 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
 
   findSubscription(accountId).then(function(accountSubscription) {
     async.each(plans, function(plan, callback) {
+      const preferenceName = PLAN_CONSTANTS.preferenceName(plan.plan.id);
       // TODO Refacture to one function
-      if(notNeedEstimatePrice(plan, accountSubscription)){
-        plan.additionalParams = PLAN_CONSTANTS[plan.plan.id];
+      if(notNeedEstimatePrice(preferenceName, accountSubscription)){
+        plan.plan.preference = preferenceName;
         plansWithAllInfo.push(plan);
         callback();
-      }else if(needEstimatePrice(plan, accountSubscription)){
+      }else if(needEstimatePrice(preferenceName, accountSubscription)){
         getEstimateCharge(plan, accountSubscription).then(function(planWithEstimate) {
-          planWithEstimate.additionalParams = PLAN_CONSTANTS[planWithEstimate.plan.id];
+          planWithEstimate.plan.preference = preferenceName;
           plansWithAllInfo.push(planWithEstimate);
           callback();
         }, function(error) {
@@ -177,12 +190,12 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
 
 
 // TODO  re-write to one function
-function notNeedEstimatePrice(plan, accountSubscription) {
-  return plan.plan.id == accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "free_trial"
+function notNeedEstimatePrice(preferenceName, accountSubscription) {
+  return preferenceName == accountSubscription.SubscriptionPlan.preferenceName && preferenceName != "free_trial"
 }
 
-function needEstimatePrice(plan, accountSubscription) {
-  return plan.plan.id != accountSubscription.SubscriptionPlan.chargebeePlanId && plan.plan.id != "free_trial"
+function needEstimatePrice(preferenceName, accountSubscription) {
+  return preferenceName != accountSubscription.SubscriptionPlan.preferenceName && preferenceName != "free_trial"
 }
 
 // TODO this is realy plan ?
@@ -211,7 +224,7 @@ function getEstimateCharge(plan, accountSubscription) {
 function processFreeTrialPlanInformation(accountId, subscription) {
   return new Bluebird(function (resolve, reject) {
     let currentPlan = subscription.SubscriptionPlan;
-    if (currentPlan.chargebeePlanId == 'free_trial') {
+    if (currentPlan.preferenceName == 'free_trial') {
       getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
           let ends = moment.unix(chargebeeSub.current_term_end);
           currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
@@ -303,7 +316,7 @@ function createSubscription(accountId, userId, provider, plan) {
         transactionPool.once(tiket, () => {
           models.sequelize.transaction(function (t) {
             return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-              return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.chargebeePlanId]}, {transaction: t}).then(function() {
+              return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.preferenceName]}, {transaction: t}).then(function() {
                 transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
                 deferredTransactionPool.resolve(subscription);
               }, function(error) {
@@ -326,9 +339,7 @@ function createSubscription(accountId, userId, provider, plan) {
         return deferredTransactionPool.promise;
 
       } else {
-        //todo: temp solution because of new added plans
-        deferred.resolve(null);
-        //deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
+        deferred.reject(MessagesUtil.subscription.notFound.subscriptionPlan);
       }
     });
   }).then(function(subscription) {
@@ -498,7 +509,7 @@ function updateSubscriptionData(passThruContent){
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true, endDate: passThruContent.endDate }).then(function(updatedSub) {
 
-      let params = _.cloneDeep(PLAN_CONSTANTS[passThruContent.planId]);
+      let params = _.cloneDeep(PLAN_CONSTANTS[subscription.SubscriptionPlan.preferenceName]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
