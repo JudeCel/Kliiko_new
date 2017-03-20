@@ -116,12 +116,16 @@ function create(params, callback) {
 function update(id, parameters, sessionId, callback){
   parameters.sessionId = sessionId;
 
+  let baseTemplateQuery = {id: parameters['MailTemplateBase.id']};
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+
   MailTemplate.findAll({
     where: {
       sessionId: sessionId,
       isCopy: true,
       required: true
-    }
+    },
+    include: include
   }).then(function(templates) {
     let ids = [];
     if (templates && templates.length > 0) {

@@ -715,8 +715,11 @@
         messenger.error(messagesUtil.contactList.import.remapFailed);
       });
 
-      domServices.modal('contactList-addNewListFieldsModal', 'close');
-      domServices.modal('modals-import-preview');
+
+      domServices.modal('contactList-addNewListFieldsModal', function() {
+        domServices.modal('modals-import-preview');
+      });
+
     }
 
     vm.clearDoppedItem = function(item) {
@@ -772,8 +775,13 @@
       vm.importErrorMessage = null;
     }
     function reUpload() {
-      domServices.modal('modals-import-preview','close');
-      domServices.modal('contactList-addNewListFieldsModal','close');
+      // domServices.modal('modals-import-preview','close');
+
+      domServices.modal('modals-import-preview','close', function() {
+        domServices.modal('contactList-addNewListFieldsModal');
+      });
+
+      // domServices.modal('contactList-addNewListFieldsModal','close');
       // timeout is to wait fade effects
       setTimeout(function() {
         var type;
@@ -784,7 +792,10 @@
       clearImportErrors();
     }
     function reMap() {
-      domServices.modal('modals-import-preview', 'close');
+      domServices.modal('contactList-addNewListFieldsModal','close', function() {
+        domServices.modal('modals-import-preview');
+      });
+      // domServices.modal('modals-import-preview', 'close');
       prepareCustomFields();
       vm.addNewListFieldMapping();
     }

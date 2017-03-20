@@ -87,6 +87,12 @@
           </uib-accordion-heading>
           <div ng-controller="GalleryController as gc">
             <div ng-controller='SurveyEditController as sc' ng-init='step2Controller.initSurveyEditor(sc, gc, survey)'>
+              <div class="col-md-12">
+                <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
+                  ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+                </textarea>
+                </br>
+              </div>
               <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
 
               <button ng-if="survey.canDisable && !survey.active" class='btn border-radius-none ng-binding btn-success pull-right' ng-click='step2Controller.blockSurvey(survey)'>Enable</button>

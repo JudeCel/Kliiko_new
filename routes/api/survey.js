@@ -91,7 +91,7 @@ function getResponses(req, res) {
       res.send({ error: error });
     },
     onSuccess: function(result) {
-      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat, status: result.status });
+      res.send({ data: result.data, message: result.message, dateFormat: constants.dateFormat, status: result.status, isFacilitator: result.isFacilitator });
     }
   };
 }

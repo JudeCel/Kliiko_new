@@ -118,6 +118,11 @@
 
     function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
       if (isChangedAndNotSaved(isResetingOrSaving) && !vm.isAccordionToggled) {
+        if (vm.properties.sessionId) {
+          vm.warningMessage = "If you want to save the changes you have made to your email, you need to Apply them to Session."
+        } else {
+          vm.warningMessage = "If you want to save the changes you have made to your email, you need to Save them first."
+        }
         domServices.modal('unsavedTemplateMsg');
         return;
       }

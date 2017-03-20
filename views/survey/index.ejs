@@ -1,7 +1,7 @@
 <% include ../header %>
 <div ng-app="KliikoApp.Root">
-  <div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>, '<%= chatUrl %>')">
-    <div class='form-horizontal survey-container' id='GalleryController'>
+  <div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>, '<%= chatUrl %>', '<%= token %>')">
+    <div class='form-horizontal survey-container hidden' id='GalleryController'>
       <div ng-if='!(sc.status || sc.message)'>
         <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/preview.html'"></ng-include>
 
