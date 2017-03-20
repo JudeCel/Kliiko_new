@@ -29,10 +29,12 @@ function updateSubscriptionEndDate(subscription) {
       models.Subscription.update({ endDate: endDate }, { where: { id: subscription.id } }).then(() => {
         resolveItem();
       }, (error) => {
-        rejectItem();
+        console.log(subscription.id, error);
+        resolveItem();
       });
     }, (error) => {
-      rejectItem();
+      console.log(subscription.id, error);
+      resolveItem();
     });
   });
 }
