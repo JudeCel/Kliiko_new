@@ -412,8 +412,8 @@
 
     function saveSurveysConfirmed(autoSave, publish) {
       if (inviteAgainTopicAdded()) {
-        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function(res) {
-          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function(res) {
+        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function() {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function() {
             if (publish) {
               publishSession();
             } else if (!autoSave) {
@@ -421,7 +421,9 @@
             }
           });
         }).catch(function(e) {
-          messenger.error(e);
+          if (e) {
+            messenger.error(e);
+          }
         });
       } else {
         publishSession();
