@@ -128,6 +128,7 @@
         vm.originalReference = topic.sessionTopic;
         angular.copy(topic.sessionTopic, vm.topicData);
         vm.topicData.inviteAgain = topic.inviteAgain;
+        vm.topicData.stock = topic.stock;
         setEditData();
       }
     };
