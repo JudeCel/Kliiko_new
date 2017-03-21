@@ -266,7 +266,7 @@ module.exports = {
       email: 'Email has already been taken'
     },
     session: {
-      date: "Start date can't be higher then end date."
+      date: "Start date can't be higher than End Date."
     },
     user: {
       password: 'Make sure your Password is at least 7 characters'

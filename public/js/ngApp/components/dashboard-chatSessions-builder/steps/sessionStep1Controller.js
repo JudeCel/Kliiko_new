@@ -23,6 +23,7 @@
     vm.session = null;
     vm.selectedFacilitatorEmail = null;
     vm.canSelectFacilitator = false;
+    vm.endDateEdited = false;
 
     vm.formAction = null;
     vm.name = '';
@@ -364,7 +365,16 @@
       vm.session.updateStep(dataObj, vm.session).then(function(res) {
         deferred.resolve(res);
       }, function (err) {
-        messenger.error(err);
+        if(err.startTime && vm.endDateEdited) {
+          messenger.error(err);
+        }
+        if(!err.startTime) {
+          messenger.error(err);
+        }
+
+        validateDate(vm.step1.startTime)
+        validateDate(vm.step1.endTime)
+
         deferred.reject(err);
       });
 
@@ -372,6 +382,11 @@
     }
 
     function updateStep(dataObj) {
+
+      if(dataObj == 'endTime') {
+        vm.endDateEdited = true;
+      }
+
       if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
         if (propertyDisabler.isPropertyDisabled('dateAndTime')) {
           setTimeout(function() {
@@ -381,20 +396,16 @@
         }
         propertyDisabler.disablePropertyChanges('dateAndTime');
         initCanSelectFacilitator();
-        if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
-            if (res.ignored) {
-              vm.step1.startTime = vm.session.steps.step1.startTime;
-              vm.step1.endTime = vm.session.steps.step1.endTime;
-              vm.step1.timeZone = vm.session.steps.step1.timeZone;
-            }
-            propertyDisabler.enablePropertyChanges('dateAndTime');
-          }, function(error) {
-            propertyDisabler.enablePropertyChanges('dateAndTime');
-          });
-        } else {
+        postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
+          if (res.ignored) {
+            vm.step1.startTime = vm.session.steps.step1.startTime;
+            vm.step1.endTime = vm.session.steps.step1.endTime;
+            vm.step1.timeZone = vm.session.steps.step1.timeZone;
+          }
           propertyDisabler.enablePropertyChanges('dateAndTime');
-        }
+        }, function(error) {
+          propertyDisabler.enablePropertyChanges('dateAndTime');
+        });
         return;
       } else {
         return postUpdateStep(dataObj);
