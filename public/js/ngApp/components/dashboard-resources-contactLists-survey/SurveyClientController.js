@@ -52,14 +52,23 @@
           vm.survey = res.data;
           vm.isFacilitator = res.isFacilitator;
           $('#GalleryController').removeClass('hidden');
+
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
           }, function() {
             messenger.error(messagesUtil.gallery.cantLoad);
           });
+
+          autoFillNameField();
         }
       });
     };
+
+    function autoFillNameField () {
+      setTimeout(function() {
+        $('#contact-firstName').val(vm.survey.username);
+      }, 500);
+    }
 
     function submitSurvey() {
       if(vm.isFacilitator) return messenger.error('Only Guests can answer these questions');
