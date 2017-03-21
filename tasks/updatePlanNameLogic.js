@@ -14,16 +14,43 @@ module.exports = {
 
 function update() {
   return new Bluebird((resolve, reject) => {
-    models.Subscription.findAll(where()).then((subscriptions) => {
-      const updateables = subscriptions.filter((sub) => !sub.planId.match(regex));
-      const promises = updateables.map((sub) => sub.update({ planId: `${sub.planId}_${TO_CURRENCY}` }));
-      return Promise.all(promises);
-    }).then(() => {
-      resolve();
+    models.sequelize.transaction().then((transaction) => {
+      let key = 'chargebeePlanId';
+      models.SubscriptionPlan.findAll(where(key)).then((plans) => {
+        const promises = mapPromises(plans, key, planParams, transaction);
+        return Promise.all(promises);
+      }).then(() => {
+        return models.Subscription.findAll(where(key = 'planId'));
+      }).then((subs) => {
+        const promises = mapPromises(subs, key, subParams, transaction);
+        return Promise.all(promises);
+      }).then(() => {
+        transaction.commit();
+      }).then(() => {
+        resolve();
+      }).catch((error) => {
+        transaction.rollback().then(() => reject(error));
+      });
     }).catch(reject);
   });
 }
 
-function where() {
-  return { where: { planId: { $notIn: ['free_trial', 'free_account'] } } };
+function updateables(array, key) {
+  return array.filter((item) => !item[key].match(regex));
+}
+
+function mapPromises(array, key, paramFunc, transaction) {
+  return updateables(array, key).map((item) => item.update(paramFunc(item), { transaction }));
+}
+
+function planParams(plan) {
+  return { chargebeePlanId: `${plan.chargebeePlanId}_${TO_CURRENCY}`, preferenceName: plan.chargebeePlanId };
+}
+
+function subParams(sub) {
+  return { planId: `${sub.planId}_${TO_CURRENCY}` };
+}
+
+function where(key) {
+  return { where: { [key]: { $notIn: ['free_trial', 'free_account'] } } };
 }
