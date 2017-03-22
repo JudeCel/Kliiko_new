@@ -23,8 +23,8 @@ describe('SERVICE - Subscription', function() {
         testData = result;
         return subscriptionFixture.createPlans();
       }).then(function(results) {
-        testData.subscriptionPlan = _.find(results, ['priority', 1]);
-        testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority + 1]);
+        testData.subscriptionPlan = _.find(results, ['priority', 2]);
+        testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
         done();
       }).catch(function(error) {
         done(error);
@@ -393,7 +393,6 @@ describe('SERVICE - Subscription', function() {
                 let providers = {
                   creditCard: validCreditCardProvider(),
                   updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId }),
-                  viaCheckout: null
                  }
 
                 subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId}, providers).then(function(subscription) {
