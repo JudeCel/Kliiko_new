@@ -155,7 +155,9 @@
 
     function setSelectedPlan(array) {
       array.forEach(function(item) {
-        if(item.plan.preference === vm.shouldShowPlan) vm.selectedPlan = item;
+        if(item.plan.preference === vm.shouldShowPlan) {
+          vm.selectedPlan = item;
+        }
       });
     }
 
