@@ -25,6 +25,7 @@ var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
 var exec = require('child_process').exec;
+var ipCurrency = require('../../lib/ipCurrency');
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 
@@ -380,7 +381,17 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
   prepareUrlParams(userParams, req.body);
-  createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+  if(userParams.currency) {
+    createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+  }
+  else {
+    ipCurrency.get({ ip: "8.8.8.8" || req.ip }).then((data) => {
+      userParams.currency = data.client;
+      createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+    }, () => {
+      createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+    });
+  }
 });
 
 router.post('/login', function(req, res, next) {
