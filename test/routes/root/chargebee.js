@@ -39,7 +39,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free_trial', current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: 'free_trial_AUD', current_term_end: new Date() },
             customer: { id: params.id }
           });
         }

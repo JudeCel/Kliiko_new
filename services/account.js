@@ -136,7 +136,8 @@ function create(object, callback) {
   Account.create({
     name: object.params.accountName,
     selectedPlanOnRegistration: object.params.selectedPlanOnRegistration,
-    admin: object.params.role == "admin"
+    admin: object.params.role == "admin",
+    currency: getCorrectCurrency(object.params.currency)
   }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, type: 'focus', name: 'Default Focus Scheme', colours: {} }, object.transaction).then(function() {
@@ -165,6 +166,11 @@ function create(object, callback) {
     _.merge(object.errors, filters.errors(error));
     callback(null, object);
   });
+}
+
+function getCorrectCurrency(currency) {
+  const valid = Constants.supportedCurrencies.includes(currency);
+  return valid ? currency : undefined;
 }
 
 function updateInstance(account, params, callback) {

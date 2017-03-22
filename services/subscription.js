@@ -110,16 +110,12 @@ function getAllPlans(accountId, ip) {
     if (error) {
       deferred.reject(error);
     } else {
-      // TODO: TEMP CURRENCY FIX
-      let plans = result.list.filter((item) => item.plan.currency_code === 'AUD');
-
       if (accountId) {
-        let currentPlan, currencyData;
-        ipCurrency.get({ ip }).then((data) => {
-          currencyData = data;
-          return findAndProcessSubscription(accountId);
-        }).then((currentSub) => {
+        let currentPlan, currencyData, plans;
+        findAndProcessSubscription(accountId).then((currentSub) => {
+          currencyData = { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+          plans = result.list.filter((item) => item.plan.currency_code === currencyData.client);
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -128,8 +124,23 @@ function getAllPlans(accountId, ip) {
         }).catch((error) => {
           deferred.reject(filters.errors(error));
         });
+
+        // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
+        // ipCurrency.get({ ip }).then((data) => {
+        //   currencyData = data;
+        //   return findAndProcessSubscription(accountId);
+        // }).then((currentSub) => {
+        //   currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+        //   return addPlanEstimateChargeAndConstants(plans, accountId);
+        // }).then(function(planWithConstsAndEstimates) {
+        //   const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+        //   plans = mapPlans(planWithConstsAndEstimates);
+        //   deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
+        // }).catch((error) => {
+        //   deferred.reject(filters.errors(error));
+        // });
       } else {
-        deferred.resolve(plans);
+        deferred.resolve(result.list);
       }
     }
   });
@@ -138,8 +149,9 @@ function getAllPlans(accountId, ip) {
 }
 
 function getFreeAccountRemoveTrial(plans) {
-  const free = _.remove(plans, (item) => ['free_trial', 'free_account'].includes(item.plan.id)); // remove free plans
-  return free.find((item) => item.plan.id === 'free_account');
+  const remove = ['free_trial', 'free_account'];
+  const free = _.remove(plans, (item) => remove.includes(PLAN_CONSTANTS.preferenceName(item.plan.id)));
+  return free.find((item) => item.plan.id.includes('free_account'));
 }
 
 function mapPlans(plans) {
@@ -191,11 +203,11 @@ function addPlanEstimateChargeAndConstants(plans, accountId) {
 
 // TODO  re-write to one function
 function notNeedEstimatePrice(preferenceName, accountSubscription) {
-  return preferenceName == accountSubscription.SubscriptionPlan.preferenceName && preferenceName != "free_trial"
+  return preferenceName == accountSubscription.SubscriptionPlan.preferenceName && !preferenceName.includes("free_trial")
 }
 
 function needEstimatePrice(preferenceName, accountSubscription) {
-  return preferenceName != accountSubscription.SubscriptionPlan.preferenceName && preferenceName != "free_trial"
+  return preferenceName != accountSubscription.SubscriptionPlan.preferenceName && !preferenceName.includes("free_trial")
 }
 
 // TODO this is realy plan ?
@@ -224,7 +236,7 @@ function getEstimateCharge(plan, accountSubscription) {
 function processFreeTrialPlanInformation(accountId, subscription) {
   return new Bluebird(function (resolve, reject) {
     let currentPlan = subscription.SubscriptionPlan;
-    if (currentPlan.preferenceName == 'free_trial') {
+    if (currentPlan.preferenceName.includes('free_trial')) {
       getChargebeeSubscription(subscription.subscriptionId).then(function(chargebeeSub) {
           let ends = moment.unix(chargebeeSub.current_term_end);
           currentPlan.dataValues.daysLeft = ends.diff(new Date(), 'days');
@@ -272,7 +284,7 @@ function findSubscription(accountId) {
 function findSubscriptionByChargebeeId(subscriptionId) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { subscriptionId: subscriptionId }, include: [SubscriptionPlan, SubscriptionPreference] }).then(function(subscription) {
+  Subscription.find({ where: { subscriptionId: subscriptionId }, include: [SubscriptionPlan, SubscriptionPreference, Account] }).then(function(subscription) {
     if(subscription) {
       deferred.resolve(subscription);
     }
@@ -294,7 +306,7 @@ function createSubscription(accountId, userId, provider, plan) {
     if (subscription) {
       deferred.reject(MessagesUtil.subscription.alreadyExists);
     } else {
-      return AccountUser.find({ where: { AccountId: accountId, UserId: userId } });
+      return AccountUser.find({ where: { AccountId: accountId, UserId: userId }, include: [models.Account] });
     }
   }).then(function(accountUser) {
     if (accountUser) {
@@ -359,8 +371,9 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
     }
   }).then(function(account) {
     if (!account) { return deferred.reject(MessagesUtil.subscription.notFound.account)}
-    let plan = account.selectedPlanOnRegistration && (account.selectedPlanOnRegistration == "free_trial" || account.selectedPlanOnRegistration == "free_account") ?
-      account.selectedPlanOnRegistration : "free_trial";
+    const selected = account.selectedPlanOnRegistration;
+    let plan = ['free_trial', 'free_account'].includes(selected) ? selected : 'free_trial';
+    plan = buildCurrencyPlan(plan, account.currency);
     createSubscription(accountId, userId, null, plan).then(function(response) {
       if(account.selectedPlanOnRegistration && !plan) {
         updateSubscription({
@@ -384,6 +397,10 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
   });
 
   return deferred.promise;
+}
+
+function buildCurrencyPlan(plan, currency) {
+  return `${plan}_${currency}`;
 }
 
 function createPortalSession(accountId, callbackUrl, provider) {
@@ -533,7 +550,8 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
   findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
     disableSubDependencies(subscription.accountId).then(function() {
-      updateSubscription({accountId: subscription.accountId, newPlanId: "free_account", skipCardCheck: true}, provider).then(function() {
+      const plan = buildCurrencyPlan('free_account', subscription.Account.currency);
+      updateSubscription({accountId: subscription.accountId, newPlanId: plan, skipCardCheck: true}, provider).then(function() {
         deferred.resolve();
       }, function(error) {
         deferred.reject(error);
@@ -691,7 +709,7 @@ function getSubscriptionEndDate(subscription) {
 
 function chargebeeSubParams(accountUser, plan) {
   return {
-    plan_id: plan || 'free_trial',
+    plan_id: plan || buildCurrencyPlan('free_trial', accountUser.Account.currency),
     customer: {
       email: accountUser.email,
       first_name: accountUser.firstName,
