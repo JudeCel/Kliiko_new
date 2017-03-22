@@ -94,6 +94,7 @@
     init();
     vm.setup = function() {
       if ($stateParams.step && $stateParams.plan) {
+        vm.shouldShowPlan = $stateParams.plan;
         vm.currentStep = parseInt($stateParams.step);
       }
     };
@@ -133,18 +134,29 @@
         }else {
           vm.currencyData = result.currencyData;
           vm.currentCurrency = vm.currencyData.client;
-          vm.currencyList = Object.keys(vm.currencyData.rates);
-          vm.currencyList.unshift(vm.currencyData.base);
+          // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
+          // vm.currencyList = Object.keys(vm.currencyData.rates);
+          // vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
           vm.free_account = result.free_account;
           vm.plans = result.plans;
           vm.additionalParams = result.additionalParams;
           changePlanList();
 
+          if(vm.shouldShowPlan) {
+            setSelectedPlan(vm.plans[vm.currentCurrency].year);
+            setSelectedPlan(vm.plans[vm.currentCurrency].month);
+          }
           vm.currentPlan = result.currentPlan;
           vm.features = result.features;
         }
       })
+    }
+
+    function setSelectedPlan(array) {
+      array.forEach(function(item) {
+        if(item.plan.preference === vm.shouldShowPlan) vm.selectedPlan = item;
+      });
     }
 
     function changePlanList() {
@@ -184,17 +196,6 @@
 
     function wantThisPlan(selectedSubPlan) {
       vm.selectedPlan = selectedSubPlan;
-
-      // vm.subPlans.map(function(subPlan) {
-      //   if(subPlan.plan.id == vm.selectedPlan.plan.id) {
-      //     vm.monthlyPlan = subPlan;
-      //   }
-      //
-      //   if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
-      //     vm.yearlyPlan = subPlan;
-      //   }
-      // });
-
       $(".planHint").hide();
       nextStep();
     }

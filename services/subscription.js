@@ -110,27 +110,37 @@ function getAllPlans(accountId, ip) {
     if (error) {
       deferred.reject(error);
     } else {
-      // TODO: TEMP CURRENCY FIX
-      // let plans = result.list.filter((item) => item.plan.currency_code === 'AUD');
-      let plans = result.list;
-
       if (accountId) {
-        let currentPlan, currencyData;
-        ipCurrency.get({ ip }).then((data) => {
-          currencyData = data;
-          return findAndProcessSubscription(accountId);
-        }).then((currentSub) => {
+        let currentPlan, currencyData, plans;
+        findAndProcessSubscription(accountId).then((currentSub) => {
+          currencyData = { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+          plans = result.list.filter((item) => item.plan.currency_code === currencyData.client);
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
-          getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+          const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
           plans = mapPlans(planWithConstsAndEstimates);
-          deferred.resolve({ currentPlan, plans, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
+          deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
         }).catch((error) => {
           deferred.reject(filters.errors(error));
         });
+
+        // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
+        // ipCurrency.get({ ip }).then((data) => {
+        //   currencyData = data;
+        //   return findAndProcessSubscription(accountId);
+        // }).then((currentSub) => {
+        //   currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
+        //   return addPlanEstimateChargeAndConstants(plans, accountId);
+        // }).then(function(planWithConstsAndEstimates) {
+        //   const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+        //   plans = mapPlans(planWithConstsAndEstimates);
+        //   deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
+        // }).catch((error) => {
+        //   deferred.reject(filters.errors(error));
+        // });
       } else {
-        deferred.resolve(plans);
+        deferred.resolve(result.list);
       }
     }
   });
@@ -139,7 +149,9 @@ function getAllPlans(accountId, ip) {
 }
 
 function getFreeAccountRemoveTrial(plans) {
-  const free = _.remove(plans, (item) => item.plan.id.includes('free_trial')); // remove free plans
+  const remove = ['free_trial', 'free_account'];
+  const free = _.remove(plans, (item) => remove.includes(PLAN_CONSTANTS.preferenceName(item.plan.id)));
+  return free.find((item) => item.plan.id.includes('free_account'));
 }
 
 function mapPlans(plans) {
