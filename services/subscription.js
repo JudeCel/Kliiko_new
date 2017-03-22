@@ -509,7 +509,7 @@ function updateSubscriptionData(passThruContent){
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true, endDate: passThruContent.endDate }).then(function(updatedSub) {
 
-      let params = _.cloneDeep(PLAN_CONSTANTS[subscription.SubscriptionPlan.preferenceName]);
+      let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
