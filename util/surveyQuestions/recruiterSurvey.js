@@ -212,7 +212,8 @@ module.exports = {
       input: true,
       required: true,
       minAnswers: 2,
-      maxAnswers: 2
+      maxAnswers: 2,
+      type: 'radio'
     },
     {
       order: 7,
@@ -224,7 +225,8 @@ module.exports = {
       contact: true,
       minAnswers: 0,
       maxAnswers: 0,
-      handleTag: 'InterestYesTag'
+      handleTag: 'InterestYesTag',
+      type: 'input'
     }
   ],
   tableOfContents: [

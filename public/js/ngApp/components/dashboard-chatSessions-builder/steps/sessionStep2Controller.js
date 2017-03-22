@@ -427,6 +427,8 @@
       if (inviteAgainTopicAdded()) {
         vm.surveyEditors[0].survey.resourceId = vm.session.sessionData.resourceId;
         vm.surveyEditors[1].survey.resourceId = vm.session.sessionData.resourceId;
+        vm.surveyEditors[0].survey.name = vm.session.steps.step1.name;
+        vm.surveyEditors[1].survey.name = vm.session.steps.step1.name;
 
         vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function() {
           vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function() {
