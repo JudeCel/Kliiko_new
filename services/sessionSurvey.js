@@ -4,6 +4,7 @@ var Bluebird = require('bluebird');
 var _ = require('lodash');
 var surveyService = require('./survey');
 var async = require('async');
+var surveyConstants = require('../util/surveyConstants');
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
@@ -23,7 +24,7 @@ function addSurveyToSession(sessionId, surveyId) {
     let data = {
       sessionId:  sessionId,
       surveyId:   surveyId,
-      active:     true
+      active:     false
     }
     isSurveyAttached(sessionId, surveyId).then(function() {
       resolve();
@@ -189,6 +190,40 @@ function assignContactListToSessionSurveys(clId, sessionId) {
   });
 }
 
+function prepareSessionQuestions(surveyData, sessionId, accountId, sType) {
+  return new Bluebird((resolve, reject) => {
+    surveyData.name = 'name' + sessionId;
+    surveyData.thanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
+    surveyData.description = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!"
+    surveyData.surveyType = sType;
+
+    surveyData.SurveyQuestions = surveyData.defaultQuestions.map((question) => {
+      return !question.contact;
+    });
+
+    surveyService.createSurveyWithQuestions(surveyData, {id: accountId}).then((response) => {
+      return addSurveyToSession(sessionId, response.data.id);
+    }).then(() => {
+      resolve();
+    }).catch((e) => {
+      reject(e);
+    })
+  });
+}
+
+function createDefaultSessionSurveys(sessionId, accountId) {
+  return new Bluebird((resolve, reject) => {
+    let sessionContactList = surveyConstants.getSurveyConstants(constants.surveyTypes.sessionContactList);
+    let sessionPrizeDraw = surveyConstants.getSurveyConstants(constants.surveyTypes.sessionPrizeDraw);
+
+    prepareSessionQuestions(sessionContactList, sessionId, accountId, constants.surveyTypes.sessionContactList).then(() => {
+      return prepareSessionQuestions(sessionPrizeDraw, sessionId, accountId, constants.surveyTypes.sessionPrizeDraw);
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+}
+
 module.exports = {
   addSurveyToSession: addSurveyToSession,
   sessionSurveys: sessionSurveys,
@@ -196,5 +231,6 @@ module.exports = {
   removeSurveys: removeSurveys,
   copySurveys: copySurveys,
   getSurveyStatsForSession: getSurveyStatsForSession,
-  assignContactListToSessionSurveys: assignContactListToSessionSurveys
+  assignContactListToSessionSurveys: assignContactListToSessionSurveys,
+  createDefaultSessionSurveys: createDefaultSessionSurveys
 }
