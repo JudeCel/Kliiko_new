@@ -828,7 +828,6 @@ function validateSessionCount(accountId, newPlan) {
       if(newPlan.sessionCount !== -1 && newPlan.sessionCount < c) {
         errors.session = MessagesUtil.subscription.validation.session;
       }
-
       cb(null, errors);
     }, function(error) {
       cb(error);
@@ -846,10 +845,9 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      if(newPlan.surveyCount !== -1 && newPlan.sessionCount < c) {
+      if(newPlan.surveyCount !== -1 && newPlan.surveyCount < c) {
         errors.survey = MessagesUtil.subscription.validation.survey;
       }
-
       cb(null, errors);
     }, function(error) {
       cb(error);
@@ -870,7 +868,6 @@ function validateContactListCount(accountId, newPlan) {
       if(newPlan.contactListCount !== -1 && newPlan.contactListCount < c) {
         errors.contactList = MessagesUtil.subscription.validation.contactList;
       }
-
       cb(null, errors);
     }, function(error) {
       cb(error);
