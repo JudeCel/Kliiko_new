@@ -139,6 +139,7 @@ function prepareUrlParams(parameters, query) {
       parameters.showOptionalFields = false;
     }
 
+    parameters.currency = query.currency;
     if (_.hasIn(query, 'package')) {
       parameters.page = "paidPlanRegistration";
       parameters.showOptionalFields = false;
@@ -165,7 +166,7 @@ router.get('/registration', function (req, res, next) {
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
 
   prepareUrlParams(params, req.query);
-
+  params.currency = params.currency || "";
   res.render('registration', params);
 });
 

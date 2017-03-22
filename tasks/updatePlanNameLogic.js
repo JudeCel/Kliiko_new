@@ -16,11 +16,11 @@ function update() {
   return new Bluebird((resolve, reject) => {
     models.sequelize.transaction().then((transaction) => {
       let key = 'chargebeePlanId';
-      models.SubscriptionPlan.findAll(where(key)).then((plans) => {
+      models.SubscriptionPlan.findAll().then((plans) => {
         const promises = mapPromises(plans, key, planParams, transaction);
         return Promise.all(promises);
       }).then(() => {
-        return models.Subscription.findAll(where(key = 'planId'));
+        return models.Subscription.findAll();
       }).then((subs) => {
         const promises = mapPromises(subs, key, subParams, transaction);
         return Promise.all(promises);
@@ -49,8 +49,4 @@ function planParams(plan) {
 
 function subParams(sub) {
   return { planId: `${sub.planId}_${TO_CURRENCY}` };
-}
-
-function where(key) {
-  return { where: { [key]: { $notIn: ['free_trial', 'free_account'] } } };
 }
