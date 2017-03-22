@@ -18,7 +18,7 @@
 <div class="col-md-12">
   <div class="row">
     <div class='col-md-12 fixed-bottom-margin'>
-      <div class='dashboard-container' ng-init='clc.initCanExportContactListData()'>        
+      <div class='dashboard-container' ng-init='clc.initCanExportContactListData()'>
         <div id="contact-lists-left-column" class="col-xs-12 col-md-3 text-left">
           <span ng-click="clc.toggleSatus()" ng-if="clc.showListStatusButton()" class='btn btn-standart btn-green btn-large activate-deactivate-list'>{{clc.listStatusMessage()}}</span>
 
@@ -49,7 +49,7 @@
 
           <div id="under-list-of-contacts-btns">
             <div class="btn btn-standart btn-green btn-large" ng-click="clc.addNewList()">
-              <span class="pull-left" title="Add New Contact List">Add New Contact List</span>
+              <span id='add-new-contact-list-btn' class="pull-left" title="Add New Contact List">Add New Contact List</span>
               <img id="btn-add-new-contact-list" src="/icons/add_new_list_green.png" class="pull-right">
             </div>
             <div class="btn btn-standart btn-blue btn-large" ui-sref='account-hub.resources.survey'>
@@ -69,10 +69,10 @@
               <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
               Delete
             </span>
-            
+
             <span class='text-center pull-right'>
               <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable" class="btn-container">
-                <span class="btn-standart btn-red btn-medium" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Delete this List</span>
+                <span id='delete-contact-list-btn' class="btn-standart btn-red btn-medium" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Delete this List</span>
               </span>
 
               <span ng-if="clc.canExport">
@@ -80,10 +80,10 @@
               </span>
 
               <span ng-if="clc.lists.activeList.editable">
-                <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+                <div id='edit-list-fields-btn' class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
               </span>
 
-              <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive btn-large">
+              <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="add-new-contact-btn custom-select-directive btn-large">
                 <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
                 <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
               </div>
