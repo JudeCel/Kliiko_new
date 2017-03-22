@@ -131,6 +131,7 @@ function findSurvey(params, skipValidations) {
             });
           }).then((member) => {
             newParams.isFacilitator = member && member.role === 'facilitator';
+            newParams.data.dataValues.username = member.username;
             deferred.resolve(newParams);
           });
         }
