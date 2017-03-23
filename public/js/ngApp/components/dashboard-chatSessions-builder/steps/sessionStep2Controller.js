@@ -406,7 +406,11 @@
     }
 
     function getTopicStockClass(topic) {
-      return 'topic-list-item topic-' + (topic.stock || topic.default ? 'stock' : 'not-stock');
+      var wrap = topic.name === "It's A Wrap";
+      var className = 'topic-list-item topic-'
+      var stockClass = (topic.stock || topic.default ? 'stock' : 'not-stock')
+      var wrapClass = wrap ? ' is-wrap-topic' : '';
+      return className + stockClass + wrapClass;
     }
 
     vm.addEditorController = function(sc) {

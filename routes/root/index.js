@@ -385,6 +385,9 @@ router.post('/registration', function (req, res, next) {
     createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
   }
   else {
+    console.error("---------------------------");
+    console.error(req);
+    console.error("---------------------------");
     ipCurrency.get({ ip: req.ip }).then((data) => {
       userParams.currency = data.client;
       createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
