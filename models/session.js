@@ -48,7 +48,6 @@ module.exports = (Sequelize, DataTypes) => {
         Session.hasMany(models.SessionTopics, { foreignKey: 'sessionId' });
         Session.hasMany(models.MiniSurvey, { foreignKey: 'sessionId' });
         Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
-        Session.hasMany(models.MailTemplate, { foreignKey: 'sessionId' });
         Session.hasMany(models.Invite, { foreignKey: 'sessionId' });
         Session.hasMany(models.DirectMessage, { foreignKey: 'sessionId' });
         Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
@@ -56,6 +55,7 @@ module.exports = (Sequelize, DataTypes) => {
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId' });
         Session.belongsTo(models.SessionType, { foreignKey: 'type' });
         Session.belongsToMany(models.Survey, { through: models.SessionSurvey, foreignKey: "sessionId" });
+        Session.belongsToMany(models.MailTemplate, { through: models.SessionMailTemplate, foreignKey: "sessionId" });
       }
     }
   });

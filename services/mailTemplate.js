@@ -3,6 +3,7 @@
 var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var MailTemplate  = require('./../models').MailTemplate;
+var SessionMailTemplate  = require('./../models').SessionMailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var Session  = require('./../models').Session;
 var SessionMember  = require('./../models').SessionMember;
@@ -75,82 +76,82 @@ function createBaseMailTemplate(params, callback) {
   });
 }
 
-function create(params, callback) {
-  let transactionPool = models.sequelize.transactionPool;
-  let tiket = transactionPool.getTiket();
-  transactionPool.once(tiket, () => {
-    models.sequelize.transaction().then(function(transaction) {
-      MailTemplate.create(params, { transaction: transaction }).then(function(result) {
-        setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
-          transaction.commit().then(function() {
-            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-            callback(null, result);
-          });
-        }, function(error) {
-          transaction.rollback().then(function() {
-            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-            callback(filters.errors(error));
-          });
-        });
-      }).catch(function(error) {
-        transaction.rollback().then(function() {
-          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-          if (error.name == 'SequelizeUniqueConstraintError') {
-            callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
-          } else {
-            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-            callback(filters.errors(error));
-          }
-          ;
-        });
-      });
-    });
-  })
-  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
-    callback("Server Timeoute");
+function createSessionMailTemplateRelation(sessionId, mailTemplateId, templateToReturn, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (sessionId) {
+      SessionMailTemplate.create({ sessionId, mailTemplateId }, {transaction}).then(() => {
+        resolve(templateToReturn);
+      }, (error) => {
+        reject(error);
+      })
+    } else {
+      resolve(templateToReturn);
+    }
   });
-
-  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
-function update(id, parameters, sessionId, callback){
-  parameters.sessionId = sessionId;
-
-  let baseTemplateQuery = {id: parameters['MailTemplateBase.id']};
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
-
-  MailTemplate.findAll({
-    where: {
-      sessionId: sessionId,
-      isCopy: true,
-      required: true
-    },
-    include: include
-  }).then(function(templates) {
-    let ids = [];
-    if (templates && templates.length > 0) {
-      ids = _.map(templates, 'id');
-    }
-
-    removeTemplatesFromSession(ids, function() {
+function create(params, sessionId, callback) {
+  removeTemplatesFromSession(sessionId, params.MailTemplateBaseId, function() {
+    let transactionPool = models.sequelize.transactionPool;
+    let tiket = transactionPool.getTiket();
+    transactionPool.once(tiket, () => {
       models.sequelize.transaction().then(function(transaction) {
-        MailTemplate.update(parameters, {
-            where: {id: id},
-            transaction: transaction
+        MailTemplate.create(params, { transaction }).then(function(res) {
+          return createSessionMailTemplateRelation(sessionId, res.id, res, transaction);
         }).then(function(result) {
-          setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
+          setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
             transaction.commit().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
               callback(null, result);
             });
           }, function(error) {
             transaction.rollback().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
               callback(filters.errors(error));
             });
           });
         }).catch(function(error) {
           transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            if (error.name == 'SequelizeUniqueConstraintError') {
+              callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+            } else {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(filters.errors(error));
+            }
+          });
+        });
+      });
+    })
+    transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+      callback("Server Timeoute");
+    });
+
+    transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+  });
+}
+
+function update(id, parameters, sessionId, callback) {
+  removeTemplatesFromSession(sessionId, parameters['MailTemplateBase.id'], function() {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.update(parameters, {
+        where: {id: id},
+        transaction
+      }).then(function(res) {
+        return createSessionMailTemplateRelation(sessionId, id, res, transaction);
+      }).then(function(result) {
+        setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
             callback(filters.errors(error));
           });
+        });
+      }).catch(function(error) {
+        transaction.rollback().then(function() {
+          callback(filters.errors(error));
         });
       });
     });
@@ -222,30 +223,24 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, tr
 }
 
 function getLatestMailTemplate(req, callback) {
-  let accountQuery = {};
+  let where = { '$or': [{ id: req.latestId }, { MailTemplateBaseId: req.id }] };
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name'] }];
+
   if (req.accountId) {
-    accountQuery['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+    where['$or'] = [{ AccountId: req.accountId }, { AccountId: null }];
+  } else if (req.sessionId) {
+    include.push({
+      model: SessionMailTemplate,
+      where: { sessionId: req.sessionId },
+      required: true
+    });
   } else {
-    accountQuery.AccountId = null;
-  }
-  if (req.sessionId) {
-    accountQuery.sessionId = req.sessionId;
-    delete accountQuery.AccountId;
-  }
-
-  let templateQuery = {
-    '$or': [{id: req.latestId}, {MailTemplateBaseId: req.id}]
-  };
-
-  if (req.sessionId) {
-    templateQuery['$and'] = {sessionId: req.sessionId};
+    where.AccountId = null;
   }
 
   MailTemplate.findAll({
-    include: [{
-      model: MailTemplateOriginal, attributes: ['id', 'name']
-    }],
-    where: [accountQuery, templateQuery],
+    include: include,
+    where: where,
     attributes: constants.mailTemplateFields,
     raw: true,
     order: [['updatedAt', 'DESC']],
@@ -346,16 +341,11 @@ function getMailTemplateForReset(req, callback) {
 
 function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getSystemMail, fullData, callback) {
   let baseTemplateQuery = {category:{ $in: ["firstInvitation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
-  let templateQuery = {};
-  if (sessionId) {
-    templateQuery.sessionId = {'$or': [sessionId, null]};
-  }
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, fullData, callback, false, sessionId);
 }
 
 function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback, isAdmin) {
-  let templateQuery = {};
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback, isAdmin);
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, false, callback, isAdmin, null);
 }
 
 function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
@@ -371,13 +361,26 @@ function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
   return baseTemplateQuery;
 }
 
-function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback, isAdmin) {
-  let query = templateQuery || {};
-
+function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, fullData, callback, isAdmin, sessionId) {
+  let query =  {};
   baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
-  if(accountId && !getSystemMail){
+  let include = [{ 
+    model: MailTemplateOriginal, 
+    attributes: ['id', 'name', 'systemMessage', 'category'], 
+    where: baseTemplateQuery 
+  }];
+
+  if (sessionId) {
+    include.push({
+      model: Session,
+      where: { id: { '$or': [sessionId, null] } },
+      attributes: ['id', 'name'], 
+      required: false
+    });
+  }
+
+  if (accountId && !getSystemMail) {
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
@@ -394,40 +397,27 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   } else {
     attributes = constants.mailTemplateFieldsForList;
   }
-
   MailTemplate.findAll({
-      include: include,
-      where: query,
-      attributes: attributes,
-      raw: true,
-      order: "id ASC"
+    include: include,
+    where: query,
+    attributes: attributes,
+    raw: true,
+    order: "id ASC"
   }).then(function(result) {
-    getTemplatesSessionNames(result).then(function(templates) {
-      sortMailTemplates(result);
-      callback(null, result);
-    }, function(error) {
-      callback(error);
-    });
+    initTemplatesSessionNames(result);
+    sortMailTemplates(result);
+    callback(null, result);
   }).catch(function(error) {
-    callback(error);
+    callback(filters.errors(error));
   });
 };
 
-function getTemplatesSessionNames(templates) {
-  return new Bluebird((resolve, reject) => {
-    Bluebird.each(templates, (template) => {
-      if (template.sessionId) {
-        return Session.find({ where: { id: template.sessionId } }).then((session) => {
-          template.sessionName = session.name;
-        }, (error) => {
-          reject(error)
-        });
-      }
-    }).then(() => {
-      resolve(templates);
-    }, (error) => {
-      reject(error);
-    });
+function initTemplatesSessionNames(templates) {
+  _.each(templates, (template) => {
+    if (template['Sessions.name']) {
+      template.sessionName = template['Sessions.name'];
+      template.sessionId = template['Sessions.id'];
+    }
   });
 }
 
@@ -456,30 +446,24 @@ function sortMailTemplates(result) {
   });
 }
 
-function copyTemplatesFromSession(accountId, sessionIdFrom, sessionIdTo, callback) {
-  getAllSessionMailTemplates(accountId, false, sessionIdFrom, false, true, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
+function copyTemplatesFromSession(sessionIdFrom, sessionIdTo, callback) {
+  SessionMailTemplate.findAll({ where: { sessionId: sessionIdFrom } }).then(function(result) {
     var dataToCopy = [];
     _.map(result, function(item, index) {
-      if (item.AccountId) {
-        item.sessionId = sessionIdTo;
-        delete item.id;
-
-        dataToCopy.push(item);
-      }
+      dataToCopy.push({sessionId: sessionIdTo, mailTemplateId: item.mailTemplateId});
     });
 
     if (dataToCopy.length) {
-      MailTemplate.bulkCreate(dataToCopy).done(function(res) {
-         callback(null, res);
+      SessionMailTemplate.bulkCreate(dataToCopy).done(function(res) {
+        callback(null, res);
       }, function(err) {
-         callback(err);
-      })
+        callback(err);
+      });
     } else {
       callback(null);
     }
+  }, function(error) {
+    callback(error);
   });
 }
 
@@ -502,7 +486,7 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
+function setMailTemplateDefault(id, templateCopyId, isAdmin, callback) {
   if (!isAdmin) {
     return callback(null, {id: templateCopyId});
   }
@@ -510,12 +494,10 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
     mailTemplateActive: templateCopyId
   }
   MailTemplateOriginal.update(params, {
-      where: {id: id}
-    })
-  .then(function (result) {
+    where: {id: id}
+  }).then(function (result) {
     return callback(null, {id: templateCopyId});
-  })
-  .catch(function (err) {
+  }).catch(function (err) {
     callback(err);
   });
 }
@@ -531,14 +513,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (shouldOverwrite && template["isCopy"]) {
       result = false;
-    }
-  }
-
-  // in case if template was modified in session builder
-  if (template.properties && template.properties.sessionId) {
-    if (template.sessionId != template.properties.sessionId) {
-      result = true;
-      template.sessionId = template.properties.sessionId;
     }
   }
 
@@ -643,28 +617,6 @@ function validateTemplate(template) {
   }
 }
 
-function getMailTemplateForSession(req, callback) {
-  if (!req.template.properties || !req.template.properties.sessionId) {
-    return callback();
-  }
-
-  let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
-
-  MailTemplate.findAll({
-    where: {
-      sessionId: req.template.properties.sessionId,
-      isCopy: true,
-      required: true
-    },
-    include: include})
-    .then(function(templates) {
-      callback(null, templates)
-    }).catch(function(error) {
-      callback(error);
-    });
-}
-
 function buildTemplate(inputTemplate) {
   let id = null;
   let targetTemplate = {
@@ -680,7 +632,6 @@ function buildTemplate(inputTemplate) {
     'MailTemplateBase.name': inputTemplate['MailTemplateBase.name'],
     'MailTemplateBase.systemMessage': inputTemplate['MailTemplateBase.systemMessage'],
     'MailTemplateBase.category': inputTemplate['MailTemplateBase.category'],
-    sessionId: inputTemplate.sessionId,
     properties: inputTemplate.properties
   };
 
@@ -692,17 +643,22 @@ function buildTemplate(inputTemplate) {
   };
 }
 
-function removeTemplatesFromSession(ids, callback){
-  if (ids && ids.length > 0) {
-    let parameters = {sessionId: null};
-    MailTemplate.update(parameters, {
-      where: { id: {$in: ids} }
-    })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
+function removeTemplatesFromSession(sessionId, mailTemplateBaseId, callback){
+  if (sessionId && mailTemplateBaseId) {
+    MailTemplate.findAll({
+      where: {
+        isCopy: true,
+        MailTemplateBaseId: mailTemplateBaseId
+      }
+    }).then(function(templates) {
+      let ids = _.map(templates, 'id');
+      SessionMailTemplate.destroy({ where: { sessionId: sessionId, mailTemplateId: ids } }).then(function (result) {
+        return callback(null, result);
+      }).catch(function (error) {
+        callback(error);
+      });
+    }).catch(function(error) {
+      callback(error);
     });
   } else {
     callback();
@@ -720,8 +676,8 @@ function validateTemplateSnapshot(shouldCreateTemplateCopy, snapshot, templateOb
       } else {
         callback(null, { validation: validationRes });
       }
-    }).catch(function(error) {
-      callback(error);
+    }, function(error) {
+      callback(filters.errors(error));
     });
   }
 }
@@ -740,43 +696,28 @@ function saveMailTemplate(template, createCopy, accountId, isAdmin, sessionId, c
         } else if (validationResult) {
           callback(null, validationResult);
         } else {
-
-          getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-            let ids = [];
-            if (!createCopy && result && result.length > 0) {
-              ids = _.map(result, 'id');
-            }
-
+          removeTemplatesFromSession(createCopy && sessionId, template['MailTemplateBase.id'], function() {
             let isAdminDefault = isAdmin && template.properties && template.properties.sessionBuilder;
-
-            removeTemplatesFromSession(ids, function() {
-              if (shouldCreateTemplateCopy) {
-                templateObject.template.isCopy = true;
-                templateObject.template.AccountId = accountId;
-                if (createCopy) {
-                  templateObject.template.sessionId = null;
+            if (shouldCreateTemplateCopy) {
+              templateObject.template.isCopy = true;
+              templateObject.template.AccountId = accountId;
+              create(templateObject.template, sessionId, function(error, result) {
+                if (error) {
+                  callback(error);
+                } else {
+                  setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdminDefault, callback);
                 }
-
-                create(templateObject.template, function(error, result) {
-                  if (error) {
-                    callback(error);
-                  } else {
-                    setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdminDefault, callback);
-                  }
-                });
-
-              } else {
-                update(templateObject.id, templateObject.template, sessionId, function(error, result) {
-                  if (error) {
-                    callback(error);
-                  } else {
-                    setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, isAdminDefault, callback);
-                  }
-                });
-              }
-            });//removeTemplatesFromSession
-          });//getMailTemplateForSession
-
+              });
+            } else {
+              update(templateObject.id, templateObject.template, sessionId, function(error, result) {
+                if (error) {
+                  callback(error);
+                } else {
+                  setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, isAdminDefault, callback);
+                }
+              });
+            }
+          });
         }
       });
 
@@ -803,11 +744,11 @@ function resetMailTemplate(templateId, baseTemplateId, isCopy, callback) {
   getMailTemplateForReset({id: templateId, baseId:baseTemplateId}, function(err, result) {
     if (result) {
       if (isCopy) {
-        update(templateId, {name: result.name, subject: result.subject, content: result.content}, function(error, result) {
+        update(templateId, {name: result.name, subject: result.subject, content: result.content}, null, function(error, result) {
           callback(error, result);
         });
       } else {
-        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, null, function(error, result) {
           callback(error, result);
         });
       }

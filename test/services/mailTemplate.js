@@ -38,7 +38,7 @@ describe('Mail Template Service', () => {
     });
     
     it("should create mail template", (done) => {
-      mailTemplateService.create(validAttrs, function (error, result) {
+      mailTemplateService.create(validAttrs, null, function (error, result) {
         assert.equal(error, null);
         mailTemplateService.deleteMailTemplate(result.id, function (error, deleteResult) {
           assert.equal(error, null);
@@ -48,7 +48,7 @@ describe('Mail Template Service', () => {
     });
 
     it("should delete mail template", (done) => {
-      mailTemplateService.create(validAttrs, function (error, result) {
+      mailTemplateService.create(validAttrs, null, function (error, result) {
         mailTemplateService.deleteMailTemplate(result.id, function (error, deleteResult) {
           assert.equal(error, null);
           done();
@@ -97,7 +97,7 @@ describe('Mail Template Service', () => {
       it("should create mail template resource relation", (done) => {
         models.Resource.create(resourceParams()).then(function (resource) {
           validAttrs.content = '<img src="http://test.com/img.jpg" style="max-width:600px;" data-resource-id="' + resource.id + '">';
-          mailTemplateService.create(validAttrs, function (error, result) {
+          mailTemplateService.create(validAttrs, null, function (error, result) {
             assert.equal(error, null);
             models.MailTemplateResource.findAll({ where: { mailTemplateId: result.id } }).then(function (results) {
               assert.equal(results.length, 1);
@@ -121,7 +121,7 @@ describe('Mail Template Service', () => {
           done();
         });
       });
-      mailTemplateService.create(invalidAttrsEmptyField, function (error, user) {
+      mailTemplateService.create(invalidAttrsEmptyField, null, function (error, user) {
         assert.notEqual(error, null);
         done();
       });

@@ -1164,20 +1164,6 @@ function sessionSurveysAvailable(session) {
   return false;
 }
 
-function step3Query(sessionId) {
-  let deferred = q.defer();
-
-  models.MailTemplate.findAll({
-    where: {sessionId: sessionId}
-  }).then(function(emailTemplates) {
-    deferred.resolve(emailTemplates);
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
-}
-
 function step4and5Queries(session, role) {
   return [
     function(cb) {
@@ -1423,17 +1409,23 @@ function sessionMailTemplateStatus(id, accountId) {
 
 function getStepThreeTemplateTypes(params) {
   let deferred = q.defer();
-  let baseTemplateQuery = {category:{ $in: constants.sessionBuilderEmails }};
-  let include = [{ model: models.MailTemplateBase, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
 
   findSession(params.id, params.accountId).then(function(session) {
     models.MailTemplate.findAll({
       where: {
-        sessionId: session.id,
         isCopy: true,
         required: true
       },
-      include: include
+      include: [{
+        model: models.Session,
+        where: { id: session.id },
+        attributes: ['id', 'name'], 
+        required: true
+      }, { 
+        model: models.MailTemplateBase, 
+        attributes: ['id', 'name', 'systemMessage', 'category'], 
+        where: { category: { $in: constants.sessionBuilderEmails } } 
+      }]
     }).then(function(templates) {
       let uniqueCopies = [];
       let errors = {};
