@@ -17,7 +17,11 @@ var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
 var sessionBuilder = require('./../services/sessionBuilder');
+
 var validators = require('./../services/validators');
+var sessionValidators = require('./../services/validators/session');
+// var hasValidSubscription = require('./../services/validators/hasValidSubscription');
+
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
 
@@ -104,17 +108,21 @@ function setOpen(sessionId, open, accountId) {
         required: false,
         attributes: ['id']
       }]
-    }).then(function(session) {      
+    }).then(function(session) {
       if (session) {
         let status = open ? "open" : "closed";
-        session.update({ status: status }).then(function(updatedSession) {
-          let surveyIds = _(session.Surveys).map('dataValues.id').value();
-          Survey.update({ closed: !open }, { where: { id: surveyIds } }).then(function() {
-            sessionValidator.addShowStatus(updatedSession);
-            resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
-          }, function(error) {
-            reject(filters.errors(error));
+        sessionValidators.canOpenSession(sessionId, accountId, status).then(function() {
+          session.update({ status: status }).then(function(updatedSession) {
+            let surveyIds = _(session.Surveys).map('dataValues.id').value();
+            Survey.update({ closed: !open }, { where: { id: surveyIds } }).then(function() {
+              sessionValidator.addShowStatus(updatedSession);
+              resolve({ data: { status: updatedSession.status, showStatus: updatedSession.dataValues.showStatus } });
+            }, function(error) {
+              reject(filters.errors(error));
+            });
           });
+        }, function(error) {
+          reject(error);
         });
       } else {
         reject(MessagesUtil.session.notFound);
