@@ -497,6 +497,61 @@ function updateSubscription(params, providers) {
   return deferred.promise;
 }
 
+function cleanupAfterUpdate(accountId, oldPlan, newPlan) {
+  let deferred = q.defer();
+
+  oldPlan = PLAN_CONSTANTS.preferenceName(oldPlan);
+  newPlan = PLAN_CONSTANTS.preferenceName(newPlan);
+  const array = [
+    updateSessionTopics(accountId, oldPlan, newPlan)
+  ];
+
+  async.waterfall(array, (systemError, errorMessages) => {
+    if(systemError || !_.isEmpty(errorMessages)) {
+      deferred.reject(systemError || errorMessages);
+    }
+    else {
+      deferred.resolve();
+    }
+  });
+
+  return deferred.promise;
+}
+
+function updateSessionTopics(accountId, oldPlan, newPlan) {
+  return function(cb) {
+    const oldCount = PLAN_CONSTANTS[oldPlan].topicCount;
+    const newCount = PLAN_CONSTANTS[newPlan].topicCount;
+
+    if(newCount >= oldCount && oldCount !== -1 || newCount === -1) {
+      cb();
+    }
+    else {
+      models.SessionTopics.findAll({
+        include: [{
+          model: models.Session,
+          where: { accountId }
+        }, {
+          model: models.Topic,
+          where: { stock: false, default: false }
+        }]
+      }).then((result) => {
+        let topics = [];
+        result = _.orderBy(result, ['order', 'topicId'], ['asc', 'asc']);
+        result = _.groupBy(result, 'sessionId');
+        _.forIn(result, (value, key) => {
+          _.remove(value, (item, index) => index < newCount);
+          topics = _.merge(topics, _.map(value, 'id'));
+        });
+        const sessions = Object.keys(result);
+        models.SessionTopics.update({ active: false }, { where: { id: { $in: topics }, sessionId: { $in: sessions } } }).then(() => {
+          cb();
+        }).catch(cb);
+      });
+    }
+  }
+}
+
 function retrievCheckoutAndUpdateSub(hostedPageId) {
   let deferred = q.defer();
 
@@ -524,13 +579,18 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
+    const oldPlan = subscription.planId;
     subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true, endDate: passThruContent.endDate }).then(function(updatedSub) {
 
       let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
-        deferred.resolve({subscription: updatedSub, redirect: false});
+        cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId).then(() => {
+          deferred.resolve({subscription: updatedSub, redirect: false});
+        }, function(error) {
+          deferred.reject(error);
+        });
       }, function(error) {
         deferred.reject(error);
       });
