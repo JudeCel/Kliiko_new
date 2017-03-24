@@ -88,6 +88,8 @@ function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
         }, (error) => {
           reject(error);
         });
+      } else {
+        resolve(accountUser.SessionMembers[0]);
       }
     }, (error) => {
       reject();
