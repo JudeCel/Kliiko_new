@@ -223,24 +223,26 @@ function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, tr
 }
 
 function getLatestMailTemplate(req, callback) {
-  let where = { '$or': [{ id: req.latestId }, { MailTemplateBaseId: req.id }] };
+  let accountQuery = { };
+  let templateQuery = {	'$or': [{ id: req.latestId }, { MailTemplateBaseId: req.id }]	};
   let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name'] }];
 
   if (req.accountId) {
-    where['$or'] = [{ AccountId: req.accountId }, { AccountId: null }];
-  } else if (req.sessionId) {
+   accountQuery['$or'] = [{ AccountId: req.accountId }, { AccountId: null }];
+  } else {
+    accountQuery.AccountId = null;
+  }
+  if (req.sessionId) {
     include.push({
       model: SessionMailTemplate,
       where: { sessionId: req.sessionId },
       required: true
     });
-  } else {
-    where.AccountId = null;
-  }
-
+  } 
+  
   MailTemplate.findAll({
     include: include,
-    where: where,
+    where: [accountQuery, templateQuery],
     attributes: constants.mailTemplateFields,
     raw: true,
     order: [['updatedAt', 'DESC']],
