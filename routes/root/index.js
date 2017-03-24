@@ -286,24 +286,26 @@ function registerUsingSocialData(res, req, returnParams, info) {
   res.locals = usersRepo.prepareParams(req);
   socialProfileMiddleware.assignProfileData(info, res.locals).then(function(resul) {
     if (returnParams.page == 'freeTrialRegistration') {
-      res.render('freeTrialRegistration', getRegistrationPageParams(res.locals));
+      res.render('freeTrialRegistration', getRegistrationPageParams(res.locals, req.query));
     }else if(returnParams.page == 'paidPlanRegistration'){
       res.locals.selectedPlanOnRegistration = returnParams.selectedPlanOnRegistration;
-      res.render("paidPlanRegistration", getRegistrationPageParams(res.locals));
+      res.render("paidPlanRegistration", getRegistrationPageParams(res.locals, req.query));
     }else{
-      res.render("registration", getRegistrationPageParams(res.locals));
+      res.render("registration", getRegistrationPageParams(res.locals, req.query));
     }
   }, function(err) {
     next(err);
   });
 }
 
-function getRegistrationPageParams (appData) {
+function getRegistrationPageParams (appData, query) {
   return {
     appData: appData,
     error: {},
     googleUrl: googleUrl,
-    facebookUrl: facebookUrl
+    facebookUrl: facebookUrl,
+    selectedPlanOnRegistration: query.package,
+    currency: query.currency,
   };
 }
 
