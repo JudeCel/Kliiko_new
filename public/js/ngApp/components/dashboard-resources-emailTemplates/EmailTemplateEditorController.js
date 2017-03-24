@@ -84,6 +84,18 @@
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
           vm.startEditingTemplate(0);
+          var scrollable = $('#mail-template-list');
+          var visibleFunc = debounce(function() {
+            scrollable.children('span').each(function(index, child) {
+              if(isVisible(child)) {
+                $(child).addClass('scroll-visible');
+              }
+              else {
+                $(child).removeClass('scroll-visible');
+              }
+            });
+          }, 15);
+          scrollable.scroll(visibleFunc);
         }
       });
     };
@@ -451,6 +463,35 @@
       }
 
       return item.AccountId;
+    }
+
+    function debounce(func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+
+    function isVisible(el) {
+      var rect = el.getBoundingClientRect(), top = rect.top, height = rect.height,
+        el = el.parentNode;
+      do {
+        rect = el.getBoundingClientRect();
+        if (top <= rect.bottom === false) return false;
+        // Check if the element is out of view due to a container scrolling
+        if (top+1 <= rect.top) return false
+        el = el.parentNode;
+      } while (el != document.body);
+      // Check its within the document viewport
+      return top <= document.documentElement.clientHeight;
     }
 
     function getVideoHTML(url, resourceId) {
