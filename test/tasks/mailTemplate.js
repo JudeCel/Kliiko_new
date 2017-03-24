@@ -92,7 +92,7 @@ describe('Mail Template Task', () => {
 
           models.MailTemplateBase.find({ where: { category: category } }).then(function(baseData) {
             if(baseData) {
-              models.MailTemplate.find({ where: { MailTemplateBaseId: baseData.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(data) {
+              models.MailTemplate.find({ where: { MailTemplateBaseId: baseData.id, isCopy: null, AccountId: null } }).then(function(data) {
                 if(data) {
                   deferred.resolve();
                 } else {
@@ -131,7 +131,7 @@ describe('Mail Template Task', () => {
 
           models.MailTemplateBase.find({ where: { category: templateInfo.type } }).then(function(baseData) {
             if(baseData) {
-              models.MailTemplate.find({ where: { MailTemplateBaseId: baseData.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(data) {
+              models.MailTemplate.find({ where: { MailTemplateBaseId: baseData.id, isCopy: null, AccountId: null } }).then(function(data) {
                 if(data) {
                   done();
                 } else {

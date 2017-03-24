@@ -69,7 +69,7 @@ function processData(item, fileObject, callback) {
           callback(error);
         } else {
           models.MailTemplateBase.update({ content: minifiedData }, { where: { category: item.category } }).then(function(updateDataBase) {
-            models.MailTemplate.update({ content: minifiedData }, { where: { MailTemplateBaseId: item.id, isCopy: null, AccountId: null, sessionId: null } }).then(function(updateData) {
+            models.MailTemplate.update({ content: minifiedData }, { where: { MailTemplateBaseId: item.id, isCopy: null, AccountId: null } }).then(function(updateData) {
               callback(null, "Updated email template for " + item.category);
             }, function(error) {
               callback(error);

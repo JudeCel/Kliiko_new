@@ -378,7 +378,7 @@ function copySession(sessionId, accountId) {
             //  NOTE: right now we need to disable this functionality.
             //  When client will want to copy email templates we will jsut need to add this code back.
             // function(callback) {
-            //   MailTemplateService.copyTemplatesFromSession(accountId, sessionId, session.id, function(error, result) {
+            //   MailTemplateService.copyTemplatesFromSession(sessionId, session.id, function(error, result) {
             //     callback();
             //   });
             // }

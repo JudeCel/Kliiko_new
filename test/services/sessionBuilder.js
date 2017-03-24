@@ -734,21 +734,36 @@ describe('SERVICE - SessionBuilder', function() {
                   where: { category: { $in: constants.sessionBuilderEmails } }
                 }]
               }).then(function(result) {
+                
                 let ids = _.map(result, 'id');
-
-                models.MailTemplate.update({ sessionId: params.id, isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
-                  sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
-                    sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                      assert.equal(session.step, 'manageSessionParticipants');
-                      assert.equal(result.sessionBuilder.steps.step4.isVisited, true);
-                      done();
-                    }, function(error) {
-                      done(error);
+                models.MailTemplate.update({ isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
+                  models.MailTemplate.findAll({ where: { MailTemplateBaseId: { $in: ids } } }).then(function(result) {
+                    var dataToCopy = [];
+                    _.map(result, function(item, index) {
+                      dataToCopy.push({sessionId: params.id, mailTemplateId: item.id});
+                    });
+                    models.SessionMailTemplate.bulkCreate(dataToCopy).done(function(res) {
+                      sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                        sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                          assert.equal(session.step, 'manageSessionParticipants');
+                          assert.equal(result.sessionBuilder.steps.step4.isVisited, true);
+                          done();
+                        }, function(error) {
+                          done(error);
+                        });
+                      }, function(error) {
+                        done(error);
+                      });
+                    }, function(err) {
+                      done(err);
                     });
                   }, function(error) {
                     done(error);
                   });
-                })
+                }, function(error) {
+                  done(error);
+                });
+
               }, function(error) {
                 done(error);
               });
