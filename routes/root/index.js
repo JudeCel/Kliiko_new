@@ -374,7 +374,7 @@ router.post('/paidPlanRegistration', function (req, res, next) {
 
 router.post('/freeTrialRegistration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
-  userParams.selectedPlanOnRegistration = 'free_trial';
+  userParams.selectedPlanOnRegistration = 'free_trial_AUD';
   createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
 });
 
