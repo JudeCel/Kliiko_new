@@ -374,7 +374,7 @@ router.post('/paidPlanRegistration', function (req, res, next) {
 
 router.post('/freeTrialRegistration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
-  userParams.selectedPlanOnRegistration = 'free_trial_AUD';
+  userParams.selectedPlanOnRegistration = 'free_trial';
   createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
 });
 
@@ -385,9 +385,6 @@ router.post('/registration', function (req, res, next) {
     createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
   }
   else {
-    console.error("---------------------------");
-    console.error(req);
-    console.error("---------------------------");
     ipCurrency.get({ ip: req.ip }).then((data) => {
       userParams.currency = data.client;
       createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });

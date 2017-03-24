@@ -118,7 +118,7 @@ function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: freeTrial ? 'free_trial_AUD' : null
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null
   };
 
   if (isAdmin) {

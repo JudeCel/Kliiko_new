@@ -36,7 +36,9 @@ function planSelectPage(req, res, next) {
           }
           else {
             if(req.session.landed) {
-              if (response.selectedPlanOnRegistration && response.selectedPlanOnRegistration != 'free_account') {
+              let freePlans = ["free_account", "free_account"]
+
+              if (response.selectedPlanOnRegistration && !_.includes(freePlans, response.selectedPlanOnRegistration)) {
                 let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
                 res.redirect(redirectUrl);
               } else {
