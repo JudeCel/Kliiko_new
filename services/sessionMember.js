@@ -74,7 +74,7 @@ function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
     AccountUser.find({
       where: {id: id},
       role: { $in: defaultSystemMemberRoles},
-      include: [{model: SessionMember, required: false, where: {id: session.id}}]
+      include: [{model: SessionMember, required: false, where: {sessionId: session.id}}]
     }).then((accountUser) => {
       if (_.isEmpty(accountUser.SessionMembers)) {
         createWithTokenAndColour({
