@@ -61,7 +61,7 @@ module.exports = {
         { name: 'Yes - I am aged 18 or over & give you permission to contact me in future about a discussion group', order: 0, tag: 'InterestYesTag' },
         { name: 'No', order: 1 }
       ],
-      link: { name: 'Privace Policy', url: '/privacy_policy' },
+      link: { name: 'Privacy Policy', url: '/privacy_policy' },
       input: true,
       required: true,
       minAnswers: 2,
