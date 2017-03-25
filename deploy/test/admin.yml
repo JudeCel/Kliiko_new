@@ -121,7 +121,7 @@ spec:
         - name: MONITORING_SERVER_URL
           value: "ws://83.99.159.206:8080/socket/websocket"
         - name: MONITORING_SERVER_TOKEN
-          value: "4b3dba84-73c4-4166-9281-83a76bb02ee6"
+          value: "89f09387-8d50-4080-b0e1-6b1a607bc182"
         - name: MONITORING_SERVER_PROJECT_NAME
           value: "kliiko_test"
         - name: INFUSIONSOFT_APP
