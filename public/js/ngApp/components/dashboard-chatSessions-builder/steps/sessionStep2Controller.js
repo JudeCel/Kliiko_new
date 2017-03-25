@@ -415,11 +415,14 @@
 
     vm.addEditorController = function(sc) {
       vm.surveyEditors.push(sc);
+      if (vm.session.publicUid) {
+        sc.disableEdit();
+      }
     }
 
     vm.saveSurveys = function(autoSave, publish) {
       if (publish) {
-        $confirm({ text: "Once you have Published, you cannot change your Generate Contact List response." }).then(function() {
+        $confirm({ text: "When you Publish you will NOT be able to change the Contact List and Prize Draw Questions." }).then(function() {
           saveSurveysConfirmed(false, publish);
         });
       } else {

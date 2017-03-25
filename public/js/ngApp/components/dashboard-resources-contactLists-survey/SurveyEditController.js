@@ -40,6 +40,7 @@
     vm.checkTag = surveyServices.checkTag;
     vm.sectionQuestions = sectionQuestions;
     vm.questionTemplate = questionTemplate;
+    vm.disableEdit = disableEdit;
 
     vm.displaySaveButton = true;
     vm.displayPublishButton = true;
@@ -221,6 +222,11 @@
       if (vm.surveySettings.onSaved) {
         vm.surveySettings.onSaved(vm.survey.id);
       }
+    }
+
+    function disableEdit() {
+      vm.formDisabled = true;
+      stopAutosave();
     }
 
     function finishCreate(survey, autoSave, publish, skipMessage) {
