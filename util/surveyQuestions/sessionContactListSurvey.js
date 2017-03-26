@@ -99,6 +99,14 @@ module.exports = {
   ],
   tableOfContents: [
     {
+      header: true,
+      headerContent: {
+        name: false,
+        logo: false,
+        textArea: true
+      }
+    },
+    {
       questions: true,
       interval: [0, 3]
     },

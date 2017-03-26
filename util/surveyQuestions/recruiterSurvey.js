@@ -235,7 +235,12 @@ module.exports = {
       tag: "intro"
     },
     {
-      header: true
+      header: true,
+      headerContent: {
+        name: true,
+        logo: true,
+        textArea: true
+      }
     },
     {
       questions: true,

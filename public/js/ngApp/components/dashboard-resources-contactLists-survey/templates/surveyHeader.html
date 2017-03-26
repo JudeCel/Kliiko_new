@@ -2,7 +2,7 @@
   <div class='panel-heading'><strong>Introduction</strong></div>
   <div class='panel-body'>
     <div class='form-horizontal'>
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.name">
         <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
           <div ng-repeat='error in sc.validationErrors'>
             <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
@@ -15,7 +15,7 @@
             ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
         </div>
       </div>
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.logo">
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
         <div class='col-xs-10 col-md-8'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.textArea">
         <div class='col-md-8'>
           <div class='has-error' ng-messages='sc.manageForm.description.$error'>
             <div ng-repeat='error in sc.validationErrors'>
