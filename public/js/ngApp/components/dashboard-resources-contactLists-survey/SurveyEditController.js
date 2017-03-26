@@ -10,7 +10,9 @@
     var vm = this;
     vm.uploadTypes = {};
     vm.autoSave = null;
+    vm.onChangeAutoSave = false;
     vm.stats = {};
+    vm.hasChanges = false;
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
@@ -24,6 +26,8 @@
     vm.initContacts = initContacts;
     vm.initGallery = initGallery;
     vm.initAutoSave = initAutoSave;
+    vm.changed = changed;
+    vm.autoSaveChanged = autoSaveChanged;
 
     // Helpers
     vm.showPreview = showPreview;
@@ -120,6 +124,7 @@
         }
       }).then(function(res) {
         startSurveyEdit(res ? res.data : null);
+        vm.hasChanges = false;
       });
     };
 
@@ -167,10 +172,21 @@
       return array;
     }
 
-    function initAutoSave() {
+    function initAutoSave(onChangeAutoSave) {
       vm.autoSave = $interval(function() {
         saveSurvey(true, false);
       }, 60000, 0, false);
+      vm.onChangeAutoSave = onChangeAutoSave;
+    }
+
+    function changed() {
+      vm.hasChanges = true;
+    }
+
+    function autoSaveChanged() {
+      if (vm.onChangeAutoSave && vm.hasChanges) {
+        saveSurvey(true, false);
+      }
     }
 
     function saveSurvey(autoSave, publish, skipMessage) {
@@ -242,6 +258,7 @@
             deferred.reject();
           }
         } else {
+          vm.hasChanges = false;
           survey.id = res.data.id;
           vm.survey.id = res.data.id;
           if (publish) {
@@ -270,6 +287,7 @@
             deferred.reject();
           }
         } else {
+          vm.hasChanges = false;
           if (publish) {
             return confirmSurvey(survey, skipMessage);
           } else if (!autoSave) {

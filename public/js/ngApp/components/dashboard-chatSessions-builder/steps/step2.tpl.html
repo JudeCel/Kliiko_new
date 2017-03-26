@@ -88,7 +88,7 @@
           <div ng-controller="GalleryController as gc">
             <div ng-controller='SurveyEditController as sc' ng-init='step2Controller.initSurveyEditor(sc, gc, survey)'>
               <div class="col-md-12">
-                <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
+                <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5' ng-blur="sc.autoSaveChanged()" ng-change="sc.changed()"
                   ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm' ng-disabled='sc.submitingForm || sc.formDisabled'>
                 </textarea>
                 </br>
