@@ -27,7 +27,7 @@
     vm.initGallery = initGallery;
     vm.initAutoSave = initAutoSave;
     vm.changed = changed;
-    vm.autoSaveChanged = autoSaveChanged;
+    vm.autoSaveChanges = autoSaveChanges;
 
     // Helpers
     vm.showPreview = showPreview;
@@ -174,7 +174,9 @@
 
     function initAutoSave(onChangeAutoSave) {
       vm.autoSave = $interval(function() {
-        saveSurvey(true, false);
+        if (vm.hasChanges) {
+          saveSurvey(true, false);
+        }
       }, 60000, 0, false);
       vm.onChangeAutoSave = onChangeAutoSave;
     }
@@ -183,7 +185,7 @@
       vm.hasChanges = true;
     }
 
-    function autoSaveChanged() {
+    function autoSaveChanges() {
       if (vm.onChangeAutoSave && vm.hasChanges) {
         saveSurvey(true, false);
       }
