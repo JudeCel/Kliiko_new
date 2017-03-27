@@ -376,7 +376,9 @@
     function initContacts(question) {
       question.type = "input"
       if(!vm.currentContacts) {
-        question.answers.push({});
+        if (!question.answers.length) {
+          question.answers.push({});
+        }
         var answer = question.answers[0];
         if(!answer.contactDetails) {
           seedContactDetails(answer);
@@ -504,7 +506,7 @@
     };
 
     function contactDetailDisabled(cd) {
-      return (vm.currentContacts[cd.model] ? false : cd.disabled);
+      return (vm.currentContacts[cd.model] ? false : cd.disabled != false);
     };
 
     function sectionQuestions(section) {
