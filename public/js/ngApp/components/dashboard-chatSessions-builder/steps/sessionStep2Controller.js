@@ -57,7 +57,7 @@
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
-      surveySection.canDisable = true;
+      surveySection.canDisable = false;
       if (survey) {
         surveySection.id = survey.surveyId;
         vm.attachedSurveysToSession[surveySection.id] = true;
@@ -70,7 +70,7 @@
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionPrizeDraw';
       surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
-      surveySection.canDisable = true;
+      surveySection.canDisable = !vm.session.publicUid;
       surveySection.active = survey && survey.active;
 
       if (survey) {
@@ -92,14 +92,7 @@
     }
 
     vm.checkCanSaveSurveys = function() {
-      var canSave = true;
-      vm.surveyList.map(function(survey) {
-        if (survey.canDisable && !survey.active) {
-          canSave = false;
-        }
-      });
-
-      return canSave && vm.inviteAgainTopicAdded();
+      return !vm.session.publicUid && vm.inviteAgainTopicAdded();
     }
 
     function initSurveys() {
@@ -415,11 +408,14 @@
 
     vm.addEditorController = function(sc) {
       vm.surveyEditors.push(sc);
+      if (vm.session.publicUid) {
+        sc.disableEdit();
+      }
     }
 
     vm.saveSurveys = function(autoSave, publish) {
       if (publish) {
-        $confirm({ text: "Once you have Published, you cannot change your Generate Contact List response." }).then(function() {
+        $confirm({ text: "When you Publish you will NOT be able to change the Contact List and Prize Draw Questions." }).then(function() {
           saveSurveysConfirmed(false, publish);
         });
       } else {
@@ -478,8 +474,8 @@
 
     vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
       sessionEditor.initGallery(galeryController);
-      sessionEditor.initAutoSave(galeryController);
       sessionEditor.init(survey.id, survey);
+      sessionEditor.initAutoSave(true);
       vm.addEditorController(sessionEditor);
     }
   }

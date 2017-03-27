@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.initAutoSave(gc); sc.init(surveyListController.currentSurveyId, surveyListController.surveySettings)'>
+    <div ng-controller='SurveyEditController as sc' ng-init='sc.initGallery(gc); sc.init(surveyListController.currentSurveyId, surveyListController.surveySettings); sc.initAutoSave(false);'>
       <ng-include src="gc.templatesDir + 'modalWindows.html'"></ng-include>
       {{ upload = sc.galleryDropdownData(gc.currentModalSet, gc.currentDependency); "" }}
       <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/surveyEditor.html'"></ng-include>
