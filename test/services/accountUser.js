@@ -51,7 +51,7 @@ describe('SERVICE - AccountUser with DB', function() {
     describe("when only one record", () => {
       it("set lower role in system if no other roles", (done) =>{
         let accountUserParams2 ={
-          email: "dainis@gmail.com",
+          email: "differen@email.com",
           AccountId: accountUser2.AccountId,
           firstName: "Dainis",
           lastName: "Lapins",
@@ -79,7 +79,7 @@ describe('SERVICE - AccountUser with DB', function() {
     describe('when removing admin role', () => {
       it('should set "isRemoved" flag to true if account has only admin role', (done) => {
         let params = {
-          email: "dainis@gmail.com",
+          email: "differen@email.com",
           AccountId: accountUser2.AccountId,
           firstName: "Dainis",
           lastName: "Lapins",
@@ -104,7 +104,7 @@ describe('SERVICE - AccountUser with DB', function() {
 
       it('should set "isRemoved" flag to false if account user has admin and other roles', (done) => {
         let params ={
-          email: "dainis@gmail.com",
+          email: "differen@email.com",
           AccountId: accountUser2.AccountId,
           firstName: "Dainis",
           lastName: "Lapins",
@@ -153,7 +153,7 @@ describe('SERVICE - AccountUser with DB', function() {
     describe("when multiple roles in account", () => {
       it("recalculate role, not delete record for user", (done) =>{
         let accountUserParams2 ={
-          email: "dainis@gmail.com",
+          email: "differen@email.com",
           AccountId: accountUser2.AccountId,
           firstName: "Dainis",
           lastName: "Lapins",
