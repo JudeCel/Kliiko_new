@@ -437,11 +437,11 @@
             } else if (!autoSave) {
               openSessionsListAndHighlight();
             }
+          }, function(e) {
+            if (e) messenger.error(e);
           });
-        }).catch(function(e) {
-          if (e) {
-            messenger.error(e);
-          }
+        }, function(e) {
+          if (e) messenger.error(e);
         });
       } else {
         publishSession();

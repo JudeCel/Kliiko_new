@@ -213,17 +213,19 @@
         vm.submitError = vm.constantErrors.default;
         var form = angular.element('#manageForm');
         var elem = form.find('.ng-invalid:first');
+        /*
         var panel = elem.children('.panel:first');
         if (panel.length == 0) {
           panel = elem.parents('.panel:first');
         }
-
         var panelParent = panel.scope().$parent;
-        if(panelParent.hasOwnProperty('accordion')) {
+        if (panelParent.hasOwnProperty('accordion')) {
           panelParent.object.open = true;
         }
-        deferred.resolve();
-        moveBrowserTo(panel[0].id);
+        */
+        
+        deferred.reject();
+        //moveBrowserTo(panel[0].id);
       }
       return deferred.promise;
     }
