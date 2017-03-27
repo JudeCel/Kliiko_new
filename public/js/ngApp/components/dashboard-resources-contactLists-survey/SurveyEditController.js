@@ -185,8 +185,8 @@
       vm.hasChanges = true;
     }
 
-    function autoSaveChanges() {
-      if (vm.onChangeAutoSave && vm.hasChanges) {
+    function autoSaveChanges(forceHasChanges) {
+      if (vm.onChangeAutoSave && (forceHasChanges || vm.hasChanges)) {
         saveSurvey(true, false);
       }
     }
@@ -449,11 +449,11 @@
       if (isSessionOpen()) {
         return false;
       } else {
-        if(value == 'add') {
+        if (value == 'add') {
           question.answers.push({ order: question.answers.length });
-        }
-        else {
+        } else {
           question.answers.splice(index, 1);
+          autoSaveChanges(true);
         }
       }
     };
@@ -501,6 +501,7 @@
         delete vm.currentContacts[cd.model];
         delete answer.contactDetails[cd.model];
       }
+      autoSaveChanges(true);
     };
 
     function contactDetailDisabled(cd) {
