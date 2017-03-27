@@ -2,13 +2,13 @@
   <div class="row">
     <div class='col-xs-12'>
       <div id='account-profile-links' class='text-center remove-link-line tabs-links'>
-        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.upgradePlan' class='btn btn-standart btn-dashboard-menu btn-blue btn-large'
+        <div id='btn-upgrade-plan-container' ui-sref-active='active' ui-sref='account-hub.accountProfile.upgradePlan' class='btn btn-standart btn-dashboard-menu btn-blue btn-large'
         ng-show="app.hasPermissions('canUpgradePlan')">
           <span class='pull-left'>Upgrade Plan</span>
           <img id="btn-upgrade-plan" ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountManagers')">
+        <div id='btn-account-managers-container' ui-sref-active='active' ui-sref='account-hub.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountManagers')">
           <span class='pull-left'>Account Managers</span>
           <img id="btn-account-managers" ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
         </div>
