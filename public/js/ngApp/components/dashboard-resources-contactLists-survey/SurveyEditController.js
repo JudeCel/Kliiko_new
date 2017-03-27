@@ -321,13 +321,14 @@
     function changeQuestions(question, order) {
       question.active = !question.active;
 
-      if(question.active) {
+      if (question.active) {
         question.order = order;
         vm.survey.SurveyQuestions[order] = question;
-      }
-      else {
+      } else {
         delete vm.survey.SurveyQuestions[order];
       }
+
+      autoSaveChanges(true);
     };
 
     function initQuestion(object, sq) {
