@@ -1,6 +1,6 @@
 <form id='manageForm' name='sc.manageForm' novalidate class="survey-question-section">
   <input type="submit" name="noActionButton" value="" class="hidden" />
-  <fieldset ng-if="sc.survey" ng-readonly="sc.submitingForm || sc.formDisabled" ng-disabled='sc.formDisabled'>
+  <fieldset ng-if="sc.survey" ng-disabled='sc.formDisabled'>
     <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyBody.html'"></ng-include>
 
     <div class='col-sm-12'>

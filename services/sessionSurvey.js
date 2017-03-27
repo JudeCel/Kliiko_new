@@ -22,14 +22,19 @@ function isSurveyAttached(sessionId, surveyId) {
 function addSurveyToSession(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
     let data = {
-      sessionId:  sessionId,
-      surveyId:   surveyId,
-      active:     false
+      sessionId: sessionId,
+      surveyId: surveyId,
+      active: false
     }
     isSurveyAttached(sessionId, surveyId).then(function() {
       resolve();
     }, function() {
-      models.SessionSurvey.create(data).then(function(sessionSurvey) {
+      models.Survey.find({ where: { id: surveyId }, attributes: ["surveyType"] }).then(function(survey) {
+        if (survey.surveyType == "sessionContactList") {
+          data.active = true;
+        }
+        return models.SessionSurvey.create(data);
+      }).then(function(sessionSurvey) {
         resolve(sessionSurvey);
       }).catch(function(e) {
         reject(e);

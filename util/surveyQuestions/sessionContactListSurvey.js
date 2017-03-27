@@ -93,7 +93,6 @@ module.exports = {
         { name: "Don't Know", order: 3 }
       ],
       input: true,
-      required: true,
       minAnswers: 2,
       maxAnswers: 5
     },
