@@ -192,12 +192,11 @@
     }
 
     function saveSurvey(autoSave, publish, skipMessage) {
-      var deferred;
+      var deferred = $q.defer();
       vm.submitedForm = true;
       if (vm.manageForm.$valid) {
         var selected = findSelected();
         if (publish && selected.length < vm.minQuestions) {
-          deferred = $q.defer();
           vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
           deferred.resolve();
         } else {
@@ -211,7 +210,6 @@
           }
         }
       } else if (!autoSave) {
-        deferred = $q.defer();
         vm.submitError = vm.constantErrors.default;
         var form = angular.element('#manageForm');
         var elem = form.find('.ng-invalid:first');
