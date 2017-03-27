@@ -21,7 +21,12 @@ function unique(sequelize, model, fieldName, otherValue) {
         }
 
         if(otherValue.accountContext) {
-          where.accountId = this.accountId;
+          if(model === 'AccountUser') {
+            where.AccountId = this.AccountId;
+          }
+          else {
+            where.accountId = this.accountId;
+          }
         }
 
         if(otherValue.topicContext && this.parentTopicId) {
