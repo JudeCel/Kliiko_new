@@ -22,11 +22,7 @@
     $scope.$watch(function() {
       return sessionStorage.getItem('bannerType');
     }, function(next, prev) {
-      if(!vm.currentBanner) {
-        vm.currentBanner = next;
-        waitForToken(next);
-      }
-      else if(next != prev) {
+      if(!vm.currentBanner || next != prev) {
         vm.currentBanner = next;
         mapBanners(next);
       }
@@ -86,17 +82,6 @@
           vm.file[banner.page] = banner;
         }
       });
-    }
-
-    function waitForToken(next) {
-      setTimeout(function() {
-        if(fileUploader.token) {
-          mapBanners(next);
-        }
-        else {
-          waitForToken(next);
-        }
-      }, 10);
     }
   }
 })();
