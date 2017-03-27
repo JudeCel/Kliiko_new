@@ -12,7 +12,7 @@
         <label class='col-xs-2 control-label' for='surveyName'>Name</label>
         <div class='col-xs-10 col-md-6'>
           <input type='text' class='form-control' id='surveyName' placeholder='Name' name='surveyName' ng-blur="sc.autoSaveChanges()" ng-change="sc.changed()"
-            ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
+            ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max - 1' ng-required='sc.submitedForm' alt-maxlength='{{sc.minsMaxs.input.max}}'>
         </div>
       </div>
       <div class='form-group' ng-if="section.headerContent.logo">
@@ -34,7 +34,7 @@
           </div>
 
           <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5' ng-blur="sc.autoSaveChanges()" ng-change="sc.changed()"
-            ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+            ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max - 1' ng-required='sc.submitedForm' alt-maxlength='{{sc.minsMaxs.textarea.max}}'>
           </textarea>
         </div>
       </div>
