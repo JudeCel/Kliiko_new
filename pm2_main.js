@@ -1,6 +1,5 @@
 "use strict";
 const pm2 = require('pm2');
-
 var monitoringPid = null;
 
 pm2.connect((err, resp) => {
@@ -21,7 +20,6 @@ pm2.connect((err, resp) => {
         });
 
         bus.on('log:err', (packet) => {
-            // console.log(packet.data);
             pm2.sendDataToProcessId(monitoringPid, {
                 type: 'error',
                 topic : 'newEntry',

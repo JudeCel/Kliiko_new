@@ -8,8 +8,9 @@ const pm2 = require('pm2');
 const WebSocket = require('ws');
 const si = require('systeminformation');
 const Repo = require('./monitoring/repo');
+const ErrorParser = require('./monitoring/errorParser');
 
-const token =process.env.MONITORING_SERVER_TOKEN;
+const token = process.env.MONITORING_SERVER_TOKEN;
 const url = process.env.MONITORING_SERVER_URL;
 const projectName = process.env.MONITORING_SERVER_PROJECT_NAME;
 
@@ -40,6 +41,6 @@ repo.connect();
 
 process.on('message',  (data) => {
   if(data.type == 'error'){
-    errorChannel.push("new_entry",  data.data);
+    errorChannel.push("new_entry",  JSON.stringify(ErrorParser.parse(data.data)));
   }
 });
