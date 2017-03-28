@@ -473,6 +473,7 @@
     }
 
     vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
+      survey.notPublished == !vm.session.publicUid;
       sessionEditor.initGallery(galeryController);
       sessionEditor.init(survey.id, survey);
       sessionEditor.initAutoSave(true);

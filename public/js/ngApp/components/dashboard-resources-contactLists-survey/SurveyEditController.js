@@ -130,6 +130,9 @@
 
     function processSurveyData(survey) {
       if(survey && survey.SurveyQuestions instanceof Array) {
+        if (vm.surveySettings.notPublished) {
+          survey.confirmedAt = null;
+        }
         var object = {};
         for(var i in survey.SurveyQuestions) {
           var question = survey.SurveyQuestions[i];
