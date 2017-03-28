@@ -217,10 +217,14 @@
         var elem = angular.element('#manageForm .ng-invalid');
         var panel = elem.parents('.panel:first');
         var panelParent = panel.scope().$parent;
+        var timeoutForAnimation = 10;
         if (panelParent.hasOwnProperty('accordion')) {
           panelParent.object.open = true;
+        } else if (vm.surveySettings && !vm.surveySettings.expanded) {
+          vm.surveySettings.expanded = true;
+          timeoutForAnimation = 250;
         }
-        moveBrowserTo(panel[0].id);
+        moveBrowserTo(panel[0], timeoutForAnimation);
 
         deferred.reject();
       }
@@ -484,11 +488,10 @@
       };
     }
 
-    function moveBrowserTo(elementId) {
+    function moveBrowserTo(element, timeoutForAnimation) {
       $timeout(function () {
-        $location.hash(elementId);
-        $anchorScroll();
-      });
+        element.scrollIntoView();
+      }, timeoutForAnimation);
     }
 
     function addContactDetail(cd, answer) {
