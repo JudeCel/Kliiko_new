@@ -241,7 +241,7 @@ function getOrCreate(params) {
       if (existingList) {
         resolve(existingList);
       } else {
-        contactList.create(params).then(function(newList) {
+        create(params).then(function(newList) {
           resolve(newList);
         }, function(error) {
           reject(error);
