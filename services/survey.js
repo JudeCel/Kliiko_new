@@ -488,24 +488,23 @@ function answerSurvey(params) {
                   clParams.contactListId = contactList.id;
                   clParams.accountId = survey.accountId;
 
-                  if(survey.surveyType === 'recruiter') {
+                  if (survey.surveyType === 'recruiter') {
                     return createContactListUser(survey, clParams);
-                  }
-                  else if(survey.surveyType === 'sessionPrizeDraw') {
+                  } else if(survey.surveyType === 'sessionPrizeDraw') {
                     return survey;
-                  }
-                  else {
+                  } else {
                     const answer = findAnswer(validParams, survey, 'interest');
-                    if(answer.value === 1) {
+                    if (answer.value === 1) {
                       return survey;
-                    }
-                    else {
+                    } else {
                       const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
-                      return models.AccountUser.find({ where: { AccountId: survey.accountId, email: contactDetails.email } }).then((accountUser) => {
-                        if(accountUser) {
+                      return models.AccountUser.find({ 
+                        where: { AccountId: survey.accountId, email: contactDetails.email },
+                        include: [{ model: models.ContactListUser, where: { contactListId: clParams.contactListId }, required: true }]
+                      }).then((accountUser) => {
+                        if (accountUser) {
                           return survey;
-                        }
-                        else {
+                        } else {
                           return createContactListUser(survey, clParams);
                         }
                       });
