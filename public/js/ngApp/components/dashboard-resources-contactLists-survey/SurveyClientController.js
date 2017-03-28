@@ -66,7 +66,7 @@
 
     function autoFillNameField () {
       setTimeout(function() {
-        $('#contact-firstName').val(vm.survey.username);
+        $('#contact-firstName').val(vm.survey.username).trigger('input');
       }, 500);
     }
 
