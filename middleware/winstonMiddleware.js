@@ -14,7 +14,7 @@ const logger = () => {
     dynamicMeta: (req, res) => {
       return {
         currentResources: (req.currentResources ||  {}),
-        application: 'klzii-dashboard'
+        application: process.env.APPLICATION_NAME
       }
     },
     transports: [
@@ -35,7 +35,7 @@ const errorLogger = () => {
     dynamicMeta: (req, res) => {
       return {
         currentResources: (req.currentResources ||  {}),
-        application: 'klzii-dashboard'
+        application: process.env.APPLICATION_NAME
       }
     },
     transports: [
