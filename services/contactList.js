@@ -20,6 +20,7 @@ const MAX_LIST_LIMIT = 50
 module.exports = {
   create: create,
   update: update,
+  getOrCreate: getOrCreate,
   allByAccount: allByAccount,
   destroy: destroy,
   createDefaultLists: createDefaultLists,
@@ -232,6 +233,24 @@ function prepareData(lists) {
 
 function reqiredFieldsForList(list) {
   return constants.contactListReqiredFields;
+}
+
+function getOrCreate(params) {
+  return new Bluebird((resolve, reject) => {
+    models.ContactList.find({ where: { name: params.name, accountId: params.accountId } }).then(function(existingList) {
+      if (existingList) {
+        resolve(existingList);
+      } else {
+        contactList.create(params).then(function(newList) {
+          resolve(newList);
+        }, function(error) {
+          reject(error);
+        });
+      }
+    }, function(error) {
+      reject(error);
+    });
+  });
 }
 
 function create(params, transaction) {

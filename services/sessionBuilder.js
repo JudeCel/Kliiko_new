@@ -1518,7 +1518,7 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
 function addContactListToSession(session, accountId) {
   return new Bluebird((resolve, reject) => {
     if (session) {
-      contactList.create({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
+      contactList.getOrCreate({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
         sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
           resolve(session);
         }, function(error) {
@@ -1563,7 +1563,7 @@ function publish(sessionId, accountId) {
         reject(MessagesUtil.session.notFound);
       }
     }).catch(function(error) {
-      reject(filters.errors(error));
+      reject(error);
     });
   });
 
