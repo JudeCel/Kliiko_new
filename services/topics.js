@@ -43,10 +43,17 @@ function getAll(accountId, sessionType) {
         model: models.SessionTopics,
         include: [{
           model: models.Session,
-          where: { accountId }
+          where: { accountId },
+          required: false
         }]
       }]
     }).then(function(results) {
+      _.each(results, (topic) => {
+        if(topic.stock) {
+          topic.dataValues.SessionTopics = topic.SessionTopics.filter((sessionTopic) => sessionTopic.Session && sessionTopic.Session.accountId === accountId);
+        }
+      });
+
       if (sessionType && includeInviteAgainTopic) {
         validators.validate(accountId, 'contactList', 1).then(function(topic) {
           resolve({ topics: results });
