@@ -102,7 +102,8 @@ module.exports = {
     cantSendSMS: "You can't send SMS for this session",
     actionNotAllowed: "Action not allowed",
     closed: "Sorry, \"{sessionName}\" has now closed. Thanks for your interest!",
-    contactListLimit: "You have reached your Contact List limit.<br/>If you want to create a new Contact List, you will need to Deactivate one of your existing Lists.<br/>Or upgrade your Plan.<br/><br/>Currently your Social Forum Session, will <u>not</u> include 'It's A Wrap' Topic."
+    contactListLimit: "You have reached your Contact List limit.<br/>If you want to create a new Contact List, you will need to Deactivate one of your existing Lists.<br/>Or upgrade your Plan.<br/><br/>Currently your Social Forum Session, will <u>not</u> include 'It's A Wrap' Topic.",
+    contactListExists: 'Contact List name already exists! Delete first before Publish'
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",

@@ -1518,14 +1518,18 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
 function addContactListToSession(session, accountId) {
   return new Bluebird((resolve, reject) => {
     if (session) {
-      contactList.getOrCreate({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
+      contactList.create({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
         sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
           resolve(session);
         }, function(error) {
-          reject(error);
+          reject(error);          
         });
       }, function(error) {
-        reject(error);
+        if (error.name) {
+          reject(MessagesUtil.session.contactListExists);
+        } else {
+          reject(error);
+        }
       });
     } else {
       reject(MessagesUtil.session.notFound);
