@@ -59,23 +59,27 @@ function canOpenSession(sessionId, accountId, status) {
         }]
       }]
     }).then(function(session) {
-      let preferences = session.Account.Subscription.SubscriptionPreference;
-      let validCount = preferences.data.contactListCount + 4;
+      if (session.Account.admin) {
+        resolve();
+      } else {
+        let preferences = session.Account.Subscription.SubscriptionPreference;
+        let validCount = preferences.data.contactListCount + 4;
 
-      if (preferences.data.contactListCount == -1) { resolve() };
+        if (preferences.data.contactListCount == -1) { resolve() };
 
-      ContactList.count({
-        where: {
-          accountId: accountId
-        }
-      }).then(function(count){
-        if( session.type == "socialForum" && validCount <= count && status == "closed") {
-          let message = "Please upgrade your Plan. You can only have " + preferences.data.contactListCount + " Open Social OR Survey Recruiter on Your Plan";
-          reject(message);
-        } else {
-          resolve();
-        }
-      });
+        ContactList.count({
+          where: {
+            accountId: accountId
+          }
+        }).then(function(count){
+          if( session.type == "socialForum" && validCount <= count && status == "closed") {
+            let message = "Please upgrade your Plan. You can only have " + preferences.data.contactListCount + " Open Social OR Survey Recruiter on Your Plan";
+            reject(message);
+          } else {
+            resolve();
+          }
+        });
+      }
     })
   });
 }

@@ -65,9 +65,9 @@
     };
 
     function autoFillNameField () {
-      setTimeout(function() {
+      $timeout(function() {
         $('#contact-firstName').val(vm.survey.username).trigger('input');
-      }, 500);
+      });
     }
 
     function submitSurvey() {

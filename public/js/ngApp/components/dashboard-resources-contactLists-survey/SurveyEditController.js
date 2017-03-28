@@ -211,21 +211,15 @@
         }
       } else if (!autoSave) {
         vm.submitError = vm.constantErrors.default;
-        var form = angular.element('#manageForm');
-        var elem = form.find('.ng-invalid:first');
-        /*
-        var panel = elem.children('.panel:first');
-        if (panel.length == 0) {
-          panel = elem.parents('.panel:first');
-        }
+        var elem = angular.element('#manageForm .ng-invalid');
+        var panel = elem.parents('.panel:first');
         var panelParent = panel.scope().$parent;
         if (panelParent.hasOwnProperty('accordion')) {
           panelParent.object.open = true;
         }
-        */
-        
+        moveBrowserTo(panel[0].id);
+
         deferred.reject();
-        //moveBrowserTo(panel[0].id);
       }
       return deferred.promise;
     }
