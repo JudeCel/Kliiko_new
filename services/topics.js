@@ -32,8 +32,8 @@ module.exports = {
 function getAll(accountId, sessionType) {
   return new Bluebird((resolve, reject) => {
     let includeInviteAgainTopic = !sessionType || sessionTypesConstants[sessionType].features.inviteAgainTopic.enabled;
-    let where = includeInviteAgainTopic ? 
-      { $or: [{ accountId: accountId }, { stock: true }] } : 
+    let where = includeInviteAgainTopic ?
+      { $or: [{ accountId: accountId }, { stock: true }] } :
       { $or: [{ accountId: accountId }, { stock: true }], inviteAgain : false };
 
     Topic.findAll({
@@ -42,10 +42,18 @@ function getAll(accountId, sessionType) {
       include: [{
         model: models.SessionTopics,
         include: [{
-          model: models.Session
+          model: models.Session,
+          where: { accountId },
+          required: false
         }]
       }]
     }).then(function(results) {
+      _.each(results, (topic) => {
+        if(topic.stock) {
+          topic.dataValues.SessionTopics = topic.SessionTopics.filter((sessionTopic) => sessionTopic.Session && sessionTopic.Session.accountId === accountId);
+        }
+      });
+
       if (sessionType && includeInviteAgainTopic) {
         validators.validate(accountId, 'contactList', 1).then(function(topic) {
           resolve({ topics: results });
@@ -114,7 +122,7 @@ function getTopicParams(params, topicId) {
     };
   }
 
-  return params; 
+  return params;
 }
 
 function updateSessionTopic(params) {
@@ -168,7 +176,7 @@ function updateSessionTopics(sessionId, topicsArray) {
     let returning = [];
     joinToSession(ids, sessionId).then(function(result) {
       Bluebird.each(result.sessionTopics, (sessionTopic) => {
-        
+
         return new Bluebird(function (resolveInternal, rejectInternal) {
           let inviteAgainTopicUpdated = false;
           checkInviteAgainTopic(sessionTopic, result.sessionTopics.length, topicsArray.length).then(function() {
@@ -227,7 +235,7 @@ function updateSessionTopics(sessionId, topicsArray) {
 
 function joinToSession(ids, sessionId) {
   let deferred = q.defer();
-  Session.find({ where: { id: sessionId } }).then(function(session) {    
+  Session.find({ where: { id: sessionId } }).then(function(session) {
     canAddInviteAgainTopic(session.accountId).then(function(canAddInviteAgain) {
       let where = canAddInviteAgain ? { id: ids, stock: false } : { id: ids, stock: false, inviteAgain: false };
       Topic.findAll({ where: where }).then(function(results) {
@@ -242,10 +250,10 @@ function joinToSession(ids, sessionId) {
             let skiped = results.length < ids.length;
             skipedStock(ids, skiped).then(function(skipedStockTopics) {
               deferred.resolve({
-                sessionTopics: sessionTopics, 
-                skipedStock: skipedStockTopics && sessionTopics.length != ids.length, 
-                skipedInviteAgain: skiped && !skipedStockTopics, 
-                session 
+                sessionTopics: sessionTopics,
+                skipedStock: skipedStockTopics && sessionTopics.length != ids.length,
+                skipedInviteAgain: skiped && !skipedStockTopics,
+                session
               });
             }, function() {
               deferred.reject(filters.errors(error));
