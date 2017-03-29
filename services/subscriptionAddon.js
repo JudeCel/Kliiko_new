@@ -1,7 +1,5 @@
 'use strict';
 
-// require('./../lib/airbrake').handleExceptions();
-
 var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var filters = require('./../models/filters');

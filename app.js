@@ -15,10 +15,8 @@ const { setUpQueue} = require('./services/backgroundQueue.js');
 var app = express();
 var flash = require('connect-flash');
 var _ = require('lodash');
-var airbrake = require('./lib/airbrake').instance;
 var cors = require('./middleware/cors');
 var winstonMiddleware = require('./middleware/winstonMiddleware');
-app.use(airbrake.expressHandler());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -95,7 +93,6 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  airbrake.notify(err);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

@@ -2,7 +2,6 @@
 
 var models = require('./../models');
 var filters = require('./../models/filters');
-var airbrake = require('./../lib/airbrake').instance;
 var quotesMailer = require('../mailers/quotes');
 
 const { Subscription, AccountUser, Account, SubscriptionPlan, SubscriptionPreference} = models
@@ -810,7 +809,6 @@ function disableSubDependencies(accountId) {
 
   async.parallel(arrayFunctions, function(error, _result) {
     if(error) {
-      airbrake.notify(error);
       deferred.reject(error);
     }
     else {
@@ -832,7 +830,6 @@ function recurringSubDependencies(subscription) {
     subscription.SubscriptionPreference = updatedPreference;
     deferred.resolve(subscription);
   }).catch(function(error) {
-    airbrake.notify(error);
     deferred.reject(filters.errors(error));
   });
 

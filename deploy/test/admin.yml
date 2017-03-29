@@ -62,10 +62,6 @@ spec:
           value: "postgres-master"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
-        - name: AIRBRAKE_PROJECT_ID
-          value: "121542"
-        - name: AIRBRAKE_API_KEY
-          value: "607e87c9e8b7500497bb84c51162b0a8"
         - name: SERVER_BASE_DOMAIN
           value: ".test.klzii.com"
         - name: SERVER_DOMAIN
