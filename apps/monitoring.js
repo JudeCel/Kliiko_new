@@ -19,7 +19,6 @@ const repo = new Repo(WebSocket, url, {type: "server"});
 const infoChannel = repo.addChannel(`info:${projectName}`, {token});
 const errorChannel = repo.addChannel(`error:${projectName}`, {token});
 
-// TODO need refactor and make more consistent
 pm2.connect((err, resp) => { 
   setInterval(() => {
     pm2.Client.executeRemote('getMonitorData', {}, function(err, list) {
