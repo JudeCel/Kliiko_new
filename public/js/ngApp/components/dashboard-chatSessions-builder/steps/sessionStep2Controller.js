@@ -42,13 +42,14 @@
     vm.inviteAgainTopicAdded = inviteAgainTopicAdded;
 
     function surveyWithType(surveyType) {
-      var survey;
       if (vm.session.steps.step2.surveys && vm.session.steps.step2.surveys.length) {
-        survey = vm.session.steps.step2.surveys.find( function(survey) {
-          return survey.surveyType == surveyType;
-        });
+        for (var i=0; i<vm.session.steps.step2.surveys.length; i++) {
+          if (vm.session.steps.step2.surveys[i].surveyType == surveyType) {
+            return vm.session.steps.step2.surveys[i];
+          }
+        }
       }
-      return survey;
+      return null;
     }
 
     function initContactListSurvey() {
