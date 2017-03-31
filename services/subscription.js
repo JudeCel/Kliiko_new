@@ -102,6 +102,33 @@ function getChargebeeSubscription(subscriptionId, provider) {
   return deferred.promise;
 }
 
+function getPlansFromStore() {
+  const client = require('redis').createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
+  client.select(parseInt(process.env.REDIS_DB));
+  const key = 'subscriptionPlans';
+
+  return new Bluebird((resolve, reject) => {
+    client.hgetall(key, (error, object) => {
+      if (error) {
+        return reject(error);
+      }
+
+      const current = new Date();
+      if(object && parseInt(object.expire) < current.getTime()) {
+        resolve(JSON.parse(object.plans));
+      } else {
+        getAllPlans().then((plans) => {
+          const expire = moment(current).add(15, 'm');
+          client.hmset(key, 'expire', expire.valueOf(), 'plans', JSON.stringify(plans));
+          resolve(plans);
+        }, (error) => {
+          reject(error);
+        });
+      }
+    });
+  });
+}
+
 function getAllPlans(accountId, ip) {
   let deferred = q.defer();
 
