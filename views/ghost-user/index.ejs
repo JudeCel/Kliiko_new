@@ -27,6 +27,27 @@
       </form>
     <% } %>
   </div>  
+  <% if (sneakPreviewIntro && !error && !message) { %>
+    <div class="sneakPreviewIntro">
+      <img alt="" src="/images/Klzii_SneakPreviewIntro.jpg"/>
+      <div class="letsGoButton"></div>
+      <script>
+        $(function () {
+          var img = $(".sneakPreviewIntro img");
+          var button = $(".sneakPreviewIntro .letsGoButton");
+          button.click(function() {
+            $(".sneakPreviewIntro").hide();
+          });
+          setInterval(function(){
+            button.height(img.height() * 0.1);
+            button.width(img.width() * 0.19);
+            button.css('margin-top',img.height() * -0.204);
+            button.css('margin-left',img.width() * -0.096);
+          }, 200);
+        });
+      </script>
+    </div>  
+  <% } %>
   <% if (message) { %>
     <div ng-controller='MessengerController as mc' ng-init="mc.error('<%= message %>', true)"></div>
   <% } %>
