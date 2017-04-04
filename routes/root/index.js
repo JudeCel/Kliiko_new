@@ -575,6 +575,7 @@ router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
 router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
 
+
 router.get('/privacy_policy', function(req, res, next) {
   res.render('privacy_policy', { title: 'Privacy Policy' });
 });

@@ -43,7 +43,8 @@ module.exports = {
   getChargebeeSubscription: getChargebeeSubscription,
   postQuote: postQuote,
   createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin,
-  getSubscriptionEndDate: getSubscriptionEndDate
+  getSubscriptionEndDate: getSubscriptionEndDate,
+  getPlansFromStore: getPlansFromStore
 }
 
 function postQuote(params) {
@@ -100,6 +101,39 @@ function getChargebeeSubscription(subscriptionId, provider) {
   });
 
   return deferred.promise;
+}
+
+function getPlansFromStore() {
+  const client = require('redis').createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
+  client.select(parseInt(process.env.REDIS_DB));
+  const key = 'subscriptionPlans';
+
+  return new Bluebird((resolve, reject) => {
+    client.hgetall(key, (error, object) => {
+      if (error) {
+        return reject(error);
+      }
+
+      const current = new Date();
+      if(object && parseInt(object.expire) > current.getTime()) {
+        let storedPlans = {plans: JSON.parse(object.plans)};
+        storedPlans.planDetails = {features: planFeatures.features, additionalParams: PLAN_CONSTANTS};
+        resolve(storedPlans);
+      } else {
+        getAllPlans().then((plansResult) => {
+          const expire = moment(current).add(15, 'm');
+          client.hmset(key, 'expire', expire.valueOf(), 'plans', JSON.stringify(plansResult));
+          let storedPlans = {
+            plans: plansResult.plans,
+            planDetails: {features: planFeatures.features, additionalParams: PLAN_CONSTANTS}
+          };
+          resolve(storedPlans);
+        }, (error) => {
+          reject(error);
+        });
+      }
+    });
+  });
 }
 
 function getAllPlans(accountId, ip) {
