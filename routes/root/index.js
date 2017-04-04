@@ -21,7 +21,6 @@ var chargebeeRoutes = require('./chargebee.js');
 var constants = require('../../util/constants');
 var appData = require('../../services/webAppData');
 var contactListUserRoutes = require('./contactListUser');
-var plans = require('./plans');
 var ics = require('./ics');
 var uuid = require('node-uuid');
 var accountUserService = require('../../services/accountUser');
@@ -576,7 +575,6 @@ router.route('/chargebee/webhooks').post(chargebeeRoutes.endPoint);
 
 router.route('/unsubscribe/:token').get(contactListUserRoutes.unsubscribe);
 
-router.get('/public/subscriptionPlans', plans.get);
 
 router.get('/privacy_policy', function(req, res, next) {
   res.render('privacy_policy', { title: 'Privacy Policy' });

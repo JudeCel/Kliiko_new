@@ -43,7 +43,8 @@ module.exports = {
   getChargebeeSubscription: getChargebeeSubscription,
   postQuote: postQuote,
   createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin,
-  getSubscriptionEndDate: getSubscriptionEndDate
+  getSubscriptionEndDate: getSubscriptionEndDate,
+  getPlansFromStore: getPlansFromStore
 }
 
 function postQuote(params) {
@@ -114,13 +115,19 @@ function getPlansFromStore() {
       }
 
       const current = new Date();
-      if(object && parseInt(object.expire) < current.getTime()) {
-        resolve(JSON.parse(object.plans));
+      if(object && parseInt(object.expire) > current.getTime()) {
+        let storedPlans = {plans: JSON.parse(object.plans)};
+        storedPlans.planDetails = {features: planFeatures.features, additionalParams: PLAN_CONSTANTS};
+        resolve(storedPlans);
       } else {
-        getAllPlans().then((plans) => {
+        getAllPlans().then((plansResult) => {
           const expire = moment(current).add(15, 'm');
-          client.hmset(key, 'expire', expire.valueOf(), 'plans', JSON.stringify(plans));
-          resolve(plans);
+          client.hmset(key, 'expire', expire.valueOf(), 'plans', JSON.stringify(plansResult));
+          let storedPlans = {
+            plans: plansResult.plans,
+            planDetails: {features: planFeatures.features, additionalParams: PLAN_CONSTANTS}
+          };
+          resolve(storedPlans);
         }, (error) => {
           reject(error);
         });
