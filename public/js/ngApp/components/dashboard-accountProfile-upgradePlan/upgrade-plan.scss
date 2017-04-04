@@ -203,6 +203,9 @@
         margin: 0;
         .list-group-item-heading {
           margin-bottom: 0;
+          h4 {
+            height: 60px;
+          }
         }
         .flex-box {
           padding: 5px 10px;

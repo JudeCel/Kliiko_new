@@ -653,3 +653,25 @@ input#reveiveNewsLetters{
 uib-accordion div span.text-muted {
   color: #aaa;
 }
+
+
+.sneakPreviewIntro {
+  position: fixed;   
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  vertical-align: top;
+  background: #EE7B20;
+  z-index: 999;
+  img {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .letsGoButton {
+    position: absolute;
+    cursor: pointer;
+    left: 50vw;
+  }
+}
