@@ -46,6 +46,8 @@ spec:
           value: "chat.klzii.chat"
         - name: SERVER_CHAT_DOMAIN_URL
           value: "https://chat.klzii.chat"
+        - name: KLZII_HOMEPAGE_URL
+          value: "https://klzii.com"
         - name: EVENT_SOCKET_SERVER_URL
           value: "wss://chat.klzii.chat/socketDashboard"
         - name: SERVER_CHAT_DOMAIN_PORT

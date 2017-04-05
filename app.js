@@ -50,7 +50,7 @@ app.use(winstonMiddleware.logger())
 
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
-app.use('/api',  apiPublic);
+app.use('/api', cors.setCors(), apiPublic);
 
 app.use('/api', cors.setCors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
