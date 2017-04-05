@@ -1,10 +1,21 @@
 'use strict';
-let cors = require('cors');
+const cors = require('cors');
+const _ = require('lodash');
 
 const setCors = () => {
-  let corsOrigin = new RegExp(process.env.SERVER_CHAT_DOMAIN_URL + "(:\\d+)*");
+  const whitelist = [process.env.SERVER_CHAT_DOMAIN_URL];
 
-  return cors({ origin: corsOrigin });
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if(_.some(whitelist, (url) => origin.indexOf(url) > -1 )){
+        callback(null, true);
+      }else{
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  }
+
+  return cors(corsOptions);
 }
 
 module.exports = {
