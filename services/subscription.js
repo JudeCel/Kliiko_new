@@ -121,10 +121,10 @@ function getPlansFromStore() {
         resolve(storedPlans);
       } else {
         getAllPlans().then((plansResult) => {
-          const expire = moment(current).add(15, 'm');
+          const expire = moment(current).add(45, 'm');
           client.hmset(key, 'expire', expire.valueOf(), 'plans', JSON.stringify(plansResult));
           let storedPlans = {
-            plans: plansResult.plans,
+            plans: plansResult,
             planDetails: {features: planFeatures.features, additionalParams: PLAN_CONSTANTS}
           };
           resolve(storedPlans);
