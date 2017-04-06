@@ -127,4 +127,4 @@ spec:
         - name: INFUSIONSOFT_KEY
           value: "75b1411017f205fb92b3898c4e9151bb"
         - name: HELP_PAHE_URL
-          value: "https://klzii.com/support/"
+          value: "https://klzii.com/help/"
