@@ -6,10 +6,14 @@ const setCors = () => {
   const whitelist = [process.env.SERVER_CHAT_DOMAIN_URL, process.env.KLZII_HOMEPAGE_URL];
   const corsOptions = {
     origin: (origin, callback) => {
-      if(_.some(whitelist, (url) => origin.indexOf(url) > -1 )){
-        callback(null, true);
+      if(origin){
+        if(_.some(whitelist, (url) => origin.indexOf(url) > -1 )){
+          callback(null, true);
+        }else{
+          callback(new Error('Not allowed by CORS'));
+        }
       }else{
-        callback(new Error('Not allowed by CORS'));
+        callback(null, true);
       }
     }
   }
