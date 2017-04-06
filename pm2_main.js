@@ -35,6 +35,7 @@ pm2.connect((err, resp) => {
         "log_file": "./logs/monitoring/monitoring.log",
         "out_file": "./logs/monitoring/out.log",
         "error_file": "./logs/monitoring/err.log",
+        "max_memory_restart" : "300M"
     }, (err, proc) => {
         monitoringPid = proc[0].pm2_env.pm_id
     });
