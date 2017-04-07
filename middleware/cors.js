@@ -3,7 +3,7 @@ const cors = require('cors');
 const _ = require('lodash');
 
 const setCors = () => {
-  const whitelist = [process.env.SERVER_CHAT_DOMAIN_URL, process.env.KLZII_HOMEPAGE_URL];
+  const whitelist = [process.env.SERVER_BASE_DOMAIN, process.env.SERVER_CHAT_DOMAIN_URL, process.env.KLZII_HOMEPAGE_URL];
   const corsOptions = {
     origin: (origin, callback) => {
       if(origin){
