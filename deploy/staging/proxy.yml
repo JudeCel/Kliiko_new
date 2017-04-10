@@ -6,6 +6,8 @@ metadata:
     name: nginx
     role: ssl-proxy
     app: admin
+  annotations:
+    service.beta.kubernetes.io/external-traffic: "OnlyLocal"
 spec:
   ports:
   - name: https
