@@ -16,6 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
     required: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     isCopy: {type: DataTypes.BOOLEAN, allowNull: true}
   }, {
+    timestamps: true,
     indexes:[{
       name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
       unique: true,
@@ -27,7 +28,7 @@ module.exports = (Sequelize, DataTypes) => {
         MailTemplate.belongsTo(models.Account);
         MailTemplate.belongsToMany(models.Resource, { through: {model: models.MailTemplateResource}, foreignKey: 'mailTemplateId' });
         MailTemplate.belongsToMany(models.Session, { through: {model: models.SessionMailTemplate, onDelete: 'cascade' }, foreignKey: 'mailTemplateId' });
-        MailTemplate.hasMany(models.SessionMailTemplate, { foreignKey: 'sessionId' });
+        MailTemplate.hasMany(models.SessionMailTemplate, { foreignKey: 'mailTemplateId' });
       }
     }
   });

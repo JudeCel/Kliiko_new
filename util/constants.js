@@ -51,6 +51,7 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
+    'updatedAt',
     'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateFieldsForList: [
