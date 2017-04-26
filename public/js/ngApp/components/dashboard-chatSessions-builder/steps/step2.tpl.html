@@ -28,7 +28,8 @@
           </div>
 
           <div id="topics-list" multiple-dragging-zone="step2Controller.isDragInProgress" drag-all="step2Controller.allTopicsSelected">
-            <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)">
+            <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in tc.list" ng-drag="step2Controller.canDragElement(topic)" ng-drag-success="step2Controller.topicsOnDropComplete(topic)" multiple-dragging-item="step2Controller.canBeDraggedAsMultiple(topic)"
+              ng-drag-start="step2Controller.onDragStart($data, $event)" ng-drag-stop="step2Controller.onDragEnd()" ng-drag="true" ng-drag-data="topic">
               <div class="check" ng-if="!topic.stock && !topic.default">
                 <input id="memberSelectet{{ $index }}" class="kliiko-checkbox checkbox-btn btn-green" ng-checked="topic._selected" ng-click="topic._selected = !topic._selected" type="checkbox">
                 <label for="memberSelectet{{ $index }}" class="kliiko-checkbox"></label>
@@ -44,13 +45,13 @@
 
         <div class="col-md-6" ng-if="tc.list.length" id='drop-section' is-in-viewport="step2Controller.isDropsectionInViewport">
           <h3>Chat Session topics</h3>
-          <div class="drop-area" ng-drop="true" ng-drag-start="step2Controller.onDragStart()" ng-drag-stop="step2Controller.onDragEnd()">
+          <div class="drop-area" ng-drop="true">
             Drop Selected Topics Here
             <img class="pull-right" src="/icons/arrow_down.png"></img>
           </div>
 
           <div class="margin-top-10" ui-sortable="step2Controller.sortableOptionsA" ng-model="step2Controller.sessionTopicsArray">
-            <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in step2Controller.sessionTopicsArray">
+            <div ng-class="step2Controller.getTopicStockClass(topic)" ng-repeat="topic in step2Controller.sessionTopicsArray" ng-drag-start="step2Controller.onDragStart($data, $event)" ng-drag-stop="step2Controller.onDragEnd()" ng-drag="true" ng-drag-data="topic">
               <span>
                 <input type="radio" ng-model="topic.sessionTopic.landing" ng-value="true" ng-change='step2Controller.changeLandingState(topic)' ng-disabled="!topic.sessionTopic.active">
                 <span class="copy-of-stock">{{ step2Controller.isCopy(topic) }}</span> {{ topic.sessionTopic.name }}
