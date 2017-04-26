@@ -465,6 +465,23 @@ function copySurvey(params, account) {
   return deferred.promise;
 };
 
+function addFirstChoiceToContactListFields(survey, fields) {
+  let question = findFirstChoiceQuestion(survey.SurveyQuestions);
+  if (question) {
+    fields.push(_.camelCase(question.name));
+  }
+}
+
+function addFirstChoiceToContactListParams(survey, validParams, clParams) {
+  let question = findFirstChoiceQuestion(survey.SurveyQuestions);
+  if (question) {
+      let answerObj = question.answers[validParams.answers[question.id].value];
+      if (answerObj) {
+        clParams.customFields[_.camelCase(question.name)] = answerObj.name;
+      }
+  }
+}
+
 function answerSurvey(params) {
   let deferred = q.defer();
 
@@ -481,7 +498,9 @@ function answerSurvey(params) {
          return tryFindContactList(survey, t).then((contactList) => {
           if(!contactList) { return survey }
           let fields = getContactListFields(survey.SurveyQuestions);
-           return updateContactList(contactList, survey, fields, t).then((contactList) => {
+
+          addFirstChoiceToContactListFields(survey, fields);
+          return updateContactList(contactList, survey, fields, t).then((contactList) => {
               if(!_.isEmpty(fields)) {
                 let clParams = findContactListAnswers(contactList, validParams.answers);
                 if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
@@ -498,7 +517,8 @@ function answerSurvey(params) {
                       return survey;
                     } else {
                       const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
-                      return models.AccountUser.find({ 
+                      addFirstChoiceToContactListParams(survey, validParams, clParams);
+                      return models.AccountUser.find({
                         where: { AccountId: survey.accountId, email: contactDetails.email },
                         include: [{ model: models.ContactListUser, where: { contactListId: clParams.contactListId }, required: true }]
                       }).then((accountUser) => {
@@ -585,6 +605,10 @@ function findAnswer(params, survey, type) {
 
 function findContactQuestion(questions) {
   return questions.find((item) => item.name === 'Contact Details');
+}
+
+function findFirstChoiceQuestion(questions) {
+  return questions.find((item) => item.name === 'First Choice');
 }
 
 function findInterestQuestion(questions) {
