@@ -94,7 +94,9 @@ module.exports = {
       ],
       input: true,
       minAnswers: 2,
-      maxAnswers: 5
+      maxAnswers: 5,
+      handleTag: 'InterestYesTag',
+      type: 'input'
     },
   ],
   tableOfContents: [

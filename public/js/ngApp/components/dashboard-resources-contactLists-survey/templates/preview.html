@@ -37,10 +37,11 @@
             </div>
 
             <div ng-if='question.type == "radio"' ng-repeat='answer in question.answers'>
+              {{tagSelected = sc.checkTag(question, sq); ''}}
               <div class='radio radio-sm survey-input' ng-class='sc.pickValidClass(sc.submitForm.answers[question.order].$error, "radio")'>
 
                 <input type='radio' id='radio-{{ question.order }}-{{ answer.order }}' name='{{ question.order }}' ng-class="answer.tag"
-                  ng-value='answer.order' ng-model='sq.answer' ng-required='sc.submitedSurvey && !sq.answer'>
+                  ng-value='answer.order' ng-model='sq.answer' ng-required='sc.submitedSurvey && !sq.answer  && tagSelected'>
 
                 <label for='radio-{{ question.order }}-{{ answer.order }}'>{{ answer.name }}</label>
               </div>

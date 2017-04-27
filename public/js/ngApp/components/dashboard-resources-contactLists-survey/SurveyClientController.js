@@ -27,7 +27,7 @@
     vm.submitSurvey = submitSurvey;
     vm.init = init;
     vm.checkTag = surveyServices.checkTag;
-
+    vm.defaultBaseQuestions = [];
     initConstants();
 
     function initConstants() {
@@ -35,8 +35,22 @@
         vm.unfilled = res.data.validationErrors.unfilled;
         vm.validationErrors = res.data.validationErrors.answer;
         vm.minsMaxs = res.data.minsMaxs;
+        vm.defaultBaseQuestions = res.data.defaultQuestions;
       });
     };
+
+    function mapHandleTags() {
+      for(var i in vm.survey.SurveyQuestions) {
+        var question = vm.survey.SurveyQuestions[i];
+
+        for(var i in vm.defaultBaseQuestions) {
+          var baseQuestion = vm.defaultBaseQuestions[i];
+          if (question.name == baseQuestion.name) {
+            question.handleTag = baseQuestion.handleTag;
+          }
+        }
+      }
+    }
 
     function init(surveyId, chatUrl, token) {
       vm.chatUrl = chatUrl;
@@ -51,6 +65,7 @@
           vm.status = res.status;
           vm.survey = res.data;
           vm.isFacilitator = res.isFacilitator;
+          mapHandleTags();
           $('#GalleryController').removeClass('hidden');
 
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
