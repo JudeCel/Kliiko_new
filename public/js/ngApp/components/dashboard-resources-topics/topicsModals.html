@@ -21,7 +21,7 @@
 
           <div class='form-group'>
             <label for='topicSign'>Message Sign</label>
-            <input type='text' class='form-control' id='topicSign' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing || topics.topicData.sessionId && topics.topicData.inviteAgain'>
+            <input type='text' class='form-control' id='topicSign' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='(topics.topicData.landing || topics.topicData.sessionId && topics.topicData.inviteAgain) && topics.topicData.disabledSignEdit'>
             <span class='help-block'>Characters left: {{ topics.charactersLeft("sign") }}</span>
           </div>
 

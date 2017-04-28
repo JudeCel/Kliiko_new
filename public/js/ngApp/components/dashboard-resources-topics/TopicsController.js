@@ -129,6 +129,9 @@
         angular.copy(topic.sessionTopic, vm.topicData);
         vm.topicData.inviteAgain = topic.inviteAgain;
         vm.topicData.stock = topic.stock;
+        //used to bypass other sign checks
+        vm.topicData.disabledSignEdit = (topic.name != "It's A Wrap");
+
         setEditData();
       }
     };
@@ -166,7 +169,7 @@
       vm.topicData.default = isDefaultTopic();
 
       topicsAndSessions.updateSessionTopic(vm.topicData, vm.session).then(
-        seesionTopicUpdateSuccess, 
+        seesionTopicUpdateSuccess,
         showErrorMessage);
     }
 
@@ -200,7 +203,7 @@
         vm.topicData.sessionId = vm.session.id
       }
 
-      topicsAndSessions.updateTopic(vm.topicData).then(updateTopicSuccess, showErrorMessage);      
+      topicsAndSessions.updateTopic(vm.topicData).then(updateTopicSuccess, showErrorMessage);
     }
 
     function updateTopicSuccess(res) {
