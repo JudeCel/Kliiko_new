@@ -52,9 +52,12 @@
       }
     }
 
-    function init(surveyId, chatUrl, token) {
+    function init(surveyId, chatUrl, token, redirectSurveyLink) {
       vm.chatUrl = chatUrl;
       vm.token = token;
+      if (redirectSurveyLink) {
+        vm.redirectSurveyLink = redirectSurveyLink + "?token=" + vm.token;
+      }
       surveyServices.findSurvey({ id: surveyId, token: token }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
@@ -103,7 +106,13 @@
               messenger.error(res.error);
             }
             else {
-              vm.status = res.status;
+              if (res.status == 307) {
+                if (vm.redirectSurveyLink) {
+                  window.location = vm.redirectSurveyLink;
+                }
+                vm.status = res.status;
+              } else
+                vm.status = res.status;
             }
           });
         }

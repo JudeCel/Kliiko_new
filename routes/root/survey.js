@@ -8,7 +8,8 @@ function views_path(action) {
 
 function index(req, res, next) {
   res.locals.appData = appData;
-  res.render(views_path('index'), { title: 'Survey', surveyId: req.params.id, chatUrl: chatUrl(req.query.token), token: req.query.token });
+  let redirectSurveyLink = req.query.redirectSurveyLink || "";
+  res.render(views_path('index'), { title: 'Survey', surveyId: req.params.id, chatUrl: chatUrl(req.query.token), token: req.query.token, redirectSurveyLink: redirectSurveyLink });
 };
 
 function chatUrl(token) {

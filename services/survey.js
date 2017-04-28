@@ -531,6 +531,9 @@ function answerSurvey(params) {
                     }
                   }
                 } else {
+                  if(survey.surveyType === 'sessionContactList') {
+                    survey.redirect = true;
+                  }
                   return survey;
                 }
               } else {
@@ -568,10 +571,12 @@ const ANSWER_RESPONSES = {
   sessionContactList: {
     interested: 200,
     notInterested: 201,
+    notInterestedRedirect: 307
   },
   sessionPrizeDraw: {
     interested: 300,
     notInterested: 301,
+    notInterestedRedirect: 307
   },
   notActive: 400
 };
@@ -586,7 +591,12 @@ function correctSurveyAnsweredMessage(params, survey) {
       return ANSWER_RESPONSES[survey.surveyType].interested;
     }
     else {
-      return ANSWER_RESPONSES[survey.surveyType].notInterested;
+      if (survey.redirect) {
+        return ANSWER_RESPONSES[survey.surveyType].notInterestedRedirect;
+      } else {
+        return ANSWER_RESPONSES[survey.surveyType].notInterested;
+      }
+      return response;
     }
   }
 }
