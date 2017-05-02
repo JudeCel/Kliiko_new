@@ -5,6 +5,16 @@ var _ = require('lodash');
 var surveyService = require('./survey');
 var async = require('async');
 var surveyConstants = require('../util/surveyConstants');
+const DEFAULT_SURVEY_TEXT = {
+    "sessionContactList": {
+      "thanks": "Thanks for all your! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
+      "description": "Let's keep in touch!"
+    },
+    "sessionPrizeDraw": {
+      "thanks": "Thanks for all your! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
+      "description": "Be in the draw to win (prize)!"
+    }
+  }
 
 function isSurveyAttached(sessionId, surveyId) {
   return new Bluebird((resolve, reject) => {
@@ -198,8 +208,8 @@ function assignContactListToSessionSurveys(clId, sessionId) {
 function prepareSessionQuestions(surveyData, sessionId, accountId, sType) {
   return new Bluebird((resolve, reject) => {
     surveyData.name = 'name' + sessionId;
-    surveyData.thanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
-    surveyData.description = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!"
+    surveyData.thanks = DEFAULT_SURVEY_TEXT[sType].thanks;
+    surveyData.description = DEFAULT_SURVEY_TEXT[sType].description;
     surveyData.surveyType = sType;
 
     surveyData.SurveyQuestions = surveyData.defaultQuestions.map((question) => {
