@@ -1,9 +1,9 @@
 'use strict';
 module.exports = {
   plan: {
-    "sessionCount": -1,
-    "contactListCount": -1,
-    "recruiterContactListCount": -1,
+    "sessionCount": 4,
+    "contactListCount": 4,
+    "recruiterContactListCount": 4,
     "importDatabase": true,
     "brandLogoAndCustomColors": true,
     "contactListMemberCount": -1,
