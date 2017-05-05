@@ -31,7 +31,8 @@
     "updateDefaultBrandColors": "node ./tasks/updateDefaultBrandColors.js",
     "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js",
     "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",
-    "updatePlanName": "node ./tasks/updatePlanName.js"
+    "updatePlanName": "node ./tasks/updatePlanName.js",
+    "tidyUpDataSessionSurveys": "node ./tasks/sessionSurveys/tidyUpData.js"
   },
   "engineStrict": true,
   "engine": {

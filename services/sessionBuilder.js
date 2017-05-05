@@ -323,7 +323,11 @@ function doUpdate(originalSession, params) {
           addInviteAgainTopic(result);
         }
         if (sessionTypesConstants[params["type"]].features.survay.enabled) {
-          sessionSurvey.createDefaultSessionSurveys(updatedSession.id, originalSession.accountId);
+          sessionSurvey.sessionSurveys(updatedSession.id).then((list) => {
+            if(list.length == 0){
+              sessionSurvey.createDefaultSessionSurveys(updatedSession.id, originalSession.accountId);
+            }
+          })
         }
       }
       return sessionBuilderObject(updatedSession);
