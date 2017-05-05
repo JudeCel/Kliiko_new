@@ -45,7 +45,8 @@
     vm.sectionQuestions = sectionQuestions;
     vm.questionTemplate = questionTemplate;
     vm.disableEdit = disableEdit;
-    vm.btoonPostfix = btoonPostfix;
+    vm.bottonPostfix = bottonPostfix;
+    vm.swichBooton = swichBooton;
 
     vm.displaySaveButton = true;
     vm.displayPublishButton = true;
@@ -128,7 +129,21 @@
         vm.hasChanges = false;
       });
     };
-    function btoonPostfix(question, survey){
+
+    function swichBooton(question, survey){
+      if(survey.surveyType == 'sessionContactList'){
+        if(question.name == "First Choice"){
+          return true;
+        }else{
+          return false;
+        }
+      }
+      if(survey.surveyType == 'sessionPrizeDraw'){
+        return false;
+      }
+      return true;
+    }
+    function bottonPostfix(question, survey){
       var text = "";
       if (question.active) {
         text = text + "Disable"
