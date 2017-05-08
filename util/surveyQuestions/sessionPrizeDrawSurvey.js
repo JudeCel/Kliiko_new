@@ -39,7 +39,7 @@ module.exports = {
       question: "Would you like to be in the Prize Draw? If Yes, we'll just need some brief contact details.",
       hardcodedName: true,
       answers: [
-        { name: 'Yes - I am aged 18 or over & give you permission to contact me about a the Prize Draw', order: 0, tag: 'InterestYesTag' },
+        { name: 'Yes - I am aged 18 or over & give you permission to contact me about the Prize Draw', order: 0, tag: 'InterestYesTag' },
         { name: 'No', order: 1 }
       ],
       link: { name: 'Privacy Policy', url: '/privacy_policy' },

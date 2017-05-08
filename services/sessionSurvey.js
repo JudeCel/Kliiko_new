@@ -7,11 +7,11 @@ var async = require('async');
 var surveyConstants = require('../util/surveyConstants');
 const DEFAULT_SURVEY_TEXT = {
     "sessionContactList": {
-      "thanks": "Thanks for all your! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
+      "thanks": "Thanks for all your help! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
       "description": "Let's keep in touch!"
     },
     "sessionPrizeDraw": {
-      "thanks": "Thanks for all your! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
+      "thanks": "Thanks for all your help! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).",
       "description": "Be in the draw to win (prize)!"
     }
   }
