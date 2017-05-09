@@ -288,7 +288,8 @@ function removeByRole(role, sessionId, accountId) {
   }).then(function(sessionMembers) {
     let members = [], managers = [];
     _.map(sessionMembers, function(sessionMember) {
-      if(sessionMember.AccountUser.role == 'accountManager') {
+
+      if(['accountManager', 'admin'].indexOf(sessionMember.AccountUser.role) > -1) {
         managers.push(sessionMember);
       }
       else {
