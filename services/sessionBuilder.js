@@ -76,10 +76,14 @@ function defaultTopicParams(session, topic) {
 }
 
 function inviteAgainTopicParams(session, topic) {
+  let order = 1;
+  if (topic.inviteAgain) {
+    order = 100;
+  }
   return {
     topicId: topic.id,
     sessionId: session.id,
-    order: 1,
+    order: order,
     active: true,
     landing: false,
     boardMessage: topic.boardMessage,
@@ -1423,12 +1427,12 @@ function getStepThreeTemplateTypes(params) {
       include: [{
         model: models.Session,
         where: { id: session.id },
-        attributes: ['id', 'name'], 
+        attributes: ['id', 'name'],
         required: true
-      }, { 
-        model: models.MailTemplateBase, 
-        attributes: ['id', 'name', 'systemMessage', 'category'], 
-        where: { category: { $in: constants.sessionBuilderEmails } } 
+      }, {
+        model: models.MailTemplateBase,
+        attributes: ['id', 'name', 'systemMessage', 'category'],
+        where: { category: { $in: constants.sessionBuilderEmails } }
       }]
     }).then(function(templates) {
       let uniqueCopies = [];
@@ -1526,7 +1530,7 @@ function addContactListToSession(session, accountId) {
         sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
           resolve(session);
         }, function(error) {
-          reject(error);          
+          reject(error);
         });
       }, function(error) {
         if (error.name) {
