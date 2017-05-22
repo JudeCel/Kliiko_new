@@ -19,7 +19,9 @@ const canSeeChatSessions = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
 }
 const canUpgradePlan = (account, accountUser, sub) => {
-    return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
+    // return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
+    // 22.05.2017 Chargebee is canceled!!! from 23.05.2017
+    return(!account.admin && checkRoles(accountUser.role, []))
 }
 const canSessionRating = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
@@ -34,7 +36,9 @@ const canSmsCredits = (account, accountUser, sub) => {
     return(!!checkSub(account, accountUser, sub, 'planSmsCount'))
 }
 const canPaymentDetails = (account, accountUser, sub) => {
-    return(checkRoles(accountUser.role, ['accountManager']))
+     // 22.05.2017 Chargebee is canceled!!! from 23.05.2017
+    return(checkRoles(accountUser.role, []))
+    // return(checkRoles(accountUser.role, ['accountManager']))
 }
 const canStockCreateTopics = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
