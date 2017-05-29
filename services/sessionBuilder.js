@@ -604,7 +604,7 @@ function inviteMembers(sessionId, data, accountId, accountName) {
   findSession(sessionId, accountId).then(function(session) {
     return sessionBuilderObject(session);
   }).then(function(sessionObj) {
-    if(sessionObj.sessionBuilder.showStatus != 'Open') {
+    if(sessionObj.sessionBuilder.status != 'open') {
       if (data.role == 'observer') {
         deferred.reject(MessagesUtil.sessionBuilder.sessionClosedObserversInvite);
       } else {
@@ -1060,7 +1060,8 @@ function stepsDefinition(session, steps) {
 }
 
 function inviteMembersCheck(object) {
-  let can = object.showStatus == 'Open';
+  let can = object.status == 'open';
+
   object.steps.step4.canInviteMembers = can;
   object.steps.step5.canInviteMembers = can;
 
