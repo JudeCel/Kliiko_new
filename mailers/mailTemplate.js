@@ -16,7 +16,7 @@ function preparePathData (attribs, resources) {
   let extension = extentionArray.length ? extentionArray[extentionArray.length - 1] : "";
   let name = _.camelCase(realFilename)+"."+extension;
   let path = attribs.src;
-  if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
+  if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1 && path.indexOf("data") === -1) {
     path = "public" + path;
   }
   resources.push({filename: name, path: path, cid: name+"@att"});
