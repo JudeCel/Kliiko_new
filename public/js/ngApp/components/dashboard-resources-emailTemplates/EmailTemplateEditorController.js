@@ -47,6 +47,18 @@
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
+                events: {
+          dragover: function(event) {
+            event.preventDefault();
+          },
+          drop: function(event) {
+            event.preventDefault();
+          }
+        },
+        events: {
+          dragover: function(event) { event.preventDefault(); },
+          drop: function(event) { event.preventDefault(); },
+        },
         controls: {
           bold: { visible : true },
           italic: { visible : true },
