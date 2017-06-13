@@ -4,7 +4,7 @@ const canAccountDatabase = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
 const canAccountManagers = (account, accountUser, sub) => {
-    return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
+    return(checkRoles(accountUser.role, ['accountManager', 'admin']))
 }
 const canAccountProfile = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin']))

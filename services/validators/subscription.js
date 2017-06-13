@@ -187,7 +187,8 @@ function canAddAccountUsers(accountId) {
         include: [{
           model: models.Account,
           where: {
-            id: accountId
+            id: accountId,
+            admin: false
           }
         }]
       }).then(function(count) {
