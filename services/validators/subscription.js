@@ -83,7 +83,7 @@ function validate(accountId, type, count, params) {
         dependency.model.count(dependency.params(accountId, params.sessionId)).then(function(c) {
           let maxCount = subscription.SubscriptionPreference.data[dependency.key];
 
-          if(c + count <= maxCount || maxCount == -1) {
+          if(c + count <= maxCount || maxCount == -1 || account.admin) {
             deferred.resolve(subscription);
           } else {
             deferred.reject(dependency.countMessage(type, maxCount, subscription));
@@ -158,13 +158,17 @@ function getTopicCount(accountId, params) {
     let subscription, dependency = DEPENDENCIES.topic;
     subscriptionValidator.validate(accountId).then((account) => {
       subscription = account.Subscription;
+      if(account.admin) {
+        return 0;
+      }
+
       if(subscription) {
         return models.SessionTopics.count(dependency.params(accountId, params.sessionId));
       }
       else {
         resolve({ limit: -1 });
       }
-    }).then((count) => {
+    }).then((count) => {      
       const limit = subscription.SubscriptionPreference.data[dependency.key];
       resolve({ count, limit });
     }).catch((error) => {
