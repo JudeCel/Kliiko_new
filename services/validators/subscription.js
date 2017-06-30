@@ -159,7 +159,7 @@ function getTopicCount(accountId, params) {
     subscriptionValidator.validate(accountId).then((account) => {
       subscription = account.Subscription;
       if(account.admin) {
-        return 0;
+        resolve({ count: 0, limit: -1 });
       }
 
       if(subscription) {
