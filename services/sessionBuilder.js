@@ -455,6 +455,7 @@ function sendCloseEmailsAsync(sessionMembers, session, facilitator, deferred) {
 
 function prepareCloseSessionEmailParams(session, facilitator, receiver) {
   return {
+    accountId: session.accountId,
     sessionId: session.id,
     sessionName: session.name,
     email: receiver.email,

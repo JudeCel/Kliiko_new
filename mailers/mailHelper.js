@@ -26,7 +26,7 @@ function sendEmail(templateName, params, callback, passParamsToGetActiveMailTemp
 
 //sent on session close, with future interests
 function sendSessionClose(params, callback) {
-  sendEmail("closeSession", params, callback, false, false);
+  sendEmail("closeSession", params, callback, true, false);
 };
 
 //provide senders accountId in params, this will take latest template version for this account
