@@ -832,6 +832,7 @@ function prepareMailParams(invite, session, receiver, facilitator) {
   let deferred = q.defer();
 
   let object = {
+    accountId: session.accountId,
     sessionId: session.id,
     email: receiver.email,
     role: receiver.role,
