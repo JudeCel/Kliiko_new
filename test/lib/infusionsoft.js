@@ -6,7 +6,7 @@ const infusionsoft = require('./../../lib/infusionsoft');
 const USER_PARAMS = {
   FirstName: 'Test',
   LastName: 'Test',
-  Email: 'some@email.com'
+  Email: 'sometest@email.com'
 };
 
 describe('LIB - InfusionSoft', () => {

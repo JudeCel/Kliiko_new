@@ -17,7 +17,7 @@ describe('SERVICE - permissions', () => {
         });
 
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, true)});
-        it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, false)});
+        it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, true)});
         it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, true)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, true)});
