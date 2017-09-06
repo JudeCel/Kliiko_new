@@ -468,7 +468,7 @@ function simpleUpdate(topic, params, resolve, reject) {
 }
 
 function sessionTopicUpdateParams(params) {
-  return _.pick(params, ['boardMessage', 'sign', 'lastSign']);
+  return _.pick(params, ['boardMessage', 'sign', 'lastSign', 'name']);
 }
 
 function createDefaultForAccount(params, transaction) {
