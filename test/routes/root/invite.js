@@ -253,6 +253,46 @@ describe('ROUTE - Invite',() => {
           done(error);
         });
       });
+      it('try to accept invite that is already accepted ', (done) => {
+        let params = {
+          accountUserId: accountUserWithoutUser.id,
+          accountId: accountUserWithoutUser.AccountId,
+          role: 'accountManager',
+        };
+
+        inviteService.createInvite(params).then((invite) => {
+          let next = () => {
+            done('Should not call next function');
+          };
+          let req = {
+            params: { token: invite.token },
+          };
+
+          let res = {
+            render: (pathToView, _viewParams) => {
+              assert.equal(pathToView, 'invite/newUser');
+              done();
+            },
+          };
+
+          try {
+            inviteRoutes.accept(req, res, () => {
+              let res = {
+                redirect: (path) => {
+                  assert.equal(path, '/login');
+                  done();
+                },
+              };
+              // if the Host clicks on Login a second time - they should land on the login screen
+              inviteRoutes.accept(req, res, next);
+            });
+          } catch (e) {
+            done(e);
+          }
+        }, function(error) {
+          done(error);
+        });
+      });
     })
   });
 });
