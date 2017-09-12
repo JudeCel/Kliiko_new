@@ -25,7 +25,7 @@ module.exports = {
   getSessionMembers: getSessionMembers,
   isCloseEmailSentToSessionMember: isCloseEmailSentToSessionMember,
   findOrCreate: findOrCreate,
-  addDefaultObserver: addDefaultObserver,
+  addDefaultHost: addDefaultHost,
   createGhost: createGhost
 };
 
@@ -69,7 +69,7 @@ function ghostUserParams(name, sessionId, count) {
   };
 }
 
-function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
+function addDefaultHost({id}, session, defaultSystemMemberRoles) {
   return new Bluebird((resolve, reject) => {
     AccountUser.find({
       where: {id: id},
@@ -81,7 +81,7 @@ function addDefaultObserver({id}, session, defaultSystemMemberRoles) {
           sessionId: session.id,
           accountUserId: accountUser.id,
           username: accountUser.firstName,
-          role: 'observer',
+          role: 'facilitator',
           typeOfCreation: 'system'
         }).then((sessionMember) => {
           resolve(sessionMember);
@@ -120,7 +120,7 @@ function findOrCreate(userId, sessionId) {
       }else{
         let defaultSystemMemberRoles = ['accountManager', 'admin']
         if (_.includes(defaultSystemMemberRoles, accountUser.role)) {
-          addDefaultObserver(accountUser, session, defaultSystemMemberRoles).then((sessionMember) => {
+          addDefaultHost(accountUser, session, defaultSystemMemberRoles).then((sessionMember) => {
             resolve(sessionMember);
           }, (error) => {
             reject(MessagesUtil.lib.jwt.notPart);
