@@ -19,6 +19,25 @@ var ipCurrency = require('../lib/ipCurrency');
 var MessagesUtil = require('./../util/messages');
 var moment = require('moment-timezone');
 
+/** @typedef {Object} ChargeBeePlan
+ * @property {Object} plan
+ * @property {string} plan.id
+ * @property {string} plan.name
+ * @property {string} plan.price
+ * @property {string} plan.period
+ * @property {string} plan.period_unit
+ * @property {string} plan.trial_period
+ * @property {string} plan.trial_period_unit
+ * @property {string} plan.charge_model
+ * @property {string} plan.free_quantity
+ * @property {string} plan.status
+ * @property {string} plan.enabled_in_hosted_pages
+ * @property {string} plan.enabled_in_portal
+ * @property {string} plan.object
+ * @property {string} plan.taxable
+ * @property {string} plan.currency_code
+ * */
+
 const getAQuoteFieldsNeeded = [
   'firstName',
   'lastName',
@@ -149,10 +168,7 @@ function getAllPlans(accountId, ip) {
         findAndProcessSubscription(accountId).then((currentSub) => {
           currencyData = { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = result.list
-            .filter((item) => item.plan.currency_code === currencyData.client)
-            //filter out only allowed plans
-            .filter((item) => item.plan.id.match(Object.keys(PLANS).join('|')));
+          plans = filterSupportedPlans(result.list, currencyData, PLANS);
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -880,6 +896,22 @@ function prepareRecurringParams(plan, preference) {
       planSmsCount: plan.planSmsCount
     }
   }
+}
+
+/**
+ * Filter out only supported subscription plans
+ * Plan is supported if it matches client's currency and it is contained in the list of supported plans
+ * @param {ChargeBeePlan[]} plans -
+ * @param {Object} currencyData
+ * @param {string[]} supportedPlans - array of names
+ * @return {ChargeBeePlan[]}
+ */
+function filterSupportedPlans(plans, currencyData, supportedPlans) {
+  const plansRegex = new RegExp(supportedPlans.join('|'));
+  return plans.filter((item) => {
+    const { plan } = item;
+    return plan.id.match(plansRegex) && (plan.currency_code === currencyData.client);
+  });
 }
 
 // Validators
