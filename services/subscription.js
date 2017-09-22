@@ -12,6 +12,7 @@ var async = require('async');
 let Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 const PLAN_CONSTANTS = require('./../util/planConstants');
+const PLANS = require('./../util/plans/index');
 var planFeatures = require('./../util/planFeatures');
 var constants = require('../util/constants');
 var ipCurrency = require('../lib/ipCurrency');
@@ -148,7 +149,10 @@ function getAllPlans(accountId, ip) {
         findAndProcessSubscription(accountId).then((currentSub) => {
           currencyData = { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = result.list.filter((item) => item.plan.currency_code === currencyData.client);
+          plans = result.list
+            .filter((item) => item.plan.currency_code === currencyData.client)
+            //filter out only allowed plans
+            .filter((item) => item.plan.id.match(Object.keys(PLANS).join('|')));
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
