@@ -168,7 +168,7 @@ function getAllPlans(accountId, ip) {
         findAndProcessSubscription(accountId).then((currentSub) => {
           currencyData = { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = filterSupportedPlans(result.list, currencyData, PLANS);
+          plans = filterSupportedPlans(result.list, currencyData, Object.keys(PLANS));
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -193,7 +193,8 @@ function getAllPlans(accountId, ip) {
         //   deferred.reject(filters.errors(error));
         // });
       } else {
-        deferred.resolve(result.list);
+        const plans = filterSupportedPlans(result.list, null, Object.keys(PLANS));
+        deferred.resolve(plans);
       }
     }
   });
@@ -910,7 +911,7 @@ function filterSupportedPlans(plans, currencyData, supportedPlans) {
   const plansRegex = new RegExp(supportedPlans.join('|'));
   return plans.filter((item) => {
     const { plan } = item;
-    return plan.id.match(plansRegex) && (plan.currency_code === currencyData.client);
+    return plan.id.match(plansRegex) && (!currencyData || plan.currency_code === currencyData.client);
   });
 }
 
