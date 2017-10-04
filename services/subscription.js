@@ -211,7 +211,11 @@ function getFreeAccountRemoveTrial(plans) {
 function mapPlans(plans) {
   plans = _.groupBy(plans, (item) => item.plan.currency_code); // group by currency
   constants.supportedCurrencies.forEach((currency) => {
-    plans[currency] = _.orderBy(plans[currency], (item) => PLAN_CONSTANTS[item.plan.preference].priority, ['asc']); // order by priority
+      console.log(PLAN_CONSTANTS);
+      plans[currency] = _.orderBy(plans[currency], (item) => {
+      console.log([item.plan.preference]);
+      return PLAN_CONSTANTS[item.plan.preference].priority, ['asc']
+    }); // order by priority
     plans[currency] = _.groupBy(plans[currency], (item) => item.plan.period_unit); // group by period
   });
   return plans;
@@ -509,6 +513,14 @@ function gatherInformation(accountId, newPlanId) {
   return deferred.promise;
 }
 
+/**
+ * @param {object} params
+ * @param {string} params.accountId
+ * @param {string} params.newPlanId
+ * @param {string} params.numOfSessions
+ * @param {string} params.redirectUrl
+ * @param providers
+ */
 function updateSubscription(params, providers) {
   let deferred = q.defer();
 

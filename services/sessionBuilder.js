@@ -154,36 +154,36 @@ function createNewSessionDefaultItems(session, userId) {
   });
 }
 
+/**
+ * @param {object} params
+ * @return models.Session
+ */
 function initializeBuilder(params) {
-  let deferred = q.defer();
-  validators.subscription(params.accountId, 'session', 0).then(function() {
+  return validators
+    .subscription(params.accountId, 'session', 0)
+    .then(() => {
 
-    params.step = 'setUp';
-    params.isVisited = {
-      setUp: true,
-      facilitatiorAndTopics: false,
-      manageSessionEmails: false,
-      manageSessionParticipants: false,
-      inviteSessionObservers: false
-    };
-    Session.create(params).then(function(session) {
-      createNewSessionDefaultItems(session, params.userId).then(function() {
-        sessionBuilderObject(session).then(function(result) {
-          deferred.resolve(result);
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }, (error) => {
-        deferred.reject(error);
-      });
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+      params.step = 'setUp';
+      params.isVisited = {
+        setUp: true,
+        facilitatiorAndTopics: false,
+        manageSessionEmails: false,
+        manageSessionParticipants: false,
+        inviteSessionObservers: false,
+      };
+
+      return Session.create(params);
+    })
+    .then((session) => {
+      return Bluebird.all([
+        sessionBuilderObject(session),
+        createNewSessionDefaultItems(session, params.userId),
+      ]);
+    })
+    .spread((session, empty) => session)
+    .catch((error) => {
+      throw new Error(filters.errors(error));
     });
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
 }
 
 function findSession(id, accountId) {

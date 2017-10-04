@@ -14,6 +14,10 @@ module.exports = {
   validate: validate
 };
 
+/**
+ * @param {number} accountId
+ * @return models.Account
+ */
 function validate(accountId) {
   let deferred = q.defer();
 

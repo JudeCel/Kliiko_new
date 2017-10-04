@@ -1,6 +1,6 @@
 #upgrade-plan-content {
-  .plan-option-dark-grey{background-color: #dedede;}
-  .plan-option-light-grey{background-color: #cdcdcd;}
+  .plan-option-dark-grey{background-color: #a6a6a6;}
+  .plan-option-light-grey{background-color: #f2f2f2;}
 
   .most-popular{
     position: absolute;
@@ -203,9 +203,9 @@
         margin: 0;
         .list-group-item-heading {
           margin-bottom: 0;
-          h4 {
-            height: 60px;
-          }
+          //h4 {
+          //  height: 60px;
+          //}
         }
         .flex-box {
           padding: 5px 10px;
@@ -233,18 +233,21 @@
       //dark
       tr:nth-child(even) {
         .plan-option-feature{background-color: #ededed;}
-        .junior_monthly, .junior_yearly{background-color: #cae8c8;}
-        .core_monthly, .core_yearly{background-color: #afe3f6;}
-        .senior_monthly, .senior_yearly{background-color: #cae8c8;}
-        .free_account {background-color: #faf8c3;}
+        .essentials-monthly, .essentials-annual {background-color: #bee5bd;}
+
+        //.junior_monthly, .junior_yearly{background-color: #cae8c8;}
+        //.core_monthly, .core_yearly{background-color: #afe3f6;}
+        //.senior_monthly, .senior_yearly{background-color: #cae8c8;}
+        //.free_account {background-color: #faf8c3;}
       }
       //light
       tr:nth-child(odd) {
         .plan-option-feature{background-color: #dedede;}
-        .junior_monthly, .junior_yearly{background-color: #dbf1dc;}
-        .core_monthly, .core_yearly{background-color: #caecf9;}
-        .senior_monthly, .senior_yearly{background-color: #dbf1dc;}
-        .free_account {background-color: #fdfad7;}
+        .essentials-monthly, .essentials-annual {background-color: #d6e5d5;}
+        //.junior_monthly, .junior_yearly{background-color: #dbf1dc;}
+        //.core_monthly, .core_yearly{background-color: #caecf9;}
+        //.senior_monthly, .senior_yearly{background-color: #dbf1dc;}
+        //.free_account {background-color: #fdfad7;}
       }
 
     }
@@ -258,7 +261,6 @@
         padding: 10px;
         font-size: 22px;
         font-weight: bold;
-        font-style: italic;
         font-family: sans-serif
       }
     }
@@ -354,11 +356,19 @@
       margin-bottom: 3px;
     }
 
+    .essentials-monthly_header, .essentials-annual_header{background-color: #4cb649;}
     .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
     .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
     .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
     .free_account_header {background-color: #f5f072;}
 
+    .essentials-monthly_btn, .essentials-annual_btn {
+      border-color: #808080;
+      background-color: #4cb649;
+      color: #3a3838 !important;
+      width: 95%;
+      margin: 5px auto;
+    }
     .junior_monthly_btn, .junior_yearly_btn {
       border-color: #6ebc95;
       background-color: #fff;

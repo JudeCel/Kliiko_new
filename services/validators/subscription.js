@@ -69,6 +69,13 @@ module.exports = {
   countRecruiterMessage: countRecruiterMessage
 };
 
+/**
+ * @param {number} accountId
+ * @param {string} type - one of ['session', 'contactList', 'survey', 'topic']
+ * @param {number} count
+ * @param {object} [params]
+ * @return models.Subscription
+ */
 function validate(accountId, type, count, params) {
   let deferred = q.defer();
   if (!params) {
@@ -168,7 +175,7 @@ function getTopicCount(accountId, params) {
       else {
         resolve({ limit: -1 });
       }
-    }).then((count) => {      
+    }).then((count) => {
       const limit = subscription.SubscriptionPreference.data[dependency.key];
       resolve({ count, limit });
     }).catch((error) => {

@@ -5,6 +5,7 @@ const constants = require('./constants');
 
 const keys = Object.keys(plans);
 const mand_keys = [
+  "handsOnHelp",
   "sessionCount",
   "contactListCount",
   "recruiterContactListCount",
@@ -46,19 +47,25 @@ keys.forEach((plan_key) => {
   }
 });
 
+/**
+ * Prepare "preference" based on ChargeBee planId
+ * @param {string} chargebeePlanId
+ */
 function preferenceName(chargebeePlanId) {
   const currencies = constants.supportedCurrencies.join('|');
-  return chargebeePlanId.replace(new RegExp(`_(${currencies})`), '');
+  return chargebeePlanId.replace(new RegExp(`[_-](${currencies})`, 'i'), '');
 }
 
 module.exports = {
+  'essentials-monthly':  plans.essentials,
+  'essentials-annual':   plans.essentials,
   free_trial:     plans.trial,
   free_account:   plans.account,
   senior_monthly: plans.senior,
   senior_yearly:  plans.senior,
-  core_monthly:   plans.core,
-  core_yearly:    plans.core,
-  junior_monthly: plans.junior,
-  junior_yearly:  plans.junior,
+  // core_monthly:   plans.core,
+  // core_yearly:    plans.core,
+  // junior_monthly: plans.junior,
+  // junior_yearly:  plans.junior,
   preferenceName
 }

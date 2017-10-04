@@ -29,9 +29,9 @@
     };
 
     vm.pricePerEnding = {
-      month: 'MONTH',
-      year: 'YEAR'
-    }
+      month: 'per Month',
+      year: 'per Year'
+    };
 
     vm.stepLayouts = [
       {
@@ -138,7 +138,7 @@
           // vm.currencyList = Object.keys(vm.currencyData.rates);
           // vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
-          vm.free_account = result.free_account;
+          // vm.free_account = result.free_account;
           vm.plans = result.plans;
           vm.additionalParams = result.additionalParams;
           changePlanList();
@@ -163,7 +163,7 @@
 
     function changePlanList() {
       vm.plansList = angular.copy(vm.plans[vm.currentCurrency][vm.annualOrMonthly]);
-      vm.plansList.unshift(vm.free_account);
+      //vm.plansList.unshift(vm.free_account);
     }
 
     function succeededCheckout(params) {
@@ -182,7 +182,7 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
+        planService.updatePlan(vm.selectedPlan.plan.id, vm.selectedPlan.numOfSessions).then(function(response) {
           if(response.error){
             messenger.error(response.error);
           }else {
