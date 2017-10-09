@@ -21,7 +21,7 @@ function index(req, res, next) {
       }
     });
   }, (error) => {
-    res.render(views_path('notFound'), {title: "Invite", error: error});
+    res.redirect('/login');
   });
 }
 
