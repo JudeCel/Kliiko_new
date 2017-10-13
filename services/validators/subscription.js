@@ -19,13 +19,19 @@ const DEPENDENCIES = {
     model: models.Session,
     params: function(accountId, sessionId) {
       return {
+        // where: {
+        //   $and: [{
+        //     accountId: accountId,
+        //     status: 'open',
+        //     $or: [{ endTime: { $gt: new Date() } }, { publicUid: { $ne: null } }],
+        //     id: { $ne: sessionId || null }
+        //   }, models.sequelize.literal('"Topics"."id" is NULL')]
+        // },
         where: {
-          $and: [{
             accountId: accountId,
             status: 'open',
             $or: [{ endTime: { $gt: new Date() } }, { publicUid: { $ne: null } }],
             id: { $ne: sessionId || null }
-          }, models.sequelize.literal('"Topics"."id" is NULL')]
         },
         include: [{ model: models.Topic, required: false, where: { inviteAgain: true } }]
       };

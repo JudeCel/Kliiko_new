@@ -10,9 +10,9 @@
           </th>
 
           <th ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
-            <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)">
-              <div class="label">CURRENT</div>
-            </div>
+            <!--<div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)">-->
+              <!--<div class="label">CURRENT</div>-->
+            <!--</div>-->
             <div class="col-sm-1 pull-right">
               <div ng-if="up.mostPopular(subscriptionPlan.plan.preference)" class="most-popular pull-right"></div>
             </div>

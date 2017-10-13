@@ -160,7 +160,7 @@ function createNewSessionDefaultItems(session, userId) {
  */
 function initializeBuilder(params) {
   return validators
-    .subscription(params.accountId, 'session', 0)
+    .subscription(params.accountId, 'session', 1)
     .then(() => {
 
       params.step = 'setUp';
@@ -182,7 +182,7 @@ function initializeBuilder(params) {
     })
     .spread((session, empty) => session)
     .catch((error) => {
-      throw new Error(filters.errors(error));
+      throw filters.errors(error);
     });
 }
 
@@ -1233,7 +1233,7 @@ function validate(session, params, step) {
     step = session.step;
   }
 
-  validators.subscription(session.accountId, 'session', 0, { sessionId: session.id }).then(function() {
+  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
     return findValidation(step, params);
   }).then(function(value) {
     deferred.resolve(value);

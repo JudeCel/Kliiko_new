@@ -111,7 +111,9 @@ function setOpen(sessionId, open, accountId) {
     }).then(function(session) {
       if (session) {
         let status = open ? "open" : "closed";
-        sessionValidators.canOpenSession(sessionId, accountId, status).then(function() {
+        // sessionValidators.canOpenSession(sessionId, accountId, status).then(function() {
+        // do not validate subscription if we want to close a session
+        validators.subscription(accountId, 'session', open ? 1 : 0).then(function() {
           session.update({ status: status }).then(function(updatedSession) {
             let surveyIds = _(session.Surveys).map('dataValues.id').value();
             Survey.update({ closed: !open }, { where: { id: surveyIds } }).then(function() {

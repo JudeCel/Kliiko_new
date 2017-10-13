@@ -172,6 +172,7 @@ function getAllPlans(accountId, ip) {
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
+          planWithConstsAndEstimates = removeOldPlans(planWithConstsAndEstimates);
           plans = mapPlans(planWithConstsAndEstimates);
           deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
         }).catch((error) => {
@@ -206,6 +207,12 @@ function getFreeAccountRemoveTrial(plans) {
   const remove = ['free_trial', 'free_account'];
   const free = _.remove(plans, (item) => remove.includes(PLAN_CONSTANTS.preferenceName(item.plan.id)));
   return free.find((item) => item.plan.id.includes('free_account'));
+}
+
+function removeOldPlans(plans) {
+  const remove = ['core_monthly', 'core_yearly', 'junior_monthly','junior_yearly', 'senior_monthly', 'senior_yearly'];
+  _.remove(plans, (item) => remove.includes(PLAN_CONSTANTS.preferenceName(item.plan.id)));
+  return plans;
 }
 
 function mapPlans(plans) {
@@ -517,7 +524,8 @@ function gatherInformation(accountId, newPlanId) {
  * @param {object} params
  * @param {string} params.accountId
  * @param {string} params.newPlanId
- * @param {string} params.numOfSessions
+ * @param {object} params.resources
+ * @param {number} params.resources.sessionCount
  * @param {string} params.redirectUrl
  * @param providers
  */
@@ -532,12 +540,13 @@ function updateSubscription(params, providers) {
       viaCheckout: null
     }
   }
+  const resources = params.resources;
 
   gatherInformation(params.accountId, params.newPlanId).then(function(result) {
     canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
         if(params.skipCardCheck) {
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
-            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription)).then(function(result_1) {
+            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription, resources)).then(function(result_1) {
               deferred.resolve(result_1);
             }, function(error) {
               deferred.reject(error);
@@ -546,7 +555,7 @@ function updateSubscription(params, providers) {
             deferred.reject(error);
           })
         } else {
-          chargebeeSubUpdateViaCheckout(chargebeePassParams(result), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
+          chargebeeSubUpdateViaCheckout(chargebeePassParams(result, null, resources), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {
             deferred.reject(error);
@@ -642,6 +651,11 @@ function retrievCheckoutAndUpdateSub(hostedPageId) {
   return deferred.promise;
 }
 
+/**
+ *
+ * @param {object} passThruContent
+ * @param {number} passThruContent.sessionCount
+ */
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
   findSubscriptionByChargebeeId(passThruContent.subscriptionId).then(function(subscription) {
@@ -650,6 +664,11 @@ function updateSubscriptionData(passThruContent){
 
       let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
+
+      // TODO: add additional bought sessions
+      if (passThruContent.sessionCount) {
+        params.sessionCount = params.sessionCount + passThruContent.sessionCount;
+      }
 
       updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
         cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId).then(() => {
@@ -815,7 +834,14 @@ function chargebeePortalParams(subscription, callbackUrl) {
   }
 }
 
-function chargebeePassParams(result, subscription) {
+/**
+ * @param result
+ * @param subscription
+ * @param {object} [resources]
+ * @param {number} resources.sessionCount
+ * @return {{id, subscriptionId, planId: (*|string|chargebeePlanId|{type, allowNull, validate}), subscriptionPlanId, paidSmsCount: (*|number), planSmsCount: (*|number|planSmsCount|{type, allowNull, defaultValue}), oldPriority, accountName, endDate}}
+ */
+function chargebeePassParams(result, subscription, resources = {}) {
   return {
     id: result.subscription.id,
     subscriptionId: result.subscription.subscriptionId,
@@ -823,6 +849,7 @@ function chargebeePassParams(result, subscription) {
     subscriptionPlanId: result.newPlan.id,
     paidSmsCount: result.subscription.SubscriptionPreference.data.paidSmsCount,
     planSmsCount: result.subscription.SubscriptionPreference.data.planSmsCount,
+    sessionCount: resources.sessionCount,
     oldPriority: result.subscription.SubscriptionPlan.priority,
     accountName: result.accountName,
     endDate: getSubscriptionEndDate(subscription)
@@ -932,11 +959,12 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
   let deferred = q.defer();
 
     let functionArray = [
-      validateIfNotCurrentPlan(accountId, newPlan),
+      // user need to be able to buy several sessions within the same plan several times
+      // validateIfNotCurrentPlan(accountId, newPlan),
       validateSessionCount(accountId, newPlan),
       validateSurveyCount(accountId, newPlan),
       validateContactListCount(accountId, newPlan)
-    ]
+    ];
     async.waterfall(functionArray, function(systemError, errorMessages) {
       if(systemError){
         deferred.reject(systemError);
@@ -972,7 +1000,7 @@ function validateIfNotCurrentPlan(accountId, newPlan) {
 }
 
 function validateSessionCount(accountId, newPlan) {
-  return function(errors, cb) {
+  return function(cb) {
     models.Session.count({
       where: {
         accountId: accountId,
@@ -982,7 +1010,7 @@ function validateSessionCount(accountId, newPlan) {
         }
       }
     }).then(function(c) {
-      errors = errors || {};
+      let errors = {};
       if(newPlan.sessionCount !== -1 && newPlan.sessionCount < c) {
         errors.session = MessagesUtil.subscription.validation.session;
       }

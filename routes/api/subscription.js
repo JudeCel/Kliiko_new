@@ -46,7 +46,9 @@ function updatePlan(req, res, next) {
   let params = {
     accountId: req.currentResources.account.id,
     newPlanId: req.body.planId,
-    numOfSessions: req.body.numOfSessions,
+    resources: {
+      sessionCount: req.body.sessionCount,
+    },
     redirectUrl: redirectUrl
   };
 

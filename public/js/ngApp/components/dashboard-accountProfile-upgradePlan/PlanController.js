@@ -14,6 +14,8 @@
 
     vm.planInModal = null;
     vm.selectedPlan = null;
+    vm.sessionCount = null;
+    vm.possibleNumOfSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     vm.currentStep = 1;
     vm.currentPlan = null;
     vm.purchaseWasSuccessfull = true;
@@ -157,6 +159,7 @@
       array.forEach(function(item) {
         if(item.plan.preference === vm.shouldShowPlan) {
           vm.selectedPlan = item;
+          vm.sessionCount = 1;
         }
       });
     }
@@ -182,7 +185,7 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id, vm.selectedPlan.numOfSessions).then(function(response) {
+        planService.updatePlan(vm.selectedPlan.plan.id, vm.sessionCount).then(function(response) {
           if(response.error){
             messenger.error(response.error);
           }else {
@@ -198,6 +201,7 @@
 
     function wantThisPlan(selectedSubPlan) {
       vm.selectedPlan = selectedSubPlan;
+      vm.sessionCount = 1;
       $(".planHint").hide();
       nextStep();
     }
@@ -205,6 +209,7 @@
     vm.dropdownSelectedPlan = function(planItem) {
       if (!vm.isCurrentPlan(planItem)) {
         vm.selectedPlan = planItem;
+        vm.sessionCount = 1;
       }
     };
 
@@ -220,6 +225,7 @@
 
     function previouseStep() {
       vm.selectedPlan = null;
+      vm.sessionCount = null;
       return --vm.currentStep;
     }
 
@@ -261,6 +267,7 @@
 
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
+      vm.sessionCount = 1;
     }
 
     function openGetQuoteModal(user) {
