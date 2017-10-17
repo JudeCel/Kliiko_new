@@ -137,7 +137,13 @@ function preValidate(user, accountId, email, errors) {
       reject(errors);
     } else if (email) {
       AccountUser.findAll({
-        where: { AccountId: accountId, role: "accountManager", email: { ilike: email }  }
+        where: {
+          AccountId: accountId,
+          role: 'accountManager',
+          email: { ilike: email },
+          isRemoved: false,
+          active: true,
+        }
       }).then(function(accountUsers) {
         if(_.isEmpty(accountUsers)) {
           resolve();
@@ -156,13 +162,7 @@ function preValidate(user, accountId, email, errors) {
 }
 
 function addAccountUser(params, accountId) {
-  return new Bluebird((resolve, reject) => {
-    createAccountUser(params, accountId).then((data) => {
-      resolve(data);
-    }, (error) => {
-      reject(error);
-    });
-  })
+  return createAccountUser(params, accountId);
 }
 
 function updateAccountUser(accountId, accountUserId) {

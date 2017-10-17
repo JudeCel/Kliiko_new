@@ -21,16 +21,18 @@ function canAddAccountManager(req, res, next) {
 }
 
 function post(req, res, next) {
-  accountManagerService.createOrFindAccountManager(req.currentResources.user, req.body, req.currentResources.account.id).then(function(params) {
-    inviteService.createInvite(params).then(function(data) {
+  const { currentResources, body } = req;
+  accountManagerService.createOrFindAccountManager(currentResources.user, body, currentResources.account.id)
+    .then((params) => {
+      return inviteService.createInvite(params)
+    })
+    .then((data) => {
       res.send({ invite: data, message: MessagesUtil.routes.accountManager.invite });
-    }, function(error) {
+    })
+    .catch((error) => {
       res.send({ error: error });
     });
-  }, function(error) {
-    res.send({ error: error });
-  });
-};
+}
 
 function put(req, res, next) {
   accountManagerService.updateAccountManager(req.body).then(function(response) {
