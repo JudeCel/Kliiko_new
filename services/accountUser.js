@@ -42,35 +42,29 @@ function getPermissions(data) {
 }
 
 function deleteOrRecalculate(id, addRole, removeRole, transaction) {
-  return new Bluebird((resolve, reject) => {
-    // can't remove owner account user!
-    let query = {
-      where: {
-        id: id
-      },
-      transaction: transaction,
-      include: [
-        { model: models.Account},
-        { model: SessionMember }
-      ]
-    }
+  // can't remove owner account user!
+  let query = {
+    where: {
+      id: id,
+    },
+    transaction: transaction,
+    include: [
+      { model: models.Account },
+      { model: SessionMember },
+    ],
+  };
 
-    AccountUser.find(query).then((accountUser) => {
-      if (accountUser) {
-        recalculateRole(accountUser, addRole, removeRole).then((params) => {
-          accountUser.update(params, {transaction: transaction}).then((updatedAccountUser) => {
-            resolve(updatedAccountUser);
-          }, (error) => {
-            reject(error);
-          });
-        }, (error) => {
-          reject(error);
-        });
-      }else{
-        reject(MessagesUtil.accountUser.notFound);
+  return AccountUser.find(query)
+    .then((accountUser) => {
+      if (!accountUser) {
+        throw MessagesUtil.accountUser.notFound;
       }
+
+      return [accountUser, recalculateRole(accountUser, addRole, removeRole)];
+    })
+    .spread((accountUser, params) => {
+      return accountUser.update(params, { transaction: transaction });
     });
-  })
 }
 
 function recalculateRole(accountUser, newRole, removeRole) {
