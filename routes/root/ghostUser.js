@@ -39,7 +39,15 @@ function post(req, res, next) {
     if (error == "The response parameter is missing.") {
       error = "Captcha not confirmed";
     }
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error, captcha: captcha.formElement(), sneakPreviewIntro: false });
+    
+    res.render('ghost-user/index', { 
+      title: 'Chat Session Login', 
+      error: null, 
+      uid: req.params.uid, 
+      message: error, 
+      captchaSiteKey: process.env.RECAPTCHA_SITE_KEY, 
+      sneakPreviewIntro: false 
+    });
   });
 }
 
