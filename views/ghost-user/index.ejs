@@ -15,16 +15,23 @@
           <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="" maxlength="20">
         </p>
         <p>
-          <%- captcha %>
-          <br/>
-        </p>
-        <p>
           By clicking on the Accept button below, you agree with our <a href="/privacy_policy" target="_blank">Privacy Policy</a>
         </p>
         <div class="form-group text-right">
-          <button type="submit" value="Accept" class="btn btn-standart btn-green btn-small">Accept</button>
+          <button type="button"
+                  data-callback="onAccept"
+                  value="Accept" 
+                  class="g-recaptcha btn btn-standart btn-green btn-small"
+                  data-sitekey="<%= captchaSiteKey %>">
+                  Accept
+          </button>
         </div>
       </form>
+      <script>
+        function onAccept(token) {
+          document.getElementById("signup").submit();
+        }
+      </script>
     <% } %>
   </div>  
   <% if (sneakPreviewIntro && !error && !message) { %>
