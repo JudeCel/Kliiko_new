@@ -301,7 +301,7 @@ function removeByRole(role, sessionId, accountId) {
     let accountUserIds = _.map(members, 'accountUserId');
     SessionMember.destroy({ where: { id: ids } }).then(function(removedCount) {
       _.map(managers, function(sessionMember) {
-        sessionMember.update({ role: 'observer', typeOfCreation: 'system' });
+        sessionMember.update({ role: 'participant', typeOfCreation: 'system' });
       });
       refreshAccountUsersRole(accountUserIds).then(function() {
         deferred.resolve(removedCount);
