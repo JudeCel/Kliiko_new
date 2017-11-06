@@ -70,7 +70,7 @@
       var survey = surveyWithType('sessionPrizeDraw');
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionPrizeDraw';
-      surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
+      surveySection.title = "Prize Draw";
       surveySection.canDisable = !vm.session.publicUid;
       surveySection.active = survey && survey.active;
 
@@ -468,6 +468,7 @@
       var active = !survey.active;
       vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
         survey.active = active;
+        survey.expanded = active;
       }, function(error) {
         messenger.error(error);
       });
