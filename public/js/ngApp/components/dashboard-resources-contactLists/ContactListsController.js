@@ -155,7 +155,7 @@
       vm.sessionId = sessionId;
     }
     function canEditOrDelete(member) {
-      return !member.admin
+      return !member.admin && vm.lists.activeList.name !== 'Account Managers';
     }
 
     function removeSpecificLists() {
@@ -575,7 +575,7 @@
     }
 
     function canSelectMember(member) {
-      return (!vm.hideStuff || member.canInvite) && !member.admin;
+      return (!vm.hideStuff || member.canInvite) && !member.admin && vm.lists.activeList.name !== 'Account Managers';
     }
 
     /**

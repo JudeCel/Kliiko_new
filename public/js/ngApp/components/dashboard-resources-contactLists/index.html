@@ -60,7 +60,11 @@
         </div>
 
         <div id="contact-lists-right-column" class="col-xs-12 col-md-9">
-          <div id="list-mass-actions" class="clearfix">
+          <div
+            id="list-mass-actions"
+            class="clearfix"
+            ng-if="clc.lists.items[clc.lists.activeListIndex].name !== 'Account Managers'"
+          >
             <span class="check" ng-if="clc.lists.activeList.members.length">
               <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
               <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
@@ -83,7 +87,14 @@
                 <div id='edit-list-fields-btn' class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
               </span>
 
-              <div custom-select-directive ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()" data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="add-new-contact-btn custom-select-directive btn-large">
+              <div
+                ng-if="clc.lists.items[clc.lists.activeListIndex].name !== 'Account Managers'"
+                custom-select-directive
+                ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()"
+                data-title="Add New Contacts"
+                data-id="contact-lists-add-button-1"
+                class="add-new-contact-btn custom-select-directive btn-large"
+              >
                 <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
                 <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
               </div>
