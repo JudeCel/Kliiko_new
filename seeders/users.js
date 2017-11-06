@@ -42,6 +42,7 @@ function createAdmin(callback) {
                 accountId: account.id,
                 name: "It's A Wrap",
                 boardMessage: "Thanks for all your help! I have lots to take with me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
+                default: true,
                 stock: true,
                 inviteAgain: true
               };

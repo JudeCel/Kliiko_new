@@ -76,7 +76,10 @@ function createInviteAgainTopic() {
   return new Bluebird(function (resolve, reject) {
     models.Topic.find({where: { inviteAgain: true, stock: true } }).then(function(topic) {
       if (topic) {
-        resolve();
+        // if there is the inviteAgain topic - make it 'default' - in order to disable ability to remove it from list of topics
+        topic.default = true;
+        return topic.save()
+          .then(() => resolve());
       } else {
         return models.AccountUser.find({ where: { role: "admin" } });
       }
@@ -85,6 +88,7 @@ function createInviteAgainTopic() {
         accountId: adminAccountUser.AccountId,
         name: "It's A Wrap",
         boardMessage: "Thanks for all your help! I have lots to take with me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
+        default: true, // in order to disable ability to remove it from list of topics
         stock: true,
         inviteAgain: true
       };
