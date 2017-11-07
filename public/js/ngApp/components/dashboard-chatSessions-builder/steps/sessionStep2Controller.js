@@ -58,7 +58,7 @@
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
-      surveySection.canDisable = false;
+      surveySection.canDisable = !vm.session.publicUid;;
       if (survey) {
         surveySection.id = survey.surveyId;
         vm.attachedSurveysToSession[surveySection.id] = true;
@@ -469,10 +469,42 @@
       vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
         survey.active = active;
         survey.expanded = active;
+
+        // shows whether all surveys are enabled or are disabled
+        const allStatuses = vm.surveyList.map(survey => survey.active);
+
+        // whether user enabled or disabled survey
+        if (active) {
+          const alreadyAdded = inviteAgainTopicAdded();
+          if (alreadyAdded) {
+            return;
+          }
+          // get inviteAgain topic from list of all available topics
+          let inviteAgainTopic = vm.topicController.list.find(t=>t.inviteAgain && !t.stock);
+          if (!inviteAgainTopic) {
+            const inviteAgainTopicTemplate = vm.topicController.list.find(t=>t.inviteAgain);
+            angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
+            vm.topicController.editTopic()
+              .then(() => {
+                inviteAgainTopic = vm.topicController.list.find(t=>t.inviteAgain && !t.stock);
+                topicsOnDropComplete(inviteAgainTopic);
+              });
+          } else {
+            topicsOnDropComplete(inviteAgainTopic);
+          }
+        } else {
+          const allDisabled = allStatuses.every(el => !el);
+          if (allDisabled) {
+            // get inviteAgain topic from list of session topics
+            const inviteAgainTopicTemplate = vm.sessionTopicsArray.find(t=>t.inviteAgain);
+            inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
+          }
+        }
+
       }, function(error) {
         messenger.error(error);
       });
-    }
+    };
 
     vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
       survey.notPublished == !vm.session.publicUid;

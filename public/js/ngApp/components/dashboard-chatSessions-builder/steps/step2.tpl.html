@@ -57,7 +57,7 @@
                 <span class="copy-of-stock">{{ step2Controller.isCopy(topic) }}</span> {{ topic.sessionTopic.name }}
               </span>
 
-              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default && (!topic.inviteAgain || !step2Controller.session.publicUid)" src="/icons/dashboardElement_remove.png" title="Delete">
+              <img class="pull-right ic" ng-click="step2Controller.removeTopicFromList(topic.id)" ng-if="!topic.default && !topic.inviteAgain" src="/icons/dashboardElement_remove.png" title="Delete">
               <img class="pull-right ic" src="/icons/dashboardElement_edit.png" title="Edit" ng-click="tc.openModal('sessionTopic', topic)">
 
               <toggle-switch
@@ -78,28 +78,28 @@
     </section>
 
     <div ng-if="step2Controller.session.steps.step2.sessionSurveyEnabled" class="session-survey-section">
-      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList" ng-if="step2Controller.inviteAgainTopicAdded()">
+      <uib-accordion close-others="false" ng-repeat="survey in step2Controller.surveyList">
         <uib-accordion-group is-open="survey.expanded" is-disabled="!survey.active" class="green-input session-type">
           <uib-accordion-heading>
-            <div class="panel-label text-left">
-              {{survey.title}}
-              <div class="panel-label text-right">
+            <div class="panel-label text-left clearfix">
+              <div class="topic-survey-label">{{survey.title}}</div>
+              <div class="topic-survey-label pull-right">
                 <button ng-if="survey.canDisable"
                         ng-disabled="!survey.active"
-                        class='btn border-radius-none ng-binding btn-danger pull-right'
+                        ng-class="!survey.active ? 'btn-danger' : ''"
+                        class='btn btn-standart pull-right'
                         ng-click='step2Controller.blockSurvey(survey)'>
                   No
                 </button>
                 <button ng-if="survey.canDisable"
                         ng-disabled="survey.active"
-                        class='btn border-radius-none ng-binding btn-success pull-right'
+                        ng-class="survey.active ? 'btn-success' : ''"
+                        class='btn btn-standart pull-right'
                         ng-click='step2Controller.blockSurvey(survey)'>
                   Yes
                 </button>
               </div>
             </div>
-
-
           </uib-accordion-heading>
           <div ng-controller="GalleryController as gc">
             <div ng-controller='SurveyEditController as sc' ng-init='step2Controller.initSurveyEditor(sc, gc, survey)'>
