@@ -84,15 +84,13 @@
             <div class="panel-label text-left clearfix">
               <div class="topic-survey-label">{{survey.title}}</div>
               <div class="topic-survey-label pull-right">
-                <button ng-if="survey.canDisable"
-                        ng-disabled="!survey.active"
+                <button ng-disabled="!survey.canDisable || !survey.active"
                         ng-class="!survey.active ? 'btn-danger' : ''"
                         class='btn btn-standart pull-right'
                         ng-click='step2Controller.blockSurvey(survey)'>
                   No
                 </button>
-                <button ng-if="survey.canDisable"
-                        ng-disabled="survey.active"
+                <button ng-disabled="!survey.canDisable || survey.active"
                         ng-class="survey.active ? 'btn-success' : ''"
                         class='btn btn-standart pull-right'
                         ng-click='step2Controller.blockSurvey(survey)'>
