@@ -464,19 +464,31 @@
       messenger.ok('Successfully updated session!');
     }
 
+    function copyInviteAgainTopic() {
+      const inviteAgainTopicTemplate = vm.topicController.list.find(t => t.inviteAgain);
+      // select inviteAgain topic
+      angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
+      // create copy of selected topic based on template
+      return vm.topicController.editTopic()
+        .then(() => {
+          // get an inviteAgain topic that is not in stock
+          return vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+        });
+    }
+
     function addInviteAgainTopic() {
+      // check if there is an inviteAgain topic that is not in stock
       let inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
-      if (!inviteAgainTopic) {
-        const inviteAgainTopicTemplate = vm.topicController.list.find(t => t.inviteAgain);
-        angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
-        vm.topicController.editTopic()
-          .then(() => {
-            inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
-            topicsOnDropComplete(inviteAgainTopic);
-          });
-      } else {
-        topicsOnDropComplete(inviteAgainTopic);
+      if (inviteAgainTopic) {
+        // add inviteAgain topic into session topics
+        return topicsOnDropComplete(inviteAgainTopic);
       }
+      // there is no topic - create a copy
+      copyInviteAgainTopic()
+        .then((inviteAgainTopic) => {
+          // add inviteAgain topic into session topics
+          topicsOnDropComplete(inviteAgainTopic);
+        });
     }
 
     vm.blockSurvey = function(survey) {
