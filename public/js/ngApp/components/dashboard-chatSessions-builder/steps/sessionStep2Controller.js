@@ -464,46 +464,51 @@
       messenger.ok('Successfully updated session!');
     }
 
-    vm.blockSurvey = function(survey) {
-      var active = !survey.active;
-      vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
-        survey.active = active;
-        survey.expanded = active;
-
-        // shows whether all surveys are enabled or are disabled
-        const allStatuses = vm.surveyList.map(survey => survey.active);
-
-        // whether user enabled or disabled survey
-        if (active) {
-          const alreadyAdded = inviteAgainTopicAdded();
-          if (alreadyAdded) {
-            return;
-          }
-          // get inviteAgain topic from list of all available topics
-          let inviteAgainTopic = vm.topicController.list.find(t=>t.inviteAgain && !t.stock);
-          if (!inviteAgainTopic) {
-            const inviteAgainTopicTemplate = vm.topicController.list.find(t=>t.inviteAgain);
-            angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
-            vm.topicController.editTopic()
-              .then(() => {
-                inviteAgainTopic = vm.topicController.list.find(t=>t.inviteAgain && !t.stock);
-                topicsOnDropComplete(inviteAgainTopic);
-              });
-          } else {
+    function addInviteAgainTopic() {
+      let inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+      if (!inviteAgainTopic) {
+        const inviteAgainTopicTemplate = vm.topicController.list.find(t => t.inviteAgain);
+        angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
+        vm.topicController.editTopic()
+          .then(() => {
+            inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
             topicsOnDropComplete(inviteAgainTopic);
-          }
-        } else {
-          const allDisabled = allStatuses.every(el => !el);
-          if (allDisabled) {
-            // get inviteAgain topic from list of session topics
-            const inviteAgainTopicTemplate = vm.sessionTopicsArray.find(t=>t.inviteAgain);
-            inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
-          }
-        }
+          });
+      } else {
+        topicsOnDropComplete(inviteAgainTopic);
+      }
+    }
 
-      }, function(error) {
-        messenger.error(error);
-      });
+    vm.blockSurvey = function(survey) {
+      const active = !survey.active;
+      vm.session
+        .setSurveyEnabled(survey.id, active)
+        .then(() => {
+          survey.active = active;
+          survey.expanded = active;
+
+          // whether user enabled or disabled a survey, "active===true" means "user enabled a survey"
+          if (active) {
+            const alreadyAdded = inviteAgainTopicAdded();
+            if (alreadyAdded) {
+              return;
+            }
+            addInviteAgainTopic();
+          } else {
+            // check whether all surveys disabled
+            const allDisabled = vm.surveyList.map(survey => survey.active).every(el => !el);
+            if (allDisabled) {
+              // get inviteAgain topic from list of session topics
+              const inviteAgainTopicTemplate = vm.sessionTopicsArray.find(t => t.inviteAgain);
+              // remove inviteAgain topic from session
+              inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
+            }
+          }
+
+        })
+        .catch((error) => {
+          messenger.error(error);
+        });
     };
 
     vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {

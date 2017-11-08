@@ -148,8 +148,6 @@ module.exports = {
       },
       invalidStep: "Invalid step"
     }
-
-
   },
   sessionMember: {
     notFound: 'Session Member not found',
