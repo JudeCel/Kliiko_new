@@ -58,7 +58,7 @@
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
       surveySection.title = "Contact List Questions";
-      surveySection.canDisable = false;
+      surveySection.canDisable = !vm.session.publicUid;;
       if (survey) {
         surveySection.id = survey.surveyId;
         vm.attachedSurveysToSession[surveySection.id] = true;
@@ -70,7 +70,7 @@
       var survey = surveyWithType('sessionPrizeDraw');
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionPrizeDraw';
-      surveySection.title = "Prize Draw (Only displayed to No Thanks if Enabled)";
+      surveySection.title = "Prize Draw";
       surveySection.canDisable = !vm.session.publicUid;
       surveySection.active = survey && survey.active;
 
@@ -464,14 +464,64 @@
       messenger.ok('Successfully updated session!');
     }
 
-    vm.blockSurvey = function(survey) {
-      var active = !survey.active;
-      vm.session.setSurveyEnabled(survey.id, active).then(function(result) {
-        survey.active = active;
-      }, function(error) {
-        messenger.error(error);
-      });
+    function copyInviteAgainTopic() {
+      const inviteAgainTopicTemplate = vm.topicController.list.find(t => t.inviteAgain);
+      // select inviteAgain topic
+      angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
+      // create copy of selected topic based on template
+      return vm.topicController.editTopic()
+        .then(() => {
+          // get an inviteAgain topic that is not in stock
+          return vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+        });
     }
+
+    function addInviteAgainTopic() {
+      // check if there is an inviteAgain topic that is not in stock
+      let inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+      if (inviteAgainTopic) {
+        // add inviteAgain topic into session topics
+        return topicsOnDropComplete(inviteAgainTopic);
+      }
+      // there is no topic - create a copy
+      copyInviteAgainTopic()
+        .then((inviteAgainTopic) => {
+          // add inviteAgain topic into session topics
+          topicsOnDropComplete(inviteAgainTopic);
+        });
+    }
+
+    vm.blockSurvey = function(survey) {
+      const active = !survey.active;
+      vm.session
+        .setSurveyEnabled(survey.id, active)
+        .then(() => {
+          survey.active = active;
+          survey.expanded = active;
+
+          // whether user enabled or disabled a survey, "active===true" means "user enabled a survey"
+          if (active) {
+            const alreadyAdded = inviteAgainTopicAdded();
+            if (alreadyAdded) {
+              return;
+            }
+            addInviteAgainTopic();
+          } else {
+            // check whether all surveys disabled
+            const allDisabled = vm.surveyList.map(survey => survey.active).every(el => !el);
+            if (allDisabled) {
+              // get inviteAgain topic from list of session topics
+              const inviteAgainTopicTemplate = vm.sessionTopicsArray.find(t => t.inviteAgain);
+              // remove inviteAgain topic from session
+              inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
+            }
+          }
+
+        })
+        .catch((error) => {
+          messenger.error(error);
+        });
+    };
 
     vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
       survey.notPublished == !vm.session.publicUid;

@@ -40,6 +40,7 @@
     vm.canSetStock = canSetStock;
     vm.canDelete = canDelete;
     vm.deleteTopic = deleteTopic;
+    vm.editTopic = editTopic;
     vm.openModal = openModal;
     vm.submitModalForm = submitModalForm;
     vm.charactersLeft = charactersLeft;
@@ -203,7 +204,7 @@
         vm.topicData.sessionId = vm.session.id
       }
 
-      topicsAndSessions.updateTopic(vm.topicData).then(updateTopicSuccess, showErrorMessage);
+      return topicsAndSessions.updateTopic(vm.topicData).then(updateTopicSuccess, showErrorMessage);
     }
 
     function updateTopicSuccess(res) {
