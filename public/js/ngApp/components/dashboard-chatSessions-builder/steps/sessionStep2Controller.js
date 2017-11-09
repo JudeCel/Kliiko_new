@@ -465,60 +465,62 @@
     }
 
     function copyInviteAgainTopic() {
-      const inviteAgainTopicTemplate = vm.topicController.list.find(t => t.inviteAgain);
+      var inviteAgainTopicTemplate = vm.topicController.list.find(function(t) { return t.inviteAgain });
       // select inviteAgain topic
       angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
       // create copy of selected topic based on template
       return vm.topicController.editTopic()
-        .then(() => {
+        .then(function() {
           // get an inviteAgain topic that is not in stock
-          return vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+          return vm.topicController.list.find(function(t) { return t.inviteAgain && !t.stock });
         });
     }
 
     function addInviteAgainTopic() {
       // check if there is an inviteAgain topic that is not in stock
-      let inviteAgainTopic = vm.topicController.list.find(t => t.inviteAgain && !t.stock);
+      var inviteAgainTopic = vm.topicController.list.find(function(t) { return t.inviteAgain && !t.stock });
       if (inviteAgainTopic) {
         // add inviteAgain topic into session topics
         return topicsOnDropComplete(inviteAgainTopic);
       }
       // there is no topic - create a copy
       copyInviteAgainTopic()
-        .then((inviteAgainTopic) => {
+        .then(function(inviteAgainTopic) {
           // add inviteAgain topic into session topics
           topicsOnDropComplete(inviteAgainTopic);
         });
     }
 
     vm.blockSurvey = function(survey) {
-      const active = !survey.active;
+      var active = !survey.active;
       vm.session
         .setSurveyEnabled(survey.id, active)
-        .then(() => {
+        .then(function() {
           survey.active = active;
           survey.expanded = active;
 
           // whether user enabled or disabled a survey, "active===true" means "user enabled a survey"
           if (active) {
-            const alreadyAdded = inviteAgainTopicAdded();
+            var alreadyAdded = inviteAgainTopicAdded();
             if (alreadyAdded) {
               return;
             }
             addInviteAgainTopic();
           } else {
             // check whether all surveys disabled
-            const allDisabled = vm.surveyList.map(survey => survey.active).every(el => !el);
+            var allDisabled = vm.surveyList
+              .map(function(survey) { return survey.active })
+              .every(function(el) { return !el });
             if (allDisabled) {
               // get inviteAgain topic from list of session topics
-              const inviteAgainTopicTemplate = vm.sessionTopicsArray.find(t => t.inviteAgain);
+              var inviteAgainTopicTemplate = vm.sessionTopicsArray.find(function(t) { return t.inviteAgain });
               // remove inviteAgain topic from session
               inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
             }
           }
 
         })
-        .catch((error) => {
+        .catch(function(error) {
           messenger.error(error);
         });
     };
