@@ -238,8 +238,8 @@ function getLatestMailTemplate(req, callback) {
       where: { sessionId: req.sessionId },
       required: true
     });
-  } 
-  
+  }
+
   MailTemplate.findAll({
     include: include,
     where: [accountQuery, templateQuery],
@@ -367,17 +367,17 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   let query =  {};
   baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
-  let include = [{ 
-    model: MailTemplateOriginal, 
-    attributes: ['id', 'name', 'systemMessage', 'category'], 
-    where: baseTemplateQuery 
+  let include = [{
+    model: MailTemplateOriginal,
+    attributes: ['id', 'name', 'systemMessage', 'category'],
+    where: baseTemplateQuery
   }];
 
   if (sessionId) {
     include.push({
       model: Session,
       where: { id: { '$or': [sessionId, null] } },
-      attributes: ['id', 'name'], 
+      attributes: ['id', 'name'],
       required: false
     });
   }
@@ -774,8 +774,8 @@ function deleteMailTemplate(id, callback) {
 function prepareMailDefaultParameters(params) {
   params = params || {};
   let defaultParams = {
-    termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
-    privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
+    termsOfUseUrl: constants.externalLinks.termsOfUse,
+    privacyPolicyUrl: constants.externalLinks.privacyPolicy,
     systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
