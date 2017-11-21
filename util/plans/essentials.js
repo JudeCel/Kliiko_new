@@ -23,7 +23,7 @@ module.exports = {
     "reportingFunctions": true,
     "availableOnTabletAndMobilePlatforms": true,
     "secureSsl": true,
-    "surveyCount": -1,
+    "surveyCount": 1,
     "priority": 1, // This is only for front end.
 
 

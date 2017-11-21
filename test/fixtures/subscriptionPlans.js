@@ -40,17 +40,26 @@ function create(plan) {
   const deferred = q.defer();
   const preferenceName = planConstants.preferenceName(plan.id);
   const params = planConstants[preferenceName];
-  if(params){
+  if (params) {
     params.preferenceName = preferenceName;
     params.chargebeePlanId = plan.id;
 
-    models.SubscriptionPlan.create(params).then(function(result) {
-      deferred.resolve(result);
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
-    });
-  }else {
-    deferred.reject("Can't find plan in constants!");
+    models.SubscriptionPlan.findOne({ where: { preferenceName: params.preferenceName } })
+      .then(function (plan) {
+        if (plan) {
+          return plan;
+        }
+
+        return models.SubscriptionPlan.create(params);
+      })
+      .then(function (result) {
+        deferred.resolve(result);
+      })
+      .catch(function (error) {
+        deferred.reject(filters.errors(error));
+      });
+  } else {
+    deferred.reject('Can\'t find plan in constants!');
   }
 
   return deferred.promise;

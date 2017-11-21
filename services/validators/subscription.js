@@ -62,7 +62,17 @@ const DEPENDENCIES = {
     },
     countMessage: countMessage
   },
-  countMessage: countMessage
+  countMessage: countMessage,
+  brandLogoAndCustomColors:  {
+    key: 'brandLogoAndCustomColors',
+    model: models.BrandProjectPreference,
+    params: function(accountId) {
+      return {
+        where: { accountId: accountId, default: false }
+      };
+    },
+    countMessage: countMessage
+  },
 };
 
 module.exports = {
@@ -258,6 +268,8 @@ function countRecruiterMessage(type, maxCount, subscription) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitCore;
   } else if (_.includes(subscriptionType, 'senior_')) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
+  } else if (_.includes(subscriptionType, 'essentials-')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitEssentials;
   }
 
   message = message.replace('_max_number_', maxCount);

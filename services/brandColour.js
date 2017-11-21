@@ -103,7 +103,7 @@ function createDefaultForAccount(params, t) {
 function canCreateCustomColors(accountId) {
   let deferred = q.defer();
 
-  validators.planAllowsToDoIt(accountId, 'brandLogoAndCustomColors').then(function() {
+  validators.subscription(accountId, 'brandLogoAndCustomColors', 1).then(function() {
     deferred.resolve();
   }, function(error) {
     deferred.reject(filters.errors(error));
