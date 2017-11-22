@@ -65,6 +65,8 @@ const SMALL_AGE = 'Under 18';
 
 const CONTACT_DETAILS_STATS_FIELDS = ['gender', 'age'];
 
+const CONTACT_DETAILS_QUESTION_NAME = 'Contact Details';
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
@@ -225,7 +227,6 @@ function createContactList(survey, fields, t){
       }
   })
 }
-
 
 function tryFindContactList(survey, t) {
    return new Bluebird((resolve, reject) => {
@@ -465,21 +466,41 @@ function copySurvey(params, account) {
   return deferred.promise;
 };
 
-function addFirstChoiceToContactListFields(survey, fields) {
-  let question = findFirstChoiceQuestion(survey.SurveyQuestions);
-  if (question) {
-    fields.push(_.camelCase(question.name));
+function addQuestionsToContactListFields(survey, fields) {
+  for (let i = 0; i < survey.SurveyQuestions.length; i++) {
+    let question = survey.SurveyQuestions[i];
+    
+    if (!isContactDetailsQuestion(question)) {
+      fields.push(_.camelCase(question.name));
+    }
   }
 }
 
-function addFirstChoiceToContactListParams(survey, validParams, clParams) {
-  let question = findFirstChoiceQuestion(survey.SurveyQuestions);
-  if (question) {
-      let answerObj = question.answers[validParams.answers[question.id].value];
-      if (answerObj) {
-        clParams.customFields[_.camelCase(question.name)] = answerObj.name;
-      }
+function addAnswersToContactListParams(survey, validParams, clParams) {
+  for (let i = 0; i < survey.SurveyQuestions.length; i++) {
+    let question = survey.SurveyQuestions[i];
+    let answer = getAnswerToQuestion(question, validParams);
+
+    if (answer) {
+      clParams.customFields[_.camelCase(question.name)] = answer.name;
+    }
   }
+}
+
+function getAnswerToQuestion(question, validParams) {
+  if (isContactDetailsQuestion(question)) return null;
+
+  let answerInValidParams = validParams.answers[question.id];
+
+  if (answerInValidParams.type === 'string') {
+    return { name: answerInValidParams.value };
+  }
+
+  return question.answers[answerInValidParams.value];
+}
+
+function isContactDetailsQuestion(question) {
+  return question.name === CONTACT_DETAILS_QUESTION_NAME;
 }
 
 function answerSurvey(params) {
@@ -499,7 +520,7 @@ function answerSurvey(params) {
           if(!contactList) { return survey }
           let fields = getContactListFields(survey.SurveyQuestions);
 
-          addFirstChoiceToContactListFields(survey, fields);
+          addQuestionsToContactListFields(survey, fields);
           return updateContactList(contactList, survey, fields, t).then((contactList) => {
               if(!_.isEmpty(fields)) {
                 let clParams = findContactListAnswers(contactList, validParams.answers);
@@ -508,6 +529,7 @@ function answerSurvey(params) {
                   clParams.accountId = survey.accountId;
 
                   if (survey.surveyType === 'recruiter') {
+                    addAnswersToContactListParams(survey, validParams, clParams);
                     return createContactListUser(survey, clParams);
                   } else if(survey.surveyType === 'sessionPrizeDraw') {
                     return survey;
@@ -517,7 +539,7 @@ function answerSurvey(params) {
                       return survey;
                     } else {
                       const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
-                      addFirstChoiceToContactListParams(survey, validParams, clParams);
+                      addAnswersToContactListParams(survey, validParams, clParams);
                       return models.AccountUser.find({
                         where: { AccountId: survey.accountId, email: contactDetails.email },
                         include: [{ model: models.ContactListUser, where: { contactListId: clParams.contactListId }, required: true }]

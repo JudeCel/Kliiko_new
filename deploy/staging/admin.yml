@@ -115,9 +115,9 @@ spec:
         - name: TWILIO_SENDER_NUMBER
           value: "+61428805081"
         - name: RECAPTCHA_SITE_KEY
-          value: "+6LekfhcUAAAAAM6MfFRSud5fddd76HkrHpEo2sLF"
+          value: "6LfBvjUUAAAAAHl27G4QrGUNi6Yoh58F3WIUFYKc"
         - name: RECAPTCHA_SECRET_KEY
-          value: "+6LekfhcUAAAAAH-2NMv74uTJrYsqgcShWhdQCZEt"
+          value: "6LfBvjUUAAAAAP7sZuiOrKFmoU4A91JcLpmbReFi"
         - name: MONITORING_SERVER_URL
           value: "ws://83.99.159.206:8080/socket/websocket"
         - name: MONITORING_SERVER_TOKEN

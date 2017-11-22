@@ -13,7 +13,15 @@ module.exports = {
 function get(req, res, next) {
   sessionService.checkSessionByPublicUid(req.params.uid).then(function() {
     let captcha = recaptcha.getCaptcha();
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: null, captcha: captcha.formElement(), sneakPreviewIntro: req.params.uid == "d0530dd0-1343-11e7-bbda-df2cb039053c" });
+    res.render('ghost-user/index', { 
+      title: 'Chat Session Login', 
+      error: null, 
+      uid: req.params.uid, 
+      message: null, 
+      captchaSiteKey: process.env.RECAPTCHA_SITE_KEY, 
+      sneakPreviewIntro: 
+      req.params.uid == "d0530dd0-1343-11e7-bbda-df2cb039053c" 
+    });
   }, function(error) {
     res.render('ghost-user/index', { title: 'Chat Session Login', error: error, message: null, sneakPreviewIntro: false });
   });
@@ -31,7 +39,15 @@ function post(req, res, next) {
     if (error == "The response parameter is missing.") {
       error = "Captcha not confirmed";
     }
-    res.render('ghost-user/index', { title: 'Chat Session Login', error: null, uid: req.params.uid, message: error, captcha: captcha.formElement(), sneakPreviewIntro: false });
+    
+    res.render('ghost-user/index', { 
+      title: 'Chat Session Login', 
+      error: null, 
+      uid: req.params.uid, 
+      message: error, 
+      captchaSiteKey: process.env.RECAPTCHA_SITE_KEY, 
+      sneakPreviewIntro: false 
+    });
   });
 }
 
