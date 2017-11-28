@@ -776,6 +776,8 @@ function prepareMailDefaultParameters(params) {
   let defaultParams = {
     termsOfUseUrl: constants.externalLinks.termsOfUse,
     privacyPolicyUrl: constants.externalLinks.privacyPolicy,
+    termsOfUseGuestUrl: constants.externalLinks.termsOfUseGuest,
+    privacyPolicyGuestUrl: constants.externalLinks.privacyPolicyGuest,
     systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
@@ -918,6 +920,8 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
   str = str.replace(/\{Terms of Use\}/ig, "<%= termsOfUseUrl %>");
+  str = str.replace(/\{Privacy Policy Guest\}/ig, "<%= privacyPolicyGuestUrl %>");
+  str = str.replace(/\{Terms of Use Guest\}/ig, "<%= termsOfUseGuestUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
