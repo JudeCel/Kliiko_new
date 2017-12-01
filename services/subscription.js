@@ -218,7 +218,6 @@ function removeOldPlans(plans) {
 function mapPlans(plans) {
   plans = _.groupBy(plans, (item) => item.plan.currency_code); // group by currency
   constants.supportedCurrencies.forEach((currency) => {
-    console.log(PLAN_CONSTANTS);
     plans[currency] = _.orderBy(plans[currency], (item) => {
       console.log([item.plan.preference]);
       return PLAN_CONSTANTS[item.plan.preference].priority, ['asc'];
@@ -586,7 +585,6 @@ function updateSubscription(params, providers) {
             deferred.reject(error);
           })
         } else {
-          // chargebeeSubUpdateViaCheckout(chargebeePassParams(result, null, resources), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
           chargebeeSubCreateViaCheckout(chargebeePassParams(result, null, resources), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
             deferred.resolve({hosted_page: hosted_page, redirect: true});
           }, function(error) {
@@ -748,7 +746,6 @@ function updateSubscriptionData(passThruContent){
 
 function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
-  // findSubscriptionByChargebeeId(subscriptionId).then(function(subscription) {
   findPreferencesBySubscriptionId(subscriptionId).then(function(preference) {
     let subscription = preference.Subscription;
     let history = preference.data.history;
@@ -858,7 +855,6 @@ function chargebeeSubCreateViaCheckout(params, redirectUrl, provider) {
 
   provider({
     subscription: {
-      // id: params.subscriptionId,
       plan_id: params.planId,
       plan_quantity: params.sessionCount,
     },

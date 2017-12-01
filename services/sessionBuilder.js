@@ -1562,10 +1562,6 @@ function publish(sessionId, accountId) {
         if (session.publicUid) {
           resolve({ id: session.id, publicUid: session.publicUid });
         } else {
-          // getRelatedInviteAgainTopic(sessionId).then(function(topic) {
-          //   if (topic) {
-          //     generatePublicUid(session, resolve, reject);
-          //   } else {
           validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
             .then(function () {
               return SessionService.allocateSession(accountId, session);
@@ -1576,8 +1572,6 @@ function publish(sessionId, accountId) {
             .catch(function (reason) {
               reject(reason);
             });
-          // }
-          // });
         }
       } else {
         reject(MessagesUtil.session.notFound);

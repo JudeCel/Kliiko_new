@@ -90,9 +90,6 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
       if (isBillingRequired(req, forceBilling)) {
         req.session.landed = true;
         redirectURL = subdomains.url(req, subDomain, '/account-hub/paymentDetails');
-      // } else if(isLandingRequired(req, forceLanding)) {
-      //   req.session.landed = true;
-      //   redirectURL = subdomains.url(req, subDomain, '/account-hub/landing');
       } else {
         redirectURL = myDashboardUrl;
       }

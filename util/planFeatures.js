@@ -4,14 +4,14 @@ module.exports = {
     { key: "handsOnHelp",                               type: "Boolean",     title: "Hands-On Help"                   },
     { key: "accessKlzziSocialForum",                    type: "Boolean",     title: "Access Social Forum"             },
     { key: "sessionCount",                              type: "Number",      title: "# of Chat Sessions"              },
-    { key: "contactListCount",                          type: "Number",      title: "# of Contact Lists"              }, //todo support for unlimited
+    { key: "contactListCount",                          type: "Number",      title: "# of Contact Lists"              },
     { key: "recruiterContactListCount",                 type: "Number",      title: "# of Recruiter Social/Surveys"   },
     { key: "exportRecruiterStats",                      type: "Boolean",     title: "Export Survey Recruiter Stats"   },
     { key: "exportRecruiterSurveyData",                 type: "Boolean",     title: "Export Survey Recruiter Data"    },
     { key: "exportContactListAndParticipantHistory",    type: "Boolean",     title: "Export Contacts"                 },
     { key: "numberOfContacts",                          type: "Number",      title: "# of Contacts"                   },
     { key: "accountUserCount",                          type: "Number",      title: "# of Managers"                   },
-    { key: "brandLogoAndCustomColors",                  type: "Number",      title: "Custom Logo&Colors"              }, // todo support for number
+    { key: "brandLogoAndCustomColors",                  type: "Number",      title: "Custom Logo&Colors"              },
     { key: "topicCount",                                type: "Number",      title: "# of Topics"                     },
     { key: "whiteboardDisplay",                         type: "Boolean",     title: "Whiteboard-Display"              },
     { key: "uploadToGallery",                           type: "Boolean",     title: "Multimedia"                      },

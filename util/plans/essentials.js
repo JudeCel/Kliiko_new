@@ -13,7 +13,7 @@ module.exports = {
     "exportContactListAndParticipantHistory": true,
     "numberOfContacts": -1,
     "accountUserCount": -1,
-    "brandLogoAndCustomColors": 1, // todo: 1
+    "brandLogoAndCustomColors": 1,
     "topicCount": -1,
     "whiteboardDisplay": true,
     "uploadToGallery": true,
@@ -25,18 +25,14 @@ module.exports = {
     "secureSsl": true,
     "surveyCount": 1,
     "priority": 1, // This is only for front end.
-
-
-    // TODO unused features
-    "importDatabase": true, // unused
-    "contactListMemberCount": -1, // not listed
-    "canInviteObserversToSession": true, // unused
-    "paidSmsCount": 0, // not listed
-    "planSmsCount": 50, // unused
-    "canBuySms": true, // not listed
-    "whiteboardFunctionality": true, // unused
-    "pinboardDisplay": true, // unused
-    "customEmailInvitationAndReminderMessages": true, // unused
-
+    "importDatabase": true,
+    "contactListMemberCount": -1,
+    "canInviteObserversToSession": true,
+    "paidSmsCount": 0,
+    "planSmsCount": 50,
+    "canBuySms": true,
+    "whiteboardFunctionality": true,
+    "pinboardDisplay": true,
+    "customEmailInvitationAndReminderMessages": true,
   }
 };
