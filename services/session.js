@@ -582,9 +582,10 @@ function modifySessions(sessions, accountId) {
 
   Account.find({
     where: { id: accountId },
-    include: [Subscription]
+    include: [{ model: Subscription, include: SubscriptionPreference }],
   }).then(function(account) {
-    changeSessionData(sessions, account.admin ? null : account.Subscription.endDate);
+    let subscriptionPreference = account.Subscription.SubscriptionPreference;
+    changeSessionData(sessions, account.admin ? null : account.Subscription.endDate, subscriptionPreference);
     deferred.resolve(sessions);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -593,9 +594,15 @@ function modifySessions(sessions, accountId) {
   return deferred.promise;
 }
 
-function changeSessionData(sessions, subscriptionEndDate) {
+function changeSessionData(sessions, subscriptionEndDate, subscriptionPreference) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
+    if (session.subscriptionId) {
+      let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
+      if (availableSession) {
+        subscriptionEndDate = availableSession.endDate;
+      }
+    }
     sessionValidator.addShowStatus(session, subscriptionEndDate);
 
     let facilitator = findFacilitator(session.SessionMembers);

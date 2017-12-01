@@ -748,14 +748,20 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
   findPreferencesBySubscriptionId(subscriptionId).then(function(preference) {
     let subscription = preference.Subscription;
-    let history = preference.data.history;
+    let history = preference.data.availableSessions;
     // check if there is at least one active subscription (endDate is in future)
     let active = _.some(history, function (item) {
       return moment().isBefore(item.endDate);
     });
     disableSubDependencies(subscription.accountId, subscriptionId).then(function() {
       if (active) {
-        deferred.resolve();
+        preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
+        preference.update({ data: preference.data })
+          .then(function() {
+            deferred.resolve();
+          }, function (error) {
+            deferred.reject(error);
+          })
       } else {
         // there is no active subscription - switch account to "free_account" plan
         const plan = buildCurrencyPlan('free_account', subscription.Account.currency);
