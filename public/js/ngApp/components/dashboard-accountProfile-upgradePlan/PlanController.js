@@ -313,7 +313,7 @@
     }
 
     function upgradePlanText(plan) {
-      return plan.price ? "BUY NOW" : "GET STARTED"
+      return plan.price ? "BUY" : "GET STARTED"
     }
 
     vm.showBoolean = function(feature, plan) {

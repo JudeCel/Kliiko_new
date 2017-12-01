@@ -12,6 +12,7 @@ var smsService = require('./sms');
 var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
+var SessionService = require('./../services/session');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var stringHelpers = require('./../util/stringHelpers');
@@ -1233,7 +1234,7 @@ function validate(session, params, step) {
     step = session.step;
   }
 
-  validators.subscription(session.accountId, 'session', 1, { sessionId: session.id }).then(function() {
+  validators.subscription(session.accountId, 'session', 0, { sessionId: session.id }).then(function() {
     return findValidation(step, params);
   }).then(function(value) {
     deferred.resolve(value);
@@ -1561,17 +1562,22 @@ function publish(sessionId, accountId) {
         if (session.publicUid) {
           resolve({ id: session.id, publicUid: session.publicUid });
         } else {
-          getRelatedInviteAgainTopic(sessionId).then(function(topic) {
-            if (topic) {
+          // getRelatedInviteAgainTopic(sessionId).then(function(topic) {
+          //   if (topic) {
+          //     generatePublicUid(session, resolve, reject);
+          //   } else {
+          validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
+            .then(function () {
+              return SessionService.allocateSession(accountId, session);
+            })
+            .then(function () {
               generatePublicUid(session, resolve, reject);
-            } else {
-              validators.subscription(accountId, 'session', 1, { sessionId: sessionId }).then(function() {
-                generatePublicUid(session, resolve, reject);
-              }, function(reason) {
-                reject(reason);
-              });
-            }
-          });
+            })
+            .catch(function (reason) {
+              reject(reason);
+            });
+          // }
+          // });
         }
       } else {
         reject(MessagesUtil.session.notFound);

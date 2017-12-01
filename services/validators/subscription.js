@@ -268,7 +268,7 @@ function countRecruiterMessage(type, maxCount, subscription) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitCore;
   } else if (_.includes(subscriptionType, 'senior_')) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
-  } else if (_.includes(subscriptionType, 'essentials-')) {
+  } else if (_.includes(subscriptionType, 'essentials_')) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitEssentials;
   }
 
