@@ -42,7 +42,7 @@ module.exports = {
         { name: 'Yes - I am aged 18 or over & give you permission to contact me about the Prize Draw', order: 0, tag: 'InterestYesTag' },
         { name: 'No', order: 1 }
       ],
-      link: { name: 'Privacy Policy', url: 'https://klzii.com/privacy-policy/' },
+      link: { name: 'Privacy Policy', url: 'https://cliizii.com/privacy-policy/' },
       input: true,
       required: true,
       minAnswers: 2,

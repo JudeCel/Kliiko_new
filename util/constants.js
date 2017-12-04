@@ -82,10 +82,10 @@ module.exports = {
     'emailNotification': 'Email Notification'
   },
   externalLinks: {
-    termsOfUse: 'https://klzii.com/terms-of-use',
-    termsOfUseGuest: 'https://klzii.com/guest-terms-use',
-    privacyPolicy: 'https://klzii.com/privacy-policy/',
-    privacyPolicyGuest: 'https://klzii.com/guest-privacy-policy',
+    termsOfUse: 'https://cliizii.com/terms-of-use',
+    termsOfUseGuest: 'https://cliizii.com/guest-terms-use',
+    privacyPolicy: 'https://cliizii.com/privacy-policy/',
+    privacyPolicyGuest: 'https://cliizii.com/guest-privacy-policy',
   },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
