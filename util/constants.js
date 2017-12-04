@@ -81,6 +81,12 @@ module.exports = {
     'registerConfirmationEmailSuccess': "Confirmation Email Success",
     'emailNotification': 'Email Notification'
   },
+  externalLinks: {
+    termsOfUse: 'https://cliizii.com/terms-of-use',
+    termsOfUseGuest: 'https://cliizii.com/guest-terms-use',
+    privacyPolicy: 'https://cliizii.com/privacy-policy/',
+    privacyPolicyGuest: 'https://cliizii.com/guest-privacy-policy',
+  },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
