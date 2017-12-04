@@ -1,8 +1,12 @@
 
   <footer id="footer" class="text-center">
-    <% var terms_of_use_url = (locals.user && locals.user.role == "participant") ? '/terms_of_use_participant' : '/terms_of_use'; %>
+    <%
+    var terms_of_use_url = (locals.user && locals.user.role == "participant")
+      ? 'https://klzii.com/guest-terms-use'
+      : 'https://klzii.com/terms-of-use';
+    %>
 
-    © klzii | <a href='/privacy_policy' target='_blank'>Privacy Policy</a> | <a href='<%= terms_of_use_url %>' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
+    © klzii | <a href='https://klzii.com/privacy-policy/' target='_blank'>Privacy Policy</a> | <a href='<%= terms_of_use_url %>' target='_blank'>Terms & Conditions</a> | Version: 0.0.2
   </footer>
 
 

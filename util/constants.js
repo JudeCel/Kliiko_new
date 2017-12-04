@@ -81,6 +81,12 @@ module.exports = {
     'registerConfirmationEmailSuccess': "Confirmation Email Success",
     'emailNotification': 'Email Notification'
   },
+  externalLinks: {
+    termsOfUse: 'https://klzii.com/terms-of-use',
+    termsOfUseGuest: 'https://klzii.com/guest-terms-use',
+    privacyPolicy: 'https://klzii.com/privacy-policy/',
+    privacyPolicyGuest: 'https://klzii.com/guest-privacy-policy',
+  },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
