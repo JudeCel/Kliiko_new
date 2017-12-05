@@ -219,9 +219,8 @@ function mapPlans(plans) {
   plans = _.groupBy(plans, (item) => item.plan.currency_code); // group by currency
   constants.supportedCurrencies.forEach((currency) => {
     plans[currency] = _.orderBy(plans[currency], (item) => {
-      console.log([item.plan.preference]);
-      return PLAN_CONSTANTS[item.plan.preference].priority, ['asc'];
-    }); // order by priority
+      return PLAN_CONSTANTS[item.plan.preference].priority;
+    }, ['asc']); // order by priority
     plans[currency] = _.groupBy(plans[currency], (item) => item.plan.period_unit); // group by period
   });
   return plans;
@@ -576,11 +575,12 @@ function updateSubscription(params, providers) {
         if(params.skipCardCheck) {
           // skipCardCheck is 'true' only in case cancellation
           chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
-            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription, resources)).then(function(result_1) {
-              deferred.resolve(result_1);
-            }, function(error) {
-              deferred.reject(error);
-            })
+            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription, resources))
+              .then(function (/**@typedef {{subscription: Object, redirect: boolean}} */subResult) {
+                deferred.resolve(subResult);
+              }, function (error) {
+                deferred.reject(error);
+              });
           }, function(error) {
             deferred.reject(error);
           })
@@ -1075,9 +1075,7 @@ function canSwitchPlan(accountId, currentPlan, newPlan){
 
     let functionArray = [
       // user need to be able to buy several sessions within the same plan several times
-      // validateIfNotCurrentPlan(accountId, newPlan),
       validateSessionCount(accountId, newPlan),
-      validateSurveyCount(accountId, newPlan),
       validateContactListCount(accountId, newPlan)
     ];
     async.waterfall(functionArray, function(systemError, errorMessages) {
@@ -1146,9 +1144,9 @@ function validateSurveyCount(accountId, newPlan) {
       }
     }).then(function(c) {
       errors = errors || {};
-      // if(newPlan.surveyCount !== -1 && newPlan.surveyCount < c) {
-      //   errors.survey = MessagesUtil.subscription.validation.survey;
-      // }
+      if(newPlan.surveyCount !== -1 && newPlan.surveyCount < c) {
+        errors.survey = MessagesUtil.subscription.validation.survey;
+      }
       cb(null, errors);
     }, function(error) {
       cb(error);

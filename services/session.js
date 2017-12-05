@@ -668,8 +668,8 @@ function getPreferences(accountId) {
 function getAvailableSession(preferences) {
   // get list of available sessions that are not expired and not assigned to already created sessions
   let availableSessions = preferences.data.availableSessions;
-  let sessions = _.sortBy(availableSessions, ['endDate']).filter((s) => !s.sessionId && moment().isBefore(s.endDate));
-  let availableSession = _.first(_.sortBy(sessions, ['endDate']));
+  let sessions = _.filter(availableSessions, (s) => !s.sessionId && moment().isBefore(s.endDate));
+  let availableSession = _.first(_.sortBy(sessions, [(endDate) => moment(endDate).valueOf()]));
   return availableSession;
 }
 

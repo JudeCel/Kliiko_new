@@ -101,15 +101,11 @@ function createDefaultForAccount(params, t) {
 }
 
 function canCreateCustomColors(accountId) {
-  let deferred = q.defer();
-
-  validators.subscription(accountId, 'brandLogoAndCustomColors', 1).then(function() {
-    deferred.resolve();
-  }, function(error) {
-    deferred.reject(filters.errors(error));
-  });
-
-  return deferred.promise;
+  let numOfResourcesToAllocate = 1;
+  return validators.subscription(accountId, 'brandLogoAndCustomColors', numOfResourcesToAllocate)
+    .catch(function (error) {
+      throw filters.errors(error);
+    });
 }
 
 function resetToDefaultScheme(params, accountId) {

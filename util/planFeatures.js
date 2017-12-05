@@ -1,5 +1,6 @@
 'use strict';
 module.exports = {
+  // reorder features based on checkout page
   features: [
     { key: "handsOnHelp",                               type: "Boolean",     title: "Hands-On Help"                   },
     { key: "accessKlzziSocialForum",                    type: "Boolean",     title: "Access Social Forum"             },
@@ -22,13 +23,13 @@ module.exports = {
     { key: "availableOnTabletAndMobilePlatforms",       type: "Boolean",     title: "Mobile&Tablet"                   },
     { key: "secureSsl",                                 type: "Boolean",     title: "Private&Secure (SSL)"            },
 
-    // { key: "accessKlzziForum",                          type: "Boolean",     title: "Access klzii Forum"              },
-    // { key: "accessKlzziFocus",                          type: "Boolean",     title: "Access klzii Focus"              },
-    // { key: "importDatabase",                            type: "Boolean",     title: "Import&Map Contacts"             },
-    // { key: "customEmailInvitationAndReminderMessages",  type: "Boolean",     title: "Custom Emails"                   },
-    // { key: "planSmsCount",                              type: "NumberLimit", title: "SMS Alerts (Focus)"              },
-    // { key: "canInviteObserversToSession",               type: "Boolean",     title: "Spectators"                      },
-    // { key: "whiteboardFunctionality",                   type: "Boolean",     title: "Whiteboard-Interactive"          },
-    // { key: "pinboardDisplay",                           type: "Boolean",     title: "Pinboard"                        },
+    { key: "accessKlzziForum",                          type: "Boolean",     title: "Access klzii Forum"              },
+    { key: "accessKlzziFocus",                          type: "Boolean",     title: "Access klzii Focus"              },
+    { key: "importDatabase",                            type: "Boolean",     title: "Import&Map Contacts"             },
+    { key: "customEmailInvitationAndReminderMessages",  type: "Boolean",     title: "Custom Emails"                   },
+    { key: "planSmsCount",                              type: "NumberLimit", title: "SMS Alerts (Focus)"              },
+    { key: "canInviteObserversToSession",               type: "Boolean",     title: "Spectators"                      },
+    { key: "whiteboardFunctionality",                   type: "Boolean",     title: "Whiteboard-Interactive"          },
+    { key: "pinboardDisplay",                           type: "Boolean",     title: "Pinboard"                        },
   ]
 };
