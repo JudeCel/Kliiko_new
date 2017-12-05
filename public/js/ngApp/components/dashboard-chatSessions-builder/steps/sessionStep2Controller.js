@@ -57,6 +57,7 @@
       var surveySection = surveyBasicSectionData();
       surveySection.surveyType = 'sessionContactList';
       surveySection.active = survey && survey.active;
+      surveySection.expanded = survey.active;
       surveySection.title = "Contact List Questions";
       surveySection.canDisable = !vm.session.publicUid;;
       if (survey) {
@@ -73,6 +74,7 @@
       surveySection.title = "Prize Draw";
       surveySection.canDisable = !vm.session.publicUid;
       surveySection.active = survey && survey.active;
+      surveySection.expanded = survey.active;
 
       if (survey) {
         surveySection.id = survey.surveyId;
