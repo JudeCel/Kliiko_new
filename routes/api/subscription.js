@@ -46,8 +46,11 @@ function updatePlan(req, res, next) {
   let params = {
     accountId: req.currentResources.account.id,
     newPlanId: req.body.planId,
+    resources: {
+      sessionCount: req.body.sessionCount,
+    },
     redirectUrl: redirectUrl
-  }
+  };
 
   subscription.updateSubscription(params).then(function(result) {
     res.send(result);

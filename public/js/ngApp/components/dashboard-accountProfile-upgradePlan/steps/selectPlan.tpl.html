@@ -1,6 +1,6 @@
 <section id="step-1">
-  <h2>Choose a plan:</h2>
-  <section class="plans-table" ng-if="up.plansList">
+  <!--<h2>Choose a plan:</h2>-->
+  <section class="col-sm-push-3 col-sm-6 plans-table" ng-if="up.plansList">
       <table>
         <!-- Table headers-->
         <tr>
@@ -10,35 +10,36 @@
           </th>
 
           <th ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
-            <div class="included-plan-fader" ng-if="up.isCurrentPlan(subscriptionPlan)"><div class="label">CURRENT</div></div>
             <div class="col-sm-1 pull-right">
               <div ng-if="up.mostPopular(subscriptionPlan.plan.preference)" class="most-popular pull-right"></div>
             </div>
-            <div class="plan-block {{ subscriptionPlan.plan.preference }}">
-              <div class="list-group-item-heading" ng-if= "subscriptionPlan.plan.price">
+            <div class="plan-block {{ subscriptionPlan.plan.preference + '_header' }}">
+              <div class="list-group-item-heading" ng-if="subscriptionPlan.plan.price">
                 <h4>{{subscriptionPlan.plan.name}}</h4>
-                <div ng-include="'upgradePlanButton.html'"></div>
+                <h5>Social Forum</h5>
+                <h6>Ideal for Small Business</h6>
               </div>
-            <div>
+              <h5 class="outline">
+                {{ subscriptionPlan.plan.price | price:up.currencySymbols[up.currentCurrency]:0 }}
+                <span>&nbsp;{{ up.pricePerEnding[up.annualOrMonthly] }}</span>
+              </h5>
+            </div>
           </th>
         </tr>
         <tr>
           <th>
-            <div class="plan-option-list plan-option-feature">
-              <div class='flex-box'>
-                <div class="flex-el {{ up.buttonClassName('month') }}" ng-click="up.switchPlanView('month')">Monthly</div>
-                <div class="flex-el {{ up.buttonClassName('year') }}" ng-click="up.switchPlanView('year')">Annual</div>
-              </div>
-            </div>
+            <!-- TODO: need to uncomment when we will add annual subscription -->
+            <!--<div class="plan-option-list plan-option-feature">-->
+              <!--<div class='flex-box'>-->
+                <!--<div class="flex-el {{ up.buttonClassName('month') }}" ng-click="up.switchPlanView('month')">Monthly</div>-->
+                <!--<div class="flex-el {{ up.buttonClassName('year') }}" ng-click="up.switchPlanView('year')">Annual</div>-->
+              <!--</div>-->
+            <!--</div>-->
           </th>
           <th class="plan-option-price-block {{ subscriptionPlan.plan.preference + '_header' }}" ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">
-            <div class="plan-block">
+            <div class="plan-block {{ subscriptionPlan.plan.preference }}">
               <div class="price-label" ng-if= "subscriptionPlan.plan.price">
-                <h5 class="outline">
-                  {{ subscriptionPlan.plan.price | price:up.currencySymbols[up.currentCurrency]:0 }}
-                  <sub>/{{ up.pricePerEnding[up.annualOrMonthly] }}</sub>
-                </h5>
-                <p>Get 2 Months FREE on all annual plans</p>
+                <div ng-include="'upgradePlanButton.html'"></div>
               </div>
 
               <div class="{{ subscriptionPlan.plan.preference + '_header' }} list-group-item-heading" ng-if= "!subscriptionPlan.plan.price">
@@ -75,7 +76,6 @@
           </td>
         </tr>
       </table>
-    </div>
 
     <script type="text/ng-template" id="upgradePlanButton.html">
       <div class="list-group-item-text buttons-area" >

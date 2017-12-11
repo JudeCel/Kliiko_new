@@ -6,11 +6,9 @@
   <div class="table-content">
     <div class="row table-header" >
       <div class="col-sm-3">Plan</div>
-      <div class="col-sm-3">Duration</div>
+      <div class="col-sm-3"># Sessions</div>
       <div class="col-sm-3">Amount Due</div>
-      <div class="col-sm-2">
-        <a data-toggle="tooltip" title="{{ up.whatIsCredits }}">Credits</a>
-      </div>
+      <div class="col-sm-2">Period</div>
     </div>
 
     <div class="row">
@@ -18,37 +16,23 @@
         <div class="dropdown plan-dropdown">
           <div class="dropdown-toggle selected-plan-name" type="button" id="plansDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             {{ up.selectedPlan.plan.name }}
-            <span class="caret"><span>
           </div>
-          <ul class="dropdown-menu" aria-labelledby="plansDropdownMenu">
-              <li class="dropdown-header">Monthly</li>
-              <li ng-repeat="planItem in up.plans[up.currentCurrency].month" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
-                <a ng-click="up.dropdownSelectedPlan(planItem)">
-                  {{planItem.plan.name}}
-                  <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
-                </a>
-              </li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Annual</li>
-
-              <li ng-repeat="planItem in up.plans[up.currentCurrency].year" class="{{up.isCurrentPlan(planItem) ? 'disabled' : ''}}">
-                <a ng-click="up.dropdownSelectedPlan(planItem)">
-                  {{planItem.plan.name}}
-                  <span ng-if="up.isCurrentPlan(planItem)" class="glyphicon glyphicon-ok pull-right"/>
-                </a>
-              </li>
-          <ul>
         </div>
       </div>
       <div class="col-sm-3">
-        {{ up.selectedPlan.plan.period }}
-        {{ up.selectedPlan.plan.period_unit }}
+        <select
+          class="form-control border-radius-none"
+          ng-model="up.sessionCount"
+          ng-options="val as val for val in up.possibleNumOfSessions"
+          ng-selected="{{val == up.sessionCount}}"
+          required>
+        </select>
       </div>
       <div class="col-sm-3">
-        {{ up.selectedPlan.chargeEstimate.invoice_estimate.amount_due | price:up.currencySymbols[up.currentCurrency]:0 }}
+        {{ (up.selectedPlan.plan.price * up.sessionCount) | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
       <div class="col-sm-2">
-        {{ up.selectedPlan.chargeEstimate.invoice_estimate.credits_applied | price:up.currencySymbols[up.currentCurrency]:0 }}
+        1&nbsp;<span class="text-capitalize">{{up.selectedPlan.plan.period_unit}}</span>
       </div>
     </div>
   </div>

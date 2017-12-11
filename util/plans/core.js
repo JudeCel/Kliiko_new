@@ -1,6 +1,7 @@
 'use strict';
 module.exports = {
   plan: {
+    "handsOnHelp": false,
     "sessionCount": 2,
     "contactListCount": 2,
     "recruiterContactListCount": 2,
