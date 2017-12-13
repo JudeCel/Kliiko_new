@@ -119,7 +119,9 @@ function setOpen(sessionId, open, accountId) {
         model: Survey,
         required: false,
         attributes: ['id']
-      }]
+      },
+        { model: Account },
+      ],
     }).then(function(session) {
       if (session) {
         let status = open ? "open" : "closed";
@@ -584,8 +586,9 @@ function modifySessions(sessions, accountId) {
     where: { id: accountId },
     include: [{ model: Subscription, include: SubscriptionPreference }],
   }).then(function(account) {
-    let subscriptionPreference = account.Subscription.SubscriptionPreference;
-    changeSessionData(sessions, account.admin ? null : account.Subscription.endDate, subscriptionPreference);
+    let endDate = account.admin ? null : account.Subscription.endDate;
+    let subscriptionPreference = account.admin ? null : account.Subscription.SubscriptionPreference;
+    changeSessionData(sessions, endDate, subscriptionPreference);
     deferred.resolve(sessions);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -594,10 +597,15 @@ function modifySessions(sessions, accountId) {
   return deferred.promise;
 }
 
+/**
+ * @param sessions
+ * @param subscriptionEndDate
+ * @param subscriptionPreference
+ */
 function changeSessionData(sessions, subscriptionEndDate, subscriptionPreference) {
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
-    if (session.subscriptionId) {
+    if (session.subscriptionId && subscriptionPreference) {
       let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
       if (availableSession) {
         subscriptionEndDate = availableSession.endDate;
@@ -692,6 +700,9 @@ function getAvailableSessionById(preferences, sessionId) {
  * @return {Session}
  */
 function allocateSession(accountId, session) {
+  if (session.Account.admin) {
+    return Bluebird.resolve(session);
+  }
   // get subscription preferences
   return getPreferences(accountId)
     .then(function (subscriptionPreferences) {
@@ -713,6 +724,9 @@ function allocateSession(accountId, session) {
  * @return {Session}
  */
 function deallocateSession(accountId, session) {
+  if (session.Account.admin) {
+    return Bluebird.resolve(session);
+  }
   // get subscription preferences
   return getPreferences(accountId)
     .then(function (subscriptionPreferences) {

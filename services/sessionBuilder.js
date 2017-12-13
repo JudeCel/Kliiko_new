@@ -3,7 +3,7 @@
 var moment = require('moment-timezone');
 var models = require('./../models');
 var filters = require('./../models/filters');
-var {Session, AccountUser} = models;
+var {Session, AccountUser, Account} = models;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
@@ -1553,8 +1553,9 @@ function publish(sessionId, accountId) {
     Session.find({
       where: {
         id: sessionId,
-        accountId: accountId
-      }
+        accountId: accountId,
+      },
+      include: [Account],
     }).then(function(session) {
       return addContactListToSession(session, accountId);
     }).then(function(session) {
@@ -1564,6 +1565,10 @@ function publish(sessionId, accountId) {
         } else {
           validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
             .then(function () {
+              // do not need to allocate a new session for admin
+              if (session.Account.admin) {
+                return null;
+              }
               return SessionService.allocateSession(accountId, session);
             })
             .then(function () {
