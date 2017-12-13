@@ -147,7 +147,7 @@ function prepareUrlParams(parameters, query) {
       if (query.package) {
         parameters.selectedPlanOnRegistration = query.package;
       } else {
-        parameters.selectedPlanOnRegistration = "junior_monthly";
+        parameters.selectedPlanOnRegistration = "essentials_monthly";
       }
     }
     else if(query.selectedPlanOnRegistration) {
