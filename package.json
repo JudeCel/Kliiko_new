@@ -32,6 +32,7 @@
     "updateDefaultResourceName": "node ./tasks/updateDefaultResourceName.js",
     "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",
     "updatePlanName": "node ./tasks/updatePlanName.js",
+    "createPlans": "node ./tasks/createPlans.js",
     "tidyUpDataSessionSurveys": "node ./tasks/sessionSurveys/tidyUpData.js"
   },
   "engineStrict": true,
