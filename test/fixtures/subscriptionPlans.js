@@ -44,7 +44,7 @@ function create(plan) {
     params.preferenceName = preferenceName;
     params.chargebeePlanId = plan.id;
 
-    models.SubscriptionPlan.findOne({ where: { preferenceName: params.preferenceName } })
+    models.SubscriptionPlan.findOne({ where: { chargebeePlanId: params.chargebeePlanId } })
       .then(function (plan) {
         if (plan) {
           return plan;
