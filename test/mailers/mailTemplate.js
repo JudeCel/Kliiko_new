@@ -30,7 +30,6 @@ let params = {
   endTime: "endTime",
   startDate: "startDate",
   endDate: "endDate",
-  incentive: "testIncentive",
   acceptInvitationUrl: "acceptInvitationUrl",
   invitationNotThisTimeUrl: "invitationNotThisTimeUrl",
   invitationNotAtAllUrl: "invitationNotAtAllUrl",

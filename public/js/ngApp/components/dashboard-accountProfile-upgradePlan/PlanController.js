@@ -136,9 +136,8 @@
         }else {
           vm.currencyData = result.currencyData;
           vm.currentCurrency = vm.currencyData.client;
-          // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
-          // vm.currencyList = Object.keys(vm.currencyData.rates);
-          // vm.currencyList.unshift(vm.currencyData.base);
+          vm.currencyList = Object.keys(vm.currencyData.rates);
+          vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
           // vm.free_account = result.free_account;
           vm.plans = result.plans;

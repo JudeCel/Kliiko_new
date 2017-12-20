@@ -11,7 +11,7 @@ describe('LIB - IPCurrency', function() {
       };
 
       ipCurrency.get(params).then((data) => {
-        assert.equal(data.base, 'AUD');
+        assert.equal(data.base, 'USD');
         assert.equal(data.client, 'USD');
         done();
       }).catch(done);

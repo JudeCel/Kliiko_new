@@ -5,8 +5,7 @@
         <!-- Table headers-->
         <tr>
           <th class='currency-dropdown'>
-            <!-- TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES -->
-            <!-- <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList' ng-model='up.currentCurrency' ng-change='up.changePlanList()' /> -->
+             <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList' ng-model='up.currentCurrency' ng-change='up.changePlanList()' />
           </th>
 
           <th ng-repeat="subscriptionPlan in up.plansList track by subscriptionPlan.plan.id">

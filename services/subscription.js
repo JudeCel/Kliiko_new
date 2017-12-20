@@ -165,10 +165,13 @@ function getAllPlans(accountId, ip) {
     } else {
       if (accountId) {
         let currentPlan, currencyData, plans;
-        findAndProcessSubscription(accountId).then((currentSub) => {
-          currencyData = { client: currentSub.Account.currency };
+        ipCurrency.get({ ip }).then((data) => {
+          currencyData = data;
+          return findAndProcessSubscription(accountId);
+        }).then((currentSub) => {
+          currencyData = currencyData || { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = filterSupportedPlans(result.list, currencyData, Object.keys(PLANS));
+          plans = filterSupportedPlans(result.list, null, Object.keys(PLANS));
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -178,21 +181,6 @@ function getAllPlans(accountId, ip) {
         }).catch((error) => {
           deferred.reject(filters.errors(error));
         });
-
-        // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
-        // ipCurrency.get({ ip }).then((data) => {
-        //   currencyData = data;
-        //   return findAndProcessSubscription(accountId);
-        // }).then((currentSub) => {
-        //   currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-        //   return addPlanEstimateChargeAndConstants(plans, accountId);
-        // }).then(function(planWithConstsAndEstimates) {
-        //   const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
-        //   plans = mapPlans(planWithConstsAndEstimates);
-        //   deferred.resolve({ currentPlan, plans, free_account, currencyData, features: planFeatures.features, additionalParams: PLAN_CONSTANTS });
-        // }).catch((error) => {
-        //   deferred.reject(filters.errors(error));
-        // });
       } else {
         const plans = filterSupportedPlans(result.list, null, Object.keys(PLANS));
         deferred.resolve(plans);

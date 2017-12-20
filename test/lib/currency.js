@@ -8,13 +8,13 @@ describe('LIB - Currency', function() {
   describe('#get', function() {
     it('can get default currency', function(done) {
       const params = {
-        base: 'AUD',
+        base: 'USD',
         symbols: constants.supportedCurrencies
       };
 
       currency.get().then((data) => {
         assert.equal(data.base, params.base);
-        assert.deepEqual(['AUD', ...Object.keys(data.rates)].sort(), params.symbols.sort());
+        assert.deepEqual(['USD', ...Object.keys(data.rates)].sort(), params.symbols.sort());
         done();
       }).catch(done);
     });
