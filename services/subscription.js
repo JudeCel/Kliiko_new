@@ -718,7 +718,8 @@ function updateSubscriptionData(passThruContent){
 
       // increase count of additional bought sessions
       if (passThruContent.sessionCount) {
-        params.sessionCount = subscription.SubscriptionPreference.data.sessionCount + passThruContent.sessionCount;
+        const currentSessionCount = /free_trial/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
+        params.sessionCount = currentSessionCount + passThruContent.sessionCount;
       }
       // recalc available sessions
       params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
