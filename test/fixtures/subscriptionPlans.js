@@ -41,15 +41,15 @@ function create(plan) {
   const preferenceName = planConstants.preferenceName(plan.id);
   const params = planConstants[preferenceName];
   if (params) {
-    params.preferenceName = preferenceName;
-    params.chargebeePlanId = plan.id;
 
-    models.SubscriptionPlan.findOne({ where: { chargebeePlanId: params.chargebeePlanId } })
-      .then(function (plan) {
-        if (plan) {
-          return plan;
+    models.SubscriptionPlan.findOne({ where: { chargebeePlanId: plan.id } })
+      .then(function (subPlan) {
+        if (subPlan) {
+          return subPlan;
         }
 
+        params.preferenceName = preferenceName;
+        params.chargebeePlanId = plan.id;
         return models.SubscriptionPlan.create(params);
       })
       .then(function (result) {
