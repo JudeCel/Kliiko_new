@@ -167,7 +167,7 @@
     }
 
     function updateSessionTopic() {
-      //vm.topicData.default = isDefaultTopic();
+      vm.topicData.default = isDefaultTopic();
 
       topicsAndSessions.updateSessionTopic(vm.topicData, vm.session).then(
         seesionTopicUpdateSuccess,

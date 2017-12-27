@@ -97,7 +97,7 @@ describe('SERVICE - Subscription', function() {
           subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function() {
             done('Should not get here!');
           }, function(error) {
-            assert.equal(error.subscriptionId || error, subscriptionServices.messages.alreadyExists);
+            assert.equal(error, subscriptionServices.messages.alreadyExists);
             done();
           });
         });
@@ -150,7 +150,7 @@ describe('SERVICE - Subscription', function() {
             callback(null, {
               hosted_page: {
                 id: params.id,
-                type: "checkout_new",
+                type: "checkout_existing",
                 url: "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout",
                 state: "created",
                 embed: true,
@@ -257,7 +257,7 @@ describe('SERVICE - Subscription', function() {
         });
       });
 
-      it.skip('cant switch on the same plan as user has already', function(done) {
+      it('cant switch on the same plan as user has already', function(done) {
         let invalidAccountId = testData.account.id + 100;
         let providers = {
           updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: currentSubPlanId }),
@@ -426,7 +426,7 @@ describe('SERVICE - Subscription', function() {
         subscriptionServices.findSubscription(testData.account.id).then(function(subscription) {
           assert.isNotNull(subscription);
           assert.equal(subscription.accountId, testData.account.id);
-          return done();
+          done();
         }, function(error) {
           done(error);
         });
@@ -579,18 +579,12 @@ describe('SERVICE - Subscription', function() {
     var subId = 'SomeUniqueID';
     var providers = {
       creditCard: validCreditCardProvider(),
-      updateProvider: updateProvider({ id: subId, plan_id: "essentials_monthly_aud" })
+      updateProvider: updateProvider({ id: subId, plan_id: "core_monthly_AUD" })
     }
 
     beforeEach(function(done) {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
-        const params = {
-          accountId: testData.account.id,
-          newPlanId: 'essentials_monthly_aud',
-          skipCardCheck: true,
-          resources: { sessionCount: 1 },
-        };
-        subscriptionServices.updateSubscription(params, providers).then(function(result) {
+        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: "core_monthly_AUD", skipCardCheck: true}, providers).then(function(result) {
           done();
         }, function(error) {
           done(error);
@@ -634,8 +628,7 @@ describe('SERVICE - Subscription', function() {
             name: 'some name',
             startTime: new Date(),
             endTime: new Date(),
-            timeZone: 'Europe/Riga',
-            subscriptionId: subId,
+            timeZone: 'Europe/Riga'
           };
 
           models.Session.create(params).then(function() {

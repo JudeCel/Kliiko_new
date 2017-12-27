@@ -238,8 +238,8 @@ function getLatestMailTemplate(req, callback) {
       where: { sessionId: req.sessionId },
       required: true
     });
-  }
-
+  } 
+  
   MailTemplate.findAll({
     include: include,
     where: [accountQuery, templateQuery],
@@ -367,17 +367,17 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   let query =  {};
   baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
-  let include = [{
-    model: MailTemplateOriginal,
-    attributes: ['id', 'name', 'systemMessage', 'category'],
-    where: baseTemplateQuery
+  let include = [{ 
+    model: MailTemplateOriginal, 
+    attributes: ['id', 'name', 'systemMessage', 'category'], 
+    where: baseTemplateQuery 
   }];
 
   if (sessionId) {
     include.push({
       model: Session,
       where: { id: { '$or': [sessionId, null] } },
-      attributes: ['id', 'name'],
+      attributes: ['id', 'name'], 
       required: false
     });
   }
@@ -774,10 +774,8 @@ function deleteMailTemplate(id, callback) {
 function prepareMailDefaultParameters(params) {
   params = params || {};
   let defaultParams = {
-    termsOfUseUrl: constants.externalLinks.termsOfUse,
-    privacyPolicyUrl: constants.externalLinks.privacyPolicy,
-    termsOfUseGuestUrl: constants.externalLinks.termsOfUseGuest,
-    privacyPolicyGuestUrl: constants.externalLinks.privacyPolicyGuest,
+    termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
+    privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
     systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
@@ -920,8 +918,6 @@ function formatTemplateString(str, startDate, endDate) {
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
   str = str.replace(/\{Terms of Use\}/ig, "<%= termsOfUseUrl %>");
-  str = str.replace(/\{Privacy Policy Guest\}/ig, "<%= privacyPolicyGuestUrl %>");
-  str = str.replace(/\{Terms of Use Guest\}/ig, "<%= termsOfUseGuestUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");

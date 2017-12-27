@@ -32,7 +32,6 @@ module.exports = (Sequelize, DataTypes) => {
       manageSessionParticipants: false,
       inviteSessionObservers: false
     } },
-    subscriptionId: { type: DataTypes.STRING, allowNull: true },
     publicUid: { type: DataTypes.STRING, allowNull: true, validate: { isUnique: validations.unique(Sequelize, 'Session', 'publicUid') } }
   }, {
     timestamps: true,
@@ -57,7 +56,6 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.SessionType, { foreignKey: 'type' });
         Session.belongsToMany(models.Survey, { through: models.SessionSurvey, foreignKey: "sessionId" });
         Session.belongsToMany(models.MailTemplate, { through: models.SessionMailTemplate, foreignKey: "sessionId" });
-        Session.belongsTo(models.Subscription, { foreignKey: 'subscriptionId' });
       }
     }
   });

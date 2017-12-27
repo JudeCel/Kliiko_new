@@ -14,8 +14,6 @@
 
     vm.planInModal = null;
     vm.selectedPlan = null;
-    vm.sessionCount = null;
-    vm.possibleNumOfSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     vm.currentStep = 1;
     vm.currentPlan = null;
     vm.purchaseWasSuccessfull = true;
@@ -31,9 +29,9 @@
     };
 
     vm.pricePerEnding = {
-      month: 'per Month',
-      year: 'per Year'
-    };
+      month: 'MONTH',
+      year: 'YEAR'
+    }
 
     vm.stepLayouts = [
       {
@@ -140,7 +138,7 @@
           // vm.currencyList = Object.keys(vm.currencyData.rates);
           // vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
-          // vm.free_account = result.free_account;
+          vm.free_account = result.free_account;
           vm.plans = result.plans;
           vm.additionalParams = result.additionalParams;
           changePlanList();
@@ -156,20 +154,16 @@
     }
 
     function setSelectedPlan(array) {
-      if (!array) {
-        return;
-      }
       array.forEach(function(item) {
         if(item.plan.preference === vm.shouldShowPlan) {
           vm.selectedPlan = item;
-          vm.sessionCount = 1;
         }
       });
     }
 
     function changePlanList() {
       vm.plansList = angular.copy(vm.plans[vm.currentCurrency][vm.annualOrMonthly]);
-      //vm.plansList.unshift(vm.free_account);
+      vm.plansList.unshift(vm.free_account);
     }
 
     function succeededCheckout(params) {
@@ -188,7 +182,7 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id, vm.sessionCount).then(function(response) {
+        planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
           if(response.error){
             messenger.error(response.error);
           }else {
@@ -204,7 +198,6 @@
 
     function wantThisPlan(selectedSubPlan) {
       vm.selectedPlan = selectedSubPlan;
-      vm.sessionCount = 1;
       $(".planHint").hide();
       nextStep();
     }
@@ -212,7 +205,6 @@
     vm.dropdownSelectedPlan = function(planItem) {
       if (!vm.isCurrentPlan(planItem)) {
         vm.selectedPlan = planItem;
-        vm.sessionCount = 1;
       }
     };
 
@@ -228,7 +220,6 @@
 
     function previouseStep() {
       vm.selectedPlan = null;
-      vm.sessionCount = null;
       return --vm.currentStep;
     }
 
@@ -270,7 +261,6 @@
 
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
-      vm.sessionCount = 1;
     }
 
     function openGetQuoteModal(user) {
@@ -316,7 +306,7 @@
     }
 
     function upgradePlanText(plan) {
-      return plan.price ? "BUY" : "GET STARTED"
+      return plan.price ? "BUY NOW" : "GET STARTED"
     }
 
     vm.showBoolean = function(feature, plan) {

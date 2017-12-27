@@ -3,7 +3,6 @@ var terms_of_service = require('../lib/terms_of_service');
 var helpers = require('./helpers');
 var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
-var constants = require('./../util/constants');
 
 function sendEmail(templateName, params, callback, passParamsToGetActiveMailTemplate, isCalendarEvent) {
   mailTemplateService.getActiveMailTemplate(templateName, passParamsToGetActiveMailTemplate ? params : null, function(error, result) {
@@ -11,7 +10,7 @@ function sendEmail(templateName, params, callback, passParamsToGetActiveMailTemp
       return callback(error);
     }
     params.termsOfUseUrl = terms_of_service.filter(params);
-    params.privacyPolicyUrl = constants.externalLinks.privacyPolicy;
+    params.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
     params.systemRequirementsUrl = helpers.getUrl('', null, '/system_requirements');
     let mailContent = mailTemplateService.composeMailFromTemplate(result, params);
     if (mailContent.error) {

@@ -66,7 +66,7 @@ function planSelectPage(req, res, next) {
   }
 }
 
-function myDashboardPage(req, res, next, accountUserId, forceBilling) {
+function myDashboardPage(req, res, next, accountUserId, forceLanding) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
@@ -84,16 +84,13 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
         res.redirect(myDashboardUrl);
       }
     } else {
-      let redirectURL;
-      const subDomain = selectManager(result.accountManager, result.facilitator, accountUserId).subdomain;
-
-      if (isBillingRequired(req, forceBilling)) {
+      if(isLandingRequired(req, forceLanding)) {
         req.session.landed = true;
-        redirectURL = subdomains.url(req, subDomain, '/account-hub/paymentDetails');
-      } else {
-        redirectURL = myDashboardUrl;
+        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator, accountUserId).subdomain, '/account-hub/landing'));
       }
-      res.redirect(redirectURL);
+      else {
+        res.redirect(myDashboardUrl);
+      }
     }
   }, function(error) {
     res.send({ error: error });
@@ -164,10 +161,6 @@ function shouldRedirectFacilitatorToLandingPage(req, res) {
 
 function isLandingRequired(req, forceLanding) {
   return isFirstSignIn(req) && !req.session.landed || forceLanding;
-}
-
-function isBillingRequired(req, forceBilling) {
-  return isFirstSignIn(req) && !req.session.landed || forceBilling;
 }
 
 function isFirstSignIn(req) {

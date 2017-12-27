@@ -32,6 +32,7 @@ module.exports = (Sequelize, DataTypes) => {
     preferenceName: { type: DataTypes.STRING, allowNull: false, defaultValue: '',
       validate: {
         notEmpty: true,
+        isUnique: validations.unique(Sequelize, 'SubscriptionPlan', 'preferenceName')
       }
     },
 

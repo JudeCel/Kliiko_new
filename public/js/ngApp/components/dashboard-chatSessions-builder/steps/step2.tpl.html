@@ -82,10 +82,7 @@
         <uib-accordion-group is-open="survey.expanded" is-disabled="!survey.active" class="green-input session-type">
           <uib-accordion-heading>
             <div class="panel-label text-left clearfix">
-              <div class="topic-survey-label">
-                {{survey.title}}
-                <i class="glyphicon" ng-class="{'glyphicon-chevron-down': survey.expanded, 'glyphicon-chevron-right': !survey.expanded}"></i>
-              </div>
+              <div class="topic-survey-label">{{survey.title}}</div>
               <div class="topic-survey-label pull-right">
                 <button ng-disabled="!survey.canDisable || !survey.active"
                         ng-class="!survey.active ? 'btn-danger' : ''"

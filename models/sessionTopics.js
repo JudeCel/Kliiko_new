@@ -1,8 +1,5 @@
 'use strict';
 
-var topicConstants = require('../util/topicConstants');
-var validations = require('./validations');
-
 module.exports = (Sequelize, DataTypes) => {
   var SessionTopics = Sequelize.define('SessionTopics', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -11,7 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     order: { type: DataTypes.INTEGER, allowNull: true, defaultValue: 0 },
     active: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
     landing: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
-    boardMessage: { type: DataTypes.TEXT, allowNull: true, validate: { isLength: validations.length('boardMessage', { max: topicConstants.validations.boardMessage }) } },
+    boardMessage: { type: DataTypes.TEXT, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: true, validate: { notEmpty: true } },
     sign: { type: DataTypes.STRING, allowNull: true },
     lastSign: { type: DataTypes.STRING, allowNull: true }

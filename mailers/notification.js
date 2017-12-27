@@ -5,11 +5,10 @@ var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 var mailFrom = helpers.mailFrom();
 var { sendMail } = require('./adapter');
-var constants = require('./../util/constants');
 
 function sendNotification(params, callback) {
   params.logInUrl = helpers.getUrl('', null, '');
-  params.privacyPolicyUrl = constants.externalLinks.privacyPolicy;
+  params.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
   mailTemplateService.getActiveMailTemplate("emailNotification", null, function(error, result) {
     //if failed to find mail template from DB, use old version
     if (error) {

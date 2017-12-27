@@ -5,7 +5,6 @@ var terms_of_service = require('../lib/terms_of_service');
 var mailTemplate = require('./mailTemplate');
 var mailHelper = require('./mailHelper');
 var mailTemplateService = require('../services/mailTemplate');
-var constants = require('./../util/constants');
 
 var mailFrom = helpers.mailFrom();
 var { sendMail } = require('./adapter');
@@ -21,7 +20,7 @@ function sendInviteAccountManager(inviteParams, callback) {
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName,
         termsOfUseUrl: terms_of_service.filter(inviteParams),
-        privacyPolicyUrl: constants.externalLinks.privacyPolicy,
+        privacyPolicyUrl: helpers.getUrl('', null, '/privacy_policy'),
       };
 
       helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
@@ -65,8 +64,8 @@ function sendInviteAccountManager(inviteParams, callback) {
 };
 
 function sendInviteSession(inviteParams, callback) {
-  inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams);
-  inviteParams.privacyPolicyUrl = constants.externalLinks.privacyPolicy;
+  inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams)
+  inviteParams.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
 
   if(inviteParams.role == 'observer') {
     inviteParams.logInUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/accept/';

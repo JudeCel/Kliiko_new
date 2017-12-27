@@ -19,7 +19,7 @@ function successProvider(params) {
     return {
       request: function(callback) {
         callback(null, {
-          subscription: { id: params.id, plan_id: 'essentials_monthly_aud', current_term_end: new Date() },
+          subscription: { id: params.id, plan_id: 'junior_monthly_AUD', current_term_end: new Date() },
           customer: { id: params.id }
         });
       }
