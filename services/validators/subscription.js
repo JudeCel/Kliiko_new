@@ -20,12 +20,10 @@ const DEPENDENCIES = {
     params: function(accountId, sessionId) {
       return {
         where: {
-          $and: [{
             accountId: accountId,
             status: 'open',
             $or: [{ endTime: { $gt: new Date() } }, { publicUid: { $ne: null } }],
             id: { $ne: sessionId || null }
-          }, models.sequelize.literal('"Topics"."id" is NULL')]
         },
         include: [{ model: models.Topic, required: false, where: { inviteAgain: true } }]
       };
@@ -56,7 +54,17 @@ const DEPENDENCIES = {
     },
     countMessage: countMessage
   },
-  countMessage: countMessage
+  countMessage: countMessage,
+  brandLogoAndCustomColors:  {
+    key: 'brandLogoAndCustomColors',
+    model: models.BrandProjectPreference,
+    params: function(accountId) {
+      return {
+        where: { accountId: accountId, default: false }
+      };
+    },
+    countMessage: countMessage
+  },
 };
 
 module.exports = {
@@ -69,6 +77,13 @@ module.exports = {
   countRecruiterMessage: countRecruiterMessage
 };
 
+/**
+ * @param {number} accountId
+ * @param {string} type - one of ['session', 'contactList', 'survey', 'topic']
+ * @param {number} count
+ * @param {object} [params]
+ * @return models.Subscription
+ */
 function validate(accountId, type, count, params) {
   let deferred = q.defer();
   if (!params) {
@@ -168,7 +183,7 @@ function getTopicCount(accountId, params) {
       else {
         resolve({ limit: -1 });
       }
-    }).then((count) => {      
+    }).then((count) => {
       const limit = subscription.SubscriptionPreference.data[dependency.key];
       resolve({ count, limit });
     }).catch((error) => {
@@ -245,6 +260,8 @@ function countRecruiterMessage(type, maxCount, subscription) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitCore;
   } else if (_.includes(subscriptionType, 'senior_')) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
+  } else if (_.includes(subscriptionType, 'essentials_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitEssentials;
   }
 
   message = message.replace('_max_number_', maxCount);

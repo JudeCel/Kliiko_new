@@ -8,6 +8,9 @@
 
     var requestError = 'Request failed';
     var fileUploaderService = {};
+    // TODO: might be it needs move this const into some storage for cross-project variables
+    // this const is used in chat project: https://github.com/DiatomEnterprises/klzii_chat/blob/master/lib/klzii_chat/endpoint.ex
+    var MAX_FILE_SIZE = 5000000;
 
     fileUploaderService.token = null;
     fileUploaderService.upload = upload;
@@ -22,7 +25,7 @@
     fileUploaderService.show = show;
 
     return fileUploaderService;
-    
+
     function upload(data) {
       var deferred = $q.defer();
       var server = serverData('resources');
@@ -195,7 +198,12 @@
     function switchErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
-          deferred.reject("File is too big");
+          if (error.config.file.size > MAX_FILE_SIZE) {
+            deferred.reject("File is too big");
+          } else {
+            // it would be nice to check "error.status === 504", but status is still "-1"
+            deferred.reject("Request Timeout");
+          }
           break;
         case Array.isArray(getErrorItem(error, 'name')):
           deferred.reject(error.data.errors.name[0]);

@@ -8,17 +8,17 @@ module.exports = {
     "steps": {
       "setUp": {
         "enabled": true,
-      }, 
+      },
       "facilitatiorAndTopics": {
         "enabled": true
-      }, 
+      },
       "manageSessionEmails": {
         "enabled": true
       },
       "manageSessionParticipants": {
         "enabled": true,
         "sendGroupSms": true
-      }, 
+      },
       "inviteSessionObservers": {
         "enabled": true,
         "sendGroupSms": false
@@ -33,7 +33,7 @@ module.exports = {
       },
       "whiteboard": {
         "enabled": true,
-        "canWrite": ["facilitator", "participant"]
+        "canWrite": ["facilitator", "accountManager", "admin", "participant"]
       },
       "pinboard": {
         "enabled": true
@@ -80,17 +80,17 @@ module.exports = {
     "steps": {
       "setUp": {
         "enabled": true
-      }, 
+      },
       "facilitatiorAndTopics": {
         "enabled": true
-      }, 
+      },
       "manageSessionEmails": {
         "enabled": true
       },
       "manageSessionParticipants": {
         "enabled": true,
         "sendGroupSms": false
-      }, 
+      },
       "inviteSessionObservers": {
         "enabled": true,
         "sendGroupSms": false
@@ -105,7 +105,7 @@ module.exports = {
       },
       "whiteboard": {
         "enabled": true,
-        "canWrite": ["facilitator"]
+        "canWrite": ["facilitator", "accountManager", "admin"]
       },
       "pinboard": {
         "enabled": false
@@ -152,17 +152,17 @@ module.exports = {
     "steps": {
       "setUp": {
         "enabled": true
-      }, 
+      },
       "facilitatiorAndTopics": {
         "enabled": true,
         "hideNext": true
-      }, 
+      },
       "manageSessionEmails": {
         "enabled": false
       },
       "manageSessionParticipants": {
         "enabled": false
-      }, 
+      },
       "inviteSessionObservers": {
         "enabled": false
       },
@@ -177,7 +177,7 @@ module.exports = {
       },
       "whiteboard": {
         "enabled": true,
-        "canWrite": ["facilitator"]
+        "canWrite": ["facilitator", "accountManager", "admin"]
       },
       "pinboard": {
         "enabled": false
