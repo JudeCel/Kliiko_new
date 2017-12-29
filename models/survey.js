@@ -7,7 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     resourceId: { type: DataTypes.INTEGER, allowNull: true },
     contactListId: { type: DataTypes.INTEGER, allowNull: true },
-    name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
+    name: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, not: ['\&'] } },
     description: { type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
     thanks: { type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
     closed: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },

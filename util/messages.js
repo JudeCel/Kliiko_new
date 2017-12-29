@@ -284,6 +284,7 @@ module.exports = {
     filters: {
       uniqueAccountName: 'Name has already been taken',
       empty: " can't be empty",
+      not: ' contains restricted symbols',
       format: ' has invalid format',
       unique: ' has already been taken',
     }
