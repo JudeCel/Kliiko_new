@@ -42,6 +42,9 @@ function parseErrorMessage(error, object) {
     case message.includes("Validation notEmpty failed"):
       message = field + MessagesUtil.models.filters.empty;
       break;
+    case message.includes("Validation not failed"):
+      message = field + MessagesUtil.models.filters.not;
+      break;
     case message.includes('Validation is failed'):
       message = field + MessagesUtil.models.filters.format;
       break;
