@@ -472,7 +472,8 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
         updateSubscription({
           accountId: account.id,
           newPlanId: account.selectedPlanOnRegistration,
-          redirectUrl: redirectUrl
+          redirectUrl: redirectUrl,
+          skipCheck: true,
         }).then(function(response) {
           deferred.resolve(response);
         }, function(erros) {
@@ -515,6 +516,11 @@ function createPortalSession(accountId, callbackUrl, provider) {
   return deferred.promise;
 }
 
+/**
+ * @param {string} accountId
+ * @param {string} newPlanId
+ * @return {{accountName:string, subscription:object, currentPlan:object, newPlan:object}}
+ */
 function gatherInformation(accountId, newPlanId) {
   let deferred = q.defer();
 
@@ -551,6 +557,7 @@ function gatherInformation(accountId, newPlanId) {
 /**
  * @param {object} params
  * @param {string} params.accountId
+ * @param {string} params.userId
  * @param {string} params.newPlanId
  * @param {object} [params.resources]
  * @param {number} [params.resources.sessionCount]
@@ -558,8 +565,6 @@ function gatherInformation(accountId, newPlanId) {
  * @param providers
  */
 function updateSubscription(params, providers) {
-  let deferred = q.defer();
-
   // Thiss is because we need to moch chargebee responses for tests!!!
   if(!providers){
     providers = {
@@ -570,36 +575,79 @@ function updateSubscription(params, providers) {
   }
   const resources = params.resources;
 
-  gatherInformation(params.accountId, params.newPlanId).then(function(result) {
-    canSwitchPlan(params.accountId, result.currentPlan, result.newPlan).then(function() {
-        if(params.skipCardCheck) {
-          // skipCardCheck is 'true' only in case cancellation
-          chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider).then(function(chargebeSubscription) {
-            updateSubscriptionData(chargebeePassParams(result, chargebeSubscription.subscription, resources))
-              .then(function (/**@typedef {{subscription: Object, redirect: boolean}} */subResult) {
-                deferred.resolve(subResult);
-              }, function (error) {
-                deferred.reject(error);
-              });
-          }, function(error) {
-            deferred.reject(error);
-          })
-        } else {
-          chargebeeSubCreateViaCheckout(chargebeePassParams(result, null, resources), params.redirectUrl, providers.viaCheckout).then(function(hosted_page) {
-            deferred.resolve({hosted_page: hosted_page, redirect: true});
-          }, function(error) {
-            deferred.reject(error);
-          })
-        }
-
-    }, function(error) {
-      deferred.reject(error);
+  return gatherInformation(params.accountId, params.newPlanId)
+    .then(function (/**@type{{accountName:string, subscription:object, currentPlan:object, newPlan:object}}*/result) {
+      return Bluebird.join(result, canSwitchPlan(params.accountId, result.currentPlan, result.newPlan));
+    })
+    .spread(function (result) {
+      if (params.skipCardCheck) {
+        // skipCardCheck is 'true' only in case cancellation
+        return chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider)
+          .then(function (chargebeeSubscription) {
+            return updateSubscriptionData(chargebeePassParams(result, chargebeeSubscription.subscription, resources));
+          });
+      } else {
+        return buyMoreSubscriptions(params, result, resources, providers);
+      }
     });
-  }, function(error) {
-    deferred.reject(error);
-  });
+}
 
-  return deferred.promise;
+/**
+ * @param {object} params
+ * @param {string} params.accountId
+ * @param {string} params.userId
+ * @param {string} params.newPlanId
+ * @param {object} [params.resources]
+ * @param {number} [params.resources.sessionCount]
+ * @param {string} [params.redirectUrl]
+ * @param {object} result
+ * @param {string} result.accountName
+ * @param {object} result.subscription
+ * @param {object} result.currentPlan
+ * @param {object} result.newPlan
+ * @param {object} resources
+ * @param {object} providers
+ * @return {{redirect: boolean, [redirect_url]: string, [hosted_page]: string, [message]: string}}
+ */
+function buyMoreSubscriptions(params, result, resources, providers) {
+  return AccountUser.find({ where: { AccountId: params.accountId, UserId: params.userId } })
+    .then(function (accountUser) {
+      // check old plan
+      if ((/^free_/).test(result.currentPlan.preferenceName)) {
+        // from FREE to PAID plan
+        const customerId = result.subscription.customerId;
+        return chargebeeSubCreateForCustomer(chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId), customerId)
+          .then(function (chargeBeeSub) {
+            result.subscription.subscriptionId = chargeBeeSub.subscription.id; // use id of new subscription
+            const passThruContent = chargebeePassParams(result, chargeBeeSub.subscription, resources);
+            return updateSubscriptionData(passThruContent);
+          })
+          .then(function (subResult) {
+            const response = {
+              message: MessagesUtil.subscription.successPlanUpdate,
+            };
+            if (params.redirectUrl) {
+              response.redirect = true;
+              response.redirect_url = params.redirectUrl;
+            }
+            return response;
+          })
+          .catch(function (error) {
+            throw filters.errors(error);
+          });
+      } else {
+        // buying more PAID plans
+        return chargebeeSubCreateViaCheckout(
+          chargebeePassParams(result, null, resources),
+          chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId),
+          params.redirectUrl,
+          providers.viaCheckout
+        )
+          .then(function (hostedPage) {
+            return { hosted_page: hostedPage, redirect: true };
+          });
+      }
+    });
 }
 
 function cleanupAfterUpdate(accountId, oldPlan, newPlan) {
@@ -705,6 +753,9 @@ function calculateAvailableSessions(subscription, passThruContent) {
  *
  * @param {object} passThruContent
  * @param {number} passThruContent.id
+ * @param {string} passThruContent.planId
+ * @param {string} passThruContent.subscriptionPlanId
+ * @param {date} passThruContent.endDate
  * @param {number} passThruContent.sessionCount
  */
 function updateSubscriptionData(passThruContent){
@@ -718,7 +769,7 @@ function updateSubscriptionData(passThruContent){
 
       // increase count of additional bought sessions
       if (passThruContent.sessionCount) {
-        const currentSessionCount = /free_trial/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
+        const currentSessionCount = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
         params.sessionCount = currentSessionCount + passThruContent.sessionCount;
       }
       // recalc available sessions
@@ -735,8 +786,6 @@ function updateSubscriptionData(passThruContent){
       });
     }, function(error) {
       deferred.reject(error);
-    }).then(function(updatedSub) {
-
     })
   }, function(error) {
     deferred.reject(error);
@@ -851,34 +900,30 @@ function chargebeeSubUpdateViaCheckout(params, redirectUrl, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubCreateViaCheckout(params, redirectUrl, provider) {
-  let deferred = q.defer();
+function chargebeeSubCreateViaCheckout(params, subParams, redirectUrl, provider) {
   let passThruContent = JSON.stringify(params);
-
   // for tests only!
   if(!provider) {
     provider = chargebee.hosted_page.checkout_new;
   }
 
-  provider({
+  const reqBody = {
     subscription: {
       plan_id: params.planId,
       plan_quantity: params.sessionCount,
     },
-    billing_cycles: params.billing_cycles,
+    customer: subParams.customer,
+    billing_address: subParams.billing_address,
+    billing_cycles: subParams.billing_cycles,
     redirect_url: redirectUrl,
     cancel_url: redirectUrl,
     pass_thru_content: passThruContent,
-    embed: "false"
-  }).request(function(error,result){
-    if(error){
-      deferred.reject(error);
-    }else{
-      deferred.resolve(result.hosted_page);
-    }
-  });
-
-  return deferred.promise;
+    embed: 'false',
+  };
+  return provider(reqBody).request()
+    .then(function (result) {
+      return result.hosted_page;
+    });
 }
 
 function chargebeeSubUpdate(params, provider) {
@@ -919,6 +964,12 @@ function chargebeeSubCreate(params, provider) {
   return deferred.promise;
 }
 
+function chargebeeSubCreateForCustomer(params, customerId) {
+  let provider = chargebee.subscription.create_for_customer;
+
+  return provider(customerId, params).request();
+}
+
 function subscriptionParams(accountId, chargebeeSub, subscriptionPlanId) {
   return {
     accountId: accountId,
@@ -939,8 +990,9 @@ function chargebeePortalParams(subscription, callbackUrl) {
 
 /**
  * Creates so called 'passThruContent'
- * @param result
- * @param subscription
+ * @param {object} result
+ * @param {models.Subscriptions} result.subscription
+ * @param {object} subscription - subscription object from ChargeBee
  * @param {object} [resources]
  * @param {number} resources.sessionCount
  * @return {{id, subscriptionId, planId: (*|string|chargebeePlanId|{type, allowNull, validate}), subscriptionPlanId, paidSmsCount: (*|number), planSmsCount: (*|number|planSmsCount|{type, allowNull, defaultValue}), oldPriority, accountName, endDate}}
