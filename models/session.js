@@ -57,7 +57,6 @@ module.exports = (Sequelize, DataTypes) => {
         Session.belongsTo(models.SessionType, { foreignKey: 'type' });
         Session.belongsToMany(models.Survey, { through: models.SessionSurvey, foreignKey: "sessionId" });
         Session.belongsToMany(models.MailTemplate, { through: models.SessionMailTemplate, foreignKey: "sessionId" });
-        Session.belongsTo(models.Subscription, { foreignKey: 'subscriptionId' });
       }
     }
   });

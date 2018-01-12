@@ -40,6 +40,9 @@
         type: 'image',
         name: bannerType
       };
+      if (!banner.file) {
+        return;
+      }
 
       fileUploader.upload(data).then(function(result) {
         var resource = result.data.resource;

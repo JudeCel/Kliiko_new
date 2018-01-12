@@ -193,7 +193,7 @@
             messenger.error(response.error);
           }else {
             if(response.redirect){
-              window.location = response.hosted_page.url;
+              window.location = response.redirect_url || response.hosted_page.url;
             }else{
               nextStep();
             }
