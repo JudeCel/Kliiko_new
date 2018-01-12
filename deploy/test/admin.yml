@@ -43,13 +43,13 @@ spec:
         - name: NODE_ENV
           value: "production"
         - name: LOG_SERVER_URL
-          value: "chat.test.klzii.com"
+          value: "chat.test.cliizii.com"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "http://chat.test.klzii.com"
+          value: "http://chat.test.cliizii.com"
         - name: KLZII_HOMEPAGE_URL
           value: "104.154.43.190"
         - name: EVENT_SOCKET_SERVER_URL
-          value: "ws://chat.test.klzii.com/socketDashboard"
+          value: "ws://chat.test.cliizii.com/socketDashboard"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "80"
         - name: REDIS_PORT
@@ -65,9 +65,9 @@ spec:
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: SERVER_BASE_DOMAIN
-          value: ".test.klzii.com"
+          value: ".test.cliizii.com"
         - name: SERVER_DOMAIN
-          value: "www.test.klzii.com"
+          value: "www.test.cliizii.com"
         - name: MAIL_TRANSPORT_SERVICE
           value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
