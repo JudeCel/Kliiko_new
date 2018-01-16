@@ -1,7 +1,8 @@
 'use strict';
 
 function getBaseUrl() {
-  return 'http://' + process.env.SERVER_DOMAIN + getPort();
+  let scheme = process.env.NODE_ENV === 'production' ? 'https://' : 'http://';
+  return scheme + process.env.SERVER_DOMAIN + getPort();
 };
 
 function getPort() {
