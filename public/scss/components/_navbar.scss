@@ -25,11 +25,6 @@
       background-repeat: no-repeat;
       background-position: 170px center;
 
-      &:hover {
-        background-color: $blue;
-        color: white;
-      }
-
       & > img{
         padding-left: 20px;
         padding-bottom: 3px;
@@ -39,33 +34,27 @@
 
   & > li#dashboard-accountProfile {
     & > a {
-    background-image: url('/icons/profile_grey.png');
+      background-image: url('/icons/profile_grey.png');
     }
-    &.active > a,
-    & > a:hover,
-    & > a:focus {
+    &.active > a {
       background-image: url('/icons/profile_white.png');
     }
   }
 
   & > li#dashboard-chatSessions {
     & > a {
-    background-image: url('/icons/session_grey.png');
+      background-image: url('/icons/session_grey.png');
     }
-    &.active > a,
-    & > a:hover,
-    & > a:focus {
+    &.active > a {
       background-image: url('/icons/session_white.png');
     }
   }
 
   & > li#dashboard-resources {
     & > a {
-    background-image: url('/icons/resources_grey.png');
+      background-image: url('/icons/resources_grey.png');
     }
-    &.active > a,
-    & > a:hover,
-    & > a:focus {
+    &.active > a {
       background-image: url('/icons/resources_white.png');
     }
   }
@@ -73,22 +62,18 @@
   & > li#btn-my-dashboard {
     width: 250px;
     & > a {
-        padding-right: 15px;
+      padding-right: 15px;
     }
   }
 
 }
 
-#nav-tabs-main > li,
-#nav-tabs-main > li:hover,
-#nav-tabs-main > li:focus {
+#nav-tabs-main > li {
   outline: 0;
 }
 
 
-#nav-tabs-main > li.active > a,
-#nav-tabs-main > li.active > a:hover,
-#nav-tabs-main > li.active > a:focus {
+#nav-tabs-main > li.active > a {
   border: 2px solid $blue;
   background-color: $blue;
   color: white;
@@ -104,6 +89,36 @@
 @media (min-width: 768px){
   #nav-tabs-main > li > a {
     width: 100%;
+  }
+}
+
+// DE1623: to query the user’s ability to hover over elements on the page with the primary pointing device
+@media (hover: hover) {
+  #nav-tabs-main {
+    & > li:hover {
+      outline: 0;
+    }
+    & > li.active > a:hover {
+      border: 2px solid $blue;
+      background-color: $blue;
+      color: white;
+      height: 45px;
+    }
+    & > li > a:hover {
+      background-color: $blue;
+      color: white;
+    }
+    & > li#dashboard-accountProfile > a:hover {
+      background-image: url('/icons/profile_white.png');
+    }
+
+    & > li#dashboard-chatSessions > a:hover {
+      background-image: url('/icons/session_white.png');
+    }
+
+    & > li#dashboard-resources > a:hover {
+      background-image: url('/icons/resources_white.png');
+    }
   }
 }
 // Main navigation end
