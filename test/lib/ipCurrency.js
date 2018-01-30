@@ -2,8 +2,8 @@
 
 const assert = require('chai').assert;
 const ipCurrency = require('./../../lib/ipCurrency');
+const constants = require('./../../util/constants');
 
-const DEFAULT_CURRENCY = 'USD';
 
 describe('LIB - IPCurrency', function() {
   describe('#get', function() {
@@ -13,8 +13,8 @@ describe('LIB - IPCurrency', function() {
       };
 
       ipCurrency.get(params).then((data) => {
-        assert.equal(data.base, DEFAULT_CURRENCY);
-        assert.equal(data.client, DEFAULT_CURRENCY);
+        assert.equal(data.base, constants.defaultCurrency);
+        assert.equal(data.client, constants.defaultCurrency);
         done();
       }).catch(done);
     });
