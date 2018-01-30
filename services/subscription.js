@@ -650,7 +650,7 @@ function buyMoreSubscriptions(params, result, resources, providers) {
         return chargebeeSubCreateViaCheckout(
           chargebeePassParams(result, null, resources),
           chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId),
-          params.redirectUrl,
+          params.redirectUrlSessionPage,
           providers.viaCheckout
         )
           .then(function (hostedPage) {
