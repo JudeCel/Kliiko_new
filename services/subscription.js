@@ -379,8 +379,18 @@ function findSubscriptionId(subscriptionId) {
 function findPreferencesBySubscriptionId(subscriptionId) {
   return SubscriptionPreference
     .find({
-      where: { data: { $contains: { availableSessions: [{ subscriptionId: subscriptionId }] } } },
-      include: [ { model: Subscription, include: [SubscriptionPlan, Account], }],
+      where: {
+        $or: [
+          { data: { $contains: { availableSessions: [{ subscriptionId: subscriptionId }] } } },
+          {
+            $and: [
+              { '$Subscription.subscriptionId$': subscriptionId },
+              { '$Subscription.planId$': { $like: 'free_%' } },
+            ],
+          },
+        ],
+      },
+      include: [{ model: Subscription, include: [SubscriptionPlan, Account], }],
     })
     .then((preferences) => {
       if (!preferences) {
