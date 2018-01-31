@@ -10,9 +10,9 @@
     init();
 
     function init() {
-      let currentURL = $location.path();
-      let checkoutPageURL = '/account-profile/upgrade-plan';
-      let showBuySessionModal = !user.app.hasPermissions('hasBoughtSessions') &&  currentURL !== checkoutPageURL;
+      var currentURL = $location.path();
+      var checkoutPageURL = '/account-profile/upgrade-plan';
+      var showBuySessionModal = !user.app.hasPermissions('hasBoughtSessions') &&  currentURL !== checkoutPageURL;
       if (showBuySessionModal) {
         $confirm({
           title: "Great to see you back!",
