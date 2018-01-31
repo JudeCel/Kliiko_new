@@ -367,8 +367,18 @@ function findSubscriptionId(subscriptionId) {
 function findPreferencesBySubscriptionId(subscriptionId) {
   return SubscriptionPreference
     .find({
-      where: { data: { $contains: { availableSessions: [{ subscriptionId: subscriptionId }] } } },
-      include: [ { model: Subscription, include: [SubscriptionPlan, Account], }],
+      where: {
+        $or: [
+          { data: { $contains: { availableSessions: [{ subscriptionId: subscriptionId }] } } },
+          {
+            $and: [
+              { '$Subscription.subscriptionId$': subscriptionId },
+              { '$Subscription.planId$': { $like: 'free_%' } },
+            ],
+          },
+        ],
+      },
+      include: [{ model: Subscription, include: [SubscriptionPlan, Account], }],
     })
     .then((preferences) => {
       if (!preferences) {
@@ -628,7 +638,7 @@ function buyMoreSubscriptions(params, result, resources, providers) {
         return chargebeeSubCreateViaCheckout(
           chargebeePassParams(result, null, resources),
           chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId),
-          params.redirectUrl,
+          params.redirectUrlSessionPage,
           providers.viaCheckout
         )
           .then(function (hostedPage) {
