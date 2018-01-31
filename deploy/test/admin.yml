@@ -71,11 +71,11 @@ spec:
         - name: MAIL_TRANSPORT_SERVICE
           value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "noreply@test.klzii.com"
+          value: "noreply@test.cliizii.com"
         - name: MAIL_FROM_NAME
-          value: "klzii"
+          value: "cliizii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "noreply@test.klzii.com"
+          value: "noreply@test.cliizii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
           value: "5y68b5t4tv743ynt7n38y75nyht75t5y"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
@@ -89,13 +89,13 @@ spec:
         - name: FACEBOOK_CLIENT_SECRET
           value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
         - name: FACEBOOK_CALLBACK_URL
-          value: "http://www.test.klzii.com/auth/facebook/callback"
+          value: "http://www.test.cliizii.com/auth/facebook/callback"
         - name: GOOGLE_CLIENT_ID
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
           value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: GOOGLE_CALLBACK_URL
-          value: "http://www.test.klzii.com/auth/google/callback"
+          value: "http://www.test.cliizii.com/auth/google/callback"
         - name: SESSION_COOKIES_NAME
           value: "klzii_test_demo"
         - name: SESSION_SECRET
@@ -127,4 +127,4 @@ spec:
         - name: INFUSIONSOFT_KEY
           value: "75b1411017f205fb92b3898c4e9151bb"
         - name: HELP_PAHE_URL
-          value: "https://klzii.com/help/"
+          value: "https://cliizii.com/help/"
