@@ -43,7 +43,7 @@ function getPlans(req, res, next) {
 
 function updatePlan(req, res, next) {
   let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub/landing');
-  let redirectUrlSessionPage = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/chatSessions');
+  let redirectUrlSessionPage = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/account-profile/upgrade-plan');
   let params = {
     accountId: req.currentResources.account.id,
     newPlanId: req.body.planId,
