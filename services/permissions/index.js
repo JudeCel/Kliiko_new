@@ -1,5 +1,7 @@
 'use strict';
 var _ = require('lodash');
+let moment = require('moment');
+
 const canAccountDatabase = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
@@ -50,6 +52,10 @@ const canUploadToGallery = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['admin', 'accountManager', 'facilitator']) && checkSub(account, accountUser, sub, 'uploadToGallery'))
 }
 
+const hasBoughtSessions = (account, accountUser, sub) => {
+  return _.some(sub.availableSessions, (s) => moment().isBefore(s.endDate)) || sub.sessionCount > 0;
+};
+
 
 const permissionsObject = {
     canAccountDatabase: canAccountDatabase,
@@ -66,6 +72,7 @@ const permissionsObject = {
     canEditSession: canEditSession,
     canSeeChatSessions: canSeeChatSessions,
     canUploadToGallery: canUploadToGallery,
+    hasBoughtSessions: hasBoughtSessions,
     canAccountProfile: canAccountProfile
 }
 
