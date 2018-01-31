@@ -77,7 +77,7 @@ spec:
         - name: MAIL_TRANSPORT_AUTH_USER
           value: "noreply@test.cliizii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "5y68b5t4tv743ynt7n38y75nyht75t5y"
+          value: "de461c27be297612dbec7c2bf74f7316"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
