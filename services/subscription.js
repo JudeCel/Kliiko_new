@@ -614,7 +614,7 @@ function buyMoreSubscriptions(params, result, resources, providers) {
       if ((/^free_/).test(result.currentPlan.preferenceName)) {
         // from FREE to PAID plan
         const customerId = result.subscription.customerId;
-        return chargebeeSubCreateForCustomer(chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId), customerId)
+        return chargebeeSubCreateForCustomer(chargebeePassParams(result, null, resources), chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId), customerId)
           .then(function (chargeBeeSub) {
             result.subscription.subscriptionId = chargeBeeSub.subscription.id; // use id of new subscription
             const passThruContent = chargebeePassParams(result, chargeBeeSub.subscription, resources);
@@ -962,10 +962,10 @@ function chargebeeSubCreate(params, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubCreateForCustomer(params, customerId) {
+function chargebeeSubCreateForCustomer(params, subParams, customerId) {
   let provider = chargebee.subscription.create_for_customer;
-
-  return provider(customerId, params).request();
+  subParams.plan_quantity = params.sessionCount
+  return provider(customerId, subParams).request();
 }
 
 function subscriptionParams(accountId, chargebeeSub, subscriptionPlanId) {
