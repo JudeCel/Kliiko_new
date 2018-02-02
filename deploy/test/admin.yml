@@ -75,9 +75,9 @@ spec:
         - name: MAIL_FROM_NAME
           value: "cliizii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "noreply@klzii.com"
+          value: "noreply@test.cliizii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "de461c27be297612dbec7c2bf74f7316"
+          value: "312d5f3a746fef7060043a34b4788af6"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
