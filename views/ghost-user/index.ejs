@@ -20,9 +20,10 @@
         <div class="form-group text-right">
           <button type="button"
                   data-callback="onAccept"
-                  value="Accept" 
+                  value="Accept"
                   class="g-recaptcha btn btn-standart btn-green btn-small"
-                  data-sitekey="<%= captchaSiteKey %>">
+                  data-sitekey="<%= captchaSiteKey %>"
+                  id="accept-button">
                   Accept
           </button>
         </div>
@@ -33,7 +34,7 @@
         }
       </script>
     <% } %>
-  </div>  
+  </div>
   <% if (sneakPreviewIntro && !error && !message) { %>
     <div class="sneakPreviewIntro">
       <img alt="" src="/images/Klzii_SneakPreviewIntro.jpg"/>
@@ -53,7 +54,7 @@
           }, 200);
         });
       </script>
-    </div>  
+    </div>
   <% } %>
   <% if (message) { %>
     <div ng-controller='MessengerController as mc' ng-init="mc.error('<%= message %>', true)"></div>

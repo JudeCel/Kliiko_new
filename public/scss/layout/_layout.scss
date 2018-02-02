@@ -617,6 +617,11 @@ input#reveiveNewsLetters{
     text-decoration: underline;
   }
 
+  #accept-button {
+    z-index: 1;
+    position: relative;
+  }
+
   #signup {
     h4, input {
       width: auto;

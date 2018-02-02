@@ -3,7 +3,7 @@
 var moment = require('moment-timezone');
 var models = require('./../models');
 var filters = require('./../models/filters');
-var {Session, AccountUser} = models;
+var {Session, AccountUser, Account} = models;
 
 var constants = require('./../util/constants');
 var inviteService = require('./invite');
@@ -12,6 +12,7 @@ var smsService = require('./sms');
 var mailHelper = require('./../mailers/mailHelper');
 var mailUrlHelper = require('./../mailers/helpers');
 var validators = require('./../services/validators');
+var SessionService = require('./../services/session');
 var sessionMemberServices = require('./sessionMember');
 var MessagesUtil = require('./../util/messages');
 var stringHelpers = require('./../util/stringHelpers');
@@ -154,36 +155,36 @@ function createNewSessionDefaultItems(session, userId) {
   });
 }
 
+/**
+ * @param {object} params
+ * @return models.Session
+ */
 function initializeBuilder(params) {
-  let deferred = q.defer();
-  validators.subscription(params.accountId, 'session', 0).then(function() {
+  return validators
+    .subscription(params.accountId, 'session', 1)
+    .then(() => {
 
-    params.step = 'setUp';
-    params.isVisited = {
-      setUp: true,
-      facilitatiorAndTopics: false,
-      manageSessionEmails: false,
-      manageSessionParticipants: false,
-      inviteSessionObservers: false
-    };
-    Session.create(params).then(function(session) {
-      createNewSessionDefaultItems(session, params.userId).then(function() {
-        sessionBuilderObject(session).then(function(result) {
-          deferred.resolve(result);
-        }, function(error) {
-          deferred.reject(error);
-        });
-      }, (error) => {
-        deferred.reject(error);
-      });
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+      params.step = 'setUp';
+      params.isVisited = {
+        setUp: true,
+        facilitatiorAndTopics: false,
+        manageSessionEmails: false,
+        manageSessionParticipants: false,
+        inviteSessionObservers: false,
+      };
+
+      return Session.create(params);
+    })
+    .then((session) => {
+      return Bluebird.all([
+        sessionBuilderObject(session),
+        createNewSessionDefaultItems(session, params.userId),
+      ]);
+    })
+    .spread((session, empty) => session)
+    .catch((error) => {
+      throw filters.errors(error);
     });
-  }, function(error) {
-    deferred.reject(error);
-  });
-
-  return deferred.promise;
 }
 
 function findSession(id, accountId) {
@@ -1552,8 +1553,9 @@ function publish(sessionId, accountId) {
     Session.find({
       where: {
         id: sessionId,
-        accountId: accountId
-      }
+        accountId: accountId,
+      },
+      include: [Account],
     }).then(function(session) {
       return addContactListToSession(session, accountId);
     }).then(function(session) {
@@ -1561,17 +1563,20 @@ function publish(sessionId, accountId) {
         if (session.publicUid) {
           resolve({ id: session.id, publicUid: session.publicUid });
         } else {
-          getRelatedInviteAgainTopic(sessionId).then(function(topic) {
-            if (topic) {
+          validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
+            .then(function () {
+              // do not need to allocate a new session for admin
+              if (session.Account.admin) {
+                return null;
+              }
+              return SessionService.allocateSession(accountId, session);
+            })
+            .then(function () {
               generatePublicUid(session, resolve, reject);
-            } else {
-              validators.subscription(accountId, 'session', 1, { sessionId: sessionId }).then(function() {
-                generatePublicUid(session, resolve, reject);
-              }, function(reason) {
-                reject(reason);
-              });
-            }
-          });
+            })
+            .catch(function (reason) {
+              reject(reason);
+            });
         }
       } else {
         reject(MessagesUtil.session.notFound);

@@ -1,5 +1,7 @@
 'use strict';
 var _ = require('lodash');
+let moment = require('moment');
+
 const canAccountDatabase = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
 }
@@ -19,9 +21,9 @@ const canSeeChatSessions = (_account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['accountManager', 'admin', 'facilitator']))
 }
 const canUpgradePlan = (account, accountUser, sub) => {
-    // return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
+    return(!account.admin && checkRoles(accountUser.role, ['accountManager', 'admin']))
     // 22.05.2017 Chargebee is canceled!!! from 23.05.2017
-    return(!account.admin && checkRoles(accountUser.role, []))
+    // return(!account.admin && checkRoles(accountUser.role, []))
 }
 const canSessionRating = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
@@ -37,8 +39,8 @@ const canSmsCredits = (account, accountUser, sub) => {
 }
 const canPaymentDetails = (account, accountUser, sub) => {
      // 22.05.2017 Chargebee is canceled!!! from 23.05.2017
-    return(checkRoles(accountUser.role, []))
-    // return(checkRoles(accountUser.role, ['accountManager']))
+    // return(checkRoles(accountUser.role, []))
+    return(checkRoles(accountUser.role, ['accountManager']))
 }
 const canStockCreateTopics = (account, accountUser, sub) => {
     return(account.admin && checkRoles(accountUser.role, ['admin']))
@@ -49,6 +51,10 @@ const canUploadBanners = (account, accountUser, sub) => {
 const canUploadToGallery = (account, accountUser, sub) => {
     return(checkRoles(accountUser.role, ['admin', 'accountManager', 'facilitator']) && checkSub(account, accountUser, sub, 'uploadToGallery'))
 }
+
+const hasBoughtSessions = (account, accountUser, sub) => {
+  return checkRoles(accountUser.role, ['admin']) || (_.some(sub.availableSessions, (s) => moment().isBefore(s.endDate)) || sub.sessionCount > 0);
+};
 
 
 const permissionsObject = {
@@ -66,6 +72,7 @@ const permissionsObject = {
     canEditSession: canEditSession,
     canSeeChatSessions: canSeeChatSessions,
     canUploadToGallery: canUploadToGallery,
+    hasBoughtSessions: hasBoughtSessions,
     canAccountProfile: canAccountProfile
 }
 

@@ -32,6 +32,7 @@ module.exports = (Sequelize, DataTypes) => {
       manageSessionParticipants: false,
       inviteSessionObservers: false
     } },
+    subscriptionId: { type: DataTypes.STRING, allowNull: true },
     publicUid: { type: DataTypes.STRING, allowNull: true, validate: { isUnique: validations.unique(Sequelize, 'Session', 'publicUid') } }
   }, {
     timestamps: true,
