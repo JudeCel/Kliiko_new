@@ -136,9 +136,8 @@
         }else {
           vm.currencyData = result.currencyData;
           vm.currentCurrency = vm.currencyData.client;
-          // TODO: DISABLED UNTIL CHARGEBEE FIXES CURRENCY CHANGES
-          // vm.currencyList = Object.keys(vm.currencyData.rates);
-          // vm.currencyList.unshift(vm.currencyData.base);
+          vm.currencyList = Object.keys(vm.currencyData.rates);
+          vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
           // vm.free_account = result.free_account;
           vm.plans = result.plans;
@@ -193,7 +192,7 @@
             messenger.error(response.error);
           }else {
             if(response.redirect){
-              window.location = response.hosted_page.url;
+              window.location = response.redirect_url || response.hosted_page.url;
             }else{
               nextStep();
             }

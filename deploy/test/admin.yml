@@ -43,13 +43,13 @@ spec:
         - name: NODE_ENV
           value: "production"
         - name: LOG_SERVER_URL
-          value: "chat.test.klzii.com"
+          value: "chat.test.cliizii.com"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "http://chat.test.klzii.com"
+          value: "http://chat.test.cliizii.com"
         - name: KLZII_HOMEPAGE_URL
           value: "104.154.43.190"
         - name: EVENT_SOCKET_SERVER_URL
-          value: "ws://chat.test.klzii.com/socketDashboard"
+          value: "ws://chat.test.cliizii.com/socketDashboard"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "80"
         - name: REDIS_PORT
@@ -65,19 +65,19 @@ spec:
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
         - name: SERVER_BASE_DOMAIN
-          value: ".test.klzii.com"
+          value: ".test.cliizii.com"
         - name: SERVER_DOMAIN
-          value: "www.test.klzii.com"
+          value: "www.test.cliizii.com"
         - name: MAIL_TRANSPORT_SERVICE
           value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "noreply@test.klzii.com"
+          value: "noreply@test.cliizii.com"
         - name: MAIL_FROM_NAME
-          value: "klzii"
+          value: "cliizii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "noreply@test.klzii.com"
+          value: "noreply@test.cliizii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "5y68b5t4tv743ynt7n38y75nyht75t5y"
+          value: "312d5f3a746fef7060043a34b4788af6"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
@@ -89,13 +89,13 @@ spec:
         - name: FACEBOOK_CLIENT_SECRET
           value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
         - name: FACEBOOK_CALLBACK_URL
-          value: "http://www.test.klzii.com/auth/facebook/callback"
+          value: "http://www.test.cliizii.com/auth/facebook/callback"
         - name: GOOGLE_CLIENT_ID
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
           value: "i_S2xLucKbRL14sp6hHSRVA_"
         - name: GOOGLE_CALLBACK_URL
-          value: "http://www.test.klzii.com/auth/google/callback"
+          value: "http://www.test.cliizii.com/auth/google/callback"
         - name: SESSION_COOKIES_NAME
           value: "klzii_test_demo"
         - name: SESSION_SECRET
@@ -127,4 +127,4 @@ spec:
         - name: INFUSIONSOFT_KEY
           value: "75b1411017f205fb92b3898c4e9151bb"
         - name: HELP_PAHE_URL
-          value: "https://klzii.com/help/"
+          value: "https://cliizii.com/help/"

@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('ChatSessionsController', ChatSessionsController);
 
-  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices', '$confirm', 'surveyServices'];
-  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices, $confirm, surveyServices){
+  ChatSessionsController.$inject = ['dbg', 'chatSessionsServices', 'goToChatroom', 'messenger', 'angularConfirm', '$window', '$rootScope', 'domServices', '$confirm', 'surveyServices', '$location', 'user'];
+  function ChatSessionsController(dbg, chatSessionsServices, goToChatroom, messenger, angularConfirm, $window, $rootScope, domServices, $confirm, surveyServices, $location, user) {
     dbg.log2('#ChatSessionsController started');
 
     var vm = this;
@@ -52,6 +52,9 @@
     changePage('index');
 
     function init() {
+      if (!user.app.hasPermissions('hasBoughtSessions')) {
+        $location.path('/account-profile');
+      }
       chatSessionsServices.findAllSessions().then(function(res) {
         vm.queriedForSessions = true;
         vm.sessions = res.data;
