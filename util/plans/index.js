@@ -6,4 +6,6 @@ module.exports = {
   junior:  require('./junior').plan,
   senior:  require('./senior').plan,
   trial:   require('./trial').plan,
-}
+
+  essentials: require('./essentials').plan,
+};
