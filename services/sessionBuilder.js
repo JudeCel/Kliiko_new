@@ -1526,26 +1526,30 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   return deferred.promise;
 }
 
+/**
+ * @param {Session} session
+ * @param {number} accountId
+ * @return {Session}
+ */
 function addContactListToSession(session, accountId) {
-  return new Bluebird((resolve, reject) => {
-    if (session) {
-      contactList.create({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
-        sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
-          resolve(session);
-        }, function(error) {
-          reject(error);
-        });
-      }, function(error) {
-        if (error.name) {
-          reject(MessagesUtil.session.contactListExists);
-        } else {
-          reject(error);
-        }
-      });
-    } else {
-      reject(MessagesUtil.session.notFound);
-    }
-  });
+  if (!session) {
+    throw MessagesUtil.session.notFound;
+  }
+
+  return contactList.create({ name: _.upperFirst(_.lowerCase(session.publicUid)), customFields: [], accountId: accountId })
+    .then((cList) => {
+      return sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id);
+    })
+    .then(() => {
+      return session;
+    })
+    .catch((error) => {
+      if (error.name) {
+        throw MessagesUtil.session.contactListExists;
+      } else {
+        throw error;
+      }
+    });
 }
 
 /**
@@ -1562,10 +1566,7 @@ function publish(sessionId, accountId) {
       },
       include: [Account],
     })
-    .then(function (session) {
-      return addContactListToSession(session, accountId);
-    })
-    .then(function (session) {
+    .then((session) => {
       if (!session) {
         throw MessagesUtil.session.notFound;
       }
@@ -1574,15 +1575,21 @@ function publish(sessionId, accountId) {
       }
 
       return validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
-        .then(function () {
+        .then(() => {
           // do not need to allocate a new session for admin
           if (session.Account.admin) {
             return null;
           }
           return SessionService.allocateSession(accountId, session);
         })
-        .then(function () {
+        .then(() => {
           return generatePublicUid(session);
+        })
+        .then((updatedSession) => {
+          return addContactListToSession(updatedSession, accountId);
+        })
+        .then(function (updatedSession) {
+          return { id: updatedSession.id, publicUid: updatedSession.publicUid };
         });
     });
 }
@@ -1590,15 +1597,12 @@ function publish(sessionId, accountId) {
 /**
  * @param {object} session
  * @param {string} session.name
- * @returns {Promise.<{id: number, publicUid: string}>}
+ * @returns {Promise.<Session>}
  */
 function generatePublicUid(session) {
   return generateUniqueSlugFor(session)
     .then(function (slug) {
       return session.update({ publicUid: slug });
-    })
-    .then(function (updatedSession) {
-      return { id: updatedSession.id, publicUid: updatedSession.publicUid };
     });
 }
 
