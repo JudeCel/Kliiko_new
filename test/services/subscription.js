@@ -7,6 +7,7 @@ var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
 var surveyFixture = require('./../fixtures/survey');
+var constants = require('./../../util/constants');
 
 var async = require('async');
 var assert = require('chai').assert;
@@ -37,7 +38,7 @@ describe('SERVICE - Subscription', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free_trial_AUD', current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: `free_trial_${constants.defaultCurrency}`, current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
@@ -579,14 +580,14 @@ describe('SERVICE - Subscription', function() {
     var subId = 'SomeUniqueID';
     var providers = {
       creditCard: validCreditCardProvider(),
-      updateProvider: updateProvider({ id: subId, plan_id: "essentials_monthly_aud" })
+      updateProvider: updateProvider({ id: subId, plan_id: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}` })
     }
 
     beforeEach(function(done) {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
         const params = {
           accountId: testData.account.id,
-          newPlanId: 'essentials_monthly_aud',
+          newPlanId: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`,
           skipCardCheck: true,
           resources: { sessionCount: 1 },
         };

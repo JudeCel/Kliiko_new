@@ -14,6 +14,7 @@ var validAttrs = {
   email: "dainis@gmail.com",
   gender: "male"
 }
+var constants = require('./../../util/constants');
 
 describe('SERVICE - ContactListUser', () => {
   let TestUser = null;
@@ -52,7 +53,7 @@ describe('SERVICE - ContactListUser', () => {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'senior_monthly_AUD', current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`, current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
