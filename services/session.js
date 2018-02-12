@@ -689,7 +689,7 @@ function getAvailableSession(preferences) {
  */
 function getAvailableSessionById(preferences, sessionId) {
   let availableSessions = preferences.data.availableSessions;
-  let availableSession = availableSessions.find((s) => s.sessionId === sessionId);
+  let availableSession = _.find(availableSessions, (s) => s.sessionId === sessionId);
   return availableSession;
 }
 
