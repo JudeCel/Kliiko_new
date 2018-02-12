@@ -58,8 +58,8 @@ function preferenceName(chargebeePlanId) {
 
 module.exports = {
   // active plans
-  'essentials_monthly':  plans.essentials,
-  'essentials-annual':   plans.essentials,
+  essentials_monthly:  plans.essentials,
+  essentials_annual:   plans.essentials,
   // inactive plans
   free_trial:     plans.trial,
   free_account:   plans.account,

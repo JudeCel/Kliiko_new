@@ -20,7 +20,7 @@ describe('SERVICE - BrandColour', function() {
         testData.account = result.account;
         testData.session = result.session;
         testData.preference = result.preference;
-        BrandProjectPreference.update({ default: false }, { where: { id: result.preference.id } }).then(() => done());
+        done();
       }, function(error) {
         done(error);
       });
@@ -130,16 +130,50 @@ describe('SERVICE - BrandColour', function() {
 
     describe('sad path', function() {
       it('should fail because of colour regex', function (done) {
-        BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 2);
-
-          brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams()).then(function(result) {
+        BrandProjectPreference.count(countWhere())
+          .then((c) => {
+            try {
+              assert.equal(c, 2);
+            } catch (e) {
+              done(e);
+            }
+            return brandColourServices.createScheme({ colours: { browserBackground: 'somerandomstring' } }, accountParams());
+          })
+          .then((result) => {
             done('Should not get here!');
-          }, function(error) {
-            assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
-            done();
+          })
+          .catch((error) => {
+            try {
+              assert.deepEqual(error, { browserBackground: 'Browser Background: Not valid colour' });
+              done();
+            } catch (e) {
+              done(e);
+            }
           });
-        });
+      });
+
+      it('should fail because of reached limit of resource', function (done) {
+        BrandProjectPreference.count({ where: { accountId: accountParams(), default: false } })
+          .then(function (c) {
+            try {
+              assert.equal(c, 0);
+            } catch (e) {
+              done(e);
+            }
+
+            return brandColourServices.createScheme({ name: 'untitled' }, accountParams());
+          })
+          .then(function () {
+            return brandColourServices.createScheme({ name: 'untitled2' }, accountParams());
+          })
+          .catch(function (error) {
+            try {
+              assert.deepEqual(error, 'You have reached limit for Brand Logo And Custom Colorss (max: 1)');
+              done();
+            } catch (e) {
+              done(e);
+            }
+          });
       });
     });
   });
@@ -151,12 +185,17 @@ describe('SERVICE - BrandColour', function() {
         attrs.id = testData.preference.id;
         attrs.name = 'Test name';
 
-        brandColourServices.resetToDefaultScheme(attrs, accountParams()).then(function(result) {
-          testScheme(result.data, { name: attrs.name });
-          done();
-        }, function(error) {
-          done(error);
-        });
+        BrandProjectPreference.update({ default: false }, { where: { id: testData.preference.id } })
+          .then(() => {
+            return brandColourServices.resetToDefaultScheme(attrs, accountParams());
+          })
+          .then((result) => {
+            testScheme(result.data, { name: attrs.name });
+            done();
+          })
+          .catch((error) => {
+            done(error);
+          });
       });
     });
   });
@@ -168,13 +207,18 @@ describe('SERVICE - BrandColour', function() {
         attrs.id = testData.preference.id;
         attrs.name = 'Other name';
 
-        brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
-          assert.equal(result.message, brandColourServices.messages.updated);
-          testScheme(result.data, { name: attrs.name });
-          done();
-        }, function(error) {
-          done(error);
-        });
+        BrandProjectPreference.update({ default: false }, { where: { id: testData.preference.id } })
+          .then(function () {
+            return brandColourServices.updateScheme(attrs, accountParams());
+          })
+          .then(function (result) {
+            assert.equal(result.message, brandColourServices.messages.updated);
+            testScheme(result.data, { name: attrs.name });
+            done();
+          })
+          .catch(function (error) {
+            done(error);
+          });
       });
     });
 
@@ -200,11 +244,20 @@ describe('SERVICE - BrandColour', function() {
         attrs.id = testData.preference.id;
         attrs.accountId = null;
 
-        brandColourServices.updateScheme(attrs, accountParams()).then(function(result) {
-          done('Should not get here!');
-        }, function(error) {
-          assert.equal(error.accountId, "Account Id can't be empty");
-          done();
+        BrandProjectPreference.update({ default: false }, { where: { id: testData.preference.id } })
+          .then(() => {
+            return brandColourServices.updateScheme(attrs, accountParams());
+          })
+          .then((result) => {
+            done('Should not get here!');
+          })
+          .catch((error) => {
+            try {
+              assert.equal(error.accountId, 'Account Id can\'t be empty');
+              done();
+            } catch (error) {
+              done(error);
+            }
         });
       });
 
@@ -222,20 +275,26 @@ describe('SERVICE - BrandColour', function() {
   describe('#removeScheme', function() {
     describe('happy path', function() {
       it('should succeed on deleting scheme', function (done) {
-        BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 2);
+        BrandProjectPreference.count(countWhere())
+          .then(function (c) {
+            assert.equal(c, 2);
 
-          brandColourServices.removeScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
+            return BrandProjectPreference.update({ default: false }, { where: { id: testData.preference.id } });
+          })
+          .then(() => {
+            return brandColourServices.removeScheme({ id: testData.preference.id }, accountParams());
+          })
+          .then((result) => {
             assert.equal(result.message, brandColourServices.messages.removed);
-
-            BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 1);
-              done();
-            });
-          }, function(error) {
+            return BrandProjectPreference.count(countWhere());
+          })
+          .then((c) => {
+            assert.equal(c, 1);
+            done();
+          })
+          .catch((error) => {
             done(error);
           });
-        });
       });
     });
 
@@ -253,22 +312,30 @@ describe('SERVICE - BrandColour', function() {
 
   describe('#copyScheme', function() {
     describe('happy path', function() {
-      it('should succeed on copieing scheme', function (done) {
-        BrandProjectPreference.count(countWhere()).then(function(c) {
-          assert.equal(c, 2);
+      // TODO: skip this test before we introduce a pricing plans that allows more than one Brand Logo / Color Schema
+      it.skip('should succeed on copieing scheme', function (done) {
+        BrandProjectPreference.count(countWhere())
+          .then(function (c) {
+            assert.equal(c, 2);
 
-          brandColourServices.copyScheme({ id: testData.preference.id }, accountParams()).then(function(result) {
+            return BrandProjectPreference.update({ default: false }, { where: { id: testData.preference.id } });
+          })
+          .then(() => {
+            return brandColourServices.copyScheme({ id: testData.preference.id }, accountParams());
+          })
+          .then((result) => {
             testScheme(result.data, { name: `Copy of Default Focus Scheme #${result.data.id}` });
             assert.equal(result.message, brandColourServices.messages.copied);
 
-            BrandProjectPreference.count(countWhere()).then(function(c) {
-              assert.equal(c, 3);
-              done();
-            });
-          }, function(error) {
+            return BrandProjectPreference.count(countWhere());
+          })
+          .then(function (c) {
+            assert.equal(c, 3);
+            done();
+          })
+          .catch((error) => {
             done(error);
           });
-        });
       });
     });
 

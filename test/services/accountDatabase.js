@@ -15,18 +15,18 @@ describe('SERVICE - AccountDatabase', () => {
   var testUser, testAccount, testAccountUser;
 
   beforeEach((done) => {
-    testDatabase.prepareDatabaseForTests().then(() => {
-      userFixture.createUserAndOwnerAccount().then((result) => {
+    testDatabase.prepareDatabaseForTests()
+      .then(() => {
+        return userFixture.createUserAndOwnerAccount();
+      })
+      .then((result) => {
         testUser = result.user;
         testAccount = result.account;
         testAccountUser = result.accountUser;
-        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(() => {
-          done();
-        })
-      }).catch((error) => {
-        done(error);
-      });
-    });
+        return subscriptionFixture.createSubscription(testAccount.id, testUser.id);
+      })
+      .then(() => done())
+      .catch((error) => done(error));
   });
 
   describe("#addAdmin", () =>{
@@ -133,7 +133,7 @@ describe('SERVICE - AccountDatabase', () => {
 
         ContactListUser.find({where: {userId: userId, accountId: testAccount.id}}).then((contactListUser) => {
           assert.isNull(contactListUser);
-          
+
           account.AccountUsers.map((accountUser) => {
             assert.equal(accountUser.active, accountUser.role !== 'admin');
           });
@@ -148,11 +148,11 @@ describe('SERVICE - AccountDatabase', () => {
 
   describe("Reactivates/Deactives", () => {
     it('user',  (done) => {
-      let params = { 
-        userId: testUser.id, 
-        accountId: testAccount.id, 
-        accountUserId: testAccount.AccountUser.id, 
-        active: false 
+      let params = {
+        userId: testUser.id,
+        accountId: testAccount.id,
+        accountUserId: testAccount.AccountUser.id,
+        active: false
       };
 
       accountDatabaseService.updateAccountUser(params, {}, (error, account) => {
@@ -169,11 +169,11 @@ describe('SERVICE - AccountDatabase', () => {
     });
 
     it('Returns error on user', (done) => {
-      let params = { 
-        userId: testUser.id + 1, 
-        accountId: testAccount.id + 1, 
-        accountUserId: testAccount.AccountUser.id, 
-        active: false 
+      let params = {
+        userId: testUser.id + 1,
+        accountId: testAccount.id + 1,
+        accountUserId: testAccount.AccountUser.id,
+        active: false
       };
 
       accountDatabaseService.updateAccountUser(params, {}, (error, account) => {
