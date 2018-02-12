@@ -85,20 +85,22 @@ function create(params, callback) {
 };
 
 function infusionEmail(user) {
-  return new Bluebird((resolve, reject) => {
-    if(!user.infusionEmail) return resolve();
 
-    infusionsoft.contact.find({ Email: user.email }).then((contact) => {
-      if(contact) {
-        infusionsoft.contact.tagRemove(contact.Id, infusionsoft.TAGS.optIn).then((tag) => {
-          resolve();
-        });
+  if (!user.infusionEmail) {
+    return Promise.resolve();
+  }
+
+  return infusionsoft.contact.find({ Email: user.email })
+    .then((contact) => {
+      if (!contact) {
+        return;
       }
-      else {
-        resolve();
-      }
-    }).catch(reject);
-  });
+
+      return Promise.all([
+        infusionsoft.contact.tagRemove(contact.Id, infusionsoft.TAGS.optIn),
+        infusionsoft.contact.tagAdd(contact.Id, infusionsoft.TAGS.activated),
+      ]);
+    });
 }
 
 function update(req, callback){
