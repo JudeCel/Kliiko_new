@@ -171,7 +171,7 @@ function getAllPlans(accountId, ip) {
         }).then((currentSub) => {
           currencyData = currencyData || { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = filterSupportedPlans(result.list, null, Object.keys(PLANS), constants.supportedCurrencies);
+          plans = filterSupportedPlans(result.list, null, Object.keys(PLAN_CONSTANTS), constants.supportedCurrencies);
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -182,7 +182,7 @@ function getAllPlans(accountId, ip) {
           deferred.reject(filters.errors(error));
         });
       } else {
-        const plans = filterSupportedPlans(result.list, null, Object.keys(PLANS), constants.supportedCurrencies);
+        const plans = filterSupportedPlans(result.list, null, Object.keys(PLAN_CONSTANTS), constants.supportedCurrencies);
         deferred.resolve(plans);
       }
     }
@@ -1114,11 +1114,10 @@ function prepareRecurringParams(plan, preference) {
  * @return {ChargeBeePlan[]}
  */
 function filterSupportedPlans(plans, currencyData, supportedPlans, supportedCurrencies) {
-  const plansRegex = new RegExp(supportedPlans.join('|'));
-  const currenciesRegex = new RegExp(supportedCurrencies.join('|'), 'i');
+  const plansRegex = new RegExp(`(${supportedPlans.join('|')})_(${supportedCurrencies.join('|')})$`, 'i');
   return plans.filter((item) => {
     const { plan } = item;
-    return plan.id.match(plansRegex) && plan.id.match(currenciesRegex) && (!currencyData || plan.currency_code === currencyData.client);
+    return plansRegex.test(plan.id) && (!currencyData || plan.currency_code === currencyData.client);
   });
 }
 
