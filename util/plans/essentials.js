@@ -24,7 +24,7 @@ module.exports = {
     "availableOnTabletAndMobilePlatforms": true,
     "secureSsl": true,
     "surveyCount": 1,
-    "priority": 1, // This is only for front end.
+    "priority": 2, // This is only for front end.
     "importDatabase": true,
     "contactListMemberCount": -1,
     "canInviteObserversToSession": true,

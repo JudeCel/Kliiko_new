@@ -7,5 +7,7 @@ module.exports = {
   senior:  require('./senior').plan,
   trial:   require('./trial').plan,
 
+  starter: require('./starter').plan,
   essentials: require('./essentials').plan,
+  pro: require('./pro').plan,
 };
