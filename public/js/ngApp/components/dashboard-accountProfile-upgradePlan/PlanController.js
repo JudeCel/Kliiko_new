@@ -311,11 +311,11 @@
     }
 
     function mostPopular(planId) {
-      return 'core_monthly' == planId;
+      return 'essentials_monthly' == planId;
     }
 
     function upgradePlanText(plan) {
-      return plan.price ? "BUY" : "GET STARTED"
+      return plan.price ? "Buy Now" : "GET STARTED"
     }
 
     vm.showBoolean = function(feature, plan) {
@@ -365,5 +365,9 @@
         updateCurrentPlanStyle(vm.currentPlan.preferenceName);
       });
     }
+
+    vm.normalizePlanName = function (name) {
+      return name.replace(new RegExp('usd|nzd|monthly|annual','gi'), '');
+    };
   }
 })();

@@ -193,6 +193,8 @@ function removeFacilitatorFromList(sessionId, results) {
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
+    } else {
+      deferred.resolve(results);
     }
   })
 

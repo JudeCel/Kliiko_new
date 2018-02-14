@@ -38,6 +38,10 @@ const mand_keys = [
   "priority",
   "surveyCount",
   "secureSsl",
+  "monthToUseChatSessions",
+  "unlimitedTopicChanges",
+  "recruitNewContactList",
+  "accessThreeChatRooms",
 ].sort();
 
 keys.forEach((plan_key) => {
