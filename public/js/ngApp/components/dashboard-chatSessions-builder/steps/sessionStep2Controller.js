@@ -192,7 +192,10 @@
 
     function changeActiveState(topic) {
       topic.sessionTopic.active = !topic.sessionTopic.active;
-      vm.session.canChangeTopicActive(!topic.sessionTopic.active).then(function(res) {
+      var skipCheck = topic.sessionTopic.Topic.default || topic.sessionTopic.Topic.inviteAgain;
+      var isActive = topic.sessionTopic.active;
+
+      vm.session.canChangeTopicActive(!isActive && !skipCheck).then(function(res) {
         if (topic.default && !topic.sessionTopic.active && topic.sessionTopic.landing) {
           for(var i=0; i<vm.sessionTopicsArray.length; i++) {
             if (vm.sessionTopicsArray[i].sessionTopic.active) {
