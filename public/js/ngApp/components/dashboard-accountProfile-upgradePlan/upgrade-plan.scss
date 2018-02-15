@@ -5,12 +5,10 @@
   .most-popular{
     position: absolute;
     display: block;
-    width: 60px;
-    height: 60px;
+    width: 280px;
+    height: 90px;
     background-repeat: no-repeat;
     background-size: contain;
-    top: -20px;
-    right: 0;
     background-image: url('/icons/MostPopular.png');
     z-index: 101;
   }
@@ -78,7 +76,6 @@
   .plan-option-list{
     padding-right: 2px;
     .option-btn-red{
-      margin-top: 110px;
       display: inline-block;
       font-size: 14px;
       color: #e51d39;
@@ -194,11 +191,12 @@
       margin: 0 auto;
       .currency-dropdown {
         vertical-align: bottom;
-        select { margin-bottom: 5px; }
+        background-color: #ededed;
+        select { margin: 5px; }
       }
       th {
         text-align: center;
-        width: 20%;
+        width: 25%;
         border-right: 2px solid #ffffff;
         margin: 0;
         .list-group-item-heading {
@@ -210,6 +208,7 @@
 
         .plan-block {
           height: 100%;
+          padding-top: 40px;
         }
       }
 
@@ -230,7 +229,9 @@
       //dark
       tr:nth-child(even) {
         .plan-option-feature{background-color: #ededed;}
-        .essentials_monthly, .essentials_annual {background-color: #bee5bd;}
+        .starter_monthly, .starter_annual {background-color: #bee5bd;}
+        .essentials_monthly, .essentials_annual {background-color: #faf6b7;}
+        .pro_monthly, .pro_annual {background-color: #cdeff9;}
 
         .junior_monthly, .junior_yearly{background-color: #cae8c8;}
         .core_monthly, .core_yearly{background-color: #afe3f6;}
@@ -240,7 +241,10 @@
       //light
       tr:nth-child(odd) {
         .plan-option-feature{background-color: #dedede;}
-        .essentials_monthly, .essentials_annual {background-color: #d6e5d5;}
+        .starter_monthly, .starter_annual {background-color: #d6e5d5;}
+        .essentials_monthly, .essentials_annual {background-color: #fffadd;}
+        .pro_monthly, .pro_annual {background-color: #e8fcfb;}
+
         .junior_monthly, .junior_yearly{background-color: #dbf1dc;}
         .core_monthly, .core_yearly{background-color: #caecf9;}
         .senior_monthly, .senior_yearly{background-color: #dbf1dc;}
@@ -353,15 +357,32 @@
       margin-bottom: 3px;
     }
 
-    .essentials_monthly_header, .essentials_annual_header{background-color: #4cb649;}
+    .starter_monthly_header, .starter_annual_header{background-color: #4cb649;}
+    .essentials_monthly_header, .essentials_annual_header{background-color: #eee540;}
+    .pro_monthly_header, .pro_annual_header{background-color: #55beee;}
+
     .junior_monthly_header, .junior_yearly_header{background-color: #72c46e;}
     .core_monthly_header, .core_yearly_header{background-color: #41b2e3;}
     .senior_monthly_header, .senior_yearly_header{background-color: #72c46e;}
     .free_account_header {background-color: #f5f072;}
 
-    .essentials_monthly_btn, .essentials_annual_btn {
-      border-color: #808080;
+    .starter_monthly_btn, .starter_annual_btn {
+      //border-color: #808080;
       background-color: #4cb649;
+      color: #3a3838 !important;
+      width: 95%;
+      margin: 5px auto;
+    }
+    .essentials_monthly_btn, .essentials_annual_btn {
+      //border-color: #808080;
+      background-color: #eee540;
+      color: #3a3838 !important;
+      width: 95%;
+      margin: 5px auto;
+    }
+    .pro_monthly_btn, .pro_annual_btn {
+      //border-color: #808080;
+      background-color: #55beee;
       color: #3a3838 !important;
       width: 95%;
       margin: 5px auto;
@@ -420,12 +441,15 @@
     display: block;
     padding: 9px 10px;
     font-size: 16px;
-    border: solid 3px $grey;
+    //border: solid 3px $grey;
     cursor: pointer;
     text-align: center;
     &.btn-back,
     &.btn-submit {
       padding: 3px;
+    }
+    &:hover {
+      box-shadow: rgba(0, 6, 8, 0.35) 0px 9px 5px 0px;
     }
   }
   .buttons-area {
@@ -596,4 +620,7 @@
 
   }
 
+  .text-bold {
+    font-weight: bold;
+  }
 }

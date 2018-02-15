@@ -351,7 +351,13 @@ function removeAllAndAddNew(accountId, sessionId, topics) {
     return canChangeTopicActive(accountId, sessionId);
   }).then((validation) => {
     if(validation.count > validation.limit && validation.limit !== -1) {
-      models.SessionTopics.findAll({ where: { sessionId }, limit: validation.count - validation.limit, order: '"updatedAt" DESC' }).then((result) => {
+      let query = {
+        where: { sessionId, '$Topic.default$': false, '$Topic.inviteAgain$': false },
+        limit: validation.count - validation.limit,
+        order: '"updatedAt" DESC',
+        include: [{ model: Topic }],
+      };
+      models.SessionTopics.findAll(query).then((result) => {
         const ids = _.map(result, 'id');
         return models.SessionTopics.update({ active: false }, { where: { id: ids } });
       }).then(() => {
@@ -364,6 +370,8 @@ function removeAllAndAddNew(accountId, sessionId, topics) {
         })
       }).then((result) => {
         deferred.resolve({ data: result });
+      }).catch((error) => {
+        deferred.reject(error);
       });
     }
     else {

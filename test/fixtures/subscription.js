@@ -5,6 +5,7 @@ var filters = require('./../../models/filters');
 var subscriptionService = require('./../../services/subscription');
 var userFixture = require('./user');
 var subscriptionPlansFixture = require('./subscriptionPlans');
+var constants = require('./../../util/constants');
 
 var q = require('q');
 var _ = require('lodash');
@@ -19,7 +20,7 @@ function successProvider(params) {
     return {
       request: function(callback) {
         callback(null, {
-          subscription: { id: params.id, plan_id: 'essentials_monthly_aud', current_term_end: new Date() },
+          subscription: { id: params.id, plan_id: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`, current_term_end: new Date() },
           customer: { id: params.id }
         });
       }

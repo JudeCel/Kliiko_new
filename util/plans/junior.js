@@ -33,6 +33,11 @@ module.exports = {
     "topicCount": 5,
     "priority": 4, // This is only for front end.
     "surveyCount": 1,
-    "secureSsl": true
+    "secureSsl": true,
+
+    "monthToUseChatSessions": false,
+    "unlimitedTopicChanges": false,
+    "recruitNewContactList": false,
+    "accessThreeChatRooms": false,
   }
 }

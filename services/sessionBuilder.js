@@ -1137,6 +1137,7 @@ function step2Queries(session, step) {
         order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
         include: [{
           model: models.SessionTopics,
+          include: [{ model: models.Topic }],
           where: {
             sessionId: session.id
           }
