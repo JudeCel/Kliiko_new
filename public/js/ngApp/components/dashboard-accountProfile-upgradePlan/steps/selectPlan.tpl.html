@@ -31,10 +31,15 @@
             <div class="plan-block {{ subscriptionPlan.plan.preference + '_header' }}">
               <div class="list-group-item-heading" ng-if="subscriptionPlan.plan.price">
                 <h4 class='text-uppercase'>{{up.normalizePlanName(subscriptionPlan.plan.name)}}</h4>
-                <h5 ng-show='!up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan)'>Social Forum</h5>
-                <h5 ng-show='!up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan)'>&nbsp;</h5>
-                <h5 ng-show='up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan)'>Advanced Features</h5>
-                <h5 ng-show='up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan)'>Select from 3 Chat Rooms</h5>
+                <div ng-show='up.getFeatureValue("accessKlzziSocialForum", subscriptionPlan.plan) && !up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan) && !up.getFeatureValue("accessKlzziFocus", subscriptionPlan.plan)'>
+                  <h5>Social Forum</h5>
+                  <h5>&nbsp;</h5>
+                </div>
+                <div
+                  ng-show='up.getFeatureValue("accessKlzziSocialForum", subscriptionPlan.plan) && up.getFeatureValue("accessKlzziForum", subscriptionPlan.plan) && up.getFeatureValue("accessKlzziFocus", subscriptionPlan.plan)'>
+                  <h5>Advanced Features</h5>
+                  <h5>Select from 3 Chat Rooms</h5>
+                </div>
               </div>
               <h5 class="outline text-bold">
                 {{ subscriptionPlan.plan.price | price:up.currencySymbols[up.currentCurrency]:0 }}
