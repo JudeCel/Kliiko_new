@@ -184,20 +184,26 @@
     }
   }
 
+  .button-container {
+    width: 90%;
+    margin: 0 auto;
+    .currency-dropdown, .period-dropdown {
+      vertical-align: bottom;
+      background-color: #ededed;
+      padding: 10px 20px;
+      select {
+        margin: 4px;
+      }
+    }
+  }
   .plans-table {
     table {
       width: 90%;
       padding: 0;
       margin: 0 auto;
-      .currency-dropdown {
-        vertical-align: bottom;
-        background-color: #ededed;
-        select { margin: 5px; }
-      }
       th {
         text-align: center;
         width: 25%;
-        border-right: 2px solid #ffffff;
         margin: 0;
         .list-group-item-heading {
           margin-bottom: 0;
@@ -217,7 +223,6 @@
       }
 
       td {
-        border: 2px solid #ffffff;
         font-size: 15px;
         padding: 5px 10px;
       }

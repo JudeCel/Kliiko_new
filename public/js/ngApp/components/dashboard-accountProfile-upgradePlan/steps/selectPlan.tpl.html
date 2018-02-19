@@ -1,6 +1,7 @@
 <section id="step-1">
 
   <div class='col-sm-push-1 col-sm-10' ng-if="up.plansList">
+    <div class='button-container'>
     <div class='col-sm-3 currency-dropdown'>
       <select class='form-control border-radius-none' ng-options='currency as currency for currency in up.currencyList'
               ng-model='up.currentCurrency' ng-change='up.changePlanList()'>
@@ -8,7 +9,7 @@
       </select>
     </div>
 
-    <div class='col-sm-3'>
+    <div class='col-sm-3 period-dropdown'>
       <div class="plan-option-list plan-option-feature">
         <div class='flex-box'>
           <div class="flex-el {{ up.buttonClassName('month') }}" ng-click="up.switchPlanView('month')">Monthly</div>
@@ -17,6 +18,7 @@
           <div class="disabled flex-el {{ up.buttonClassName('year') }}">Annual</div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 

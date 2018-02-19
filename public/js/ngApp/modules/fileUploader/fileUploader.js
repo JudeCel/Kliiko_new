@@ -198,7 +198,7 @@
     function switchErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
-          if (error.config.file.size > MAX_FILE_SIZE) {
+          if (error.config.file && error.config.file.size > MAX_FILE_SIZE) {
             deferred.reject("File is too big");
           } else {
             // it would be nice to check "error.status === 504", but status is still "-1"
