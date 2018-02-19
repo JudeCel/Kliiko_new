@@ -28,6 +28,7 @@ var exec = require('child_process').exec;
 var ipCurrency = require('../../lib/ipCurrency');
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
+var planConstants = require('./../../util/planConstants');
 
 
 router.route('/ics').get(ics.render);
@@ -142,12 +143,13 @@ function prepareUrlParams(parameters, query) {
 
     parameters.currency = query.currency;
     if (_.hasIn(query, 'package')) {
-      parameters.page = "paidPlanRegistration";
       parameters.showOptionalFields = false;
       if (query.package) {
+        parameters.page = query.package === planConstants.TRIAL_PLAN_NAME ? 'freeTrialRegistration' : 'paidPlanRegistration';
         parameters.selectedPlanOnRegistration = query.package;
       } else {
-        parameters.selectedPlanOnRegistration = "essentials_monthly";
+        parameters.page = 'paidPlanRegistration';
+        parameters.selectedPlanOnRegistration = planConstants.DEFAULT_PLAN_NAME;
       }
     }
     else if(query.selectedPlanOnRegistration) {

@@ -79,5 +79,7 @@ module.exports = {
   core_yearly:    plans.core,
   junior_monthly: plans.junior,
   junior_yearly:  plans.junior,
-  preferenceName
+  preferenceName,
+  TRIAL_PLAN_NAME: 'free_trial',
+  DEFAULT_PLAN_NAME: 'essentials_monthly',
 };
