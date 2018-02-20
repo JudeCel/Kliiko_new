@@ -14,7 +14,7 @@ module.exports = {
     "reportingFunctions": true,
     "privateMessaging": true,
     "availableOnTabletAndMobilePlatforms": true,
-    "contactListCount": 1,
+    "contactListCount": -1,
     "exportContactListAndParticipantHistory": true,
     "accountUserCount": -1,
     "brandLogoAndCustomColors": 1,
