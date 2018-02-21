@@ -91,10 +91,7 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
 
       if (isBillingRequired(req, forceBilling)) {
         req.session.landed = true;
-        let isFreeTrialPlanSelected = account.selectedPlanOnRegistration === planConstants.TRIAL_PLAN_NAME;
-        // account manager signs up and selects not a free trial plan -> go to payment details otherwise to Welcome video
-        let redirectURI = (result.accountManager && !isFreeTrialPlanSelected) ? '/account-hub/paymentDetails' : '/account-hub/landing';
-        redirectURL = subdomains.url(req, subDomain, redirectURI);
+        redirectURL = subdomains.url(req, subDomain, '/account-hub/landing');
       } else {
         redirectURL = myDashboardUrl;
       }

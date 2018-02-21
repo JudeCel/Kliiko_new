@@ -610,30 +610,6 @@ function updateSubscription(params, providers) {
 function buyMoreSubscriptions(params, result, resources, providers) {
   return AccountUser.find({ where: { AccountId: params.accountId, UserId: params.userId } })
     .then(function (accountUser) {
-      // check old plan
-      if ((/^free_/).test(result.currentPlan.preferenceName)) {
-        // from FREE to PAID plan
-        const customerId = result.subscription.customerId;
-        return chargebeeSubCreateForCustomer(chargebeePassParams(result, null, resources), chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId), customerId)
-          .then(function (chargeBeeSub) {
-            result.subscription.subscriptionId = chargeBeeSub.subscription.id; // use id of new subscription
-            const passThruContent = chargebeePassParams(result, chargeBeeSub.subscription, resources);
-            return updateSubscriptionData(passThruContent);
-          })
-          .then(function (subResult) {
-            const response = {
-              message: MessagesUtil.subscription.successPlanUpdate,
-            };
-            if (params.redirectUrl) {
-              response.redirect = true;
-              response.redirect_url = params.redirectUrl;
-            }
-            return response;
-          })
-          .catch(function (error) {
-            throw filters.errors(error);
-          });
-      } else {
         // buying more PAID plans
         return chargebeeSubCreateViaCheckout(
           chargebeePassParams(result, null, resources),
@@ -644,7 +620,6 @@ function buyMoreSubscriptions(params, result, resources, providers) {
           .then(function (hostedPage) {
             return { hosted_page: hostedPage, redirect: true };
           });
-      }
     });
 }
 
