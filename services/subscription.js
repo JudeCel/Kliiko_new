@@ -629,7 +629,8 @@ function cleanupAfterUpdate(accountId, oldPlan, newPlan) {
   oldPlan = PLAN_CONSTANTS.preferenceName(oldPlan);
   newPlan = PLAN_CONSTANTS.preferenceName(newPlan);
   const array = [
-    updateSessionTopics(accountId, oldPlan, newPlan)
+    updateSessionTopics(accountId, oldPlan, newPlan),
+    activeDefaultContactLists(accountId)
   ];
 
   async.waterfall(array, (systemError, errorMessages) => {
@@ -676,6 +677,19 @@ function updateSessionTopics(accountId, oldPlan, newPlan) {
       });
     }
   }
+}
+
+function activeDefaultContactLists(accountId) {
+  return function (cb) {
+    let query = {
+      accountId: accountId,
+      editable: false,
+      active: false,
+    };
+    return models.ContactList.update({ active: true }, { where: query })
+      .then(() => cb())
+      .catch(cb);
+  };
 }
 
 function retrievCheckoutAndUpdateSub(hostedPageId) {

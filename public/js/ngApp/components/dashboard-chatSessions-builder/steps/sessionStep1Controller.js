@@ -363,17 +363,18 @@
     function postUpdateStep(dataObj) {
       var deferred = $q.defer();
       vm.session.updateStep(dataObj, vm.session).then(function(res) {
+        validateDate(vm.step1.startTime);
+        validateDate(vm.step1.endTime);
         deferred.resolve(res);
       }, function (err) {
+        validateDate(vm.step1.startTime);
+        validateDate(vm.step1.endTime);
         if(err.startTime && vm.endDateEdited) {
           messenger.error(err);
         }
         if(!err.startTime) {
           messenger.error(err);
         }
-
-        validateDate(vm.step1.startTime)
-        validateDate(vm.step1.endTime)
 
         deferred.reject(err);
       });
