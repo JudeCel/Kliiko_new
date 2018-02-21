@@ -18,6 +18,7 @@ var constants = require('../util/constants');
 var ipCurrency = require('../lib/ipCurrency');
 var MessagesUtil = require('./../util/messages');
 var moment = require('moment-timezone');
+var InfusionSoft = require('./../lib/infusionsoft');
 
 /** @typedef {Object} ChargeBeePlan
  * @property {Object} plan
@@ -64,7 +65,9 @@ module.exports = {
   postQuote: postQuote,
   createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin,
   getSubscriptionEndDate: getSubscriptionEndDate,
-  getPlansFromStore: getPlansFromStore
+  getPlansFromStore: getPlansFromStore,
+  getInfusionTagForSub: getInfusionTagForSub,
+
 }
 
 function postQuote(params) {
@@ -408,7 +411,7 @@ function createSubscription(accountId, userId, provider, plan) {
   }).then(function(chargebeeSub) {
     return SubscriptionPlan.find({
       where: {
-        chargebeePlanId: chargebeeSub.subscription.plan_id
+        chargebeePlanId: { $iLike: chargebeeSub.subscription.plan_id }
       }
     }).then(function(plan) {
       if (plan) {
@@ -418,16 +421,29 @@ function createSubscription(accountId, userId, provider, plan) {
 
         transactionPool.once(tiket, () => {
           models.sequelize.transaction(function (t) {
-            return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-              return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.preferenceName]}, {transaction: t}).then(function() {
-                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                deferredTransactionPool.resolve(subscription);
-              }, function(error) {
-                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                // TODO Take a look!!!
-                throw error;
-              });
-            });
+            return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), { transaction: t })
+              .then(function (subscription) {
+                let preference = {
+                  subscriptionId: subscription.id,
+                  data: PLAN_CONSTANTS[plan.preferenceName],
+                };
+                return SubscriptionPreference.create(preference, { transaction: t })
+                  .then(function () {
+                    return models.User.findById(userId)
+                  })
+                  .then(function (user) {
+                    return markPaidAccountInInfusion(user, subscription);
+                  })
+                  .then(function () {
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                    deferredTransactionPool.resolve(subscription);
+                  })
+                  .catch(function (error) {
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                    // TODO Take a look!!!
+                    throw error;
+                  });
+              })
           }).catch(function(error) {
             transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
             deferredTransactionPool.reject(error);
@@ -748,15 +764,23 @@ function updateSubscriptionData(passThruContent){
       // recalc available sessions
       params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
 
-      updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
-        cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId).then(() => {
-          deferred.resolve({subscription: updatedSub, redirect: false});
-        }, function(error) {
+      updatedSub.SubscriptionPreference.update({ data: params })
+        .then(function (preference) {
+          return cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId)
+        })
+        .then(() => {
+          return models.AccountUser.findOne({ where: { AccountId: updatedSub.accountId, owner: true }, include: [{ model: models.User }] });
+        })
+        .then(function(accountUser) {
+          let user = accountUser.User;
+          return markPaidAccountInInfusion(user, subscription);
+        })
+        .then(() => {
+          deferred.resolve({ subscription: updatedSub, redirect: false });
+        })
+        .catch(function (error) {
           deferred.reject(error);
         });
-      }, function(error) {
-        deferred.reject(error);
-      });
     }, function(error) {
       deferred.reject(error);
     })
@@ -1199,4 +1223,38 @@ function validateContactListCount(accountId, newPlan) {
       cb(error);
     });
   }
+}
+
+/**
+ * @param {Subscription} subscription
+ * @param {string} subscription.subscriptionPlanId
+ * @return {string}
+ */
+function getInfusionTagForSub(subscription) {
+  let planName = subscription.planId.replace(new RegExp(`_(${'monthly|annual'})_(${'nzd|usd'})`, 'i'), '');
+
+  return InfusionSoft.TAGS.paidAccount[planName];
+}
+
+/**
+ * @param {User} user
+ * @param {string} user.email
+ * @param {string} user.infusionEmail
+ * @param {Subscription} subcription
+ * @return {Promise.<T>}
+ */
+function markPaidAccountInInfusion(user, subcription) {
+  let tag = getInfusionTagForSub(subcription);
+  if (!user.infusionEmail || !tag) {
+    return Promise.resolve();
+  }
+
+  return InfusionSoft.contact.find({ Email: user.email })
+    .then((contact) => {
+      if (!contact) {
+        return;
+      }
+
+      return InfusionSoft.contact.tagAdd(contact.Id, tag);
+    });
 }
