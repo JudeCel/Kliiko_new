@@ -8,6 +8,7 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscriptionPlans');
 var surveyFixture = require('./../fixtures/survey');
 var constants = require('./../../util/constants');
+var InfusionSoft = require('./../../lib/infusionsoft');
 
 var async = require('async');
 var assert = require('chai').assert;
@@ -33,12 +34,12 @@ describe('SERVICE - Subscription', function() {
     });
   });
 
-  function successProvider(params) {
+  function successProvider(params, planName) {
     return function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: `free_trial_${constants.defaultCurrency}`, current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: `${planName || 'free_trial'}_${constants.defaultCurrency.toLowerCase()}`, current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
@@ -757,5 +758,84 @@ describe('SERVICE - Subscription', function() {
       });
     });
   });
+
+  describe('#infusion tag for paid subscriptions', function() {
+
+    describe('happy path', function() {
+
+      it('should get desired invision tag for the paid plan - starter', function(done) {
+        let subId = 'Subtest';
+        let planName = 'starter'
+        let provider = successProvider({ id: subId }, `${planName}_monthly`);
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, provider, `${planName}_monthly_usd`)
+          .then(function (subscription) {
+            let tag = subscriptionServices.getInfusionTagForSub(subscription);
+            try {
+              assert.equal(tag, InfusionSoft.TAGS.paidAccount[planName]);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          })
+          .catch(done);
+      });
+      it('should get desired invision tag for the paid plan - essentials', function(done) {
+        let subId = 'Subtest';
+        let planName = 'essentials'
+        let provider = successProvider({ id: subId }, `${planName}_monthly`);
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, provider, `${planName}_monthly_usd`)
+          .then(function (subscription) {
+            let tag = subscriptionServices.getInfusionTagForSub(subscription);
+            try {
+              assert.equal(tag, InfusionSoft.TAGS.paidAccount[planName]);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          })
+          .catch(done);
+      });
+
+      it('should get desired invision tag for the paid plan - pro', function(done) {
+        let subId = 'Subtest';
+        let planName = 'pro'
+        let provider = successProvider({ id: subId }, `${planName}_monthly`);
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, provider, `${planName}_monthly_usd`)
+          .then(function (subscription) {
+            let tag = subscriptionServices.getInfusionTagForSub(subscription);
+            try {
+              assert.equal(tag, InfusionSoft.TAGS.paidAccount[planName]);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          })
+          .catch(done);
+      });
+
+    });
+
+    describe('sad path', function() {
+
+      it('should get no invision tags for free_trial plan', function (done) {
+        let subId = 'Subtest';
+        let provider = successProvider({ id: subId });
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, provider)
+          .then(function (subscription) {
+            let tag = subscriptionServices.getInfusionTagForSub(subscription);
+            try {
+              assert.equal(tag, undefined);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          })
+          .catch(done);
+      });
+
+    });
+
+  });
+
 
 });
