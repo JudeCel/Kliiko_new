@@ -145,5 +145,6 @@ module.exports = {
   emailNotifications: ['none', 'privateMessages', 'all'],
   supportedCurrencies: ['USD', 'NZD'],
   defaultCurrency: 'USD',
+  supportedPlanPeriods: ['monthly', 'annual'],
   loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
 }
