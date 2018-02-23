@@ -591,9 +591,6 @@ function updateSubscription(params, providers) {
 
   return gatherInformation(params.accountId, params.newPlanId)
     .then(function (/**@type{{accountName:string, subscription:object, currentPlan:object, newPlan:object}}*/result) {
-      return Bluebird.join(result, canSwitchPlan(params.accountId, result.currentPlan, result.newPlan));
-    })
-    .spread(function (result) {
       if (params.skipCardCheck) {
         // skipCardCheck is 'true' only in case cancellation
         return chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider)
