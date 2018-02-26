@@ -231,7 +231,7 @@ function canAddAccountUsers(accountId) {
 }
 
 function canAddManager(allowedBySubscription, currentManagerCount) {
-  return allowedBySubscription == -1 || allowedBySubscription >= currentManagerCount;
+  return allowedBySubscription == -1 || allowedBySubscription > currentManagerCount;
 }
 
 function countMessage(type, maxCount) {
