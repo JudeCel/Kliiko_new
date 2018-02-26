@@ -19,20 +19,22 @@ module.exports = {
     "accountUserCount": -1,
     "brandLogoAndCustomColors": 1,
     "exportRecruiterSurveyData": true,
-    "accessThreeChatRooms": false,
+    "accessThreeChatRooms": true,
     "accessKlzziSocialForum": true,
-    "accessKlzziForum": false,
-    "accessKlzziFocus": false,
-    "customEmailInvitationAndReminderMessages": false,
-    "planSmsCount": 0,
-    "whiteboardFunctionality": false,
-    "pinboardDisplay": false,
+    "accessKlzziForum": true,
+    "accessKlzziFocus": true,
+    "customEmailInvitationAndReminderMessages": true,
+    "planSmsCount": 20,
+    "whiteboardFunctionality": true,
+    "pinboardDisplay": true,
 
 
-    "priority": 2, // This is only for front end.
+
+    "priority": 3, // This is only for front end.
+
     "sessionCount": 1,
     "recruiterContactListCount": 1,
-    "whiteboardDisplay": false,
+    "whiteboardDisplay": true,
     "discussionGuideTips": true,
     "secureSsl": true,
     "surveyCount": 1,

@@ -8,12 +8,12 @@
           <img id="btn-upgrade-plan" ui-sref-active='active' class='upgrade pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>
 
-        <div id='btn-account-managers-container' ui-sref-active='active' ui-sref='account-hub.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountManagers')">
+        <div id='btn-account-managers-container' ui-sref-active='active' ui-sref='account-hub.accountProfile.accountManagers' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountManagers') && app.hasPermissions('hasBoughtSessions')">
           <span class='pull-left'>Account Managers</span>
           <img id="btn-account-managers" ui-sref-active='active' class='account-manager pull-right' src='/icons/account_manager_blue.png' alt='' />
         </div>
 
-        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.accountDatabase' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountDatabase')">
+        <div ui-sref-active='active' ui-sref='account-hub.accountProfile.accountDatabase' class='btn btn-standart btn-dashboard-menu btn-blue btn-large' ng-show="app.hasPermissions('canAccountDatabase') && app.hasPermissions('hasBoughtSessions')">
           <span class='pull-left'>Account Database</span>
           <img id="btn-account-database" ui-sref-active='active' class='account-database pull-right' src='/icons/upgrade_blue.png' alt='' />
         </div>

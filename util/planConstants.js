@@ -38,6 +38,10 @@ const mand_keys = [
   "priority",
   "surveyCount",
   "secureSsl",
+  "monthToUseChatSessions",
+  "unlimitedTopicChanges",
+  "recruitNewContactList",
+  "accessThreeChatRooms",
 ].sort();
 
 keys.forEach((plan_key) => {
@@ -58,16 +62,24 @@ function preferenceName(chargebeePlanId) {
 
 module.exports = {
   // active plans
-  'essentials_monthly':  plans.essentials,
-  'essentials-annual':   plans.essentials,
-  // inactive plans
+  //TODO: TA2061 yearly plans
   free_trial:     plans.trial,
   free_account:   plans.account,
+  starter_monthly:  plans.starter,
+  // starter_annual:
+  essentials_monthly:  plans.essentials,
+  // essentials_annual:
+  pro_monthly:  plans.pro,
+  // pro_annual:
+
+  // inactive plans
   senior_monthly: plans.senior,
   senior_yearly:  plans.senior,
   core_monthly:   plans.core,
   core_yearly:    plans.core,
   junior_monthly: plans.junior,
   junior_yearly:  plans.junior,
-  preferenceName
+  preferenceName,
+  TRIAL_PLAN_NAME: 'free_trial',
+  DEFAULT_PLAN_NAME: 'essentials_monthly',
 };

@@ -23,7 +23,8 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <form method="post" action="/registration" novalidate="" id="register">
+              <% var query = selectedPlanOnRegistration && (`?package=${selectedPlanOnRegistration}&name=${firstName}&email=${email}&currency=${currency}`) %>
+              <form method="post" action="/registration<%= query %>" novalidate="" id="register">
                 <% if(socialProfile){ %>
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">

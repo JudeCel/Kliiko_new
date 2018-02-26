@@ -11,6 +11,7 @@ var jwt = require('../lib/jwt');
 var _ = require('lodash');
 var q = require('q');
 var request = require('request');
+var planConstants = require('./../util/planConstants');
 
 module.exports = {
   planSelectPage: planSelectPage,
@@ -85,11 +86,12 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
       }
     } else {
       let redirectURL;
-      const subDomain = selectManager(result.accountManager, result.facilitator, accountUserId).subdomain;
+      const account = selectManager(result.accountManager, result.facilitator, accountUserId);
+      const subDomain = account.subdomain;
 
       if (isBillingRequired(req, forceBilling)) {
         req.session.landed = true;
-        redirectURL = subdomains.url(req, subDomain, result.accountManager ? '/account-hub/paymentDetails' : '/account-hub/landing');
+        redirectURL = subdomains.url(req, subDomain, '/account-hub/landing');
       } else {
         redirectURL = myDashboardUrl;
       }

@@ -3,7 +3,7 @@ module.exports = {
   plan: {
     "handsOnHelp": true,
     "monthToUseChatSessions": true,
-    "topicCount": -1,
+    "topicCount": 5,
     "unlimitedTopicChanges": true,
     "numberOfContacts": -1,
     "importDatabase": true,
@@ -14,11 +14,11 @@ module.exports = {
     "reportingFunctions": true,
     "privateMessaging": true,
     "availableOnTabletAndMobilePlatforms": true,
-    "contactListCount": -1,
-    "exportContactListAndParticipantHistory": true,
-    "accountUserCount": -1,
-    "brandLogoAndCustomColors": 1,
-    "exportRecruiterSurveyData": true,
+    "contactListCount": 1,
+    "exportContactListAndParticipantHistory": false,
+    "accountUserCount": 1,
+    "brandLogoAndCustomColors": 0,
+    "exportRecruiterSurveyData": false,
     "accessThreeChatRooms": false,
     "accessKlzziSocialForum": true,
     "accessKlzziForum": false,
@@ -28,8 +28,7 @@ module.exports = {
     "whiteboardFunctionality": false,
     "pinboardDisplay": false,
 
-
-    "priority": 2, // This is only for front end.
+    "priority": 1, // This is only for front end.
     "sessionCount": 1,
     "recruiterContactListCount": 1,
     "whiteboardDisplay": false,

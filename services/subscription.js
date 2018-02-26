@@ -18,6 +18,7 @@ var constants = require('../util/constants');
 var ipCurrency = require('../lib/ipCurrency');
 var MessagesUtil = require('./../util/messages');
 var moment = require('moment-timezone');
+var InfusionSoft = require('./../lib/infusionsoft');
 
 /** @typedef {Object} ChargeBeePlan
  * @property {Object} plan
@@ -64,7 +65,9 @@ module.exports = {
   postQuote: postQuote,
   createSubscriptionOnFirstLogin: createSubscriptionOnFirstLogin,
   getSubscriptionEndDate: getSubscriptionEndDate,
-  getPlansFromStore: getPlansFromStore
+  getPlansFromStore: getPlansFromStore,
+  getInfusionTagForSub: getInfusionTagForSub,
+
 }
 
 function postQuote(params) {
@@ -171,7 +174,7 @@ function getAllPlans(accountId, ip) {
         }).then((currentSub) => {
           currencyData = currencyData || { client: currentSub.Account.currency };
           currentPlan = currentSub && currentSub.active && currentSub.SubscriptionPlan || {};
-          plans = filterSupportedPlans(result.list, null, Object.keys(PLANS));
+          plans = filterSupportedPlans(result.list, null, Object.keys(PLAN_CONSTANTS), constants.supportedCurrencies);
           return addPlanEstimateChargeAndConstants(plans, accountId);
         }).then(function(planWithConstsAndEstimates) {
           const free_account = getFreeAccountRemoveTrial(planWithConstsAndEstimates);
@@ -182,7 +185,7 @@ function getAllPlans(accountId, ip) {
           deferred.reject(filters.errors(error));
         });
       } else {
-        const plans = filterSupportedPlans(result.list, null, Object.keys(PLANS));
+        const plans = filterSupportedPlans(result.list, null, Object.keys(PLAN_CONSTANTS), constants.supportedCurrencies);
         deferred.resolve(plans);
       }
     }
@@ -408,7 +411,7 @@ function createSubscription(accountId, userId, provider, plan) {
   }).then(function(chargebeeSub) {
     return SubscriptionPlan.find({
       where: {
-        chargebeePlanId: chargebeeSub.subscription.plan_id
+        chargebeePlanId: { $iLike: chargebeeSub.subscription.plan_id }
       }
     }).then(function(plan) {
       if (plan) {
@@ -418,16 +421,29 @@ function createSubscription(accountId, userId, provider, plan) {
 
         transactionPool.once(tiket, () => {
           models.sequelize.transaction(function (t) {
-            return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), {transaction: t}).then(function(subscription) {
-              return SubscriptionPreference.create({subscriptionId: subscription.id, data: PLAN_CONSTANTS[plan.preferenceName]}, {transaction: t}).then(function() {
-                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                deferredTransactionPool.resolve(subscription);
-              }, function(error) {
-                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                // TODO Take a look!!!
-                throw error;
-              });
-            });
+            return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), { transaction: t })
+              .then(function (subscription) {
+                let preference = {
+                  subscriptionId: subscription.id,
+                  data: PLAN_CONSTANTS[plan.preferenceName],
+                };
+                return SubscriptionPreference.create(preference, { transaction: t })
+                  .then(function () {
+                    return models.User.findById(userId)
+                  })
+                  .then(function (user) {
+                    return markPaidAccountInInfusion(user, subscription);
+                  })
+                  .then(function () {
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                    deferredTransactionPool.resolve(subscription);
+                  })
+                  .catch(function (error) {
+                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                    // TODO Take a look!!!
+                    throw error;
+                  });
+              })
           }).catch(function(error) {
             transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
             deferredTransactionPool.reject(error);
@@ -575,9 +591,6 @@ function updateSubscription(params, providers) {
 
   return gatherInformation(params.accountId, params.newPlanId)
     .then(function (/**@type{{accountName:string, subscription:object, currentPlan:object, newPlan:object}}*/result) {
-      return Bluebird.join(result, canSwitchPlan(params.accountId, result.currentPlan, result.newPlan));
-    })
-    .spread(function (result) {
       if (params.skipCardCheck) {
         // skipCardCheck is 'true' only in case cancellation
         return chargebeeSubUpdate(chargebeePassParams(result), providers.updateProvider)
@@ -610,30 +623,6 @@ function updateSubscription(params, providers) {
 function buyMoreSubscriptions(params, result, resources, providers) {
   return AccountUser.find({ where: { AccountId: params.accountId, UserId: params.userId } })
     .then(function (accountUser) {
-      // check old plan
-      if ((/^free_/).test(result.currentPlan.preferenceName)) {
-        // from FREE to PAID plan
-        const customerId = result.subscription.customerId;
-        return chargebeeSubCreateForCustomer(chargebeePassParams(result, null, resources), chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId), customerId)
-          .then(function (chargeBeeSub) {
-            result.subscription.subscriptionId = chargeBeeSub.subscription.id; // use id of new subscription
-            const passThruContent = chargebeePassParams(result, chargeBeeSub.subscription, resources);
-            return updateSubscriptionData(passThruContent);
-          })
-          .then(function (subResult) {
-            const response = {
-              message: MessagesUtil.subscription.successPlanUpdate,
-            };
-            if (params.redirectUrl) {
-              response.redirect = true;
-              response.redirect_url = params.redirectUrl;
-            }
-            return response;
-          })
-          .catch(function (error) {
-            throw filters.errors(error);
-          });
-      } else {
         // buying more PAID plans
         return chargebeeSubCreateViaCheckout(
           chargebeePassParams(result, null, resources),
@@ -644,7 +633,6 @@ function buyMoreSubscriptions(params, result, resources, providers) {
           .then(function (hostedPage) {
             return { hosted_page: hostedPage, redirect: true };
           });
-      }
     });
 }
 
@@ -654,7 +642,8 @@ function cleanupAfterUpdate(accountId, oldPlan, newPlan) {
   oldPlan = PLAN_CONSTANTS.preferenceName(oldPlan);
   newPlan = PLAN_CONSTANTS.preferenceName(newPlan);
   const array = [
-    updateSessionTopics(accountId, oldPlan, newPlan)
+    updateSessionTopics(accountId, oldPlan, newPlan),
+    activeDefaultContactLists(accountId)
   ];
 
   async.waterfall(array, (systemError, errorMessages) => {
@@ -701,6 +690,19 @@ function updateSessionTopics(accountId, oldPlan, newPlan) {
       });
     }
   }
+}
+
+function activeDefaultContactLists(accountId) {
+  return function (cb) {
+    let query = {
+      accountId: accountId,
+      editable: false,
+      active: false,
+    };
+    return models.ContactList.update({ active: true }, { where: query })
+      .then(() => cb())
+      .catch(cb);
+  };
 }
 
 function retrievCheckoutAndUpdateSub(hostedPageId) {
@@ -773,15 +775,23 @@ function updateSubscriptionData(passThruContent){
       // recalc available sessions
       params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
 
-      updatedSub.SubscriptionPreference.update({ data: params }).then(function(preference) {
-        cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId).then(() => {
-          deferred.resolve({subscription: updatedSub, redirect: false});
-        }, function(error) {
+      updatedSub.SubscriptionPreference.update({ data: params })
+        .then(function (preference) {
+          return cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId)
+        })
+        .then(() => {
+          return models.AccountUser.findOne({ where: { AccountId: updatedSub.accountId, owner: true }, include: [{ model: models.User }] });
+        })
+        .then(function(accountUser) {
+          let user = accountUser.User;
+          return markPaidAccountInInfusion(user, subscription);
+        })
+        .then(() => {
+          deferred.resolve({ subscription: updatedSub, redirect: false });
+        })
+        .catch(function (error) {
           deferred.reject(error);
         });
-      }, function(error) {
-        deferred.reject(error);
-      });
     }, function(error) {
       deferred.reject(error);
     })
@@ -1110,13 +1120,14 @@ function prepareRecurringParams(plan, preference) {
  * @param {ChargeBeePlan[]} plans -
  * @param {Object} currencyData
  * @param {string[]} supportedPlans - array of names
+ * @param {string[]} supportedCurrencies - array of supported currencies
  * @return {ChargeBeePlan[]}
  */
-function filterSupportedPlans(plans, currencyData, supportedPlans) {
-  const plansRegex = new RegExp(supportedPlans.join('|'));
+function filterSupportedPlans(plans, currencyData, supportedPlans, supportedCurrencies) {
+  const plansRegex = new RegExp(`(${supportedPlans.join('|')})_(${supportedCurrencies.join('|')})$`, 'i');
   return plans.filter((item) => {
     const { plan } = item;
-    return plan.id.match(plansRegex) && (!currencyData || plan.currency_code === currencyData.client);
+    return plansRegex.test(plan.id) && (!currencyData || plan.currency_code === currencyData.client);
   });
 }
 
@@ -1223,4 +1234,40 @@ function validateContactListCount(accountId, newPlan) {
       cb(error);
     });
   }
+}
+
+/**
+ * @param {Subscription} subscription
+ * @param {string} subscription.subscriptionPlanId
+ * @return {string}
+ */
+function getInfusionTagForSub(subscription) {
+  let planPeriods = constants.supportedPlanPeriods.join('|').toLowerCase();
+  let supportedCurrencies = constants.supportedCurrencies.join('|').toLowerCase();
+  let planName = subscription.planId.replace(new RegExp(`_(${planPeriods})_(${supportedCurrencies})`, 'i'), '');
+
+  return InfusionSoft.TAGS.paidAccount[planName];
+}
+
+/**
+ * @param {User} user
+ * @param {string} user.email
+ * @param {string} user.infusionEmail
+ * @param {Subscription} subcription
+ * @return {Promise.<T>}
+ */
+function markPaidAccountInInfusion(user, subcription) {
+  let tag = getInfusionTagForSub(subcription);
+  if (!user.infusionEmail || !tag) {
+    return Promise.resolve();
+  }
+
+  return InfusionSoft.contact.find({ Email: user.email })
+    .then((contact) => {
+      if (!contact) {
+        return;
+      }
+
+      return InfusionSoft.contact.tagAdd(contact.Id, tag);
+    });
 }

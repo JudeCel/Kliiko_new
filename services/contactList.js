@@ -178,6 +178,10 @@ function removeAlreadyInvitedresult(sessionId, results) {
 function removeFacilitatorFromList(sessionId, results) {
   let deferred = q.defer();
 
+  if (!results || results.length === 0) {
+    return deferred.resolve(results);
+  }
+
   _.map(results, function(result) {
     if(result.name == "Hosts"){
       models.SessionMember.find({
@@ -193,6 +197,8 @@ function removeFacilitatorFromList(sessionId, results) {
       }).catch(function(error) {
         deferred.reject(filters.errors(error));
       });
+    } else {
+      deferred.resolve(results);
     }
   })
 

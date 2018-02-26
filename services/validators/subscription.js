@@ -50,7 +50,7 @@ const DEPENDENCIES = {
     key: 'topicCount',
     model: models.SessionTopics,
     params: function(accountId, sessionId) {
-      return { where: { sessionId, active: true }, include:[{ model: models.Topic, where: { default: false } }] };
+      return { where: { sessionId, active: true }, include:[{ model: models.Topic, where: { default: false, inviteAgain: false } }] };
     },
     countMessage: countMessage
   },
@@ -231,7 +231,7 @@ function canAddAccountUsers(accountId) {
 }
 
 function canAddManager(allowedBySubscription, currentManagerCount) {
-  return allowedBySubscription == -1 || allowedBySubscription >= currentManagerCount;
+  return allowedBySubscription == -1 || allowedBySubscription > currentManagerCount;
 }
 
 function countMessage(type, maxCount) {

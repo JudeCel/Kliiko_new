@@ -6,7 +6,7 @@ module.exports = {
     "contactListCount": 1,
     "recruiterContactListCount": 1,
     "importDatabase": true,
-    "brandLogoAndCustomColors": true,
+    "brandLogoAndCustomColors": 0,
     "contactListMemberCount": -1,
     "accountUserCount": 1,
     "exportContactListAndParticipantHistory": false,
@@ -33,6 +33,11 @@ module.exports = {
     "topicCount": 10,
     "priority": 5, // This is only for front end.
     "surveyCount": 1,
-    "secureSsl": true
+    "secureSsl": true,
+
+    "monthToUseChatSessions": false,
+    "unlimitedTopicChanges": false,
+    "recruitNewContactList": false,
+    "accessThreeChatRooms": false,
   }
 }

@@ -16,7 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
       isLength: validations.length('name', { max: 40 })
     } },
     startTime: { type: DataTypes.DATE, allowNull: true, validate: { isValid: validateDate } },
-    endTime: { type: DataTypes.DATE, allowNull: true },
+    endTime: { type: DataTypes.DATE, allowNull: true, validate: { isValid: validateDate }  },
     timeZone: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
