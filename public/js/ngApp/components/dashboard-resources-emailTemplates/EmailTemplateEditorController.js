@@ -30,6 +30,7 @@
     vm.currentUpload = 'image';
     vm.headTemplate = null;
     vm.headPattern = /<head>[\S\s]*?<\/head>/gi;
+    vm.isAccordionToggled = false;
     var showSystemMail = $stateParams.systemMail;
 
     vm.preInit = function(params) {
@@ -39,10 +40,17 @@
       vm.init();
     }
 
+    $scope.$watch('sbc.accordions.emailTemplates', function() {
+      vm.isAccordionToggled = true;
+    });
+
     vm.init = function () {
       vm.emailTemplates = vm.emailTemplates.concat(vm.constantEmailTemplates);
       $('#templateContent').wysiwyg({
-        rmUnusedControls: true,
+        events: {
+          dragover: function(event) { event.preventDefault(); },
+          drop: function(event) { event.preventDefault(); },
+        },
         controls: {
           bold: { visible : true },
           italic: { visible : true },
@@ -55,7 +63,7 @@
             exec: function() {
               vm.currentUpload = 'image';
               $scope.$apply(function() {
-                vm.galleryController.openUploadModal(vm.uploadTypes.image, { modal: {}, callback: postUpload });
+                vm.galleryController.openSelectOrUploadModal(vm.uploadTypes.image, { modal: {}, callback: postUpload });
               });
             }
           }
@@ -66,11 +74,11 @@
         icon: "/icons/header button icons/addYoutubeVideo.png",
         visible: true,
         callbackArguments: [],
-        tooltip: 'Add YouTube link',
+        tooltip: 'Add Video',
         exec: function() {
           vm.currentUpload = 'video';
           $scope.$apply(function() {
-            vm.galleryController.openUploadModal(vm.uploadTypes.video, { modal: {}, callback: postUpload });
+            vm.galleryController.openSelectOrUploadModal(vm.uploadTypes.video, { modal: {}, callback: postUpload });
           });
         }
       });
@@ -80,6 +88,18 @@
       refreshTemplateList(function() {
         if (vm.emailTemplates && vm.emailTemplates.length) {
           vm.startEditingTemplate(0);
+          var scrollable = $('#mail-template-list');
+          var visibleFunc = debounce(function() {
+            scrollable.children('span').each(function(index, child) {
+              if(isVisible(child)) {
+                $(child).addClass('scroll-visible');
+              }
+              else {
+                $(child).removeClass('scroll-visible');
+              }
+            });
+          }, 15);
+          scrollable.scroll(visibleFunc);
         }
       });
     };
@@ -94,9 +114,11 @@
     vm.galleryDropdownData = galleryDropdownData;
     vm.openModal = openModal;
     vm.findIndexFromId = findIndexFromId;
+    vm.sendEmail = sendEmail;
 
     function setContent(content) {
       $('#templateContent').wysiwyg('setContent', content);
+      vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
     }
 
     function getColors() {
@@ -110,7 +132,18 @@
       return object;
     }
 
-    function startEditingTemplate(templateIndex, inSession, templateId, template) {
+    function startEditingTemplate(templateIndex, templateId, template, isResetingOrSaving) {
+      if (isChangedAndNotSaved(isResetingOrSaving) && !vm.isAccordionToggled) {
+        if (vm.properties.sessionId) {
+          vm.warningMessage = "If you want to save the changes you have made to your email, you need to Apply them to Session."
+        } else {
+          vm.warningMessage = "If you want to save the changes you have made to your email, you need to Save them first."
+        }
+        domServices.modal('unsavedTemplateMsg');
+        return;
+      }
+
+      vm.isAccordionToggled = false;
 
       if (!templateId) {
         templateId = template ? template.id : vm.emailTemplates[templateIndex].id;
@@ -120,11 +153,12 @@
         mailTemplate.getMailTemplate({id:templateId}).then(function (res) {
           if (res.error) return;
 
-          if (vm.properties.brandLogoId && inSession) {
+          if (vm.properties.brandLogoId && vm.properties.sessionId) {
             fileUploader.show(vm.properties.brandLogoId).then(function(result) {
               populateTemplate(res);
-              setContent(vm.currentTemplate.content);
+              $('#templateContent').wysiwyg('setContent', vm.currentTemplate.content);
               $('.wysiwyg iframe').contents().find("img#brandLogoUrl").attr("src", result.resource.url.full);
+              vm.currentWysiwygProccessedTemplate = $('#templateContent').wysiwyg('getContent');
             });
           } else {
 
@@ -132,6 +166,12 @@
             setContent(vm.currentTemplate.content);
           }
         });
+      }
+
+      function isChangedAndNotSaved(isResetingOrSaving) {
+        var actualContent = $('#templateContent').wysiwyg('getContent');
+        var initialContent = vm.currentWysiwygProccessedTemplate;
+        return initialContent !== undefined && initialContent != actualContent && !isResetingOrSaving;
       }
 
       function populateContentWithColors() {
@@ -143,11 +183,58 @@
         }
       }
 
+      function adjustSessionTimeSentenceIfFirstInvitation() {
+        if(isFirstInvitationTemplate()) {
+          if (isSessionBuilder()) {
+            setSessionBuilderStartDateVisibility();
+          } else {
+            showStartDateSpan();
+          }
+        }
+
+        function isFirstInvitationTemplate() {
+          return vm.currentTemplate['MailTemplateBase.category'] == "firstInvitation";
+        }
+
+        function isSessionBuilder() {
+          return $scope.step3Controller && $scope.step3Controller.session;
+        }
+
+        function setSessionBuilderStartDateVisibility() {
+          if (isEndDateAfterStartDate()) {
+            showStartDateSpan();
+          } else {
+            hideStartDateSpan();
+          }
+        }
+
+        function hideStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")*>/g, "<span id=start-date-container style=display:none>");
+        }
+
+        function showStartDateSpan() {
+          toggleStartDateSpan(/<span id=(\")*start-date-container(\")* style=(\")*display:none;(\")*>/g, "<span id=start-date-container>")
+        }
+
+        function toggleStartDateSpan(currentSpanRegEx, expectedSpan) {
+          var currentContent = vm.currentTemplate.content;
+          vm.currentTemplate.content = currentContent.replace(currentSpanRegEx, expectedSpan);
+        }
+
+        function isEndDateAfterStartDate() {
+          var session = $scope.step3Controller.session;
+          var startDate = new Date(session.startTime).setHours(0, 0, 0, 0);
+          var endDate = new Date(session.endTime).setHours(0, 0, 0, 0);
+          return endDate > startDate;
+        }
+      }
+
       function populateTemplate(res) {
         vm.currentTemplate = vm.emailTemplates[templateIndex];
         vm.currentTemplate.content = res.template.content;
         vm.currentTemplate.index = templateIndex;
         vm.currentTemplate.subject = res.template.subject;
+        vm.currentTemplate.snapshot = res.snapshot;
 
         if(!vm.currentTemplate.isCopy) {
           vm.viewingTemplateId = vm.currentTemplate.id;
@@ -165,6 +252,7 @@
         }
 
         populateContentWithColors();
+        adjustSessionTimeSentenceIfFirstInvitation();
       }
 
     }
@@ -182,7 +270,7 @@
      * @param createCopy {boolean}
      * @param [template] {object} default valuse is currentTemplate
      */
-    function modifyAndSave(createCopy, templateData, includeProperties, templateName, createdFromModal) {
+    function modifyAndSave(createCopy, templateData, includeProperties, templateName, createdFromModal, sessionId) {
       var deferred = $q.defer();
       var template = templateData || vm.currentTemplate;
 
@@ -201,22 +289,31 @@
         template.properties = vm.properties;
         template.properties.createdWithCustomName = createdFromModal;
         template.properties.templateName = templateName;
+        template.snapshot = vm.currentTemplate.snapshot;
       }
-      mailTemplate.saveMailTemplate(template, createCopy).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            var index = getIndexOfMailTemplateWithId(res.templates.id);
-            if (index != -1) {
-              vm.startEditingTemplate(index);
-            }
-          });
-          messenger.ok(res.message);
-          deferred.resolve();
-        } else {
+      mailTemplate.saveMailTemplate(template, createCopy, sessionId).then(function (res) {
+        if (res.error) {
           template.error = null;
           template.properties = null;
           messenger.error(res.error);
           deferred.reject();
+        } else if (res.ignored) {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(template.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index);
+            }
+          });
+          deferred.resolve();
+        } else {
+          refreshTemplateList(function() {
+            var index = getIndexOfMailTemplateWithId(res.templates.id);
+            if (index != -1) {
+              vm.startEditingTemplate(index, null, null, true);
+            }
+          });
+          messenger.ok(res.message);
+          deferred.resolve();
         }
       });
 
@@ -236,20 +333,10 @@
     }
 
     function resetMailTemplate() {
-      var deferred = $q.defer();
-      mailTemplate.resetMailTemplate(vm.currentTemplate).then(function (res) {
-        if (!res.error) {
-          refreshTemplateList(function() {
-            vm.startEditingTemplate(vm.currentTemplate.index);
-            deferred.resolve();
-          });
-        } else {
-          messenger.error(res.error);
-          deferred.reject();
-        }
-      });
 
-      return deferred.promise;
+      refreshTemplateList(function() {
+        vm.startEditingTemplate(vm.currentTemplate.index, null, null, true);
+      });
     }
 
     function previewMailTemplate() {
@@ -257,9 +344,11 @@
       var contentFrame = $("#contentFrame").contents().find('html');
       domServices.modal('previewMailTemplateModal');
       mailTemplate.previewMailTemplate(vm.currentTemplate, vm.properties.sessionId).then(function(res) {
-        if (!res.error) {
-          contentFrame.html(res.template.content);
-          $("#mailTemplatePreviewSubject").html(res.template.subject);
+        if (!res.error || angular.equals({}, res.error)) {
+          //this is for case when preview button pressed after save but before server responce
+          var template = res.template || vm.currentTemplate;
+          contentFrame.html(template.content);
+          $("#mailTemplatePreviewSubject").text(template.subject);
         } else {
           messenger.error(res.error);
         }
@@ -304,9 +393,13 @@
     function refreshTemplateList(callback) {
       (vm.properties.sessionBuilder ? mailTemplate.getAllSessionMailTemplatesWithColors : mailTemplate.getAllMailTemplatesWithColors)
           (showSystemMail, vm.properties, vm.properties.sessionBuilder ? builderServices.session.sessionData.brandProjectPreferenceId : null).then(function (res) {
-        vm.colors = res.colors;
-        vm.defaultColors = res.manageFields;
-        preprocessMailTemplateList(res.templates, callback);
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          vm.colors = res.colors;
+          vm.defaultColors = res.manageFields;
+          preprocessMailTemplateList(res.templates, callback);
+        }
       });
     }
 
@@ -376,14 +469,53 @@
       return item.AccountId;
     }
 
+    function debounce(func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+
+    function isVisible(el) {
+      var rect = el.getBoundingClientRect(), top = rect.top, height = rect.height,
+        el = el.parentNode;
+      do {
+        rect = el.getBoundingClientRect();
+        if (top <= rect.bottom === false) return false;
+        // Check if the element is out of view due to a container scrolling
+        if (top+1 <= rect.top) return false
+        el = el.parentNode;
+      } while (el != document.body);
+      // Check its within the document viewport
+      return top <= document.documentElement.clientHeight;
+    }
+
+    function getVideoHTML(url, resourceId) {
+      return '<a href="' + url + '" target="_blank" style="display:block;text-decoration:none;color:#000;" data-resource-id="' + resourceId + '"><img src="/icons/header button icons/videoLink.png"></img></a>';
+    }
+
     function postUpload(resource) {
-      if(resource.type == 'image') {
-        var linkHTML = '<img src="' + resource.url.full + '" style="max-width:600px;"></img>';
-        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+      var html = null;
+      if (resource.type == 'image') {
+        html = '<img src="' + resource.url.full + '" style="max-width:600px;" data-resource-id="' + resource.id + '"></img>';
+      } else if (resource.type == 'video') {
+        html = getVideoHTML(resource.url.full, resource.id);
+      } else {
+        var url = GalleryServices.prepareVideoServiceUrl(resource.url.full, resource.source);
+        if (url != null) {
+          html = getVideoHTML(url, resource.id);
+        }
       }
-      else {
-        var linkHTML = '<a href="https://www.youtube.com/watch?v=' + resource.url.full + '" target="_blank" style="display:block;text-decoration:none;color:#000;"><img src="/icons/header button icons/videoLink.png"></img> </a>';
-        $('#templateContent').wysiwyg("insertHtml", linkHTML);
+      if (html) {
+        $('#templateContent').wysiwyg("insertHtml", html);
       }
     }
 
@@ -391,12 +523,13 @@
       vm.galleryController = gc;
       vm.uploadTypes = {
         image: gc.getUploadType('image'),
-        video: gc.getUploadType('youtube')
+        video: gc.getUploadType('video')
       };
     }
 
     function galleryDropdownData(dependency) {
       return {
+        validation: 'uploadToGallery',
         types: vm.uploadTypes[vm.currentUpload],
         modal: { upload: true },
         dependency: dependency
@@ -406,6 +539,14 @@
     function openModal() {
       vm.templateNameAdd = null;
       domServices.modal('templateNameModal');
+    }
+
+    function sendEmail() {
+      mailTemplate.sendMail(vm.currentTemplate, vm.properties.sessionId).then(function (res) {
+          messenger.ok(res.message);
+        }, function (error) {
+          messenger.error(error);
+      });
     }
   }
 })();

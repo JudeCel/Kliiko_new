@@ -2,26 +2,38 @@
 
 var constants = require('../util/constants');
 var MessagesUtil = require('./../util/messages');
+var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var validations = require('./validations');
 
 module.exports = (Sequelize, DataTypes) => {
   var Session = Sequelize.define('Session', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     brand_project_id: { type: DataTypes.INTEGER, allowNull: true },
-    accountId: { type: DataTypes.INTEGER, allowNull: false  },
+    accountId: { type: DataTypes.INTEGER, allowNull: false },
     participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: '', validate: {
       isLength: validations.length('name', { max: 40 })
     } },
-    startTime: { type: DataTypes.DATE, allowNull: false, defaultValue: initializeDate(), validate: { isValid: validateDate } },
-    endTime: { type: DataTypes.DATE, allowNull: false , defaultValue: initializeDate() },
+    startTime: { type: DataTypes.DATE, allowNull: true, validate: { isValid: validateDate } },
+    endTime: { type: DataTypes.DATE, allowNull: true },
     timeZone: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     incentive_details: { type: DataTypes.STRING, allowNull: true  },
     colours_used: { type: DataTypes.TEXT, allowNull: true },
     step: { type: DataTypes.ENUM, allowNull: false, values: constants.sessionBuilderSteps, defaultValue: 'setUp' },
     status: { type: DataTypes.ENUM, allowNull: false, values: ['open', 'closed'], defaultValue: 'open' },
-    type: { type: DataTypes.ENUM, values: ['focus', 'forum'] }
+    type: { type: DataTypes.STRING },
+    anonymous: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    isInactive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    isVisited: { type: DataTypes.JSON, allowNull: false, defaultValue: {
+      setUp: false,
+      facilitatiorAndTopics: false,
+      manageSessionEmails: false,
+      manageSessionParticipants: false,
+      inviteSessionObservers: false
+    } },
+    subscriptionId: { type: DataTypes.STRING, allowNull: true },
+    publicUid: { type: DataTypes.STRING, allowNull: true, validate: { isUnique: validations.unique(Sequelize, 'Session', 'publicUid') } }
   }, {
     timestamps: true,
     hooks: {
@@ -37,12 +49,14 @@ module.exports = (Sequelize, DataTypes) => {
         Session.hasMany(models.SessionTopics, { foreignKey: 'sessionId' });
         Session.hasMany(models.MiniSurvey, { foreignKey: 'sessionId' });
         Session.hasMany(models.SessionMember, { foreignKey: 'sessionId' });
-        Session.hasMany(models.MailTemplate, { foreignKey: 'sessionId' });
         Session.hasMany(models.Invite, { foreignKey: 'sessionId' });
         Session.hasMany(models.DirectMessage, { foreignKey: 'sessionId' });
         Session.belongsTo(models.Resource, { foreignKey: 'resourceId' });
         Session.belongsToMany(models.Resource, { through: {model: models.SessionResource}, foreignKey: 'sessionId' });
         Session.hasMany(models.SessionTopicsReport, { foreignKey: 'sessionId' });
+        Session.belongsTo(models.SessionType, { foreignKey: 'type' });
+        Session.belongsToMany(models.Survey, { through: models.SessionSurvey, foreignKey: "sessionId" });
+        Session.belongsToMany(models.MailTemplate, { through: models.SessionMailTemplate, foreignKey: "sessionId" });
       }
     }
   });
@@ -51,16 +65,13 @@ module.exports = (Sequelize, DataTypes) => {
 };
 
 function validateDate(value, next) {
-  if(this.startTime > this.endTime) {
+  if (isDateEnabled(this) && this.startTime > this.endTime) {
     next(MessagesUtil.models.session.date);
-  }
-  else {
+  } else {
     next();
   }
 }
 
-function initializeDate() {
-  let date = new Date();
-  date.setHours(0, 0, 0, 0);
-  return date;
+function isDateEnabled(self) {
+  return self.type && sessionTypesConstants[self.type].features.dateAndTime.enabled;
 }

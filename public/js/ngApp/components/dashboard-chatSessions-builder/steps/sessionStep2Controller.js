@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep2Controller', SessionStep2Controller);
 
-  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$scope'];
-  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $scope) {
+  SessionStep2Controller.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'orderByFilter', '$anchorScroll', '$location', '$scope', '$confirm', 'domServices', '$sce'];
+  function SessionStep2Controller(dbg, sessionBuilderControllerServices, messenger, orderByFilter, $anchorScroll, $location, $scope, $confirm, domServices, $sce) {
     dbg.log2('#SessionBuilderController 2 started');
 
     var vm = this;
@@ -13,9 +13,11 @@
     vm.allTopicsSelected = false;
     vm.sessionTopicsArray = [];
     vm.sessionTopicsObject = {};
+    vm.isDropsectionInViewport = true;
+    vm.isDragInProgress = false;
 
     vm.sortableOptionsA = {
-      stop : function(e, ui) {
+      stop: function(e, ui) {
         reOrderTopics();
         saveTopics(vm.sessionTopicsArray);
       }
@@ -24,59 +26,190 @@
     vm.init = init;
     vm.canDragElement = canDragElement;
     vm.selectAllTopics = selectAllTopics;
+    vm.closeModal = closeModal;
     vm.removeTopicFromList = removeTopicFromList;
     vm.topicsOnDropComplete = topicsOnDropComplete;
     vm.changeActiveState = changeActiveState;
     vm.changeLandingState = changeLandingState;
+    vm.onDragEnd = onDragEnd;
+    vm.onDragStart = onDragStart;
+    vm.canBeDraggedAsMultiple = canBeDraggedAsMultiple;
+    vm.getTopicStockClass = getTopicStockClass;
+    vm.isCopy = isCopy;
+    vm.surveyList = [];
+    vm.surveyEditors = [];
+    vm.attachedSurveysToSession = {};
+    vm.inviteAgainTopicAdded = inviteAgainTopicAdded;
+
+    function surveyWithType(surveyType) {
+      if (vm.session.steps.step2.surveys && vm.session.steps.step2.surveys.length) {
+        for (var i=0; i<vm.session.steps.step2.surveys.length; i++) {
+          if (vm.session.steps.step2.surveys[i].surveyType == surveyType) {
+            return vm.session.steps.step2.surveys[i];
+          }
+        }
+      }
+      return null;
+    }
+
+    function initContactListSurvey() {
+      var survey = surveyWithType('sessionContactList');
+      var surveySection = surveyBasicSectionData();
+      surveySection.surveyType = 'sessionContactList';
+      surveySection.active = survey && survey.active;
+      surveySection.expanded = survey.active;
+      surveySection.title = "Contact List Questions";
+      surveySection.canDisable = !vm.session.publicUid;;
+      if (survey) {
+        surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
+      }
+      return surveySection;
+    }
+
+    function initPrizeDrawSurvey() {
+      var survey = surveyWithType('sessionPrizeDraw');
+      var surveySection = surveyBasicSectionData();
+      surveySection.surveyType = 'sessionPrizeDraw';
+      surveySection.title = "Prize Draw";
+      surveySection.canDisable = !vm.session.publicUid;
+      surveySection.active = survey && survey.active;
+      surveySection.expanded = survey.active;
+
+      if (survey) {
+        surveySection.id = survey.surveyId;
+        vm.attachedSurveysToSession[surveySection.id] = true;
+      }
+      return surveySection;
+    }
+
+    function surveyBasicSectionData() {
+      return {
+        defaultSurveyName: vm.session.steps.step1.name,
+        onSaved: vm.onSurveySaved,
+        showSaveButton: false,
+        showPublishButton: false,
+        showPreviewButton: false,
+        disableMessages: true
+      }
+    }
+
+    vm.checkCanSaveSurveys = function() {
+      return !vm.session.publicUid && vm.inviteAgainTopicAdded();
+    }
+
+    function initSurveys() {
+      var listSurvey = initContactListSurvey();
+      var prizeSurvey = initPrizeDrawSurvey();
+      vm.surveyList = [listSurvey, prizeSurvey];
+    }
 
     function init(topicController) {
       vm.session = sessionBuilderControllerServices.session;
       vm.topics = vm.session.steps.step2.topics;
       vm.topicController = topicController;
+      vm.topicController.session = vm.session;
+      vm.topicController.resetSessionTopics = vm.init;
+      vm.topicController.init();
 
       vm.topics.map(function(topic) {
         addSessionTopic(topic);
       });
       vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
+      initSurveys();
+    }
+
+    vm.onSurveySaved = function(surveyId) {
+      if (!vm.attachedSurveysToSession[surveyId]) {
+        vm.session.addSurveyToSession(surveyId).then(function(result) {
+          vm.attachedSurveysToSession[surveyId] = true;
+        });
+      }
     }
 
     function addSessionTopic(topic) {
-      if(topic.SessionTopics[0]) {
+      if (topic.SessionTopics[0]) {
         var exists = vm.sessionTopicsObject[topic.id];
         vm.sessionTopicsObject[topic.id] = topic;
         vm.sessionTopicsObject[topic.id].sessionTopic = topic.SessionTopics[0];
-        if(!exists) {
+        if (!exists) {
           vm.sessionTopicsArray.push(vm.sessionTopicsObject[topic.id]);
         }
+        vm.sessionTopicsArray = vm.sessionTopicsArray.map(function(item) {
+          if (topic.id == item.id) {
+            return topic;
+          } else {
+            return item;
+          }
+        });
       }
     }
 
     function canDragElement(topic) {
       var can = false, selected = getSelectedTopics();
 
+      if (topic.stock || topic.default) {
+        return false;
+      }
+
+      if (topic.inviteAgain && vm.session.publicUid) {
+        return false;
+      }
+
       if(!selected.length) {
         return true;
       }
 
-      for(var i in selected) {
-        if(selected[i].id == topic.id) {
-          can = true;
+      return isSelectedTopic(selected, topic);
+    }
+
+    function canBeDraggedAsMultiple(topic) {
+      return isSelectedTopic(getSelectedTopics(), topic);
+    }
+
+    function isSelectedTopic(selectedTopics, currentTopic) {
+      for(var i in selectedTopics) {
+        if(selectedTopics[i].id == currentTopic.id) {
+          return true;
         }
       }
 
-      return can;
+      return false;
+    }
+
+    function isCopy(topic){
+      if(topic.parentTopicId){
+        return "Copy of ";
+      }
     }
 
     function selectAllTopics(list) {
       vm.allTopicsSelected = !vm.allTopicsSelected;
-
       list.map(function(topic) {
-        topic._selected = vm.allTopicsSelected;
+        topic._selected = vm.allTopicsSelected && !topic.stock && !topic.default;
       });
     }
 
     function changeActiveState(topic) {
-      saveTopics(vm.sessionTopicsArray);
+      topic.sessionTopic.active = !topic.sessionTopic.active;
+      vm.session.canChangeTopicActive(!topic.sessionTopic.active).then(function(res) {
+        if (topic.default && !topic.sessionTopic.active && topic.sessionTopic.landing) {
+          for(var i=0; i<vm.sessionTopicsArray.length; i++) {
+            if (vm.sessionTopicsArray[i].sessionTopic.active) {
+              changeLandingState(vm.sessionTopicsArray[i]);
+              return;
+            }
+          }
+        }
+        topic.sessionTopic.active = !topic.sessionTopic.active;
+        saveTopics(vm.sessionTopicsArray);
+      }, function() {
+        domServices.modal('topicCantShow');
+      });
+    }
+
+    function closeModal() {
+      domServices.modal('topicCantShow', true);
     }
 
     function changeLandingState(topic) {
@@ -95,6 +228,26 @@
     }
 
     function removeTopicFromList(id) {
+      for(var index in vm.sessionTopicsArray) {
+        var topic = vm.sessionTopicsArray[index];
+        if (topic.id == id) {
+          if (topic.inviteAgain) {
+            if (!vm.session.publicUid) {
+              $confirm({
+                text: "By deleting this Topic you will not be able to Generate a Contact List. You can however reactivate by dragging from the left-hand column before publishing your Session."
+              }).then(function() {
+                removeTopicFromListConfirmed(id);
+              });
+            }
+          } else {
+            removeTopicFromListConfirmed(id);
+          }
+          break;
+        }
+      }
+    }
+
+    function removeTopicFromListConfirmed(id) {
       vm.session.removeTopic(id).then(function(res) {
         dbg.log2('topic removed');
         removeTopicFromLocalList(id);
@@ -106,17 +259,19 @@
     function topicsOnDropComplete(dragTopic) {
       var list = [];
       var selected = getSelectedTopics();
+      var flags = {
+        inviteAgainTopicMessage: false
+      };
 
-      if(selected.length) {
+      if (selected.length) {
         selected.map(function(topic) {
-          addTopics(topic, list);
+          addTopics(topic, list, flags);
         });
-      }
-      else {
-        addTopics(dragTopic, list);
+      } else {
+        addTopics(dragTopic, list, flags);
       }
 
-      if(list.length) {
+      if (list.length) {
         if(!findLandingTopic()) {
           setLanding(list[0]);
         }
@@ -141,9 +296,18 @@
 
     function saveTopics(list) {
       vm.session.saveTopics(list).then(function(result) {
-        orderByFilter(result, "id").map(function(topic) {
-          addSessionTopic(topic);
-        });
+        if (result.ignored) {
+          init(vm.topicController);
+        } else {
+          orderByFilter(result.data, "id").map(function(topic) {
+            addSessionTopic(topic);
+          });
+          vm.sessionTopicsArray = orderByFilter(vm.sessionTopicsArray, "sessionTopic.order");
+          if (result.message) {
+            var isHtml = result.message.indexOf("<") != -1;
+            $confirm({ text: result.message, htmlText: isHtml ? $sce.trustAsHtml(result.message) : null, closeOnly: true, title: null });
+          }
+        }
       }, function(error) {
         messenger.error(error);
       });
@@ -156,19 +320,42 @@
           found = index;
           deletedLanding = topic.sessionTopic.landing;
           delete vm.sessionTopicsObject[topic.id];
+          vm.sessionTopicsArray.splice(found, 1);
+          reOrderTopics();
         }
       });
-
-      vm.sessionTopicsArray.splice(found, 1);
-      reOrderTopics();
 
       if(deletedLanding && vm.sessionTopicsArray[0]) {
         changeLandingState(vm.sessionTopicsArray[0]);
       }
     }
 
-    function addTopics(topic, list) {
-      if(!vm.sessionTopicsObject[topic.id]) {
+    function inviteAgainTopicAdded(list) {
+      for (var index in vm.sessionTopicsArray) {
+        if (vm.sessionTopicsArray[index].inviteAgain) {
+          return true;
+        }
+      }
+      if (list) {
+        for (var index in list) {
+          if (list[index].inviteAgain) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function addTopics(topic, list, flags) {
+      if (topic.inviteAgain && inviteAgainTopicAdded(list)) {
+        if (!flags.inviteAgainTopicMessage) {
+          flags.inviteAgainTopicMessage = true;
+          $confirm({ text: "You can only have one of this type of Topics as active", closeOnly: true, title: null });
+        }
+        return;
+      }
+
+      if (!vm.sessionTopicsObject[topic.id]) {
         topic.sessionTopic = {
           order: vm.sessionTopicsArray.length,
           active: true,
@@ -178,7 +365,7 @@
           sign: topic.sign,
           lastSign: null
         }
-        if(list) {
+        if (list) {
           list.push(topic);
         }
       }
@@ -196,6 +383,156 @@
         if(topic._selected) { array.push(topic); }
       });
       return array;
+    }
+
+    function onDragEnd() {
+      vm.isDragInProgress = false;
+    }
+
+    function onDragStart() {
+      scrollToDropSection();
+      vm.isDragInProgress = true;
+    }
+
+    function scrollToDropSection() {
+      if (!vm.isDropsectionInViewport) {
+        $location.hash('drop-section');
+        $anchorScroll();
+      }
+    }
+
+    function getTopicStockClass(topic) {
+      var wrap = topic.name === "It's A Wrap";
+      var className = 'topic-list-item topic-'
+      var stockClass = (topic.stock || topic.default ? 'stock' : 'not-stock')
+      var wrapClass = wrap ? ' is-wrap-topic' : '';
+      return className + stockClass + wrapClass;
+    }
+
+    vm.addEditorController = function(sc) {
+      vm.surveyEditors.push(sc);
+      if (vm.session.publicUid) {
+        sc.disableEdit();
+      }
+    }
+
+    vm.saveSurveys = function(autoSave, publish) {
+      if (publish) {
+        $confirm({ text: "When you Publish you will NOT be able to change the Contact List and Prize Draw Questions." }).then(function() {
+          saveSurveysConfirmed(false, publish);
+        });
+      } else {
+        saveSurveysConfirmed(autoSave, false);
+      }
+    }
+
+    function saveSurveysConfirmed(autoSave, publish) {
+      if (inviteAgainTopicAdded()) {
+        vm.surveyEditors[0].survey.resourceId = vm.session.sessionData.resourceId;
+        vm.surveyEditors[1].survey.resourceId = vm.session.sessionData.resourceId;
+        vm.surveyEditors[0].survey.name = vm.session.steps.step1.name;
+        vm.surveyEditors[1].survey.name = vm.session.steps.step1.name;
+
+        vm.surveyEditors[0].saveSurvey(autoSave, publish, true).then(function() {
+          vm.surveyEditors[1].saveSurvey(autoSave, publish, true).then(function() {
+            if (publish) {
+              publishSession();
+            } else if (!autoSave) {
+              openSessionsListAndHighlight();
+            }
+          }, function(e) {
+            if (e) messenger.error(e);
+          });
+        }, function(e) {
+          if (e) messenger.error(e);
+        });
+      } else {
+        publishSession();
+      }
+    }
+
+    function publishSession() {
+      sessionBuilderControllerServices.publish(vm.session.id).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          openSessionsListAndHighlight();
+        }
+      });
+    }
+
+    function openSessionsListAndHighlight() {
+      location.href = "#/chatSessions?highlight=" + vm.session.id;
+      messenger.ok('Successfully updated session!');
+    }
+
+    function copyInviteAgainTopic() {
+      var inviteAgainTopicTemplate = vm.topicController.list.find(function(t) { return t.inviteAgain });
+      // select inviteAgain topic
+      angular.copy(inviteAgainTopicTemplate, vm.topicController.topicData);
+      // create copy of selected topic based on template
+      return vm.topicController.editTopic()
+        .then(function() {
+          // get an inviteAgain topic that is not in stock
+          return vm.topicController.list.find(function(t) { return t.inviteAgain && !t.stock });
+        });
+    }
+
+    function addInviteAgainTopic() {
+      // check if there is an inviteAgain topic that is not in stock
+      var inviteAgainTopic = vm.topicController.list.find(function(t) { return t.inviteAgain && !t.stock });
+      if (inviteAgainTopic) {
+        // add inviteAgain topic into session topics
+        return topicsOnDropComplete(inviteAgainTopic);
+      }
+      // there is no topic - create a copy
+      copyInviteAgainTopic()
+        .then(function(inviteAgainTopic) {
+          // add inviteAgain topic into session topics
+          topicsOnDropComplete(inviteAgainTopic);
+        });
+    }
+
+    vm.blockSurvey = function(survey) {
+      var active = !survey.active;
+      vm.session
+        .setSurveyEnabled(survey.id, active)
+        .then(function() {
+          survey.active = active;
+          survey.expanded = active;
+
+          // whether user enabled or disabled a survey, "active===true" means "user enabled a survey"
+          if (active) {
+            var alreadyAdded = inviteAgainTopicAdded();
+            if (alreadyAdded) {
+              return;
+            }
+            addInviteAgainTopic();
+          } else {
+            // check whether all surveys disabled
+            var allDisabled = vm.surveyList
+              .map(function(survey) { return survey.active })
+              .every(function(el) { return !el });
+            if (allDisabled) {
+              // get inviteAgain topic from list of session topics
+              var inviteAgainTopicTemplate = vm.sessionTopicsArray.find(function(t) { return t.inviteAgain });
+              // remove inviteAgain topic from session
+              inviteAgainTopicTemplate && removeTopicFromListConfirmed(inviteAgainTopicTemplate.id);
+            }
+          }
+
+        })
+        .catch(function(error) {
+          messenger.error(error);
+        });
+    };
+
+    vm.initSurveyEditor = function(sessionEditor, galeryController, survey) {
+      survey.notPublished == !vm.session.publicUid;
+      sessionEditor.initGallery(galeryController);
+      sessionEditor.init(survey.id, survey);
+      sessionEditor.initAutoSave(true);
+      vm.addEditorController(sessionEditor);
     }
   }
 

@@ -29,7 +29,7 @@ spec:
         name: admin
     spec:
       imagePullSecrets:
-        - name: docker-hub-secret
+        - name: docker-hub-secret-2
       containers:
       - image: "index.docker.io/klzii/kliiko:stable"
         command: ['/bin/sh', './start_server.sh']
@@ -42,18 +42,24 @@ spec:
           value: "redis-master"
         - name: NODE_ENV
           value: "production"
+        - name: LOG_SERVER_URL
+          value: "chat.cliizii.chat"
         - name: SERVER_CHAT_DOMAIN_URL
-          value: "https://chat.klzii.chat"
+          value: "https://chat.cliizii.chat"
+        - name: KLZII_HOMEPAGE_URL
+          value: "https://cliizii.com"
+        - name: EVENT_SOCKET_SERVER_URL
+          value: "wss://chat.cliizii.chat/socketDashboard"
         - name: SERVER_CHAT_DOMAIN_PORT
           value: "443"
         - name: FACEBOOK_CALLBACK_URL
-          value: "https://www.klzii.chat/auth/facebook/callback"
+          value: "https://www.cliizii.chat/auth/facebook/callback"
         - name: FACEBOOK_CLIENT_ID
           value: "1740610496152274"
         - name: FACEBOOK_CLIENT_SECRET
           value: "7d0f78d9fdd0052c20cdf5c2aeda7b33"
         - name: GOOGLE_CALLBACK_URL
-          value: "https://www.klzii.chat/auth/google/callback"
+          value: "https://www.cliizii.chat/auth/google/callback"
         - name: GOOGLE_CLIENT_ID
           value: "570903251504-hvev7sqcqqvl977djc1kqv722sqgidp3.apps.googleusercontent.com"
         - name: GOOGLE_CLIENT_SECRET
@@ -61,13 +67,13 @@ spec:
         - name: MAIL_TRANSPORT_SERVICE
           value: "smtp.mailgun.org"
         - name: MAIL_FROM_EMAIL
-          value: "postmaster@noreply.klzii.com"
+          value: "noreply@cliizii.com"
         - name: MAIL_FROM_NAME
-          value: "klzii"
+          value: "cliizii"
         - name: MAIL_TRANSPORT_AUTH_USER
-          value: "postmaster@noreply.klzii.com"
+          value: "noreply@cliizii.com"
         - name: MAIL_TRANSPORT_AUTH_PASS
-          value: "3c005b08f7c42469235456d4da3808da"
+          value: "6796ef949c81627253d6c236a260eadd"
         - name: MAIL_TRANSPORT_SECURE_CONNECTION
           value: "false"
         - name: MAIL_TRANSPORT_PORT
@@ -75,7 +81,7 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: DATABASE_NAME_PROD
-          value: "klzii_production"
+          value: "klzii_production2"
         - name: DATABASE_USER_PROD
           value: "postgres"
         - name: DATABASE_PASSWORD_PROD
@@ -84,14 +90,10 @@ spec:
           value: "postgres-master"
         - name: DATABASE_DIALECT_PROD
           value: "postgres"
-        - name: AIRBRAKE_PROJECT_ID
-          value: "121542"
-        - name: AIRBRAKE_API_KEY
-          value: "607e87c9e8b7500497bb84c51162b0a8"
         - name: SERVER_BASE_DOMAIN
-          value: ".klzii.chat"
+          value: ".cliizii.chat"
         - name: SERVER_DOMAIN
-          value: www.klzii.chat
+          value: www.cliizii.chat
         - name: SERVER_BASE_SUBDOMAIN
           value: "www"
         - name: SERVER_SKIP_SUBDOMAINS
@@ -102,9 +104,29 @@ spec:
           value: "d31ffc942a0c160844117563d3c3003b7c7625d8f01771300189d8afb6602f0d2e3676fea88b2722704792546b16daad66ff57fb4ec31e5f504da0859c1c7719"
         - name: COOKIE_SECRET
           value: "384ea4460f93543b5df82b039ff9da764bfd6393e16dd0913dfaf91b380baa409ed7587865b76d8cb2ac70bd5a7db538280778ac6bc2c73b737709e5ef7df98e"
+        - name: CHARGEBEE_SITE
+          value: "kliikotst"
+        - name: CHARGEBEE_API_KEY
+          value: "live_0NcdNIGs7shJK60fOa91BVhFOBmxKwl6h"
         - name: TWILIO_ACCOUNT_SID
           value: "AC979a928c7e46eb715283177d0bf69d23"
         - name: TWILIO_AUTH_TOKEN
           value: "40c3e7b2fb16608f28bafbd53466c2dc"
         - name: TWILIO_SENDER_NUMBER
           value: "+61428805081"
+        - name: RECAPTCHA_SITE_KEY
+          value: "6LfBvjUUAAAAAHl27G4QrGUNi6Yoh58F3WIUFYKc"
+        - name: RECAPTCHA_SECRET_KEY
+          value: "6LfBvjUUAAAAAP7sZuiOrKFmoU4A91JcLpmbReFi"
+        - name: MONITORING_SERVER_URL
+          value: "ws://83.99.159.206:8080/socket/websocket"
+        - name: MONITORING_SERVER_TOKEN
+          value: "b28ec1b3-0e1b-4ed2-93dd-2ed8145c5ddd"
+        - name: MONITORING_SERVER_PROJECT_NAME
+          value: "kliiko_prod"
+        - name: INFUSIONSOFT_APP
+          value: "su329"
+        - name: INFUSIONSOFT_KEY
+          value: "75b1411017f205fb92b3898c4e9151bb"
+        - name: HELP_PAHE_URL
+          value: "https://cliizii.com/help/"

@@ -13,6 +13,8 @@
     'debModule',
     'domServices',
     'messenger',
+    'errorMessenger',
+    'infoMessenger',
     'ngMessages',
     'ngCookies',
     'colorpicker.module',
@@ -26,14 +28,21 @@
     'toggle-switch',
     'angular-confirm',
     'ngSanitize',
+    'vkEmojiPicker',
+    'KliikoApp',
     // app modules
     'KliikoApp.user',
     'KliikoApp.account',
     'KliikoApp.accountUser',
     'KliikoApp.fileUploader',
+    'KliikoApp.changesValidation',
     'KliikoApp.goToChatroom',
     'KliikoApp.mailTemplate',
-    'KliikoApp.sessionExpire'
+    'KliikoApp.sessionExpire',
+    'KliikoApp.propertyDisabler',
+    'KliikoApp.appEvents',
+    'angulartics',
+    'angulartics.mixpanel'
   ];
 
   angular
@@ -65,25 +74,41 @@
     });
   }
 
-  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger'];
-  function myInterceptor($log, $q, $rootScope, messenger) {
-    // Show progress bar on every request
+  function useAPI_URL(config) {
+    var regex = /(\.html|\/api\/|http|\.template)/
+    return(!config.url.match(regex))
+  }
 
+  myInterceptor.$inject = ['$log','$q', '$rootScope', 'messenger', 'globalSettings'];
+  function myInterceptor($log, $q, $rootScope, messenger, globalSettings) {
+    // Show progress bar on every request
     var requestInterceptor = {
       request: function(config) {
+        if(useAPI_URL(config)){
+          config.url = (globalSettings.restUrl + config.url);
+        }
+
+        config.headers.Authorization = getToken();
+
         if(config.transformResponse.length > 0) {
           $rootScope.progressbarStart();
+          $rootScope.showSpinner = true;
         }
 
         return config;
       },
 
       'response': function(response) {
+
         if (response.status == 404) {
           alert('that is all folks');
         }
+
         if(response.config.transformResponse.length > 0) {
+          saveToken(response.headers()['refresh-token']);
+          $rootScope.showSpinner = false;
           $rootScope.progressbarComplete();
+          deactivateHelperNote();
         }
         return response;
       },
@@ -93,18 +118,35 @@
         if(rejection.status == 404) {
           messenger.error(rejection.data);
         }
+
+        $rootScope.showSpinner = false;
         $rootScope.progressbarComplete();
         return $q.reject(rejection);
       }
     };
 
+    function deactivateHelperNote() {
+      if (window.inline_manual_player) {
+        window.inline_manual_player.deactivate();
+      }
+    }
+
     return requestInterceptor;
+  }
+
+  function saveToken(token){
+    if(token){
+      window.localStorage.setItem('jwtToken', token);
+    }
+  }
+
+  function getToken(){
+    return(window.localStorage.getItem("jwtToken"));
   }
 
   appConfigs.$inject = ['dbgProvider', '$routeProvider', '$locationProvider', '$rootScopeProvider', '$httpProvider'];
   function appConfigs(dbgProvider, $routeProvider, $locationProvider, $rootScopeProvider, $httpProvider) {
-    //$rootScopeProvider.digestTtl(20);
-    dbgProvider.enable(1);
+    dbgProvider.enable(window.appData.mode != 'production');
     dbgProvider.debugLevel('trace');
 
     $httpProvider.interceptors.push('myInterceptor');
@@ -150,33 +192,39 @@
     $confirmModalDefaults.defaultLabels.title = 'Are you sure?';
     $confirmModalDefaults.defaultLabels.ok = 'Continue';
     $confirmModalDefaults.defaultLabels.cancel = 'Cancel';
+    $confirmModalDefaults.defaultLabels.close = 'Close';
 
   }
 
-  AppController.$inject = ['$rootScope', 'dbg', 'user', '$q', 'accountUser', 'account','$cookies', '$injector', 'fileUploader', 'domServices', '$scope', 'sessionExpire'];
-  function AppController($rootScope, dbg, user, $q, accountUser, account, $cookies, $injector, fileUploader, domServices, $scope, sessionExpire) {
+  AppController.$inject = ['$rootScope', 'dbg', 'user', '$cookies', '$injector', 'domServices', '$scope', 'sessionExpire'];
+  function AppController($rootScope, dbg, user, $cookies, $injector, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
+    vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
-    $rootScope.$on('app.updateUser', init);
+    $rootScope.$on('app.user', init);
 
     init();
 
     function init() {
       user.getUserData(vm).then(function(res) {
         setSessionStorage(res);
-        vm.user = res;
+        sessionExpire.init();
       });
-      accountUser.getAccountUserData().then(function(res) { vm.accountUser = res });
-      account.getAccountData().then(function(res) { vm.account = res });
-      fileUploader.getToken().then(function(res) { vm.fileUploader = res });
-      sessionExpire.init();
     }
 
     function openModal(id) {
       setTimeout(function () {
         domServices.modal(id);
       }, 10);
+    }
+
+    function hasPermissions(perrmission){
+      if(vm.permissions){
+        return vm.permissions[perrmission]
+      }else{
+        return false
+      }
     }
 
     function setSessionStorage(res) {
@@ -231,7 +279,10 @@
       sessionBuilder: {
         noContacts: 'There are no contacts selected',
         cantSelect: "You can't select members from this list",
-        noMobile: ' has no mobile provided'
+        noMobileForContact: 'The contact has no mobile provided',
+        noMobileForContacts: ' contacts has no mobile provided',
+        noContactsToInvite: 'You have already sent invitation to selected users',
+        noContactsToSendSMS: 'Selected contacts has no mobile provided'
       },
       gallery: {
         noResource: 'No resource selected',

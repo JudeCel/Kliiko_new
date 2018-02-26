@@ -6,11 +6,14 @@
   contactListFactory.$inject = ['$q','globalSettings', '$resource', 'dbg', 'Upload'];
   function contactListFactory($q, globalSettings, $resource, dbg, Upload)  {
     var contactListsApi = {
-      contactLists: $resource(globalSettings.restUrl +  '/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUsersToRemove: $resource(globalSettings.restUrl +  '/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsUser: $resource(globalSettings.restUrl +  '/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsImport: $resource(globalSettings.restUrl +  '/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      contactListsValidate: $resource(globalSettings.restUrl +  '/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}})
+      contactLists: $resource('/contactLists/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUsersToRemove: $resource('/contactListsUsersToRemove', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsUser: $resource('/contactListsUser/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsImport: $resource('/contactLists/:id/import', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      contactListsValidate: $resource('/contactLists/:id/validate', {id:'@id'}, {post: {method: 'POST'}}),
+      toggleListState: $resource('/contactLists/:id/toggleListState', {id:'@id'}, {post: {method: 'POST'}}),
+      contactComments: $resource('/contactListsUser/comments', {}, {post: {method: 'POST'}}),
+      canExportContactListData: $resource('/contactLists/canExportContactListData', {}, {get: {method: 'GET'}})
     };
 
 
@@ -24,14 +27,27 @@
     publicServices.createUser = createUser;
     publicServices.updateUser = updateUser;
     publicServices.deleteUser = deleteUser;
+    publicServices.getContactComments = getContactComments;
 
     publicServices.parseImportFile = parseImportFile;
     publicServices.addImportedContacts = addImportedContacts;
     publicServices.validateContactImportData = validateContactImportData;
-
+    publicServices.canExportContactListData = canExportContactListData;
+    publicServices.toggleListState = toggleListState;
 
     return publicServices;
 
+    function canExportContactListData() {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > canExportContactListData > make rest call');
+      contactListsApi.canExportContactListData.get({}, function(res) {
+        dbg.log2('#contactListServices > canExportContactListData > rest call responds');
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
 
     /**
      * Fetch all contact lists for this account
@@ -58,19 +74,14 @@
 
 
       function prepareCustomFieldsData(input) {
-        for (var i = 0, len = input.length; i < len ; i++) {
-          for (var j = 0, len = input[i].members.length; j < len ; j++) {
-
+        for (var i = 0; i < input.length ; i++) {
+          for (var j = 0; j < input[i].members.length ; j++) {
             if (input[i].members[j].customFields) {
               input[i].members[j].CustomFieldsObject = input[i].members[j].data.customFields;
             }
-
           }
-
         }
-
         return input;
-
       }
     }
 
@@ -270,6 +281,19 @@
       return deferred.promise;
     }
 
+    function toggleListState(list) {
+      var deferred = $q.defer();
+      contactListsApi.toggleListState.post({ id: list.id }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
+
     function validateContactImportData(listId, contactList) {
       var params = {
         contactsArray: contactList
@@ -281,6 +305,23 @@
           deferred.reject(res.error);
         } else {
           deferred.resolve(res);
+        }
+      });
+
+      return deferred.promise;
+    }
+
+    function getContactComments(contactListId, id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#contactListServices > getContactComments > call to api');
+      contactListsApi.contactComments.post({},{ contactListId: contactListId, id: id },function(res) {
+        if (res.error) {
+          dbg.log1('#contactListServices > getContactComments > error: ', res.error);
+          deferred.reject(res.error);
+        } else {
+          dbg.log1('#contactListServices > getContactComments > success '); dbg.log2(res);
+          deferred.resolve(res.data);
         }
       });
 

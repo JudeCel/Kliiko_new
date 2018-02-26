@@ -37,17 +37,17 @@
 				/(msie) ([\w.]+)/.exec(ua) ||
 				ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
 				[];
-				
+
 				return { browser:match[ 1 ] || "", version:match[ 2 ] || "0" };
 			},
 			matched = ua_match(navigator.userAgent),
 			browser = {};
-			
+
 			if (matched.browser) {
 				browser[ matched.browser ] = true;
 				browser.version = matched.version;
 			}
-			
+
 			if (browser.chrome) {
 				browser.webkit = true;
 			} else if (browser.webkit) {
@@ -100,7 +100,7 @@
 				tags: ["a"],
 				tooltip: "Create link"
 			},
-			
+
 			unLink : {
 				groupIndex: 6,
 				visible: true,
@@ -224,7 +224,7 @@
 								alsoResize: this.editor
 							}, this.options.resizeOptions));
 						}
-						
+
 						this.ui.toolbar.find("li").each(function () {
 							var li = $(this);
 
@@ -243,7 +243,7 @@
 							resize: "none"
 						}).show();
 						this.editor.hide();
-						
+
 						if (this.options.resizeOptions && $.fn.resizable) {
 							// if element.height still the same after frame was hidden
 							if (elementHeight === this.element.height()) {
@@ -523,16 +523,16 @@
 					}
 				}
 			},
-			
+
 			cssWrap: {
 				visible : false,
 				groupIndex: 6,
 				tooltip: "CSS Wrapper",
-				exec: function () { 
+				exec: function () {
 					$.wysiwyg.controls.cssWrap.init(this);
 				}
 			}
-			
+
 		};
 
 
@@ -1014,7 +1014,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			if (!r) {
 				return r;
 			}
-			
+
 			if (r.toString) {
 				r = r.toString();
 			} else if (r.text) {	// IE
@@ -1816,8 +1816,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		};
 
 		this.setContent = function (newContent) {
+			if (newContent) {
+				newContent = newContent.replace(/<p/gi, "<div");
+				newContent = newContent.replace(/\/p>/gi, "/div>");
+			}
 			this.editorDoc.body.innerHTML = newContent;
 			this.saveContent();
+
+
 
 			return this;
 		};
@@ -1917,15 +1923,15 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				oWysiwyg.setContent("");
 			});
 		},
-		
+
 		resize: function (object) {
 			return object.each(function() {
 				var oWysiwyg = $(this).data("wysiwyg");
-				
+
 				if (!oWysiwyg) {
 					return this;
 				}
-				
+
 				oWysiwyg.ui.grow();
 			});
 		},
@@ -1977,7 +1983,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 
 			return oWysiwyg.getContent();
 		},
-    
+
 		getSelection: function (object) {
 			// no chains because of return
 			var oWysiwyg = object.data("wysiwyg");
@@ -2027,7 +2033,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 
 			bind: function (Wysiwyg) {
 				var self = this;
-				
+
 				var makeHandler = function() {
 					return function(event) {
 						var pluginName = event.data.plugin.name;
@@ -2042,7 +2048,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					for (i = 0; i < handlers.length; i += 1) {
 						plugin = self.parseName(handlers[i]);
 
-						$(Wysiwyg.editorDoc).bind(action + ".wysiwyg", {plugin: plugin}, 
+						$(Wysiwyg.editorDoc).bind(action + ".wysiwyg", {plugin: plugin},
 							makeHandler()
 						);
 					}
@@ -2115,14 +2121,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				return true;
 			}
 		},
-		
+
 		quirk: {
 			quirks: [],
-			
+
 			assert: function(expression, message) {
 				if (!expression) throw new Error(message);
 			},
-			
+
 			register: function(quirk) {
 				this.assert(typeof quirk.init === 'function', 'quirk.init must be a function');
 				this.quirks.push(quirk);
@@ -2232,7 +2238,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 
 	/**
 	 * Unifies dialog methods to allow custom implementations
-	 * 
+	 *
 	 * Events:
 	 *     * afterOpen
 	 *     * beforeShow
@@ -2241,23 +2247,23 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 	 *     * afterHide
 	 *     * beforeClose
 	 *     * afterClose
-	 * 
+	 *
 	 * Example:
 	 * var dialog = new ($.wysiwyg.dialog)($('#idToTextArea').data('wysiwyg'), {"title": "Test", "content": "form data, etc."});
-	 * 
+	 *
 	 * dialog.bind("afterOpen", function () { alert('you should see a dialog behind this one!'); });
-	 * 
+	 *
 	 * dialog.open();
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	$.wysiwyg.dialog = function (jWysiwyg, opts) {
-		
+
 		var theme	= (jWysiwyg && jWysiwyg.options && jWysiwyg.options.dialog) ? jWysiwyg.options.dialog : (opts.theme ? opts.theme : "default"),
 			obj		= new $.wysiwyg.dialog.createDialog(theme),
 			that	= this,
 			$that	= $(that);
-				
+
 		this.options = {
 			"modal": true,
 			"draggable": true,
@@ -2284,7 +2290,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			var $dialog = obj.show.apply(that, []);
 
 			$that.trigger("afterOpen", [$dialog]);
-			
+
 		};
 
 		this.show = function () {
@@ -2295,24 +2301,24 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 
 		this.hide = function () {
 			this.isOpen = false;
-			
+
 			$that.trigger("beforeHide");
-			
+
 			var $dialog = obj.hide.apply(that, []);
-			
+
 			$that.trigger("afterHide", [$dialog]);
 		};
 
 		// Closes the dialog window.
 		this.close = function () {
 			this.isOpen = false;
-						
+
 			var $dialog = obj.hide.apply(that, []);
-			
+
 			$that.trigger("beforeClose", [$dialog]);
-			
+
 			obj.destroy.apply(that, []);
-			
+
 			$that.trigger("afterClose", [$dialog]);
 
 			jWysiwyg.ui.focus();
@@ -2344,7 +2350,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		createDialog : function (name) {
 			return new $.wysiwyg.dialog._themes[name]();
 		},
-		
+
 		getDimensions : function () {
 			var width  = document.body.scrollWidth,
 				height = document.body.scrollHeight;
@@ -2384,7 +2390,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 						dialogWidth = this.options.width === 'auto' ? 450 : this.options.width;
 
 					// console.log(that._$dialog);
-					
+
 					that._$dialog.dialog({
 						modal: this.options.modal,
 						draggable: this.options.draggable,
@@ -2436,15 +2442,15 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				var $link = $('<a href="#" class="wysiwyg-dialog-close-button">X</a>');
 
 				$link.click(function () {
-					abstractDialog.close(); // this is important it makes sure that is close from the abstract $.wysiwyg.dialog instace, not just locally 
+					abstractDialog.close(); // this is important it makes sure that is close from the abstract $.wysiwyg.dialog instace, not just locally
 				});
-				
+
 				$topbar.find('.wysiwyg-dialog-close-wrapper').prepend($link);
 
 				var $dcontent = $('<div class="wysiwyg-dialog-content">'+content+'</div>');
 
 				that._$dialog.append($topbar).append($dcontent);
-				
+
 				// Set dialog's height & width, and position it correctly:
 				var dialogHeight = this.options.height === 'auto' ? 300 : this.options.height,
 					dialogWidth = this.options.width === 'auto' ? 450 : this.options.width;
@@ -2469,12 +2475,12 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 						.css({"width": dimensions[0], "height": dimensions[1]});
 					that._$dialog.wrap(wrapper);
 				}
-				
+
 				// Draggable feature:
-				if (this.options.draggable) { 
-					
+				if (this.options.draggable) {
+
 					var mouseDown = false;
-					
+
 					that._$dialog.find("div.wysiwyg-dialog-topbar").bind("mousedown", function (e) {
 						e.preventDefault();
 						$(this).css({ "cursor": "move" });
@@ -2484,7 +2490,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 							offsetY = (e.pageY - parseInt(_dialog.css("top"), 10));
 						mouseDown = true;
 						$(this).css({ "cursor": "move" });
-						
+
 						$(document).bind("mousemove", function (e) {
 							e.preventDefault();
 							if (mouseDown) {
@@ -2499,10 +2505,10 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 							$topbar.css({ "cursor": "auto" });
 							$(document).unbind("mousemove").unbind("mouseup");
 						});
-					
+
 					});
 				}
-				
+
 				that._$dialog.show();
 				return that._$dialog;
 
@@ -2514,17 +2520,17 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			};
 
 			this.destroy = function() {
-			
+
 				// Modal feature:
-				if (this.options.modal) { 
+				if (this.options.modal) {
 					that._$dialog.unwrap();
 				}
-				
+
 				// Draggable feature:
-				if (this.options.draggable) { 
+				if (this.options.draggable) {
 					that._$dialog.find("div.wysiwyg-dialog-topbar").unbind("mousedown");
 				}
-				
+
 				that._$dialog.remove();
 				return that._$dialog;
 			};
@@ -2552,7 +2558,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			console.error("Method '" +  method + "' does not exist on jQuery.wysiwyg.\nTry to include some extra controls or plugins");
 		}
 	};
-	
+
 	$.fn.getWysiwyg = function () {
 		return this.data("wysiwyg");
 	};

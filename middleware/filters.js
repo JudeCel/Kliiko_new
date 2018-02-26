@@ -5,6 +5,7 @@ var AccountUser = models.AccountUser;
 var Subscription = models.Subscription;
 var subdomains = require('../lib/subdomains');
 var subscriptionService = require('../services/subscription');
+var sessionMembersService = require('../services/sessionMember');
 var myDashboardServices = require('../services/myDashboard');
 var jwt = require('../lib/jwt');
 var _ = require('lodash');
@@ -16,25 +17,33 @@ module.exports = {
   myDashboardPage: myDashboardPage
 }
 
+function createPlanSelectRedirectUrl(req, plan) {
+  return subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/account-profile/upgrade-plan?step=2&plan=' + plan);
+}
+
 function planSelectPage(req, res, next) {
-  let redirectUrl = subdomains.url(req, res.locals.currentDomain.name, '/account-hub/landing');
-  if(req.originalUrl == '/account-hub/selectPlan' || req.originalUrl == '/account-hub/landing') {
-    next();
-  }
-  else if(_.includes(res.locals.currentDomain.roles, 'accountManager')) {
-    Subscription.find({ where: { accountId: res.locals.currentDomain.id } }).then(function(subscription) {
+  let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub/landing');
+  if(req.currentResources.accountUser.role ==  'accountManager') {
+    Subscription.find({ where: { accountId: req.currentResources.account.id } }).then(function(subscription) {
       if(subscription) {
         next();
       }
       else {
-        subscriptionService.createSubscriptionOnFirstLogin(res.locals.currentDomain.id, req.user.id, redirectUrl).then(function(response) {
+        subscriptionService.createSubscriptionOnFirstLogin(req.currentResources.account.id, req.user.id, redirectUrl).then(function(response) {
           if(response && 'hosted_page' in response) {
             res.writeHead(301, { Location: response.hosted_page.url } );
             res.end();
           }
           else {
             if(req.session.landed) {
-              next();
+              let freePlans = ["free_account", "free_trial"];
+
+              if (response.selectedPlanOnRegistration && !_.includes(freePlans, response.selectedPlanOnRegistration)) {
+                let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
+                res.redirect(redirectUrl);
+              } else {
+                next();
+              }
             }
             else {
               res.redirect(redirectUrl);
@@ -57,22 +66,34 @@ function planSelectPage(req, res, next) {
   }
 }
 
-function myDashboardPage(req, res, next, accountUserId) {
+function myDashboardPage(req, res, next, accountUserId, forceBilling) {
   let myDashboardUrl = subdomains.url(req, subdomains.base, '/my-dashboard');
 
   myDashboardServices.getAllData(req.user.id, req.protocol).then(function(result) {
-
     let managers = result.accountManager || result.facilitator;
-    if(!managers) {
-      res.redirect(myDashboardUrl);
-    } else {
-      if((!req.user.signInCount) && !req.session.landed) {
-        req.session.landed = true;
-        res.redirect(subdomains.url(req, selectManager(result.accountManager, result.facilitator, accountUserId).subdomain, '/account-hub/landing'));
-      }
-      else {
+    if (!managers) {
+      let theOnlySession = getTheOnlySession(result);
+      if (theOnlySession && (theOnlySession.showStatus == 'Open' || theOnlySession.showStatus == 'Expired')) {
+          sessionMembersService.findOrCreate(req.user.id, theOnlySession.id).then((sessionMmeber) => {
+            let token = jwt.token(sessionMmeber.id, 'SessionMember:', myDashboardUrl);
+            getUrl(res, token, myDashboardUrl);
+          }, (error) => {
+            res.redirect(myDashboardUrl);
+          });
+      } else {
         res.redirect(myDashboardUrl);
       }
+    } else {
+      let redirectURL;
+      const subDomain = selectManager(result.accountManager, result.facilitator, accountUserId).subdomain;
+
+      if (isBillingRequired(req, forceBilling)) {
+        req.session.landed = true;
+        redirectURL = subdomains.url(req, subDomain, result.accountManager ? '/account-hub/paymentDetails' : '/account-hub/landing');
+      } else {
+        redirectURL = myDashboardUrl;
+      }
+      res.redirect(redirectURL);
     }
   }, function(error) {
     res.send({ error: error });
@@ -95,6 +116,18 @@ function getUrl(res, token, url) {
       res.redirect(body.redirect_url);
     }
   });
+}
+
+function getTheOnlySession(accounts) {
+  let participants = accounts.participant;
+  let observers = accounts.observer;
+  if (participants && !observers && participants.data.length == 1) {
+    return participants.data[0].dataValues.session;
+  } else if (observers && !participants && observers.data.length == 1) {
+    return observers.data[0].dataValues.session;
+  } else {
+    return null;
+  }
 }
 
 function selectManager(accountManagers, facilitators, accountUserId) {
@@ -126,5 +159,17 @@ function buildUrlForChatToken() {
 }
 
 function shouldRedirectFacilitatorToLandingPage(req, res) {
-  return req.user.signInCount == 1 && _.includes(res.locals.currentDomain.roles, 'facilitator') && !req.session.landed;
+  return req.user.signInCount == 1 && (req.currentResources.accountUser.role == 'facilitator') && !req.session.landed;
+}
+
+function isLandingRequired(req, forceLanding) {
+  return isFirstSignIn(req) && !req.session.landed || forceLanding;
+}
+
+function isBillingRequired(req, forceBilling) {
+  return isFirstSignIn(req) && !req.session.landed || forceBilling;
+}
+
+function isFirstSignIn(req) {
+  return !req.user.signInCount || req.user.signInCount <= 1;
 }

@@ -3,14 +3,15 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
     var colorSchemeId, brandLogoId;
     vm.editedContactIndex = null;
     vm.step1 = {};
+    vm.q = "";
     vm.$state = $state;
 
     vm.selectedFacilitator = {};
@@ -22,11 +23,14 @@
     vm.session = null;
     vm.selectedFacilitatorEmail = null;
     vm.canSelectFacilitator = false;
+    vm.endDateEdited = false;
 
     vm.formAction = null;
     vm.name = '';
     vm.type = null;
     vm.typeToConfirm = '';
+    vm.anonymous = '';
+    vm.anonymousToConfirm = '';
     vm.editedContactListName = '';
 
     vm.updateStep = updateStep;
@@ -36,11 +40,14 @@
     vm.openFacilitatorForm = openFacilitatorForm;
     vm.closeFacilitatorForm = closeFacilitatorForm;
     vm.deleteContact = deleteContact;
+    vm.filterContacts = filterContacts;
     vm.editContact = editContact;
     vm.saveEdited = saveEdited;
     vm.inviteFacilitator = inviteFacilitator;
     vm.cleanColorScheme = cleanColorScheme;
     vm.updateOrCleanColorScheme = updateOrCleanColorScheme;
+    vm.showTimeBlockedMessage = showTimeBlockedMessage;
+    vm.showSocialMediaGraphicsMessage = showSocialMediaGraphicsMessage;
 
     vm.currentPage = 1;
     vm.pageSize = 3;
@@ -52,30 +59,36 @@
       startingDay: 1,
     }
 
+    vm.memberNotCurrentUser = function(member, accountUser) {
+      return member.id !== accountUser.id;
+    }
+
     function initCanSelectFacilitator() {
       vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
-        && new Date(vm.step1.endTime) > new Date(vm.step1.startTime);
+        && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
     }
 
     function inviteFacilitator(facilitator) {
       if (!vm.selectedFacilitator || facilitator.email != vm.selectedFacilitator.email) {
         vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
         var text = vm.selectedFacilitator ?
-          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Participant's level of engagement!</p>"
-            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Facilitator on any future emails.</p>"
-            + "<p>- As will the Facilitator-Avatar Name in the Chat Room.</p>"
-            + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Participants explaining the change.</p>" :
-          "Are you sure you want to select this Facilitator - <b>"
+          "<p>- If you have already sent Session Invitations, and started a Session, this may affect a Guest's level of engagement!</p>"
+            + "<p>- The Name & Contact details on the Email Templates signature will change to the new Host on any future emails.</p>"
+            + "<p>- As will the Host-Avatar Name in the Chat Room.</p>"
+            + "<p>- If unavoidable, we strongly recommend sending an SMS, Generic Email or Chat Room Private Message to Guests explaining the change.</p>" :
+          "Are you sure you want to select this Host - <b>"
             + facilitator.firstName + " " + facilitator.lastName
-            + "</b>?<br/> We strongly suggest that any change to the Facilitator later, may confuse Participants!";
+            + "</b>?<br/> We strongly suggest that any change to the Host later, may confuse Guests!";
         var leftAndWide = vm.selectedFacilitator ? true : false;
         $confirm({ text: text, htmlText: $sce.trustAsHtml(text), textLeft: leftAndWide, wide: leftAndWide }).then(function() {
           vm.session.addMembers(facilitator, 'facilitator').then(function(res) {
-            vm.session.sessionData.facilitator = facilitator;
-            vm.session.steps.step1.facilitator = facilitator;
+            if (!res.ignored) {
+              vm.session.sessionData.facilitator = facilitator;
+              vm.session.steps.step1.facilitator = facilitator;
+              messenger.ok(res.message);
+            }
             vm.selectedFacilitator = vm.session.steps.step1.facilitator;
             vm.selectedFacilitatorEmail = vm.selectedFacilitator.email;
-            messenger.ok(res.message);
           }, function (err) {
             messenger.error(err);
           });
@@ -89,14 +102,19 @@
     }
 
     function updateOrCleanColorScheme(id, executeUpdate) {
+      propertyDisabler.disablePropertyChanges('colorScheme');
       if (vm.session.steps.step1.brandProjectPreferenceId == id) {
         vm.colorScheme = null;
         vm.session.steps.step1.brandProjectPreferenceId = null;
-        executeUpdate({ brandProjectPreferenceId: null });
       } else {
-        executeUpdate({ brandProjectPreferenceId: id });
         vm.session.steps.step1.brandProjectPreferenceId = id;
       }
+      vm.session.updateStep({ brandProjectPreferenceId: vm.session.steps.step1.brandProjectPreferenceId }, vm.session).then(function() {
+        propertyDisabler.enablePropertyChanges('colorScheme');
+      }, function() {
+        propertyDisabler.enablePropertyChanges('colorScheme');
+        messenger.error(err);
+      });
     }
 
     function newFacilitator(userData) {
@@ -106,7 +124,9 @@
       }
 
       step1Service.createNewFcilitator(params).then(function(result) {
-        result.user.listName = "Facilitators";
+        result.user.listName = "Hosts";
+        result.user.role = 'facilitator';
+        result.user.id = result.user.accountUserId;
         vm.allContacts.push(result.user);
         messenger.ok(result.facMessage);
         closeFacilitatorForm();
@@ -131,6 +151,7 @@
 
       step1Service.updateContact(params).then(function(res) {
         res.data.listName = vm.editedContactListName;
+        res.data.role = vm.allContacts[vm.editedContactIndex].role;
         angular.copy(res.data, vm.allContacts[vm.editedContactIndex])
         vm.userData = {};
         messenger.ok(res.message);
@@ -159,16 +180,45 @@
       vm.userData = {};
     }
 
+    function showTimeBlockedMessage() {
+      if (vm.session.steps.step1.type && !vm.session.properties.features.dateAndTime.enabled) {
+        $confirm({ text: vm.session.properties.features.dateAndTime.message, htmlText: $sce.trustAsHtml(vm.session.properties.features.dateAndTime.message), title: null, closeOnly: true, showAsError: false });
+      } else if (vm.session.steps.step1.canEditTime == false) {
+        $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
+      }
+    }
+
+    function showSocialMediaGraphicsMessage() {
+      $confirm({ text: vm.session.properties.features.socialMediaGraphics.message, title: null, closeOnly: true, showAsError: false });
+    }
+
+    function filterContacts() {
+      if(vm.q) {
+        return vm.q;
+      }
+      else {
+        var facilitator = vm.session.steps.step1.facilitator;
+        return function(item) {
+          return ['facilitator', 'accountManager'].indexOf(item.role) > -1 || facilitator && facilitator.email === item.email;
+        };
+      }
+    }
+
     function getAllContacts() {
       step1Service.getAllContacts(sessionId).then(function(results) {
+        vm.allContacts = [];
         results.map(function(result) {
-          if (result.name == "Facilitators") {
+          if (result.name == "Hosts") {
             vm.facilitatorContactListId = result.id;
           }
-          result.members.map(function(member) {
-            member.listName = result.name;
-            vm.allContacts.push(member);
-          });
+          if (result.members.length) {
+            result.members.map(function(member) {
+              member.id = member.accountUserId;
+              member.role = result.role;
+              member.listName = result.name;
+              vm.allContacts.push(member);
+            });
+          }
         });
       }, function(error) {
         messenger.error(error);
@@ -184,11 +234,16 @@
       vm.step1.startTime = vm.session.steps.step1.startTime;
       vm.step1.endTime = vm.session.steps.step1.endTime;
       vm.step1.timeZone = vm.session.steps.step1.timeZone;
-      vm.step1.ngModalOptions = { timezone: vm.session.steps.step1.timeZoneOffset };
+      vm.step1.ngModalOptions = { timezone: 'UTC' };
       initStep(null, 'initial');
       getAllContacts();
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, function() {
+        vm.session.getRemoteData();
+        getAllContacts();
+      });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
+      vm.anonymous = vm.session.steps.step1.anonymous.toString();
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
       vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
       initCanSelectFacilitator();
@@ -232,8 +287,12 @@
     }
 
     vm.updateName = function() {
-      updateStep({name: vm.name}).then(function() {
-        vm.session.steps.step1.name = vm.name;
+      updateStep({name: vm.name}).then(function(res) {
+        if (res.ignored) {
+          vm.name = vm.session.steps.step1.name;
+        } else {
+          vm.session.steps.step1.name = vm.name;
+        }
         initCanSelectFacilitator();
       }, function(err) {
         vm.name = vm.session.steps.step1.name;
@@ -251,10 +310,36 @@
     vm.updateType = function () {
       domServices.modal('sessionTypeModal', 'close');
       vm.type = vm.typeToConfirm;
-      updateStep({type: vm.type}).then(function() {
-        vm.session.steps.step1.type = vm.type;
+      updateStep({type: vm.type}).then(function(res) {
+        if (res.ignored) {
+          vm.type = vm.session.steps.step1.type;
+        } else {
+          vm.session.steps.step1.type = vm.type;
+          vm.session.properties = res.sessionBuilder.properties;
+          vm.session.startTime = vm.step1.startTime = res.sessionBuilder.steps.step1.startTime;
+          vm.session.endTime = vm.step1.endTime = res.sessionBuilder.steps.step1.endTime;
+        }
+        initCanSelectFacilitator();
       }, function(err) {
         vm.type = vm.session.steps.step1.type;
+      });
+    }
+
+    vm.confirmAnonymous = function () {
+      vm.anonymousToConfirm = vm.anonymous;
+      vm.anonymous = vm.session.steps.step1.anonymous.toString();
+      if (!vm.session.steps.step1.anonymous) {
+        domServices.modal('sessionAnonymousModal');
+      }
+    }
+
+    vm.updateAnonymous = function () {
+      domServices.modal('sessionAnonymousModal', 'close');
+      vm.anonymous = vm.anonymousToConfirm;
+      vm.session.setAnonymous().then(function(res) {
+        vm.session.steps.step1.anonymous = res.anonymous;
+      }, function(err) {
+        vm.anonymous = vm.session.steps.step1.anonymous;
       });
     }
 
@@ -275,25 +360,56 @@
       return false;
     }
 
-    function updateStep(dataObj) {
-      if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
-        if(validateDate(vm.step1.startTime) && validateDate(vm.step1.endTime)) {
-          updateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone });
-        }
-        initCanSelectFacilitator();
-        return;
-      }
-
+    function postUpdateStep(dataObj) {
       var deferred = $q.defer();
-
-      vm.session.updateStep(dataObj).then(function() {
-        deferred.resolve();
+      vm.session.updateStep(dataObj, vm.session).then(function(res) {
+        deferred.resolve(res);
       }, function (err) {
-        messenger.error(err);
+        if(err.startTime && vm.endDateEdited) {
+          messenger.error(err);
+        }
+        if(!err.startTime) {
+          messenger.error(err);
+        }
+
+        validateDate(vm.step1.startTime)
+        validateDate(vm.step1.endTime)
+
         deferred.reject(err);
       });
 
       return deferred.promise;
+    }
+
+    function updateStep(dataObj) {
+
+      if(dataObj == 'endTime') {
+        vm.endDateEdited = true;
+      }
+
+      if (dataObj == 'startTime' || dataObj == 'endTime' || dataObj == 'timeZone') {
+        if (propertyDisabler.isPropertyDisabled('dateAndTime')) {
+          setTimeout(function() {
+            updateStep(dataObj);
+          }, 10);
+          return;
+        }
+        propertyDisabler.disablePropertyChanges('dateAndTime');
+        initCanSelectFacilitator();
+        postUpdateStep({ startTime: vm.step1.startTime, endTime: vm.step1.endTime, timeZone: vm.step1.timeZone }).then(function(res) {
+          if (res.ignored) {
+            vm.step1.startTime = vm.session.steps.step1.startTime;
+            vm.step1.endTime = vm.session.steps.step1.endTime;
+            vm.step1.timeZone = vm.session.steps.step1.timeZone;
+          }
+          propertyDisabler.enablePropertyChanges('dateAndTime');
+        }, function(error) {
+          propertyDisabler.enablePropertyChanges('dateAndTime');
+        });
+        return;
+      } else {
+        return postUpdateStep(dataObj);
+      }
     }
 
     // Gallery stuff
@@ -307,19 +423,12 @@
 
     function initGallery(gc) {
       vm.uploadTypes = [gc.getUploadType('brandLogo')];
-
-      gc.listResources({ type: ['image'], scope: ['brandLogo'], stock: true }).then(function(result) {
-        gc.resourceList = result.resources;
-        for(var i in result.resources) {
-          var resource = result.resources[i];
-          var type = gc.getUploadTypeFromResource(resource);
-          gc.selectionList[type].push(resource);
-        }
-      });
+      gc.preloadResources({ type: ['image'], scope: ['brandLogo'], stock: true });
     }
 
-    function galleryDropdownData(dependency) {
+    function galleryDropdownData(dependency, validation) {
       return {
+        validation: validation || 'brandLogoAndCustomColors',
         types: vm.uploadTypes,
         modal: { upload: true, select: true },
         dependency: dependency

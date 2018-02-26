@@ -14,11 +14,13 @@ module.exports = {
   update: update,
   parseImportFile: parseImportFile,
   importContacts: importContacts,
-  validateContacts: validateContacts
+  validateContacts: validateContacts,
+  canExportContactListData: canExportContactListData,
+  toggleListState: toggleListState
 };
 
 function index(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   let sessionId = req.query.sessionId;
 
   contactListService.allByAccount(accountId, sessionId).then(function(lists) {
@@ -42,7 +44,7 @@ function create(req, res, next) {
   req.body.customFields = _.uniq(req.body.customFields);
 
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   contactListService.create(params).then(function(result) {
     res.send({ list: result, message: MessagesUtil.routes.contactList.created });
@@ -62,7 +64,7 @@ function update(req, res, next) {
 
   let params = req.body;
   params.id = req.params.id;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   contactListService.update(params).then(function(result) {
     res.send({success: true, itemsUpdatedAmount:result, message: MessagesUtil.routes.contactList.updated });
@@ -71,7 +73,7 @@ function update(req, res, next) {
   })
 }
 
-// Create Params example
+// Destroy Params example
 // {
 //    id: INTEGER/required => 1
 //  }
@@ -80,10 +82,27 @@ function update(req, res, next) {
 function destroy(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
 
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
   contactListService.destroy(req.params.id, accountId).then(function(lists) {
     res.send({success: true, lists: lists, message: MessagesUtil.routes.contactList.removed});
   },function(err) {
+    res.send({ error: err });
+  });
+}
+
+// toggleListState List Params example
+// {
+//    id: INTEGER/required => 1
+//  }
+//
+
+function toggleListState(req, res, next) {
+  validations.params(res, req.params.id, 'query param @id is missed');
+
+  let accountId = req.currentResources.account.id;
+  contactListService.toggleListState(req.params.id, accountId).then(() => {
+    res.send({message: MessagesUtil.routes.contactList.activated});
+  },(err) => {
     res.send({ error: err });
   });
 }
@@ -118,7 +137,7 @@ function importContacts(req, res, next) {
   validations.params(res, req.params.id, 'query param @id is missed');
   validations.body(res, req.body.contactsArray, 'contactsArray is missed');
 
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
 
   contactListUserService.bulkCreate(req.body.contactsArray, accountId).then(
     function(result) {
@@ -132,7 +151,12 @@ function importContacts(req, res, next) {
       res.send({error: err});
     }
   );
+}
 
-
-
+function canExportContactListData(req, res, next) {
+  contactListService.canExportContactListData(req.currentResources.account).then(function(result) {
+    res.send({success: true, result: result});
+  }, function(err) {
+    res.send({error:err});
+  });
 }

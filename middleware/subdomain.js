@@ -1,5 +1,4 @@
 'use strict';
-
 var models  = require('./../models');
 var Sequelize = models.sequelize;
 var policy = require('./policy');
@@ -9,27 +8,23 @@ var constants = require('../util/constants');
 var libSubdomains = require('./../lib/subdomains');
 var MessagesUtil = require('./../util/messages');
 
-function assignCurrentDomain(result, res) {
-  res.locals.currentDomain = { id: result.id, name: result.subdomain, roles: [result.accountUser.role], realName: result.realName };
-  res.locals.hasAccess = policy.hasAccess;
-}
-
-function assignCurrentUserInfo(result, req) {
-  _.merge(req.user, _.pick(result.accountUser.dataValues, prepareValidAccountUserParams()));
-  req.user.accountUserId = result.accountUser.id;
-}
-
-function prepareValidAccountUserParams() {
-  let safeAccountUserParams = _.cloneDeep(constants.safeAccountUserParams);
-  let index = safeAccountUserParams.indexOf('id');
-  safeAccountUserParams.splice(index, 1);
-  return safeAccountUserParams;
+function assignCurrentDomain(result, req) {
+  req.currentResources = {
+    accountUser: { id: result.id, role: result.role},
+    account: {
+      id: result.Account.id,
+      name: result.Account.name,
+      subdomain: result.Account.subdomain,
+      admin: result.Account.admin
+    },
+    user: {id: result.User.id, email: result.User.email, selectedPlanOnRegistration: result.User.selectedPlanOnRegistration}
+  };
 }
 
 function getSubdomain(req) {
-  let subdomains = req.subdomains
-  let skipSubdomains = _.split(process.env.SERVER_SKIP_SUBDOMAINS, ",")
-  subdomains = _.difference(req.subdomains, skipSubdomains)
+  let subdomains = req.subdomains;
+  let skipSubdomains = _.split(process.env.SERVER_SKIP_SUBDOMAINS, ",");
+  subdomains = _.difference(req.subdomains, skipSubdomains);
 
 
   if (_.last(subdomains)) {
@@ -44,28 +39,30 @@ function comparedWithBaseDomainName(subdomain) {
 }
 
 function getAccauntWithRoles(user, subdomain, callback) {
-  models.User.find({attributes: ['id'], where: {id: user.id}}).then(function(user){
-    user.getAccounts({where: {
-      $and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)] },
-      include: [ { model: models.AccountUser }], limit: 1 }
-    ).then(function(accounts) {
-      let account = accounts[0];
-
-      if (account) {
-        if(account.AccountUser.active) {
-          let result = { id: account.id, subdomain: account.subdomain, realName: account.name, accountUser: account.AccountUser }
-          callback(null, result)
-        }
-        else {
-          callback(MessagesUtil.middleware.subdomain.deactivated);
-        }
-      }else {
-        callback(true)
+  models.AccountUser.find({
+    attributes: ['id', 'role'],
+    active: true,
+    include: [
+      { model: models.User,
+        where: { id: user.id },
+        attributes: constants.safeUserParams,
+        required: true
+      },
+      { model: models.Account,
+        attributes: ['id', 'name', 'subdomain', 'admin'],
+        where: {$and: [ Sequelize.where(Sequelize.col('subdomain'), subdomain)]},
+        required: true
       }
-    }).catch(function (err) {
-      callback(err)
-    });
-  });
+    ]
+  }).then(function(accountUser){
+    if (accountUser) {
+      callback(null, accountUser)
+    }else{
+      callback(MessagesUtil.middleware.subdomain.deactivated);
+    }
+  }).catch(function (err) {
+    callback(err)
+  });;
 }
 
 function isDomainAvailableForThisUser(req, res, subdomain, callback) {
@@ -86,8 +83,7 @@ module.exports = function(req, res, next) {
   if (comparedWithBaseDomainName(subdomain)) {
     isDomainAvailableForThisUser(req, res, subdomain, function(error, result){
       if(result){
-        assignCurrentDomain(result, res)
-        assignCurrentUserInfo(result, req)
+        assignCurrentDomain(result, req)
         next();
       }else{
         res.status(404).send(MessagesUtil.middleware.subdomain.noAccessOrNotFound);

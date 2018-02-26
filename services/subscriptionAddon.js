@@ -1,16 +1,16 @@
 'use strict';
 
-// require('./../lib/airbrake').handleExceptions();
-
 var MessagesUtil = require('./../util/messages');
 var models = require('./../models');
 var filters = require('./../models/filters');
+var subscriptionValidator = require('./validators/subscription');
 var Subscription = models.Subscription;
 var Account = models.Account;
 
 var q = require('q');
 var _ = require('lodash');
 var async = require('async');
+var Bluebird = require('bluebird');
 var chargebee = require('./../lib/chargebee').instance;
 
 // We can get credit count when we call addon from chargebee system, there is unit field for addon.
@@ -21,7 +21,8 @@ module.exports = {
   messages: MessagesUtil.subscriptionAddon,
   getAllAddons: getAllAddons,
   creditCount: creditCount,
-  chargeAddon: chargeAddon
+  chargeAddon: chargeAddon,
+  checkout: checkout
 }
 
 function getAllAddons() {
@@ -45,7 +46,8 @@ function creditCount(accountId) {
   let deferred = q.defer();
 
   Subscription.find({ where: { accountId: accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
-    deferred.resolve(subscription.SubscriptionPreference.data.paidSmsCount);
+    let smsCount = subscription.SubscriptionPreference.data.planSmsCount + subscription.SubscriptionPreference.data.paidSmsCount
+    deferred.resolve(smsCount);
   }).catch(function(error) {
     deferred.reject(error);
   });;
@@ -64,31 +66,57 @@ function creditCount(accountId) {
 function chargeAddon(params) {
   let deferred = q.defer();
 
-  Subscription.find({ where: { accountId: params.accountId }, include: [models.SubscriptionPreference] }).then(function(subscription) {
-    if(subscription.planId == 'free_account') {
-      deferred.reject(MessagesUtil.subscriptionAddon.notAllowed);
-    }
-    else {
+  return new Bluebird((resolve, reject) => {
+    subscriptionValidator.planAllowsToDoIt(params.accountId, 'canBuySms').then((subscription) => {
       if(!params.addon_quantity) {
-        return deferred.reject(MessagesUtil.subscriptionAddon.missingQuantity);
+        return reject(MessagesUtil.subscriptionAddon.missingQuantity);
       }
       params.subscriptionId = subscription.subscriptionId
       params.customerId = subscription.customerId
       params.id = subscription.id
       params.currentSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-      chargebeeAddonCharge(params).then(function(result) {
-        addSmsCreditsToAccountSubscription(params, result.invoice).then(function(result) {
-          deferred.resolve({smsCretiCount: result, message: MessagesUtil.subscriptionAddon.successfulPurchase});
-        }, function(error) {
-          deferred.reject(error);
-        })
-
-      }, function(error) {
-        deferred.reject(error);
+      chargebeeAddonCharge(params).then((result) => {
+        return addSmsCreditsToAccountSubscription(params, result.invoice)
+      }).then((result) => {
+        resolve({smsCretiCount: result, message: MessagesUtil.subscriptionAddon.successfulPurchase});
+      }).catch((error) => {
+        reject(error);
       });
-    }
-  }).catch(function(error) {
+    }).catch((error) => {
+      reject({ planTooLow: true, message: filters.errors(error) });
+    });
+  });
+}
+
+
+// Example params for charging addon
+// params = {
+//   accountId: accountId,
+//   addonId: addonId,
+//   addonQuantity: addonQuantity,
+//   subscriptionId: subscriptionId
+// }
+
+function checkout(params) {
+  let deferred = q.defer();
+
+  Subscription.find({ where: { accountId: params.accountId }}).then((subscription) => {
+      chargebee.hosted_page.update_payment_method({
+          customer : {
+            id : subscription.customerId
+          },
+          iframe_messaging: true,
+          embed: true
+      }).request((error, result) => {
+        if(error){
+          deferred.reject(error.message);
+        }else{
+          result.hosted_page.site_name =  process.env.CHARGEBEE_SITE
+          deferred.resolve(result);
+        }
+      });
+  }).catch((error) => {
     deferred.reject(filters.errors(error));
   });
 
@@ -123,9 +151,9 @@ function addSmsCreditsToAccountSubscription(params, addonInvoice) {
     where: { subscriptionId: params.id }
   }).then(function(result) {
     result.data.paidSmsCount = smsCount;
-    return result.update({ data:  result.data}, { returning: true });
+    return result.update({ data: result.data}, { returning: true });
   }).then(function(result) {
-    deferred.resolve(smsCount);
+    deferred.resolve((result.data.planSmsCount + result.data.paidSmsCount));
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
   })

@@ -2,16 +2,19 @@
   'use strict';
   angular.module('KliikoApp.user', []).factory('user', usersFactory);
 
-  usersFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg'];
-  function usersFactory($q, globalSettings, $resource, dbg) {
-    var usersRestApi = $resource(globalSettings.restUrl + '/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}});
+  usersFactory.$inject = ['$q', '$resource', 'dbg'];
+  function usersFactory($q, $resource, dbg) {
+    var usersRestApi = $resource('/user', {}, {post: {method: 'POST'}, changePassword: {method: 'PUT'}, permissions: {method: 'PATCH'}});
 
     var UserService = {};
     UserService.app = {};
+    UserService.account = {};
     UserService.user = {};
+    UserService.permissions = {};
     UserService.getUserData = getUserData;
     UserService.changeUserPassword = changeUserPassword;
     UserService.updateUserData = updateUserData;
+    UserService.reloadPermissions = reloadPermissions;
     return UserService;
 
     function getUserData(app) {
@@ -21,13 +24,17 @@
 
       usersRestApi.get({}, function (res) {
         dbg.log2('#KliikoApp.user > get user > server respond >', res);
-
         if(res.error) {
           deferred.reject(res.error);
         }
         else {
           $('#welcome-user').removeClass('hidden');
-          UserService.user = res;
+          UserService.app.user = res.user;
+          UserService.app.account = res.account;
+          UserService.app.accountUser = res.accountUser;
+          UserService.app.permissions = res.perrmissions;
+          UserService.app.subscription = res.subscription;
+
           deferred.resolve(UserService.user);
         }
       });
@@ -54,12 +61,27 @@
       var deferred = $q.defer();
 
       usersRestApi.post(data, function (res) {
-        if(res.error) {
+        if (res.error) {
           deferred.reject(res.error);
+        } else {
+          for (var field in res.user) {
+            UserService.app.accountUser[field] = res.user[field];
+          }
+          deferred.resolve(res);
         }
-        else {
-          UserService.app.user = res.user;
-          UserService.user = res.user;
+      });
+
+      return deferred.promise;
+    }
+
+    function reloadPermissions() {
+      var deferred = $q.defer();
+
+      usersRestApi.permissions({}, function (res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          UserService.app.permissions = res.permissions;
           deferred.resolve(res);
         }
       });

@@ -2,8 +2,7 @@
 var assert = require("chai").assert;
 var expect = require("chai").expect;
 var helpers = require('./../../mailers/helpers.js');
-
-var mailUrlPattern = "http://"+process.env.SERVER_DOMAIN+":"+process.env.SERVER_PORT;
+var urlHeplers = require('./../../services/urlHeplers');
 
 describe('Mailer helpers', () => {
   describe('getUrl ', () => {
@@ -13,22 +12,7 @@ describe('Mailer helpers', () => {
         let token = "token";
         let path = "/somePath";
         let url = helpers.getUrl(token, null, path);
-        assert.equal(url, mailUrlPattern + path + token );
-
-      });
-    });
-  });
-
-  describe('createTransport ', () => {
-    describe('success ', () => {
-      it('creates a fake transport for testing', (done) =>  {
-
-        let fakeTrans = helpers.createTransport();
-        let fakeData = { datum1: "aString", datum2: 2, datum3: { iAmAnObject: true } };
-        fakeTrans.sendMail(fakeData, function(err, response){
-          assert.equal(response.data,fakeData);
-          done();
-        });
+        assert.equal(url, urlHeplers.getBaseUrl() + path + token );
 
       });
     });

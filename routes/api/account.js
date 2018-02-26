@@ -1,13 +1,14 @@
 'use strict';
 
 var accountServices = require('./../../services/account');
+var policy = require('./../../middleware/policy.js');
 
 function get(req, res, next) {
-  if(!res.locals.currentDomain) {
+  if(!req.currentResources.account) {
     return res.send({ error: 'Not in account' });
   }
 
-  accountServices.findWithSubscription(res.locals.currentDomain.id).then(function(result) {
+  accountServices.findWithSubscription(req.currentResources.account.id).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });
@@ -15,7 +16,8 @@ function get(req, res, next) {
 };
 
 function createNewAccount(req, res, next) {
-  accountServices.createNewAccountIfNotExists(req.body, req.user.id).then(function(result) {
+  let isAdmin = policy.hasAccess(req.currentResources.accountUser.role, ['admin']);
+  accountServices.createNewAccountIfNotExists(req.body, req.currentResources.user.id, isAdmin).then(function(result) {
     res.send(result);
   }, function(error) {
     res.send({ error: error });

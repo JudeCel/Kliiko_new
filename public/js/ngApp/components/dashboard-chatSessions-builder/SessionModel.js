@@ -6,35 +6,36 @@
    */
   angular.module('KliikoApp').factory('SessionModel', SessionModel);
 
-  SessionModel.$inject = ['$q', 'globalSettings', '$resource'];
-  function SessionModel($q, globalSettings, $resource)  {
-    var apiPath = globalSettings.restUrl+'/sessionBuilder/:id/:path/:arg';
-    var sessionBuilderRestApi = $resource(apiPath, { id : '@id', arg: '@arg' }, {
+  SessionModel.$inject = ['$q', '$resource', 'fileUploader', 'changesValidation'];
+  function SessionModel($q, $resource, fileUploader, changesValidation)  {
+    var sessionBuilderRestApi = $resource('/sessionBuilder/:id/:path/:arg', { id : '@id', arg: '@arg' }, {
       post: { method: 'POST' },
       put: { method: 'PUT' },
       sendSms: { method: 'POST', params: { path: 'sendSms' } },
       inviteMembers: { method: 'POST', params: { path: 'invite' } },
       removeInvite: { method: 'DELETE', params: { path: 'removeInvite' } },
-      removeSessionMember: { method: 'DELETE', params: { path: 'removeSessionMember' } },
       sendGenericEmail: { method: 'POST', params: { path: 'sendGenericEmail' } },
+      sendCloseEmail: { method: 'POST', params: { path: 'sendCloseEmail' } },
+      setAnonymous: { method: 'POST', params: { path: 'setAnonymous' } },
       sessionMailTemplateStatus: { method: 'GET', params: { path: 'sessionMailTemplateStatus' } },
+      canChangeTopicActive: {method: 'GET',  params: {path: 'canChangeTopicActive'} },
       addTopics: {method: 'POST',  params: {path: 'addTopics'} },
       removeTopic: {method: 'POST',  params: {path: 'removeTopic'} },
-
-      nextStep: {method: 'POST', params: {path: 'step'} },
-      previousStep: {method: 'POST', params: {path: 'step'} }
+      certainStep: {method: 'POST', params: {path: 'step'} },
+      addSurvey: {method: 'POST', params: {path: 'addSurvey'} },
+      setSurveyEnabled: {method: 'POST', params: {path: 'setSurveyEnabled'} },
     });
 
     var mailRestApi = {
-      mailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, {get: {method: 'GET'}})
+      mailTemplates: $resource('/sessionMailTemplates', {}, {get: {method: 'GET'}})
     };
-    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+    var chatSessionApi = $resource('/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
       remove: { method: 'delete', params: { id: '@id' } }
     });
 
-    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path', {}, {
+    var sessionMemberApi = $resource('/sessionMember/:path', {}, {
       post: { method: 'POST', params: { path: 'addFacilitator' } }
     });
 
@@ -45,22 +46,25 @@
     SessionModel.prototype.createNew = createNew;
     SessionModel.prototype.getRemoteData = getRemoteData;
     SessionModel.prototype.setOpen = setOpen;
-  //  SessionModel.prototype.update = update;
-
-    SessionModel.prototype.goNextStep = goNextStep;
-    SessionModel.prototype.goPreviouseStep = goPreviousStep;
-
+    SessionModel.prototype.setAnonymous = setAnonymous;
+    SessionModel.prototype.goCertainStep = goCertainStep;
     SessionModel.prototype.updateStep = updateStep;
     SessionModel.prototype.sendSms = sendSms;
     SessionModel.prototype.addMembers = addMembers;
     SessionModel.prototype.saveTopics = saveTopics;
+    SessionModel.prototype.canChangeTopicActive = canChangeTopicActive;
     SessionModel.prototype.inviteParticipants = inviteParticipants;
     SessionModel.prototype.inviteObservers = inviteObservers;
     SessionModel.prototype.removeMember = removeMember;
     SessionModel.prototype.sendGenericEmail = sendGenericEmail;
+    SessionModel.prototype.sendCloseEmail = sendCloseEmail;
     SessionModel.prototype.processStepResponse = processStepResponse;
     SessionModel.prototype.removeTopic = removeTopic;
     SessionModel.prototype.getSessionMailTemplateStatus = getSessionMailTemplateStatus;
+    SessionModel.prototype.activateSession = activateSession;
+    SessionModel.prototype.addSurveyToSession = addSurveyToSession;
+    SessionModel.prototype.setSurveyEnabled = setSurveyEnabled;
+
 
     return SessionModel;
 
@@ -73,9 +77,9 @@
      */
     function SessionModel(params) {
       var self = this;
-
       var params = params || {};
       self.id = null;
+      self.socket = null;
       if (arguments && arguments.length && arguments.length == 1) {
         self.id = arguments[0];
       } else {
@@ -84,8 +88,6 @@
           if (params.hasOwnProperty(p)) self[p] = params[p];
         }
       }
-
-
     }
 
     function init() {
@@ -100,8 +102,6 @@
         self.getRemoteData().then(resolve, reject);
       }
 
-      return deferred.promise;
-
       function resolve(res) {
         deferred.resolve(res);
       }
@@ -110,6 +110,7 @@
         deferred.reject(err);
       }
 
+      return deferred.promise;
     }
 
     function getSessionMailTemplateStatus() {
@@ -126,17 +127,11 @@
       return deferred.promise;
     }
 
-    function initializeDate() {
-      var date = new Date();
-      date.setHours(0, 0, 0, 0);
-      return date;
-    }
-
     function createNew() {
       var self = this;
 
       var deferred = $q.defer();
-      sessionBuilderRestApi.post({},{ date: initializeDate().toString(), timeZone: jstz.determine().name() },function(res) {
+      sessionBuilderRestApi.post({},{ timeZone: jstz.determine().name() },function(res) {
         if (res.error) {
           deferred.reject(res.error);
         }
@@ -151,10 +146,11 @@
       var self = this;
       var deferred = $q.defer();
       sessionBuilderRestApi.get({id:self.id}, {}, function(res) {
-        if(res.error){
+        if (res.error) {
           deferred.reject(res.error);
-        }else{
+        } else {
           self.sessionData = angular.merge(self, res.sessionBuilder);
+          self.snapshot = res.sessionBuilder.snapshot;
           // get current session data
 
           chatSessionApi.get({}, function(sessionApiRes) {
@@ -170,8 +166,6 @@
           });
 
         }
-
-
       });
 
       return deferred.promise;
@@ -180,15 +174,49 @@
     function setOpen(status) {
       var self = this;
       var deferred = $q.defer();
-      self.updateStep({status: status}).then(
+      self.updateStep({status: status}, self).then(
         function (res) {
-          self.status = self.sessionData.status = status;
-          deferred.resolve(res)
+          if (!res.ignored) {
+            self.status = self.sessionData.status = status;
+            self.currentStep = self.sessionData.step = res.sessionBuilder.currentStep;
+          }
+          deferred.resolve(res);
         },
         function (err) {
           deferred.reject(err);
         }
       );
+      return deferred.promise;
+    }
+
+    function activateSession() {
+      var self = this;
+      var deferred = $q.defer();
+      self.updateStep({ isInactive: false }, self).then(
+        function (res) {
+          if (!res.ignored) {
+            self.status = self.sessionData.status = status;
+          }
+          deferred.resolve(res);
+        },
+        function (err) {
+          deferred.reject(err);
+        }
+      );
+      return deferred.promise;
+    }
+
+    function setAnonymous() {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.setAnonymous({ id: self.id },function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
       return deferred.promise;
     }
 
@@ -203,36 +231,38 @@
       }
     }
 
-    function goNextStep(step) {
+    function goCertainStep(step) {
       var deferred = $q.defer();
       var self = this;
 
-      sessionBuilderRestApi.nextStep({id: self.id, arg: 'next'}, {}, function(res) {
+      sessionBuilderRestApi.certainStep({id: self.id, arg: step}, {}, function(res) {
         self.processStepResponse(res, deferred);
       });
 
       return deferred.promise;
     }
 
-    function goPreviousStep() {
-      var self = this;
+    function updateStep(stepDataObj, sessionModel) {
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.previousStep({id: self.id, arg: 'previous'}, {}, function(res) {
-        self.processStepResponse(res, deferred);
-      });
+      if (!stepDataObj.snapshot) {
+        stepDataObj.snapshot = sessionModel.snapshot;
+      }
 
-      return deferred.promise;
-    }
-
-    function updateStep(stepDataObj) {
-      var self = this;
-      var deferred = $q.defer();
-
-      sessionBuilderRestApi.put({id:self.id}, stepDataObj,function(res) {
+      sessionBuilderRestApi.put({id:sessionModel.id}, stepDataObj, function(res) {
         if (res.error) {
           deferred.reject(res.error);
+        } else if (res.validation && !res.validation.isValid) {
+          changesValidation.validationConfirm(res, sessionModel.updateStep, stepDataObj, sessionModel).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
         } else {
+          sessionModel.showStatus = res.sessionBuilder.showStatus;
+          sessionModel.sessionData.showStatus = res.sessionBuilder.showStatus;
+          sessionModel.steps = res.sessionBuilder.steps;
+          sessionModel.snapshot = res.sessionBuilder.snapshot;
           deferred.resolve(res);
         }
       });
@@ -240,12 +270,11 @@
       return deferred.promise;
     }
 
-
     function sendSms(recievers, message) {
       var self = this;
       var deferred = $q.defer();
 
-      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message }, function(res) {
+      sessionBuilderRestApi.sendSms({ id: self.id }, { recievers: recievers, message: message, sessionId: self.id }, function(res) {
         if(res.error) {
           deferred.reject(res.error);
         }
@@ -257,34 +286,127 @@
 
 
     function addMembers(member, role) {
-      var self = this;
       var deferred = $q.defer();
       var params = {
-        sessionId: self.id,
+        sessionId: this.id,
         role: role,
         username: member.firstName,
-        accountUserId: member.accountUserId
+        accountUserId: member.accountUserId,
+        snapshot: this.snapshot
       }
-
-      sessionMemberApi.post({},params,function(res) {
-        if (res.error) { deferred.reject(res.error);  return deferred.promise;}
+      addMembersByParams(params, this).then(function(res) {
         deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    }
+
+    function addMembersByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionMemberApi.post({}, params, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else if (res.validation && !res.validation.isValid) {
+
+          changesValidation.validationConfirm(res, addMembersByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        } else {
+          self.snapshot.facilitatorId = res.snapshot.facilitatorId;
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
     }
 
-    function saveTopics(topicsArray) {
-      var self = this;
+    function addSurveyToSession(surveyId) {
       var deferred = $q.defer();
-      sessionBuilderRestApi.addTopics({id: self.id}, { topicsArray: topicsArray }, function(res) {
+      sessionBuilderRestApi.addSurvey({id: this.id}, {surveyId: surveyId}, function(res) {
         if (res.error) {
           deferred.reject(res.error);
         } else {
-          self.steps.step2.topics = topicsArray
-          deferred.resolve(res.data);
+          deferred.resolve();
         }
       });
+      return deferred.promise;
+    }
+
+    function setSurveyEnabled(surveyId, enabled) {
+      var deferred = $q.defer();
+      sessionBuilderRestApi.setSurveyEnabled({id: this.id}, {surveyId: surveyId, active: enabled}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+    }
+
+
+    function saveTopics(topicsArray) {
+      var deferred = $q.defer();
+
+      var params = {
+        topicsArray: topicsArray,
+        snapshot: this.snapshot
+      }
+      saveTopicsByParams(params, this).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    function canChangeTopicActive(active) {
+      var self = this;
+      var deferred = $q.defer();
+
+      if(active) {
+        sessionBuilderRestApi.canChangeTopicActive({id: self.id}, {}, function(res) {
+          if(res.can) {
+            deferred.resolve();
+          }
+          else {
+            deferred.reject();
+          }
+        });
+      }
+      else {
+        deferred.resolve();
+      }
+
+      return deferred.promise;
+    }
+
+    function saveTopicsByParams(params, self) {
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.addTopics({id: self.id}, params, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else if (res.validation && !res.validation.isValid) {
+
+          changesValidation.validationConfirm(res, saveTopicsByParams, params, self).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        } else {
+          self.snapshot = res.snapshot;
+          deferred.resolve({ data: res.data, message: res.message });
+        }
+      });
+
       return deferred.promise;
     }
 
@@ -295,6 +417,7 @@
         if (res.error) {
           deferred.reject(res.error);
         } else {
+          delete self.snapshot[topicId.toString()];
           deferred.resolve(res.data);
         }
       });
@@ -321,9 +444,11 @@
       var deferred = $q.defer();
 
       sessionBuilderRestApi.inviteMembers({ id: self.id }, { members: members, role: 'observer' }, function(res) {
-        if (res.error) { deferred.reject(err);  return deferred.promise;}
-
-        deferred.resolve(res);
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;
@@ -337,19 +462,11 @@
         sessionBuilderRestApi.removeInvite({ id: self.id, arg: member.invite.id }, function(res) {
           if(res.error) {
             deferred.reject(res.error);
+          }else {
+            deferred.resolve(res);
           }
-          else deferred.resolve(res);
         });
-      }
-      else {
-        sessionBuilderRestApi.removeSessionMember({ id: self.id, arg: member.sessionMember.id }, function(res) {
-          if(res.error) {
-            deferred.reject(res.error);
-          }
-          else deferred.resolve(res);
-        });
-      }
-
+      };
       return deferred.promise;
     }
 
@@ -362,6 +479,21 @@
           deferred.reject(res.error);
         }
         else deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    }
+
+    function sendCloseEmail(members) {
+      var self = this;
+      var deferred = $q.defer();
+
+      sessionBuilderRestApi.sendCloseEmail({ id: self.id }, { recievers: members }, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
       });
 
       return deferred.promise;

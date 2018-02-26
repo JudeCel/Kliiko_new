@@ -1,0 +1,64 @@
+<% include ../header %>
+<div ng-app="KliikoApp.Root">
+  <div class='login-container login-ghost center-block'>
+    <% if (error) { %>
+      <center>
+        <h4><%= error %></h4>
+        <br/>
+        <h5><a href="//cliizii.com" class="black">Why not start your own Chat Session?</a></h5>
+      </center>
+    <% } else { %>
+      <h4>Hi! Just before we chat we need to cover the formalities...</h4>
+      <form method="post" action="/session/<%= uid %>" novalidate="" id="signup">
+        <p>
+          <h4>Introducing...</h4>
+          <input type="text" name='name' class="form-control" id="name" placeholder="Your first name please" value="" maxlength="20">
+        </p>
+        <p>
+          By clicking on the Accept button below, you agree with our <a href="https://cliizii.com/guest-privacy-policy" target="_blank">Privacy Policy</a>
+        </p>
+        <div class="form-group text-right">
+          <button type="button"
+                  data-callback="onAccept"
+                  value="Accept"
+                  class="g-recaptcha btn btn-standart btn-green btn-small"
+                  data-sitekey="<%= captchaSiteKey %>"
+                  id="accept-button">
+                  Accept
+          </button>
+        </div>
+      </form>
+      <script>
+        function onAccept(token) {
+          document.getElementById("signup").submit();
+        }
+      </script>
+    <% } %>
+  </div>
+  <% if (sneakPreviewIntro && !error && !message) { %>
+    <div class="sneakPreviewIntro">
+      <img alt="" src="/images/Klzii_SneakPreviewIntro.jpg"/>
+      <div class="letsGoButton"></div>
+      <script>
+        $(function () {
+          var img = $(".sneakPreviewIntro img");
+          var button = $(".sneakPreviewIntro .letsGoButton");
+          button.click(function() {
+            $(".sneakPreviewIntro").hide();
+          });
+          setInterval(function(){
+            button.height(img.height() * 0.1);
+            button.width(img.width() * 0.19);
+            button.css('margin-top',img.height() * -0.204);
+            button.css('margin-left',img.width() * -0.096);
+          }, 200);
+        });
+      </script>
+    </div>
+  <% } %>
+  <% if (message) { %>
+    <div ng-controller='MessengerController as mc' ng-init="mc.error('<%= message %>', true)"></div>
+  <% } %>
+</div>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<% include ../footer %>

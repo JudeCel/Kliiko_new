@@ -1,5 +1,5 @@
 <section id='banner-messages' class='row'>
-  <div ng-if='bmc.isAdmin()'>
+  <div ng-if='app.hasPermissions("canUploadBanners")'>
     <div ng-init='bmc.init()'>
       <div class='col-md-12' >
         <div class='dashboard-container'>

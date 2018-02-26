@@ -3,21 +3,21 @@
 
   angular.module('KliikoApp').controller('AccountManagerController', AccountManagerController);
 
-  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope'];
-  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope){
+  AccountManagerController.$inject = ['dbg', 'messenger', 'accountManagerServices', 'angularConfirm', '$window', '$rootScope', 'domServices', '$scope', 'errorMessenger', 'appEvents', 'user'];
+  function AccountManagerController(dbg, messenger, accountManagerServices, angularConfirm, $window, $rootScope, domServices, $scope, errorMessenger, appEvents, user){
     dbg.log2('#AccountManagerController started');
     var vm = this;
     vm.maxLength = { normal: 20, email: 40 };
-
     init();
     vm.openModal = openModal;
     vm.removeAccountUser = removeAccountUser;
     vm.isInvited = isInvited;
     vm.isAccepted = isAccepted;
-    vm.isAccountOwner = isAccountOwner;
+    vm.canDelete = canDelete;
     vm.removeInvite = removeInvite;
     vm.submitForm = submitForm;
     vm.cancel = cancel;
+    vm.canEdit = canEdit;
 
     vm.modalInstance = null;
     vm.editModalInstance = null;
@@ -33,15 +33,19 @@
     vm.modalPath = "/js/ngApp/components/dashboard-accountProfile-accountManagers/modal.html";
 
     function init() {
+      getAllManagers();
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, getAllManagers);
+    };
+
+    function getAllManagers() {
       accountManagerServices.getAllManagersList().then(function(res) {
         if(res.error){
-          messenger.error(res.error)
+          errorMessenger.showError(res.error);
         }else{
           vm.accountUsers = res.accountUsers;
         }
       });
     };
-
 
     function openModal(modalTitle, action, accountUser) {
       vm.userIndex = vm.accountUsers.indexOf(accountUser);
@@ -58,7 +62,7 @@
       else {
         accountManagerServices.canAddAccountManager().then(function(res) {
           if(res.error) {
-            messenger.error(res.error);
+            errorMessenger.showError(res.error);
           }else{
             domServices.modal('accountManagerModal');
           }
@@ -97,8 +101,12 @@
       return accountUser.status == "active";
     };
 
-    function isAccountOwner(accountUser) {
-      return accountUser.owner;
+    function canDelete(accountUser) {
+      return(!accountUser.owner && !accountUser.admin);
+    };
+    
+    function canEdit(accountUser) {
+      return(!accountUser.admin);
     };
 
     function removeInvite(accountUser) {
@@ -129,7 +137,7 @@
         if(result.error) {
           messenger.error(result.error);
         }else{
-          onSuccess(result.message)
+          onSuccess(result.message);
           vm.accountUsers.push(result.invite.AccountUser);
         }
       })
@@ -142,6 +150,19 @@
         }else{
           vm.accountUsers[vm.userIndex] = result.accountManager;
           onSuccess(result.message);
+          if (user.app.accountUser.AccountId == result.accountManager.AccountId) {
+            user.app.accountUser.city = result.accountManager.city;
+            user.app.accountUser.firstName = result.accountManager.firstName;
+            user.app.accountUser.lastName = result.accountManager.lastName;
+            user.app.accountUser.landlineNumber = result.accountManager.landlineNumber;
+            user.app.accountUser.landlineNumberCountryData = result.accountManager.landlineNumberCountryData;
+            user.app.accountUser.mobile = result.accountManager.mobile;
+            user.app.accountUser.phoneCountryData = result.accountManager.phoneCountryData;
+            user.app.accountUser.postCode = result.accountManager.postCode;
+            user.app.accountUser.postalAddress = result.accountManager.postalAddress;
+            user.app.accountUser.state = result.accountManager.state;
+            user.app.accountUser.country = result.accountManager.country;
+          }
         }
       })
     }

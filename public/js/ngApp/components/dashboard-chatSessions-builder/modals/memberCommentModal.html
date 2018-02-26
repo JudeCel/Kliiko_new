@@ -1,0 +1,25 @@
+<div class='modal fade' id='memberCommentModal' role='dialog'>
+  <div class='modal-dialog memberCommentModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Comment about {{lastStepsController.currentMemberModal.firstName}} {{lastStepsController.currentMemberModal.lastName}}</h2>
+      </div>
+
+      <div class='modal-body text-gray-medium form-horizontal'>
+        <div class='form-group'>
+          <div class='col-md-12'>
+            <textarea class='form-control' id='comment' placeholder='Comment' ng-model='lastStepsController.currentMemberModal.sessionMember.comment' alt-maxlength='{{lastStepsController.maxCommentLength}}' rows='5'></textarea>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-xs-12'>
+            <button type='button' class='btn-standart btn-red pull-left' data-dismiss='modal'>Cancel</button>
+            <button type='button' class='btn-standart btn-green pull-right' ng-click="lastStepsController.saveComment()">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -19,10 +19,11 @@
       vm.errors = {};
     });
 
-    function createNewAccount() {
+    function createNewAccount(dashboardController) {
       account.createNewAccount(vm.accountData).then(function(res) {
         vm.accountData = {};
         messenger.ok(res.message);
+        dashboardController.initMyDashboard();
         cancel();
       }, function(error) {
         vm.errors = error;

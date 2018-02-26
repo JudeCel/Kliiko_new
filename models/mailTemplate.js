@@ -13,15 +13,22 @@ module.exports = (Sequelize, DataTypes) => {
     subject: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true } },
     content: { type: DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } },
     systemMessage: {type: DataTypes.BOOLEAN, allowNull: false, validate: { notEmpty: true } },
-    sessionId: { type: DataTypes.INTEGER, allowNull: true, validate: { notEmpty: true } },
     required: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     isCopy: {type: DataTypes.BOOLEAN, allowNull: true}
   }, {
+    timestamps: true,
+    indexes:[{
+      name: 'compositeAccountIdMailTemplateBaseIdAndTemplateName',
+      unique: true,
+      fields: ['name', 'AccountId', 'MailTemplateBaseId']
+    }],
     classMethods: {
       associate: function(models) {
         MailTemplate.belongsTo(models.MailTemplateBase);
         MailTemplate.belongsTo(models.Account);
-        MailTemplate.belongsTo(models.Session, { foreignKey: 'sessionId', onDelete: 'cascade' });
+        MailTemplate.belongsToMany(models.Resource, { through: {model: models.MailTemplateResource}, foreignKey: 'mailTemplateId' });
+        MailTemplate.belongsToMany(models.Session, { through: {model: models.SessionMailTemplate, onDelete: 'cascade' }, foreignKey: 'mailTemplateId' });
+        MailTemplate.hasMany(models.SessionMailTemplate, { foreignKey: 'mailTemplateId' });
       }
     }
   });

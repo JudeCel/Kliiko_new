@@ -1,25 +1,45 @@
 <% include ../header %>
+<div ng-app="KliikoApp.Root">
+  <div class='dashboard-container ng-cloak' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>, '<%= chatUrl %>', '<%= token %>', '<%= redirectSurveyLink %>' )">
+    <div class='form-horizontal survey-container hidden' id='GalleryController' ng-if='!sc.status || sc.message'>
+      <div ng-if='!(sc.status || sc.message)'>
+        <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/preview.html'"></ng-include>
+        <div class='text-center'>
+          <button type='button' class='btn border-radius-none' ng-class='sc.pickValidClass(sc.submitForm.$error, "btn")' ng-click='sc.submitSurvey()'>
+            Submit
+          </button>
 
-<div class='dashboard-container' ng-controller='SurveyClientController as sc' ng-init="sc.init(<%= surveyId %>)">
-  <div class='form-horizontal survey-container' id='GalleryController' ng-controller='GalleryController as gc'>
-    <div ng-if='!sc.message'>
-      <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/preview.html'"></ng-include>
-
-      <div class='text-center'>
-        <button type='button' class='btn border-radius-none' ng-class='sc.pickValidClass(sc.submitForm.$error, "btn")' ng-click='sc.submitSurvey()'>
-          Submit
-        </button>
-
-        <span class='has-error'>
-          <span class='help-block'>{{ sc.surveySelect.error }}</span>
-        </span>
+          <span class='has-error'>
+            <span class='help-block'>{{ sc.surveySelect.error }}</span>
+          </span>
+        </div>
       </div>
+
+    </div>
+    <div class='text-center survey-container' ng-if='sc.message'>
+      <h2>{{ sc.message }}</h2>
     </div>
 
-    <div class='text-center' ng-if='sc.message'>
-      <h2>{{ sc.message }}</h2>
+    <div class='text-center survey-message' ng-if='sc.status'>
+      <div class="survey-message-body border-green">
+        <h2 ng-if='sc.status === 100'>Successfully completed survey!</h2>
+        <h2 ng-if='sc.status === 200'>
+          Have a great day!<br />
+          Click <a href='{{ sc.chatUrl }}' target='_blank'>here</a> to go back to Chat Room
+        </h2>
+
+        <div ng-if='sc.status === 201 || sc.status === 301 || sc.status === 400'>
+          <h1>Thanks!</h1>
+          <h3> No worries, we won't bother you again<br />
+            Have a great day!
+          </h3>
+        </div>
+
+        <h2 ng-if='sc.status === 300'>
+          Have a great day!
+        </h2>
+      </div>
     </div>
   </div>
 </div>
-
 <% include ../footer %>

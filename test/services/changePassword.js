@@ -1,9 +1,9 @@
 "use strict";
-var models  = require('./../../models');
-var User  = models.User;
+var {User}  = require('./../../models');
 var usersRepo  = require('./../../services/users');
 var changePassword  = require('./../../services/changePassword');
 var assert = require('assert');
+var testDatabase = require("../database");
 
 describe('Change Password', function() {
 
@@ -18,7 +18,7 @@ describe('Change Password', function() {
       email: "bligzna.lauris@gmail.com",
       gender: "male"
     }
-    models.sequelize.sync({ force: true }).then(() => {
+    testDatabase.prepareDatabaseForTests().then(() => {
       User.build(attrs).save()
         .then(function(user) {
           testUser = user;
@@ -27,11 +27,6 @@ describe('Change Password', function() {
     });
   });
 
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
-  });
 
   it('fails on password mismatch', function (done) {
     let attrs = {
@@ -42,8 +37,12 @@ describe('Change Password', function() {
     }
 
     changePassword.save(attrs, function(errors, user){
-      assert.equal(errors.message, 'Passwords not equal');
-      done();
+      try {
+        assert.equal(errors.message, 'Passwords not equal');
+        done();
+      } catch (e) {
+        deone(e);
+      } 
     });
   });
 
@@ -66,8 +65,13 @@ describe('Change Password', function() {
       body: {
         password: '123',
         repassword: '123'
-      },
-      user: testUser.dataValues
+        },
+      currentResources: {
+        user: testUser.dataValues,
+        accountUser: {
+          firstName: testUser.dataValues.firstName
+        }
+      }
     }
     changePassword.save(attrs, function(errors, user){
       assert.equal(errors.message, 'Validation error: Make sure your Password is at least 7 characters');
@@ -81,7 +85,12 @@ describe('Change Password', function() {
         password: 'okpassword',
         repassword: 'okpassword'
       },
-      user: testUser.dataValues
+      currentResources: {
+        user: testUser.dataValues,
+        accountUser: {
+          firstName: testUser.dataValues.firstName
+        }
+      }
     }
     changePassword.save(attrs, function(errors, message, user){
       assert.equal(message, changePassword.successMessage);

@@ -12,6 +12,7 @@ output.settings = {
   baseDomain: process.env.SERVER_BASE_DOMAIN,
   domain: process.env.SERVER_DOMAIN,
   serverChatDomainUrl: process.env.SERVER_CHAT_DOMAIN_URL + ':' + process.env.SERVER_CHAT_DOMAIN_PORT,
+  socketServerUrl: process.env.EVENT_SOCKET_SERVER_URL,
   baseSubdomain: process.env.SERVER_BASE_SUBDOMAIN
 }
 

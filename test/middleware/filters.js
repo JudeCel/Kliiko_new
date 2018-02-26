@@ -8,13 +8,14 @@ var filtersMiddleware = require('./../../middleware/filters');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var assert = require('chai').assert;
+var testDatabase = require("../database");
 
 describe('MIDDLEWARE - Filters', function() {
   var testData;
 
   describe('#myDashboardPage', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         userFixture.createUserAndOwnerAccount().then(function(result) {
           testData = result;
           AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {
@@ -27,20 +28,25 @@ describe('MIDDLEWARE - Filters', function() {
       });
     });
 
-    function reqObject() {
+    function reqObject(account) {
       return {
         user: {
           id: testData.user.id
         },
-        protocol: 'http'
+        protocol: 'http',
+        session: { landed: false }
       }
     }
 
     function resObject(matcher, done) {
       return {
         redirect: function(url) {
-          assert.include(url, matcher);
-          done();
+          try {
+            assert.include(url, matcher);
+            done();
+          } catch (e) {
+            done(e);
+          }
         }
       }
     }
@@ -62,38 +68,52 @@ describe('MIDDLEWARE - Filters', function() {
 
   describe('#planSelectPage', function() {
     beforeEach(function(done) {
-      models.sequelize.sync({ force: true }).then(function() {
+      testDatabase.prepareDatabaseForTests().then(function() {
         subscriptionFixture.createSubscription().then(function(result) {
           testData = result;
-          done();
+            AccountUser.find({ where: { UserId: result.user.id, AccountId: result.account.id } }).then(function(accountUser) {
+              testData.accountUser = accountUser;
+              done();
+            });
         }, function(error) {
           done(error);
         });
       });
     });
 
-    function reqObject(path) {
+    function reqObject(path, account, accountUser) {
       return {
         originalUrl: path || 'someUrl',
         user: {
           id: testData.user.id
         },
-        protocol: 'http'
+        currentResources: { 
+          account: {name: account.name, id: account.id}, 
+          accountUser: {id: accountUser.id, role: accountUser.role}  
+        },
+        protocol: 'http',
+        session: { landed: false }
       }
     }
 
-    function resObject(matcher, done, accountId) {
+    function resObject(matcher, done) {
       return {
-        locals: {
-          currentDomain: { id: accountId || testData.account.id, name: testData.account.name, roles: ['accountManager'] }
-        },
         redirect: function(url) {
-          assert.include(url, matcher);
-          done();
+          try {
+            assert.include(url, matcher);
+            done();
+          } catch (e) {
+            done(e);
+          }
+
         },
         send: function(resp) {
-          assert.equal(resp.error, "No account found.");
-          done();
+          try {
+            assert.equal(resp.error, "No account found.");
+            done();
+          } catch (e) {
+            done(e);
+          }
         }
       }
     }
@@ -101,18 +121,18 @@ describe('MIDDLEWARE - Filters', function() {
     describe('happy path', function() {
       it('should succeed on redirecting to landing page', function(done) {
         models.Subscription.destroy({where: {accountId: testData.account.id}}).then(function() {
-          filtersMiddleware.planSelectPage(reqObject(), resObject('account-hub/landing', done, testData.account.id));
+          filtersMiddleware.planSelectPage(reqObject(null, testData.account, testData.accountUser), resObject('account-hub/landing', done));
         })
       });
 
       it('should succeed on skipping this check because path matches', function(done) {
-        filtersMiddleware.planSelectPage(reqObject('/account-hub/selectPlan'), resObject(), function() {
+        filtersMiddleware.planSelectPage(reqObject('/account-hub/selectPlan', testData.account, testData.accountUser), resObject(), function() {
           done();
         });
       });
 
       it('should succeed on skipping this check because subscription already exists', function(done) {
-        filtersMiddleware.planSelectPage(reqObject(), resObject(), function() {
+        filtersMiddleware.planSelectPage(reqObject(null, testData.account, testData.accountUser), resObject(), function() {
           done();
         });
       });
@@ -120,7 +140,8 @@ describe('MIDDLEWARE - Filters', function() {
 
     describe('sad path', function() {
       it('should succeed on redirecting to select plan page', function(done) {
-        filtersMiddleware.planSelectPage(reqObject(), resObject('selectPlan', done, testData.account.id + 100));
+        let account = {id: (testData.account.id + 100), name: testData.account.name}
+        filtersMiddleware.planSelectPage(reqObject(null, account, testData.accountUser), resObject('selectPlan', done));
       });
     });
   });

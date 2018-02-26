@@ -18,8 +18,10 @@
 <div class="col-md-12">
   <div class="row">
     <div class='col-md-12 fixed-bottom-margin'>
-      <div class='dashboard-container'>
-        <div id="contact-lists-left-column" class="col-md-3 text-left">
+      <div class='dashboard-container' ng-init='clc.initCanExportContactListData()'>
+        <div id="contact-lists-left-column" class="col-xs-12 col-md-3 text-left">
+          <span ng-click="clc.toggleSatus()" ng-if="clc.showListStatusButton()" class='btn btn-standart btn-green btn-large activate-deactivate-list'>{{clc.listStatusMessage()}}</span>
+
           <div id="list-of-contacts">
             <div class="header">
               Select a Contact List
@@ -47,7 +49,7 @@
 
           <div id="under-list-of-contacts-btns">
             <div class="btn btn-standart btn-green btn-large" ng-click="clc.addNewList()">
-              <span class="pull-left" title="Add New Contact List">Add New Contact List</span>
+              <span id='add-new-contact-list-btn' class="pull-left" title="Add New Contact List">Add New Contact List</span>
               <img id="btn-add-new-contact-list" src="/icons/add_new_list_green.png" class="pull-right">
             </div>
             <div class="btn btn-standart btn-blue btn-large" ui-sref='account-hub.resources.survey'>
@@ -57,50 +59,48 @@
           </div>
         </div>
 
-        <div id="contact-lists-right-column" class="col-md-9">
-          <div id="list-mass-actions" ng-if="clc.lists.activeList.members.length">
-            <div class="check">
+        <div id="contact-lists-right-column" class="col-xs-12 col-md-9">
+          <div
+            id="list-mass-actions"
+            class="clearfix"
+            ng-if="clc.lists.items[clc.lists.activeListIndex].name !== 'Account Managers'"
+          >
+            <span class="check" ng-if="clc.lists.activeList.members.length">
               <input id="dashboard-contact-lists-selectAll-mass-action"  ng-click="clc.selectAll()" class="kliiko-checkbox checkbox-btn btn-green"  type="checkbox" ng-checked="clc.allSelected">
               <label for="dashboard-contact-lists-selectAll-mass-action" ></label> Select all
-            </div>
-            <div class="check" ng-click="clc.massDelete()" ng-if='!clc.hideStuff'>
+            </span>
+            <span class="check" ng-click="clc.massDelete()" ng-if='!clc.hideStuff && clc.lists.activeList.members.length'>
               <img src='/icons/dashboardElement_remove.png' alt='' height="22px" />
               Delete
-            </div>
+            </span>
 
             <span class='text-center pull-right'>
-              <span ng-if="clc.lists.activeList.editable">
-                <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-                &nbsp; or &nbsp;
+              <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable" class="btn-container">
+                <span id='delete-contact-list-btn' class="btn-standart btn-red btn-medium" ng-click="clc.deleteContactList(clc.lists.activeList, $index)">Delete this List</span>
               </span>
 
-              <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-1" class="custom-select-directive btn-large">
+              <span ng-if="clc.canExport">
+                <a class='btn btn-standart btn-green btn-medium margin-top-m2' href="/resources/contactlist/export/{{ clc.lists.activeList.id }}">Export to CSV</a>
+              </span>
+
+              <span ng-if="clc.lists.activeList.editable">
+                <div id='edit-list-fields-btn' class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
+              </span>
+
+              <div
+                ng-if="clc.lists.items[clc.lists.activeListIndex].name !== 'Account Managers'"
+                custom-select-directive
+                ng-hide="sbc.isSelectObserverStep() && !clc.isObserverListSelected()"
+                data-title="Add New Contacts"
+                data-id="contact-lists-add-button-1"
+                class="add-new-contact-btn custom-select-directive btn-large"
+              >
                 <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-                <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
                 <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
               </div>
             </span>
           </div>
 
-          <!-- TABLE -->
-
-          <div id="no-contacts-in-list" class="text-center pull-right" ng-if="!clc.lists.activeList.members.length">
-            <span ng-show="clc.lists.items[clc.lists.activeListIndex].editable">
-              <div class="btn-standart btn-red btn-large" ng-click="clc.deleteList(clc.lists.activeList, $index)">Remove this List</div>
-            </span>
-
-            <span ng-if="clc.lists.activeList.editable">
-              &nbsp; or &nbsp;
-              <div class='btn-standart btn-green btn-large' ng-click='clc.editCustomFields()'>Edit Custom Fields</div>
-              &nbsp; or &nbsp;
-            </span>
-
-            <div custom-select-directive data-title="Add New Contacts" data-id="contact-lists-add-button-2" class="custom-select-directive btn-large">
-              <li id='contactListAddNew' ng-click="clc.contactAddEditClickHandle('new')"><a href=""><i class="icon-remove"></i>Manual Input</a></li>
-              <li id='contactListAddExcel' ng-click="clc.contactAddEditClickHandle('excel')"><a href=""><i class="icon-remove"></i>Import Excel</a></li>
-              <li id='contactListAddCsv' ng-click="clc.contactAddEditClickHandle('csv')"><a href=""><i class="icon-remove"></i>Import CSV</a></li>
-            </div>
-          </div>
           <ng-include src="clc.basePath+'particles/table.tpl.html'"></ng-include>
         </div>
       </div>
@@ -110,3 +110,6 @@
 
 <!----------- MODALS ---------------------->
 <ng-include src="clc.basePath+'particles/modals.tpl.html'"></ng-include>
+<ng-include src="clc.basePath+ '/modals/reachedLimitModal.html'"></ng-include>
+<ng-include src="clc.basePath+ '/modals/deleteConfirmationModal.html'"></ng-include>
+<ng-include src="clc.basePath+ '/modals/reachedLimitToggleSatusModal.html'"></ng-include>

@@ -1,0 +1,54 @@
+
+ul.countdown {
+  list-style: none;
+  margin: 30px 0 10px 0;
+  padding: 0;
+  display: block;
+  text-align: center;
+}
+
+ul.countdown li { display: inline-block; }
+
+ul.countdown li span {
+  font-size: 72px;
+  font-weight: 300;
+  line-height: 80px;
+}
+
+ul.countdown li.seperator {
+  font-size: 80px;
+  line-height: 70px;
+  vertical-align: top;
+  color: #a7abb1;
+}
+
+ul.countdown li p {
+  color: #a7abb1;
+  font-size: 24px;
+}
+
+ul.countdown.withColor li span {
+  color: #FCFEFC;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+ul.countdown.withColor li span.days {
+  background-color: #EC8924;
+}
+
+ul.countdown.withColor li span.hours {
+  background-color: #7CBF58;
+}
+
+ul.countdown.withColor li span.minutes {
+  background-color: #C45660;
+}
+
+ul.countdown.withColor li span.seconds {
+  background-color: #A46EA9;
+}
+
+ul.countdown.withColor li p {
+  padding-top: 5px;
+}

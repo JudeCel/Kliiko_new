@@ -1,0 +1,45 @@
+<div class='modal fade' id='contactCommentsModal' role='dialog'>
+  <div class='modal-dialog contactCommentsModal'>
+    <div class='modal-content border-green border-radius-none'>
+
+      <div class='modal-body form-horizontal'>
+        <h2 class='text-center modal-title'>All Comments about {{clc.showContactComments.contact.firstName}} {{clc.showContactComments.contact.lastName}}</h2>
+        <div class='form-group'>
+          <div class='col-md-12'>
+            
+            <table class='table table-responsive table-dashboardElements' ng-if="clc.showContactComments.pagination.totalItems > 0">
+              <thead>
+              <tr>
+                <th>Session Name</th>
+                <th>Comment</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat='item in clc.showContactComments.pagination.items'>
+                <td>{{item.session}}</td>
+                <td>{{item.comment}}</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <div ng-if="clc.showContactComments.pagination.totalItems == 0">
+              <center>No Comments Found</center>
+            </div>
+
+            <div ng-if="clc.showContactComments.pagination.totalItems > clc.showContactComments.pagination.itemsPerPage" class="paginator">
+              <uib-pagination total-items="clc.showContactComments.pagination.totalItems" ng-model="clc.showContactComments.pagination.currentPage" class="pagination-sm" items-per-page="clc.showContactComments.pagination.itemsPerPage" 
+                max-size="10" boundary-links="true" ng-click="clc.prepareCurrentPageComments()"></pagination>
+            </div>
+
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-xs-12'>
+            <button type='button' class='btn-standart btn-red pull-left' data-dismiss='modal'>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

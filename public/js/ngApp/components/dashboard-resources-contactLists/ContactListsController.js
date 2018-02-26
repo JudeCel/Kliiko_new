@@ -1,9 +1,10 @@
 (function () {
   'use strict';
+
   angular.module('KliikoApp').controller('ContactListController', ContactListController);
 
-  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm'];
-  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm) {
+  ContactListController.$inject = ['domServices', 'dbg', 'messenger', 'ListsModel', '$scope', 'ngDraggable', '$timeout', 'messagesUtil', '$confirm', 'contactListServices', 'appEvents', 'user'];
+  function ContactListController(domServices,  dbg, messenger, ListsModel, $scope, ngDraggable, $timeout, messagesUtil, $confirm, contactListServices, appEvents, user) {
     dbg.log2('#ContactListController  started');
     var vm =  this;
 
@@ -19,12 +20,22 @@
     vm.importData = { excel:false, csv:false, fileToImport: null};
     vm.basePath = '/js/ngApp/components/dashboard-resources-contactLists/';
     vm.importErrorMessage = null;
+    vm.disableNextSortingEvent = false;
 
     vm.hideStuff = false;
     vm.hideModalStuff = false;
     vm.importedFields = [];
     vm.contactListDropItems = [];
     vm.contactListToAdd = [];
+    vm.showContactComments = {
+      pagination: {
+        currentPage: 1,
+        itemsPerPage: 5,
+        totalItems : 0,
+        items: {}
+      }
+    };
+    vm.canExport = false;
 
     vm.initLists = initLists;
     vm.changeActiveList = changeActiveList;
@@ -46,6 +57,7 @@
 
     vm.selectAll = selectAll;
     vm.massDelete = massDelete;
+    vm.canSelectMember = canSelectMember;
 
     vm.startImport = startImport;
     vm.additionalMappingFieldname = "";
@@ -54,6 +66,7 @@
     vm.reUpload = reUpload;
     vm.reMap = reMap;
     vm.addImportedContacts = addImportedContacts;
+    vm.initCanExportContactListData = initCanExportContactListData;
 
     vm.onFieldMapDrop = onFieldMapDrop;
     vm.mappingFieldsContinue = mappingFieldsContinue;
@@ -62,11 +75,53 @@
     vm.returnSelectedCount = returnSelectedCount;
     vm.canAddMoreFields = canAddMoreFields;
     vm.requireField = requireField;
+    vm.canEditOrDelete = canEditOrDelete;
+    vm.isObserverListSelected = isObserverListSelected;
+    vm.findIndexByListName = findIndexByListName;
+    vm.disableNextSortingFilter = disableNextSortingFilter;
+    vm.showContactCommentsModal = showContactCommentsModal;
+    vm.prepareCurrentPageComments = prepareCurrentPageComments;
+    vm.showListStatusButton = showListStatusButton;
+    vm.listStatusMessage = listStatusMessage;
+    vm.deleteContactList = deleteContactList;
+    vm.toggleSatus = toggleSatus;
+
+    vm.pagination = {
+      currentPage: 1,
+      itemsPerPage: 10
+    }
+
+    var facilitatorsListName = "Hosts";
+    var observersListName = "Spectators";
+
     // required for correct list switching.
     var isSelected = false;
 
+    function toggleSatus(){
+      vm.lists.toggleListState(vm.lists.activeList).then(function() {
+        vm.lists.activeList.active = !vm.lists.activeList.active;
+      },
+      function(error) {
+        domServices.modal('reachedLimitToggleSatusModal');
+      });
+    }
+
+    function showListStatusButton() {
+      return !vm.sessionId && vm.lists.activeList && vm.lists.activeList.role == 'participant';
+    }
+
+    function listStatusMessage() {
+      if (vm.lists.activeList) {
+        if (vm.lists.activeList.active) {
+          return('Deactivate Contact List');
+        }else{
+          return('Reactivate Contact List');
+        }
+      }
+    }
+
     function requireField(field) {
-      if (vm.lists.activeList && vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
+      if (vm.lists.activeList && vm.lists.activeList.reqiredFields && vm.lists.activeList.reqiredFields.indexOf(field) > -1) {
         return "*"
       } else {
         return ""
@@ -74,6 +129,11 @@
     }
 
     function initLists(listType) {
+      initListsFunction(listType);
+      appEvents.addEventListener(appEvents.events.contactDetailsUpdated, initListsFunction);
+    }
+
+    function initListsFunction(listType) {
       new ListsModel({sessionId: vm.sessionId}).then(function(result) {
         vm.lists = result;
 
@@ -81,8 +141,10 @@
           removeSpecificLists();
         }
 
-        if(listType == 'facilitators') {
+        if (listType == 'facilitators') {
           vm.sectListActiveToFacilitators();
+        } else if (listType == "inviteSessionObservers") {
+          vm.changeActiveList(findIndexByListName(observersListName));
         } else {
           vm.changeActiveList(0);
         }
@@ -92,6 +154,9 @@
     function setSessionId(sessionId) {
       vm.sessionId = sessionId;
     }
+    function canEditOrDelete(member) {
+      return !member.admin && vm.lists.activeList.name !== 'Account Managers';
+    }
 
     function removeSpecificLists() {
       var array = []
@@ -99,15 +164,14 @@
 
       for(var i in vm.lists.items) {
         var item = vm.lists.items[i];
-        if(vm.listIgnoring.includes) {
-          if(vm.listIgnoring.ids && vm.listIgnoring.ids.includes(item.id)
-          || vm.listIgnoring.names && vm.listIgnoring.names.includes(item.name)) {
+        if (vm.listIgnoring.include) {
+          if(vm.listIgnoring.ids && vm.listIgnoring.ids.indexOf(item.id) >= 0
+          || vm.listIgnoring.names && vm.listIgnoring.names.indexOf(item.name) >= 0) {
             array.push(item);
           }
-        }
-        else if(vm.listIgnoring.ignores) {
-          if(vm.listIgnoring.ids && !vm.listIgnoring.ids.includes(item.id)
-          || vm.listIgnoring.names && !vm.listIgnoring.names.includes(item.name)) {
+        } else if (vm.listIgnoring.ignore) {
+          if(vm.listIgnoring.ids && !vm.listIgnoring.ids.indexOf(item.id) >= 0
+          || vm.listIgnoring.names && !vm.listIgnoring.names.indexOf(item.name) >= 0) {
             array.push(item);
           }
         }
@@ -149,7 +213,7 @@
 
       isSelected = true;
       // timeout is for correct list switching (think about it as of promise)
-      setTimeout(function() {   vm.changeActiveList(1)  }, 300);
+      setTimeout(function() {   vm.changeActiveList(findIndexByListName(facilitatorsListName))  }, 300);
 
     };
 
@@ -161,6 +225,7 @@
         vm.name = temp.name;
       }
       vm.allSelected = false;
+      vm.pagination.currentPage = 1;
     }
 
 
@@ -216,13 +281,18 @@
           prepareCustomFields();
         },
         function(err) {
-          messenger.error(err);
+          if((typeof(err) == 'object')) {
+            messenger.error(err);
+          }else{
+            domServices.modal('contactList-addNewListModal', function() {
+              domServices.modal('reachedLimitModal');
+            });
+          }
           dbg.error('#ContactListController > submitNewList > error: ', err);
         }
       )
 
     }
-
     function updateList() {
       if (vm.newListErrorMessage) return;
       if (!vm.newList.name) {
@@ -230,7 +300,6 @@
         messenger.error(messagesUtil.contactList.listNameBlank);
         return;
       }
-
 
       var newList = angular.copy(vm.newList);
       var parsedList = prepareParsedList(vm.newList);
@@ -247,10 +316,6 @@
           dbg.error('#ContactListController > updateList > error: ', err);
         }
       );
-
-
-
-
     }
 
     function prepareParsedList(list) {
@@ -266,17 +331,21 @@
       return output
     }
 
-    function deleteList(listItem, index) {
-      var confirmed = confirm('Are you sure, that you want to delete this contact list?');
-      if (!confirmed) return;
+    function deleteContactList(listItem, index){
+      vm.modalWindowAttrs = {item: listItem,  index: index}
+      domServices.modal('deleteConfirmationModal');
 
-      vm.lists.delete(listItem, index).then(
+    }
+
+    function deleteList() {
+      vm.lists.delete(vm.modalWindowAttrs.item, vm.modalWindowAttrs.index).then(
         function (res) {
-          dbg.log('#ContactListController > removeList > success: List "'+ listItem.name + '" removed');
-          messenger.ok(res.message);
+          dbg.log('#ContactListController > removeList > success: List "'+ vm.modalWindowAttrs.item.name + '" removed');
+          domServices.modal('deleteConfirmationModal', true);
+          vm.modalWindowAttrs = null;
 
           var newIndex = vm.lists.activeListIndex - 1;
-          vm.lists.changeActiveList(newIndex)
+          vm.lists.changeActiveList(newIndex);
 
         },
         function (err) {
@@ -296,14 +365,18 @@
 
       // populate with existing data
       vm.newList.name = vm.lists.activeList.name;
-      for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
-        var I = i+1;
-        vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+      if(!vm.lists.activeList.survey){
+        for (var i = 0, len = vm.lists.activeList.maxCustomFields; i < len ; i++) {
+          var I = i+1;
+          vm.newList.customFields['customField'+I] = vm.lists.activeList.customFields[i];
+        }
       }
     }
 
     function editCustomFields() {
-      vm.modalTab2 = true;
+      if(!vm.lists.activeList.survey){
+        vm.modalTab2 = true;
+      }
       prepareCustomFields();
       domServices.modal('contactList-addNewListModal');
     }
@@ -311,6 +384,11 @@
     function updateTableSorting(draggedIndex, droppedIndex) {
       dbg.log2('#ContactListController  > updateTableSorting > draggedIndex, droppedIndex : ',draggedIndex, droppedIndex );
       vm.lists.activeList.updateTableSortingByDragging(draggedIndex, droppedIndex);
+      vm.disableNextSortingEvent = false;
+    }
+
+    function disableNextSortingFilter() {
+      vm.disableNextSortingEvent = true;
     }
 
     /**
@@ -318,8 +396,12 @@
      * @param type {string}
      */
     function changeTableSortingFilter(type) {
-      vm.tableSort.by =  type;
-      vm.tableSort.reverse = !vm.tableSort.reverse;
+      if (vm.disableNextSortingEvent) {
+        vm.disableNextSortingEvent = false;
+      } else {
+        vm.tableSort.by =  type;
+        vm.tableSort.reverse = !vm.tableSort.reverse;
+      }
     }
 
     function showManageColumnsModal() {
@@ -376,12 +458,6 @@
         }
       }
 
-      if (action === 'excel') {
-        vm.updateExistingUser = null;
-        vm.contactModalTitle = 'Add New Contacts From Excel';
-        vm.importData = { excel:true, csv: false, fileToImport: null};
-      }
-
       if (action === 'csv') {
         vm.updateExistingUser = null;
         vm.contactModalTitle = 'Add New Contacts From CSV';
@@ -427,6 +503,23 @@
         domServices.modal('contactList-addContactManual', 'close');
         vm.modalErrors = {};
         messenger.ok(res.message);
+        if (user.app.accountUser.AccountId == res.data.id) {
+          user.app.accountUser.city = res.data.city;
+          user.app.accountUser.firstName = res.data.firstName;
+          user.app.accountUser.lastName = res.data.lastName;
+          user.app.accountUser.landlineNumber = res.data.landlineNumber;
+          if (res.data.landlineNumberCountryData) {
+            user.app.accountUser.landlineNumberCountryData = res.data.landlineNumberCountryData;
+          }
+          user.app.accountUser.mobile = res.data.mobile;
+          if (res.data.phoneCountryData) {
+            user.app.accountUser.phoneCountryData = res.data.phoneCountryData;
+          }
+          user.app.accountUser.postCode = res.data.postCode;
+          user.app.accountUser.postalAddress = res.data.postalAddress;
+          user.app.accountUser.state = res.data.state;
+          user.app.accountUser.country = res.data.country;
+        }
       },
       function (err) {
         vm.modalErrors = err;
@@ -477,8 +570,12 @@
       if (!vm.lists.activeList || !vm.lists.activeList.members) return;
 
       for (var i = 0, len = vm.lists.activeList.members.length; i < len ; i++) {
-        vm.lists.activeList.members[i]._selected = vm.allSelected;
+        vm.lists.activeList.members[i]._selected = vm.allSelected && canSelectMember(vm.lists.activeList.members[i]);
       }
+    }
+
+    function canSelectMember(member) {
+      return (!vm.hideStuff || member.canInvite) && !member.admin && vm.lists.activeList.name !== 'Account Managers';
     }
 
     /**
@@ -500,10 +597,11 @@
       if (!vm.importData.file) return;
 
       vm.lists.parseImportFile(vm.importData.file).then(function(res) {
-        domServices.modal('contactList-addContactManual', 'close');
         vm.lists.generateImportPreview(res.data);
-        domServices.modal('modals-import-preview');
         processImportData(res);
+        domServices.modal('contactList-addContactManual', function() {
+          domServices.modal('modals-import-preview');
+        });
       }, function(err) {
         messenger.error(messagesUtil.contactList.import.failed);
         vm.importErrorMessage = messagesUtil.contactList.import.corrupted;
@@ -537,11 +635,7 @@
       vm.contactListDropItems.defaultFields = prepareListForMapping(res.data.contactListFields.defaultFields);
       vm.contactListDropItems.customFields = prepareListForMapping(vm.lists.activeList.customFields);
 
-
-
       vm.modalTab1 = true;
-
-      domServices.modal('contactList-addContactManual', 'close');
       prepareCustomFields();
 
       for (var j = 0; j < vm.importedFields.length; j++) {
@@ -621,8 +715,11 @@
         messenger.error(messagesUtil.contactList.import.remapFailed);
       });
 
-      domServices.modal('contactList-addNewListFieldsModal', 'close');
-      domServices.modal('modals-import-preview');
+
+      domServices.modal('contactList-addNewListFieldsModal', function() {
+        domServices.modal('modals-import-preview');
+      });
+
     }
 
     vm.clearDoppedItem = function(item) {
@@ -678,8 +775,13 @@
       vm.importErrorMessage = null;
     }
     function reUpload() {
-      domServices.modal('modals-import-preview','close');
-      domServices.modal('contactList-addNewListFieldsModal','close');
+      // domServices.modal('modals-import-preview','close');
+
+      domServices.modal('modals-import-preview','close', function() {
+        domServices.modal('contactList-addNewListFieldsModal');
+      });
+
+      // domServices.modal('contactList-addNewListFieldsModal','close');
       // timeout is to wait fade effects
       setTimeout(function() {
         var type;
@@ -690,7 +792,10 @@
       clearImportErrors();
     }
     function reMap() {
-      domServices.modal('modals-import-preview', 'close');
+      domServices.modal('contactList-addNewListFieldsModal','close', function() {
+        domServices.modal('modals-import-preview');
+      });
+      // domServices.modal('modals-import-preview', 'close');
       prepareCustomFields();
       vm.addNewListFieldMapping();
     }
@@ -752,6 +857,54 @@
         return [];
       }
     }
+
+    function isObserverListSelected() {
+      return vm.lists.activeListIndex == findIndexByListName(observersListName);
+    }
+
+    function findIndexByListName(listName) {
+      if (!vm.lists.items) {
+        return 0;
+      }
+      for (var i = 0; i < vm.lists.items.length; i++) {
+        if (vm.lists.items[i].name === listName) {
+          return i;
+        }
+      }
+    }
+
+    function prepareCurrentPageComments() {
+      if (vm.showContactComments.comments.length > 0) {
+        vm.showContactComments.pagination.items =  vm.showContactComments.comments.slice((vm.showContactComments.pagination.currentPage - 1) * vm.showContactComments.pagination.itemsPerPage,
+          vm.showContactComments.pagination.currentPage * vm.showContactComments.pagination.itemsPerPage);
+      } else {
+        vm.showContactComments.pagination.items = {};
+      }
+    }
+
+    function showContactCommentsModal(member) {
+      vm.showContactComments.contact = member;
+      vm.showContactComments.pagination.currentPage = 1;
+      vm.lists.getContactComments(member.id).then(
+        function (res) {
+          vm.showContactComments.comments = res;
+          vm.showContactComments.pagination.totalItems = res.length;
+          prepareCurrentPageComments();
+          domServices.modal('contactCommentsModal');
+        },
+        function (err) {
+          messenger.error(err);
+        }
+      );
+    }
+
+    function initCanExportContactListData() {
+      if (!vm.sessionId) {
+        contactListServices.canExportContactListData().then(function(res) {
+          vm.canExport = res.error ? false : true;
+        });
+      }
+    };
 
   }
 })();

@@ -9,7 +9,7 @@
     <label class='col-xs-2 control-label' for='questionName-{{object.order}}'>Name</label>
     <div class='col-xs-10 col-md-6'>
       <input type='text' class='form-control' id='questionName-{{object.order}}' placeholder='{{ object.name || "Name" }}' name='name'
-        ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='question.active'>
+        ng-model='question.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' alt-maxlength='{{sc.minsMaxs.input.max}}' ng-required='question.active'>
     </div>
   </div>
 </div>
@@ -24,8 +24,8 @@
 
     <label class='col-xs-2 control-label' for='questionQuestion-{{object.order}}'>Question</label>
     <div class='col-xs-10 col-md-6'>
-      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='6' name='question' ng-if='!object.hardcodedQuestion'
-        ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active' id='questionQuestion-{{object.order}}' />
+      <textarea type='text' class='form-control' placeholder='{{ object.question || "Question" }}' rows='6' name='question' ng-if='!object.hardcodedQuestion' alt-maxlength='{{sc.minsMaxs.textarea.max}}'
+        ng-model='question.question' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='question.active' id='questionQuestion-{{object.order}}' ng-blur="sc.autoSaveChanges()" ng-change="sc.changed()"/>
       <div ng-bind="question.question" ng-if='object.hardcodedQuestion'></div>
       <div ng-if='question.link' class='link-block'>
         <a target="_blank" href="{{question.link.url}}">{{question.link.name}}</a>
@@ -46,7 +46,7 @@
     <div class='col-xs-10 col-md-6'>
       {{ upload = sc.galleryDropdownData("questions", question); resource = gc.getResourceFromList(question); "" }}
       <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
-      <div ng-include="gc.templatesDir + 'dropdown.html'"></div>
+      <div ng-include="gc.templatesDir + 'dropdown.html'" ng-init="uploadText = { headerText: 'Upload Video/Audio', modalTitle: 'Upload File'}"></div>
     </div>
   </div>
 </div>

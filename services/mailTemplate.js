@@ -1,18 +1,26 @@
 "use strict";
 
 var MessagesUtil = require('./../util/messages');
+var models = require('./../models');
 var MailTemplate  = require('./../models').MailTemplate;
+var SessionMailTemplate  = require('./../models').SessionMailTemplate;
 var MailTemplateOriginal  = require('./../models').MailTemplateBase;
 var Session  = require('./../models').Session;
 var SessionMember  = require('./../models').SessionMember;
 var AccountUser  = require('./../models').AccountUser;
+var accountUserService  = require('./account');
 var filters = require('./../models/filters');
 var templateMailer = require('../mailers/mailTemplate');
 var emailDate = require('./formats/emailDate');
 var mailersHelpers = require('../mailers/helpers');
 var _ = require('lodash');
 var ejs = require('ejs');
+var q = require('q');
 var constants = require('../util/constants');
+var momentTimeZone = require('moment-timezone');
+var sessionBuilderSnapshotValidation = require('./sessionBuilderSnapshotValidation');
+let Bluebird = require('bluebird');
+let moment = require('moment');
 
 module.exports = {
   validate: validate,
@@ -32,12 +40,12 @@ module.exports = {
   composePreviewMailTemplate: composePreviewMailTemplate,
   getActiveMailTemplate: getActiveMailTemplate,
   getMailTemplateTypeList: getMailTemplateTypeList,
-  copyTemplatesFromSession: copyTemplatesFromSession
+  copyTemplatesFromSession: copyTemplatesFromSession,
+  sendTestEmail: sendTestEmail
 };
 
-var templateHeaderListFields = [
-    'id', 'name', 'category'
-];
+let templateHeaderListFields = ['id', 'name', 'category'];
+let resourceIdPattern = /data-resource-id="(\d*)/g;
 
 function getMailTemplateTypeList(categories, callback) {
   let query = {category:{ $in: categories }};
@@ -68,48 +76,172 @@ function createBaseMailTemplate(params, callback) {
   });
 }
 
-function create(params, callback) {
-  MailTemplate.create(params).then(function(result) {
-    callback(null, result);
-  }).catch(function(error) {
-    callback(filters.errors(error));
+function createSessionMailTemplateRelation(sessionId, mailTemplateId, templateToReturn, transaction) {
+  return new Bluebird((resolve, reject) => {
+    if (sessionId) {
+      SessionMailTemplate.create({ sessionId, mailTemplateId }, {transaction}).then(() => {
+        resolve(templateToReturn);
+      }, (error) => {
+        reject(error);
+      })
+    } else {
+      resolve(templateToReturn);
+    }
   });
 }
 
-function update(id, parameters, callback){
-  MailTemplate.update(parameters, {
-      where: {id: id}
-  }).then(function(result) {
-    callback(null, result);
-  }).catch(function(error) {
-    callback(filters.errors(error));
+function create(params, sessionId, callback) {
+  removeTemplatesFromSession(sessionId, params.MailTemplateBaseId, function() {
+    let transactionPool = models.sequelize.transactionPool;
+    let tiket = transactionPool.getTiket();
+    transactionPool.once(tiket, () => {
+      models.sequelize.transaction().then(function(transaction) {
+        MailTemplate.create(params, { transaction }).then(function(res) {
+          return createSessionMailTemplateRelation(sessionId, res.id, res, transaction);
+        }).then(function(result) {
+          setMailTemplateRelatedResources(result.id, result.content, transaction).then(function() {
+            transaction.commit().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(null, result);
+            });
+          }, function(error) {
+            transaction.rollback().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(filters.errors(error));
+            });
+          });
+        }).catch(function(error) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            if (error.name == 'SequelizeUniqueConstraintError') {
+              callback({ name: MessagesUtil.mailTemplate.error.uniqueName });
+            } else {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(filters.errors(error));
+            }
+          });
+        });
+      });
+    })
+    transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+      callback("Server Timeoute");
+    });
+
+    transactionPool.emit(transactionPool.CONSTANTS.nextTick);
+  });
+}
+
+function update(id, parameters, sessionId, callback) {
+  removeTemplatesFromSession(sessionId, parameters['MailTemplateBase.id'], function() {
+    models.sequelize.transaction().then(function(transaction) {
+      MailTemplate.update(parameters, {
+        where: {id: id},
+        transaction
+      }).then(function(res) {
+        return createSessionMailTemplateRelation(sessionId, id, res, transaction);
+      }).then(function(result) {
+        setMailTemplateRelatedResources(id, parameters.content, transaction).then(function() {
+          transaction.commit().then(function() {
+            callback(null, result);
+          });
+        }, function(error) {
+          transaction.rollback().then(function() {
+            callback(filters.errors(error));
+          });
+        });
+      }).catch(function(error) {
+        transaction.rollback().then(function() {
+          callback(filters.errors(error));
+        });
+      });
+    });
+  });
+}
+
+function setMailTemplateRelatedResources(mailTemplateId, mailTemplateContent, transaction) {
+  return new Bluebird((resolve, reject) => {
+    let matches = mailTemplateContent.match(resourceIdPattern);
+    let ids = [];
+    _.each(matches, (match) => {
+      let id = parseInt(match.split('"')[1]);
+      if (id) {
+        ids.push(id);
+      }
+    });
+
+    //remove old MailTemplateResources
+    if (ids.length > 0) {
+      models.MailTemplateResource.destroy({
+        where: {
+          mailTemplateId: mailTemplateId,
+          resourceId: { $notIn: ids }
+        },
+        transaction: transaction
+      });
+    } else {
+      models.MailTemplateResource.destroy({
+        where: {
+          mailTemplateId: mailTemplateId
+        },
+        transaction: transaction
+      });
+    }
+
+    //add new MailTemplateResources
+    models.Resource.findAll({
+      attributes: ["id"],
+      where: {
+        id: { $in: ids },
+      },
+      include: [{
+        model: models.MailTemplate,
+        where: { id: mailTemplateId },
+        attributes: ["id"],
+        required: false
+      }],
+      transaction: transaction
+    }).then(function(resources) {
+      Bluebird.each(resources, (resource) => {
+        return new Bluebird(function (resolve, reject) {
+          if (resource.MailTemplates.length == 0) {
+            models.MailTemplateResource.create({ mailTemplateId: mailTemplateId, resourceId: resource.id }, { transaction: transaction }).then(function(result) {
+              resolve();
+            }, function(error) {
+              reject(error);
+            });
+          } else {
+            resolve();
+          }
+        });
+      }).then(function(result) {
+        resolve();
+      }, function(error) {
+        reject(error);
+      });
+    });
   });
 }
 
 function getLatestMailTemplate(req, callback) {
-  let accountQuery = {};
+  let accountQuery = { };
+  let templateQuery = {	'$or': [{ id: req.latestId }, { MailTemplateBaseId: req.id }]	};
+  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name'] }];
+
   if (req.accountId) {
-    accountQuery['$or'] = [{AccountId: req.accountId}, {AccountId: null}];
+   accountQuery['$or'] = [{ AccountId: req.accountId }, { AccountId: null }];
   } else {
     accountQuery.AccountId = null;
   }
   if (req.sessionId) {
-    accountQuery.sessionId = req.sessionId;
-    delete accountQuery.AccountId;
-  }
-
-  let templateQuery = {
-    '$or': [{id: req.latestId}, {MailTemplateBaseId: req.id}]
-  };
-
-  if (req.sessionId) {
-    templateQuery['$and'] = {sessionId: req.sessionId};
+    include.push({
+      model: SessionMailTemplate,
+      where: { sessionId: req.sessionId },
+      required: true
+    });
   }
 
   MailTemplate.findAll({
-    include: [{
-      model: MailTemplateOriginal, attributes: ['id', 'name']
-    }],
+    include: include,
     where: [accountQuery, templateQuery],
     attributes: constants.mailTemplateFields,
     raw: true,
@@ -210,25 +342,47 @@ function getMailTemplateForReset(req, callback) {
 }
 
 function getAllSessionMailTemplates(accountId, getNoAccountData, sessionId, getSystemMail, fullData, callback) {
-  let baseTemplateQuery = {category:{ $in: ["firstInvitation", "confirmation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
-  let templateQuery = {};
-  if (sessionId) {
-    templateQuery.sessionId = {'$or': [sessionId, null]};
+  let baseTemplateQuery = {category:{ $in: ["firstInvitation", "notThisTime", "notAtAll", "closeSession", "generic"] }};
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, fullData, callback, false, sessionId);
+}
+
+function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback, isAdmin) {
+  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, false, callback, isAdmin, null);
+}
+
+function prepareCategoryQuery(baseTemplateQuery, isAdmin) {
+  if (!baseTemplateQuery) {
+    baseTemplateQuery = {};
   }
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback);
+
+  if (!baseTemplateQuery.category) {
+    baseTemplateQuery.category = {};
+  }
+
+  baseTemplateQuery.category.$not = isAdmin ? 'confirmation' : ['confirmation', 'accountManagerConfirmation'];
+  return baseTemplateQuery;
 }
 
-function getAllMailTemplates(accountId, getNoAccountData, getSystemMail, fullData, callback) {
-  let templateQuery = {};
-  getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, null, templateQuery, false, callback);
-}
+function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, fullData, callback, isAdmin, sessionId) {
+  let query =  {};
+  baseTemplateQuery = prepareCategoryQuery(baseTemplateQuery, isAdmin);
 
-function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSystemMail, baseTemplateQuery, templateQuery, fullData, callback) {
-  let query = templateQuery || {};
+  let include = [{
+    model: MailTemplateOriginal,
+    attributes: ['id', 'name', 'systemMessage', 'category'],
+    where: baseTemplateQuery
+  }];
 
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+  if (sessionId) {
+    include.push({
+      model: Session,
+      where: { id: { '$or': [sessionId, null] } },
+      attributes: ['id', 'name'],
+      required: false
+    });
+  }
 
-  if(accountId && !getSystemMail){
+  if (accountId && !getSystemMail) {
     query['$or'] = [{AccountId: accountId}, {AccountId: null}];
   }
 
@@ -245,26 +399,45 @@ function getAllMailTemplatesWithParameters(accountId, getNoAccountData, getSyste
   } else {
     attributes = constants.mailTemplateFieldsForList;
   }
-
   MailTemplate.findAll({
-      include: include,
-      where: query,
-      attributes: attributes,
-      raw: true,
-      order: "id ASC"
+    include: include,
+    where: query,
+    attributes: attributes,
+    raw: true,
+    order: "id ASC"
   }).then(function(result) {
+    initTemplatesSessionNames(result);
     sortMailTemplates(result);
     callback(null, result);
   }).catch(function(error) {
-    callback(error);
+    callback(filters.errors(error));
   });
 };
 
+function initTemplatesSessionNames(templates) {
+  _.each(templates, (template) => {
+    if (template['Sessions.name']) {
+      template.sessionName = template['Sessions.name'];
+      template.sessionId = template['Sessions.id'];
+    }
+  });
+}
+
 function sortMailTemplates(result) {
   let templateOrder = {"firstInvitation": 1, "confirmation": 2, "notThisTime": 3, "notAtAll": 4, "closeSession": 5, "generic": 6};
+  let priorityOrderCount = Object.keys(templateOrder).length;
+
+  _.map(result, function(item) {
+    if (!templateOrder[item['MailTemplateBase.category']]) {
+      templateOrder[item['MailTemplateBase.category']] = priorityOrderCount + item['id'];
+    }
+  });
+
   result.sort(function(a, b) {
     if (!a.AccountId && !b.AccountId) {
-      return templateOrder[a['MailTemplateBase.category']] - templateOrder[b['MailTemplateBase.category']];
+      let aOrder = templateOrder[a['MailTemplateBase.category']];
+      let bOrder = templateOrder[b['MailTemplateBase.category']];
+      return aOrder - bOrder;
     } else if (!a.AccountId && b.AccountId) {
       return -1;
     } else if (a.AccountId && !b.AccountId) {
@@ -275,30 +448,24 @@ function sortMailTemplates(result) {
   });
 }
 
-function copyTemplatesFromSession(accountId, sessionIdFrom, sessionIdTo, callback) {
-  getAllSessionMailTemplates(accountId, false, sessionIdFrom, false, true, function(error, result) {
-    if (error) {
-      return callback(error);
-    }
+function copyTemplatesFromSession(sessionIdFrom, sessionIdTo, callback) {
+  SessionMailTemplate.findAll({ where: { sessionId: sessionIdFrom } }).then(function(result) {
     var dataToCopy = [];
     _.map(result, function(item, index) {
-      if (item.AccountId) {
-        item.sessionId = sessionIdTo;
-        delete item.id;
-
-        dataToCopy.push(item);
-      }
+      dataToCopy.push({sessionId: sessionIdTo, mailTemplateId: item.mailTemplateId});
     });
 
     if (dataToCopy.length) {
-      MailTemplate.bulkCreate(dataToCopy).done(function(res) {
-         callback(null, res);
+      SessionMailTemplate.bulkCreate(dataToCopy).done(function(res) {
+        callback(null, res);
       }, function(err) {
-         callback(err);
-      })
+        callback(err);
+      });
     } else {
       callback(null);
     }
+  }, function(error) {
+    callback(error);
   });
 }
 
@@ -321,7 +488,7 @@ function copyBaseTemplates(callback) {
   });
 }
 
-function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
+function setMailTemplateDefault(id, templateCopyId, isAdmin, callback) {
   if (!isAdmin) {
     return callback(null, {id: templateCopyId});
   }
@@ -329,12 +496,10 @@ function setMailTemplateDefault (id, templateCopyId, isAdmin, callback) {
     mailTemplateActive: templateCopyId
   }
   MailTemplateOriginal.update(params, {
-      where: {id: id}
-    })
-  .then(function (result) {
+    where: {id: id}
+  }).then(function (result) {
     return callback(null, {id: templateCopyId});
-  })
-  .catch(function (err) {
+  }).catch(function (err) {
     callback(err);
   });
 }
@@ -353,14 +518,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
     }
   }
 
-  // in case if template was modified in session builder
-  if (template.properties && template.properties.sessionId) {
-    if (template.sessionId != template.properties.sessionId) {
-      result = true;
-      template.sessionId = template.properties.sessionId;
-    }
-  }
-
   if(template.properties) {
     if (template.properties.createdWithCustomName && template.properties.templateName == null) {
         template.name = null;
@@ -368,7 +525,6 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 
     if (template.properties.templateName) {
       result = true;
-      template.name = template.name + " " + template.properties.templateName;
     }
   }
 
@@ -378,22 +534,22 @@ function shouldCreateCopy(template, shouldOverwrite, accountId) {
 function variablesForTemplate(type) {
   switch (type) {
     case "firstInvitation":
-      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
+      return ["{First Name}", "{Session Name}", "{Start Time}", "{End Time}", "{Start Date}", "{End Date}", "{Incentive}", "{Accept Invitation}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Invitation Not This Time}", "{Invitation Not At All}"];
       break;
     case "closeSession":
-      return ["{First Name}", "{Incentive}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
+      return ["{First Name}", "{Incentive}", "{Host First Name}", "{Host Last Name}", "{Host Email}", "{Close Session Yes In Future}", "{Close Session No In Future}"];
       break;
     case "confirmation":
-      return ["{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Participant Email}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{Incentive}", "{First Name}", "{Start Time}", "{Start Date}", "{Confirmation Check In}", "{Guest Email}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "generic":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notAtAll":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "notThisTime":
-      return ["{First Name}", "{Facilitator First Name}", "{Facilitator Last Name}", "{Facilitator Email}"];
+      return ["{First Name}", "{Host First Name}", "{Host Last Name}", "{Host Email}"];
       break;
     case "accountManagerConfirmation":
       return ["{First Name}", "{Login}", "{Last Name}"];
@@ -403,40 +559,64 @@ function variablesForTemplate(type) {
   }
 }
 
-function validateTemplate(template) {
-  var params = variablesForTemplate(template['MailTemplateBase.category']);
-  var error = null;
-  if (params.length) {
-    _.map(params, function(variable) {
-        if (template.content.indexOf(variable) == -1){
-          error = "Missing " + variable + " variable";
-        }
-    });
-  }
+function isEndDateAfterStartDate(startTime, endTime) {
+  var startDate = moment(startTime, 'YYYY-MM-DD').toDate();
+  var endDate = moment(endTime, 'YYYY-MM-DD').toDate();
 
-  return error;
+  return moment(endDate).isAfter(startDate);
 }
 
-function getMailTemplateForSession(req, callback) {
-  if (!req.template.properties || !req.template.properties.sessionId) {
-    return callback(req.template);
+function validateTemplate(template) {
+  let deferred = q.defer();
+  var params = variablesForTemplate(template['MailTemplateBase.category']);
+  var error = null;
+
+  if (template.properties && template.properties.sessionId) {
+    Session.find({ where: { id: template.properties.sessionId } }).then(function (result) {
+      let incentivePopulated = false;
+      if (result && result.incentive_details) {
+        incentivePopulated = true;
+      }
+
+      if (params.length) {
+        _.map(params, function(variable) {
+            if (template.content.indexOf(variable) == -1) {
+              if ((incentivePopulated || variable != "{Incentive}") && !skipStartDate(result.startTime, result.endTime, variable)) {
+                error = "Missing " + variable + " variable";
+              }
+            }
+        });
+      }
+      if (error) {
+        deferred.reject(error);
+      } else {
+        deferred.resolve();
+      }
+
+    }, function(error) {
+      deferred.reject(MessagesUtil.session.notFound);
+    });
+  } else {
+    if (params.length) {
+      _.map(params, function(variable) {
+        if (template.content.indexOf(variable) == -1) {
+           error = "Missing " + variable + " variable";
+           return;
+        }
+      });
+    }
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve();
+    }
   }
 
-  let baseTemplateQuery = {id: req.template['MailTemplateBase.id']};
-  let include = [{ model: MailTemplateOriginal, attributes: ['id', 'name', 'systemMessage', 'category'], where: baseTemplateQuery }];
+  return deferred.promise;
 
-  MailTemplate.findAll({
-    where: {
-      sessionId: req.template.properties.sessionId,
-      isCopy: true,
-      required: true
-    },
-    include: include})
-    .then(function(templates) {
-      callback(null, templates)
-    }).catch(function(error) {
-      callback(error);
-    });
+  function skipStartDate(startTime, endTime, variableName) {
+    return variableName == "{Start Date}" && !isEndDateAfterStartDate(startTime, endTime) ;
+  }
 }
 
 function buildTemplate(inputTemplate) {
@@ -454,7 +634,6 @@ function buildTemplate(inputTemplate) {
     'MailTemplateBase.name': inputTemplate['MailTemplateBase.name'],
     'MailTemplateBase.systemMessage': inputTemplate['MailTemplateBase.systemMessage'],
     'MailTemplateBase.category': inputTemplate['MailTemplateBase.category'],
-    sessionId: inputTemplate.sessionId,
     properties: inputTemplate.properties
   };
 
@@ -466,68 +645,95 @@ function buildTemplate(inputTemplate) {
   };
 }
 
-function removeTemplatesFromSession(ids, callback){
-  if (ids && ids.length > 0) {
-    let parameters = {sessionId: null};
-    MailTemplate.update(parameters, {
-      where: { id: {$in: ids} }
-    })
-    .then(function (result) {
-      return callback(null, result);
-    })
-    .catch(function (err) {
-      callback(err);
+function removeTemplatesFromSession(sessionId, mailTemplateBaseId, callback){
+  if (sessionId && mailTemplateBaseId) {
+    MailTemplate.findAll({
+      where: {
+        isCopy: true,
+        MailTemplateBaseId: mailTemplateBaseId
+      }
+    }).then(function(templates) {
+      let ids = _.map(templates, 'id');
+      SessionMailTemplate.destroy({ where: { sessionId: sessionId, mailTemplateId: ids } }).then(function (result) {
+        return callback(null, result);
+      }).catch(function (error) {
+        callback(error);
+      });
+    }).catch(function(error) {
+      callback(error);
     });
   } else {
     callback();
   }
 }
 
-function saveMailTemplate(template, createCopy, accountId, callback) {
-  if (template) {
-    let validationResult = validateTemplate(template);
-    if (validationResult) {
-      callback(validationResult);
-      return;
-    }
-
-    let templateObject = buildTemplate(template);
-
-    getMailTemplateForSession({template:template, accountId: accountId}, function(error, result) {
-      let ids = [];
-      if (!createCopy && result && result.id != templateObject.id) {
-        ids = _.map(result, 'id');
+function validateTemplateSnapshot(shouldCreateTemplateCopy, snapshot, templateObject, callback) {
+  if (shouldCreateTemplateCopy) {
+    callback();
+  } else {
+    MailTemplate.find({ where: {id: templateObject.id} }).then(function(originalTemplate) {
+      let validationRes = sessionBuilderSnapshotValidation.isMailTemplateDataValid(snapshot, templateObject, originalTemplate);
+      if (validationRes.isValid) {
+        callback();
+      } else {
+        callback(null, { validation: validationRes });
       }
+    }, function(error) {
+      callback(filters.errors(error));
+    });
+  }
+}
 
-      removeTemplatesFromSession(ids, function() {
-        if (shouldCreateCopy(templateObject.template, createCopy, accountId)) {
-          templateObject.template.isCopy = true;
-          templateObject.template.AccountId = accountId;
-          if (createCopy) {
-            templateObject.template.sessionId = null;
-          }
+function saveMailTemplate(template, createCopy, accountId, isAdmin, sessionId, callback) {
+  if (template) {
+    validateTemplate(template).then(function() {
 
-          create(templateObject.template, function(error, result) {
-            if (error) {
-              callback(error);
-            } else {
-              setMailTemplateDefault(result.MailTemplateBaseId, result.id, !createCopy, callback);
-            }
-          });
+      let templateObject = buildTemplate(template);
+      assignTemplateName(templateObject.template);
+      let shouldCreateTemplateCopy = shouldCreateCopy(templateObject.template, createCopy, accountId);
 
+      validateTemplateSnapshot(shouldCreateTemplateCopy, template.snapshot, templateObject, function(validationError, validationResult) {
+        if (validationError) {
+          callback(validationError);
+        } else if (validationResult) {
+          callback(null, validationResult);
         } else {
-          update(templateObject.id, templateObject.template, function(error, result) {
-            if (error) {
-              callback(error);
+          removeTemplatesFromSession(createCopy && sessionId, template['MailTemplateBase.id'], function() {
+            let isAdminDefault = isAdmin && template.properties && template.properties.sessionBuilder;
+            if (shouldCreateTemplateCopy) {
+              templateObject.template.isCopy = true;
+              templateObject.template.AccountId = accountId;
+              create(templateObject.template, sessionId, function(error, result) {
+                if (error) {
+                  callback(error);
+                } else {
+                  setMailTemplateDefault(result.MailTemplateBaseId, result.id, isAdminDefault, callback);
+                }
+              });
             } else {
-              setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, !createCopy, callback);
+              update(templateObject.id, templateObject.template, sessionId, function(error, result) {
+                if (error) {
+                  callback(error);
+                } else {
+                  setMailTemplateDefault(templateObject.template.MailTemplateBaseId, templateObject.id, isAdminDefault, callback);
+                }
+              });
             }
           });
         }
-      });//removeTemplatesFromSession
-    });//getMailTemplateForSession
+      });
+
+    }, function(error) {
+      callback(error);
+    });
   } else {
     callback(MessagesUtil.mailTemplate.error.notProvided);
+  }
+
+  function assignTemplateName(template) {
+    if (template.properties && template.properties.templateName) {
+      template.name = template.properties.templateName;
+    }
   }
 }
 
@@ -540,11 +746,11 @@ function resetMailTemplate(templateId, baseTemplateId, isCopy, callback) {
   getMailTemplateForReset({id: templateId, baseId:baseTemplateId}, function(err, result) {
     if (result) {
       if (isCopy) {
-        update(templateId, {name: result.name, subject: result.subject, content: result.content}, function(error, result) {
+        update(templateId, {name: result.name, subject: result.subject, content: result.content}, null, function(error, result) {
           callback(error, result);
         });
       } else {
-        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, function(error, result) {
+        update(templateId, {name: result["MailTemplateBase.name"], subject: result["MailTemplateBase.subject"], content: result["MailTemplateBase.content"]}, null, function(error, result) {
           callback(error, result);
         });
       }
@@ -568,8 +774,11 @@ function deleteMailTemplate(id, callback) {
 function prepareMailDefaultParameters(params) {
   params = params || {};
   let defaultParams = {
-    termsOfUseUrl: mailersHelpers.getUrl('', null, '/terms_of_use'),
-    privacyPolicyUrl: mailersHelpers.getUrl('', null, '/privacy_policy'),
+    termsOfUseUrl: constants.externalLinks.termsOfUse,
+    privacyPolicyUrl: constants.externalLinks.privacyPolicy,
+    termsOfUseGuestUrl: constants.externalLinks.termsOfUseGuest,
+    privacyPolicyGuestUrl: constants.externalLinks.privacyPolicyGuest,
+    systemRequirementsUrl: mailersHelpers.getUrl('', null, '/system_requirements'),
     firstName: "", lastName: "", accountName: "", startDate: new Date().toLocaleDateString(), startTime: new Date().toLocaleTimeString(),
     endDate: new Date().toLocaleDateString(), endTime: new Date().toLocaleTimeString(),
     facilitatorFirstName: "", facilitatorLastName: "", facilitatorMail: "", participantMail: "", facilitatorMobileNumber: "",
@@ -584,7 +793,10 @@ function prepareMailDefaultParameters(params) {
 function composeMailFromTemplate(template, params) {
   params = prepareMailDefaultParameters(params);
   try {
-    template.content = formatTemplateString(template.content);
+    if (params.removeTimeBlock) {
+      template.content = removeTimeBlock(template.content);
+    }
+    template.content = formatTemplateString(template.content, params.orginalStartTime, params.orginalEndTime);
     template.subject = formatTemplateString(template.subject);
     template.content = ejs.render(template.content, params);
     template.subject = ejs.render(template.subject, params);
@@ -593,6 +805,20 @@ function composeMailFromTemplate(template, params) {
   } catch (error) {
     return {error: error};
   }
+}
+
+function removeTimeBlock(content) {
+  const blockStart = "<div class=timeInfoPanelTitle>";
+  const blockEnd = "<div class=timeInfoPanelEnd>";
+
+  let blockStartIndex = content.indexOf(blockStart);
+  if (blockStartIndex >= 0) {
+    let blockEndIndex = content.indexOf(blockEnd, blockStartIndex);
+    if (blockEndIndex >= 0) {
+      return content.substr(0, blockStartIndex) + content.substr(blockEndIndex + blockEnd.length);
+    }
+  }
+  return content;
 }
 
 function sendMailFromTemplate(id, params, callback) {
@@ -623,8 +849,48 @@ function sendMailFromTemplateWithCalendarEvent(id, params, callback) {
   });
 }
 
+function sendTestEmail(mailTemplate, sessionId, accountUserId, callback) {
+  AccountUser.find({
+    where: { id: accountUserId },
+  }).then(function(accountUser) {
+    if (accountUser) {
+      composePreviewMailTemplate(mailTemplate, sessionId, function(result) {
+        if (result.error) {
+          callback(result.error);
+        } else {
+          var params = {
+            orginalStartTime: new Date(),
+            orginalEndTime:  new Date(),
+            email: accountUser.email
+          };
+
+          templateMailer.sendMailWithTemplateAndCalendarEvent(result, params, callback);
+        }
+      });
+    } else {
+      callback({ error: MessagesUtil.accountUser.notFound });
+    }
+  }, function(error) {
+    callback(error);
+  });
+}
+
+
+function prepareDefaultStyles(str) {
+  let idx = str.indexOf('</style>');
+  if (idx > -1) {
+    let standardStyle = ".acceptButton a, .notThisTimeButton a, .notAtAllButton a {color: #ffffff !important;}";
+    str = str.substr(0, idx) + standardStyle + str.substr(idx);
+  }
+  return str;
+}
+
 //replace all "In Editor" variables with .ejs compatible variables
-function formatTemplateString(str) {
+function formatTemplateString(str, startDate, endDate) {
+  if (startDate && endDate) {
+    str = prepareFirstInvitationStartDateState(str, startDate, endDate);
+  }
+  str = prepareDefaultStyles(str);
   str = str.replace(/\{First Name\}/ig, "<%= firstName %>");
   str = str.replace(/\{Last Name\}/ig, "<%= lastName %>");
   str = str.replace(/\{Account Name\}/ig, "<%= accountName %>");
@@ -632,28 +898,49 @@ function formatTemplateString(str) {
   str = str.replace(/\{Start Time\}/ig, "<%= startTime %>");
   str = str.replace(/\{End Date\}/ig, "<%= endDate %>");
   str = str.replace(/\{End Time\}/ig, "<%= endTime %>");
+  str = str.replace(/\{Host First Name\}/ig, "<%= facilitatorFirstName %>");
   str = str.replace(/\{Facilitator First Name\}/ig, "<%= facilitatorFirstName %>");
+  str = str.replace(/\{Host Last Name\}/ig, "<%= facilitatorLastName %>");
   str = str.replace(/\{Facilitator Last Name\}/ig, "<%= facilitatorLastName %>");
+  str = str.replace(/\{Host Email\}/ig, "<%= facilitatorMail %>");
   str = str.replace(/\{Facilitator Email\}/ig, "<%= facilitatorMail %>");
+  str = str.replace(/\{Guest Email\}/ig, "<%= participantMail %>");
   str = str.replace(/\{Participant Email\}/ig, "<%= participantMail %>");
-  str = str.replace(/\{Participant First Name\}/ig, "<%= participantFirstName %>");
-  str = str.replace(/\{Participant Last Name\}/ig, "<%= participantLastName %>");
+  str = str.replace(/\{Guest First Name\}/ig, "<%= guestFirstName %>");
+  str = str.replace(/\{Participant First Name\}/ig, "<%= firstName %>");
+  str = str.replace(/\{Guest Last Name\}/ig, "<%= guestLastName %>");
+  str = str.replace(/\{Participant Last Name\}/ig, "<%= lastName %>");
+  str = str.replace(/\{Host Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Facilitator Mobile\}/ig, "<%= facilitatorMobileNumber %>");
   str = str.replace(/\{Session Name\}/ig, "<%= sessionName %>");
   str = str.replace(/\{Incentive\}/ig, "<%= incentive %>");
   str = str.replace(/\{Accept Invitation\}/ig, "<%= acceptInvitationUrl %>");
   str = str.replace(/\{Invitation Not This Time\}/ig, "<%= invitationNotThisTimeUrl %>");
-
   str = str.replace(/\{Invitation Not At All\}/ig, "<%= invitationNotAtAllUrl %>");
   str = str.replace(/\{Mail Unsubscribe\}/ig, "<%= unsubscribeMailUrl %>");
   str = str.replace(/\{Privacy Policy\}/ig, "<%= privacyPolicyUrl %>");
   str = str.replace(/\{Terms of Use\}/ig, "<%= termsOfUseUrl %>");
+  str = str.replace(/\{Privacy Policy Guest\}/ig, "<%= privacyPolicyGuestUrl %>");
+  str = str.replace(/\{Terms of Use Guest\}/ig, "<%= termsOfUseGuestUrl %>");
   str = str.replace(/\{Close Session Yes In Future\}/ig, "<%= participateInFutureUrl %>");
   str = str.replace(/\{Close Session No In Future\}/ig, "<%= dontParticipateInFutureUrl %>");
   str = str.replace(/\{Confirmation Check In\}/ig, "<%= confirmationCheckInUrl %>");
   str = str.replace(/\{Login\}/ig, "<%= logInUrl %>");
+  str = str.replace(/\{Time Zone\}/ig, "<%= timeZone %>");
   str = str.replace(/\{Reset Password URL\}/ig, "<%= resetPasswordUrl %>");
+  str = str.replace(/\{System Requirements\}/ig, "<%= systemRequirementsUrl %>");
   return str;
+}
+
+function prepareFirstInvitationStartDateState(str, startDate, endDate) {
+  var visibleStartDate = "start-date-container\">";
+  var hiddenStartDate = "start-date-container\" style=\"display:none\">";
+
+  if (isEndDateAfterStartDate(startDate, endDate)) {
+    return str.replace(hiddenStartDate, visibleStartDate);
+  } else {
+    return str.replace(visibleStartDate, hiddenStartDate);
+  }
 }
 
 function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
@@ -680,7 +967,9 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
     dontParticipateInFutureUrl: "#/dontParticipateInFutureUrl",
     confirmationCheckInUrl: "#/confirmationCheckInUrl",
     logInUrl: "#/LogInUrl",
-    resetPasswordUrl: "#/resetPasswordUrl"
+    resetPasswordUrl: "#/resetPasswordUrl",
+    systemRequirementsUrl: "#/systemRequirementsdUrl",
+    timeZone: ""
   };
   if (sessionId) {
     Session.find({
@@ -694,11 +983,13 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
         }]
        }).then(function (result) {
       if (result) {
-        mailPreviewVariables.startDate = emailDate.format("date", new Date(result.startTime), result.timeZone);
+        let startTime = new Date(result.startTime);
+        mailPreviewVariables.startDate = emailDate.format("date", startTime, result.timeZone);
         mailPreviewVariables.startTime = emailDate.format("time", new Date(result.startTime), result.timeZone);
         mailPreviewVariables.endDate = emailDate.format("date", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.endTime = emailDate.format("time", new Date(result.endTime), result.timeZone);
         mailPreviewVariables.sessionName = result.name;
+        mailPreviewVariables.timeZone = emailDate.format("timeZone", startTime, result.timeZone);
         mailPreviewVariables.incentive = result.incentive_details;
         if (result.SessionMembers[0]) {
           mailPreviewVariables.facilitatorFirstName = result.SessionMembers[0].AccountUser.firstName;
@@ -707,13 +998,22 @@ function composePreviewMailTemplate(mailTemplate, sessionId, callback) {
           mailPreviewVariables.facilitatorMobileNumber = result.SessionMembers[0].AccountUser.mobile;
         }
       }
-      var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-      template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-      callback(template);
+
+      processMailTemplate(mailTemplate, mailPreviewVariables, callback);
     });
   } else {
-    var template = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
-    template.content = template.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
-    callback(template);
+    processMailTemplate(mailTemplate, mailPreviewVariables, callback);
+  }
+
+  function processMailTemplate(mailTemplate, mailPreviewVariables, callback) {
+    var result = composeMailFromTemplate(mailTemplate, mailPreviewVariables);
+
+    if (result.error) {
+      callback({ error: result.error });
+    } else {
+      result.content = result.content.replace(/<span style="color:red;">/ig, "<span style=\"display: none;\">");
+      result.content = result.content.replace(/href="\{Calendar\}"/ig, "");
+      callback(result);
+    }
   }
 }

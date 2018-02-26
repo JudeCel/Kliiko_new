@@ -10,25 +10,14 @@
     font-weight: bold;
   }
 
-
-
   thead { background: $green; }
+  thead th { background: $green; }
+  thead th:active { background: transparent; }  /* selected link */
+
   .druggable {
     cursor: ew-resize;
     .th-name {
       cursor: pointer !important;
-    }
-  }
-
-  @media (min-width: 584px){
-    #contact-lists-left-column {
-      padding-right: 5px;
-      padding-left: 5px;
-    }
-
-    #contact-lists-right-column {
-      padding-right: 5px;
-      padding-left: 5px;
     }
   }
 
@@ -58,9 +47,10 @@
   }
 
   #contact-lists-left-column {
+    padding-left: 0px;
 
     #list-of-contacts {
-      margin-top: 47px;
+      margin-top: 10px;
       padding: 0;
       border: 3px solid $green;
 
@@ -205,13 +195,18 @@
   ////////
 
   #contact-lists-right-column {
-
+    padding-right: 0px;
     overflow: inherit;
 
     #list-mass-actions {
       .check {
         float: left;
         margin-right: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        @media (max-width: 1389px){
+          margin-right: 12px;
+        }
       }
     }
 
@@ -237,8 +232,10 @@
 
     th {
       span.th-name {
-        left: 9px;
+        left: 8px;
         position: relative;
+        white-space: nowrap;
+        margin-right: 5px;
       }
 
       &:hover {
@@ -264,6 +261,10 @@
 
       .kliiko-checkbox {
         margin-left: 4px;
+      }
+
+      .member-column {
+        padding-left: 15px;
       }
     }
   }
@@ -330,6 +331,24 @@
     }
   }
 
+  .contactCommentsModal {
+    width: 700px;
+
+    .pagination-sm {
+      margin-bottom: 0px;
+    }
+
+    .modal-title {
+      margin: 0px;
+      margin-bottom: 20px;
+    }
+  }
+
+  @import "particles/modals-excel-csv-import";
+
+}
+
+#dashboard-contact-lists, #statsModal, #statsListModal {
   .custom-select-directive {
    .dd-directive {
       padding: 3px 20px !important;
@@ -357,7 +376,86 @@
       }
     }
   }
+}
 
-  @import "particles/modals-excel-csv-import";
+#statsModal, #statsListModal {
+  .modal-dialog {
+    width: 810px;
+    .modal-header {
+      margin: 5px;
+      h3 {
+        margin-top: 0px;
+      }
+    }
+  }
+}
 
+#list-mass-actions {
+  text-align: left;
+
+  @media (max-width: 1735px){
+    .btn-large {
+      min-width: 180px;
+      width: 180px;
+      max-width: 180px;
+      .ng-custom-select {
+        .btn-large {
+          ul {
+            width: 180px !important;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 1665px){
+    .btn-large {
+      min-width: 160px;
+      width: 160px;
+      max-width: 160px;
+      .ng-custom-select {
+        .btn-large {
+          min-width: 170px;
+          width: 170px;
+          max-width: 170px;
+          padding-left: 10px !important;
+          ul {
+            width: 170px !important;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 1589px){
+    .btn-large, .btn-medium {
+      min-width: 110px;
+      width: auto;
+      max-width: 140px;
+      .ng-custom-select {
+        .btn-large {
+          min-width: 155px;
+          width: 155px;
+          max-width: 155px;
+          padding-left: 8px !important;
+          ul {
+            width: 155px !important;
+          }
+        }
+        .wrapper-dropdown-cd:after {
+          right: 8px !important;
+        }
+      }
+    }
+  }
+}
+
+.activate-deactivate-list {
+  @media (max-width: 1315px){
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+.margin-top-m2 {
+  margin-top: -2px;
 }

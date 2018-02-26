@@ -11,6 +11,7 @@ var inviteService = require('./../../services/invite');
 var accountManagerService = require('./../../services/accountManager');
 var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
+var testDatabase = require("../database");
 
 var assert = require('chai').assert;
 var async = require('async');
@@ -19,17 +20,13 @@ var testData;
 
 describe('SERVICE - AccountManager', function() {
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      done();
-    }).catch(function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
-      done();
+    testDatabase.prepareDatabaseForTests().then(function() {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        done();
+      }).catch(function(error) {
+        done(error);
+      });
     });
   });
 
@@ -37,26 +34,42 @@ describe('SERVICE - AccountManager', function() {
     return [
       function(cb) {
         Invite.count().then(function(c) {
-          assert.equal(c, params.invite);
-          cb();
+          try {
+            assert.equal(c, params.invite);
+              cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         Account.count().then(function(c) {
-          assert.equal(c, params.account);
-          cb();
+          try {
+            assert.equal(c, params.account);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         User.count().then(function(c) {
-          assert.equal(c, params.user);
-          cb();
+          try {
+            assert.equal(c, params.user);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       },
       function(cb) {
         AccountUser.count().then(function(c) {
-          assert.equal(c, params.accountUser);
-          cb();
+          try {
+            assert.equal(c, params.accountUser);
+            cb();
+          } catch (e) {
+            cb(e);
+          }
         });
       }
     ];
@@ -80,22 +93,20 @@ describe('SERVICE - AccountManager', function() {
 
   describe('#createOrFindAccountManager', function() {
     describe('happy path', function() {
-      it('should create new user', function(done) {
+      it('should create new account user', function(done) {
         let data = sampleData();
         subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
           models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
             accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
               AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
-                let returnParams = {
-                  userId: accountUser.UserId,
-                  accountUserId: accountUser.id,
-                  accountId: data.accountId,
-                  userType: 'new',
-                  role: accountUser.role
-                };
-
-                assert.deepEqual(params, returnParams);
-                done();
+                try {
+                  assert.equal(accountUser.AccountId, params.accountId);
+                  assert.equal(accountUser.id, params.accountUserId);
+                  assert.equal(accountUser.role, "accountManager");
+                  done();
+                } catch (e) {
+                  done(e);
+                }
               });
             }, function(error) {
               done(error);
@@ -161,28 +172,37 @@ describe('SERVICE - AccountManager', function() {
       subscriptionFixture.createSubscription(testData.account.id, testData.user.id).then(function(subscription) {
         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
           accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
-            inviteService.createInvite(params).then(function(result) {
-              let userParams = { accountName: 'newname', password: 'newpassword' };
-              inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
-                if(error) {
-                  done(error);
-                }
+            try {
+              inviteService.createInvite(params).then((invite) => {
+                let userParams = { password: 'newpassword' };
+                inviteService.acceptInvite(invite.token, userParams).then(({invite, user, message}) => {
+                  async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+                    if(error) {
+                      done(error);
+                    }
+                    accountManagerService.findAccountManagers(data.accountId).then(function(results) {
+                      let subject = results[0];
+                      try {
+                        assert.equal(subject.status, 'active');
+                        assert.equal(subject.AccountId, data.accountId);
+                        done();
+                      } catch (e) {
+                        done(e);
+                      }
 
-                async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
-                  if(error) {
-                    done(error);
-                  }
-                  accountManagerService.findAccountManagers(data.accountId).then(function(results) {
-                    let subject = results[0];
-                    assert.equal(subject.status, 'active');
-                    assert.equal(subject.AccountId, data.accountId);
-                    done();
-                  }, function(error) {
-                    done(error);
+                    }, function(error) {
+                      done(error);
+                    });
                   });
+                }, (error) => {
+                  done(error);
                 });
+              }, (error) => {
+                done(error);
               });
-            });
+            } catch (e) {
+              done(e);
+            }
           }, function(error) {
             done(error);
           });
@@ -200,7 +220,7 @@ describe('SERVICE - AccountManager', function() {
         models.SubscriptionPreference.update({'data.accountUserCount': 5}, { where: { subscriptionId: subscription.id } }).then(function() {
           accountManagerService.createOrFindAccountManager(data.user, data.body, data.accountId).then(function(params) {
             inviteService.createInvite(params).then(function(result) {
-              async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
+              async.parallel(countTables({ invite: 1, account: 1, user: 1, accountUser: 2 }), function(error, result) {
                 if(error) {
                   done(error);
                 }
@@ -239,11 +259,7 @@ describe('SERVICE - AccountManager', function() {
             AccountUser.find({ where: { email: data.body.email } }).then(function(accountUser) {
               inviteService.createInvite(params).then(function(result) {
                 let userParams = { accountName: 'newname', password: 'newpassword' };
-                inviteService.acceptInviteNew(result.invite.token, userParams, function(error, message) {
-                  if(error) {
-                    done(error);
-                  }
-
+                inviteService.acceptInvite(result.token, userParams).then((error, message) => {
                   async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                     if(error) {
                       done(error);
@@ -252,13 +268,15 @@ describe('SERVICE - AccountManager', function() {
                     accountManagerService.findAndRemoveAccountUser(accountUser.id, data.accountId).then(function(message) {
                       assert.equal(message, 'Successfully removed account from Account List');
 
-                      async.parallel(countTables({ invite: 0, account: 1, user: 2, accountUser: 1 }), function(error, result) {
+                      async.parallel(countTables({ invite: 1, account: 1, user: 2, accountUser: 2 }), function(error, result) {
                         done(error);
                       });
                     }, function(error) {
                       done(error);
                     });
                   });
+                }, (error) => {
+                  done(error);
                 });
               });
             });

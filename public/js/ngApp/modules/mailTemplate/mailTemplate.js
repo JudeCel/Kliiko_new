@@ -3,19 +3,20 @@
 
   angular.module('KliikoApp.mailTemplate', []).factory('mailTemplate', mailTemplateFactory);
 
-  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope'];
-  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope) {
+  mailTemplateFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', '$rootScope', 'changesValidation'];
+  function mailTemplateFactory($q, globalSettings, $resource, dbg, $rootScope, changesValidation) {
 
     var mailRestApi = {
-      mailTemplates: $resource(globalSettings.restUrl + '/mailTemplates', {}, {get: {method: 'GET'}}),
-      mailTemplatesWithColors: $resource(globalSettings.restUrl + '/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      sessionMailTemplates: $resource(globalSettings.restUrl + '/sessionMailTemplates', {}, { get: { method: 'GET' } }),
-      sessionMailTemplatesWithColors: $resource(globalSettings.restUrl + '/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
-      mailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      saveMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/save', {}, {post: {method: 'POST'}}),
-      deleteMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate', {}, {post: {method: 'POST'}}),
-      resetMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/reset', {}, {post: {method: 'POST'}}),
-      previewMailTemplate: $resource(globalSettings.restUrl + '/mailTemplate/preview', {}, {post: {method: 'POST'}}),
+      mailTemplates: $resource('/mailTemplates', {}, {get: {method: 'GET'}}),
+      mailTemplatesWithColors: $resource('/mailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      sessionMailTemplates: $resource('/sessionMailTemplates', {}, { get: { method: 'GET' } }),
+      sessionMailTemplatesWithColors: $resource('/sessionMailTemplatesWithColors', {}, { get: { method: 'GET' } }),
+      mailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      saveMailTemplate: $resource('/mailTemplate/save', {}, {post: {method: 'POST'}}),
+      deleteMailTemplate: $resource('/mailTemplate', {}, {post: {method: 'POST'}}),
+      resetMailTemplate: $resource('/mailTemplate/reset', {}, {post: {method: 'POST'}}),
+      previewMailTemplate: $resource('/mailTemplate/preview', {}, {post: {method: 'POST'}}),
+      sendMail: $resource('/mailTemplate/send', {}, {post: {method: 'POST'}})
     };
 
     var MailTemplateService = {};
@@ -29,6 +30,7 @@
     MailTemplateService.deleteMailTemplate = deleteMailTemplate;
     MailTemplateService.resetMailTemplate = resetMailTemplate;
     MailTemplateService.previewMailTemplate = previewMailTemplate;
+    MailTemplateService.sendMail = sendMail;
     return MailTemplateService;
 
     function getAllSessionMailTemplates(getSystemMail, params) {
@@ -81,13 +83,20 @@
       return deferred.promise;
     }
 
-    function saveMailTemplate(mTemplate, createCopy) {
+    function saveMailTemplate(mTemplate, createCopy, sessionId) {
       dbg.log2('#KliikoApp.mailTemplate > save mail template', mTemplate);
       var deferred = $q.defer();
-
-      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy}, function (res) {
+      mailRestApi.saveMailTemplate.post({mailTemplate:mTemplate, copy: createCopy, sessionId: sessionId}, function (res) {
         dbg.log2('#KliikoApp.mailTemplate > save mail template> server respond >');
-        deferred.resolve(res);
+        if (res.validation && !res.validation.isValid) {
+          changesValidation.validationConfirmAlternative(res, saveMailTemplate, mTemplate, createCopy).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+        } else {
+          deferred.resolve(res);
+        }
       });
       return deferred.promise;
     }
@@ -131,6 +140,20 @@
         dbg.log2('#KliikoApp.mailTemplate > preview mail template> server respond >');
         deferred.resolve(res);
       });
+      return deferred.promise;
+    }
+
+    function sendMail(mailTemplate, sessionId) {
+      var deferred = $q.defer();
+
+      mailRestApi.sendMail.post({mailTemplate: mailTemplate, sessionId: sessionId}, function(res) {
+        if (res.error) {
+          deferred.reject(res.error);
+        } else {
+          deferred.resolve(res);
+        }
+      });
+
       return deferred.promise;
     }
 

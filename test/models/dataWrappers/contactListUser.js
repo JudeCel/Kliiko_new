@@ -12,8 +12,8 @@ describe('Data Wrappers -> ContactListUser', () => {
       id: 2,
       customFields: { mobile: "1234556" },
       AccountUser: {
-        Invites: 4,
         firstName: "Dainis",
+        invitesInfo: {Invites: 1, NotAtAll: 0},
       }
     }
 
@@ -25,12 +25,22 @@ describe('Data Wrappers -> ContactListUser', () => {
       assert.isUndefined(instance.notExists);
     });
 
-    it("assigne values", () =>{
+    it("assigne values", () => {
       assert.equal(instance.firstName, data.AccountUser.firstName);
       assert.isNumber(instance.Invites);
       assert.equal(instance.lastName, data.AccountUser.lastName);
       assert.equal(instance.mobile, data.customFields.mobile);
       assert.equal(instance.id, data.id);
+    });
+
+    it("can invite", () => {
+      assert.equal(instance.canInvite, true);
+    });
+
+    it("can't invite", () => {
+      data.AccountUser.invitesInfo.NotAtAll = 1;
+      let instance2 = new ContactListUser(defaultValue, customFields, participantsFields, visibleFields, data);
+      assert.equal(instance2.canInvite, false);
     });
   });
 });

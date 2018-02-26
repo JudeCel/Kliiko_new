@@ -1,25 +1,22 @@
 'use strict';
 
 var helpers = require('./helpers');
-var mailTemplateService = require('../services/mailTemplate');
 var ical = require('ical-generator');
 var moment = require('moment-timezone');
 var sanitizeHtml = require('sanitize-html');
 var _ = require('lodash');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 
 function preparePathData (attribs, resources) {
-  let extentionArray = attribs.src.split(".");
-  let extension = "";
-  if (extentionArray.length) {
-    extension = extentionArray[extentionArray.length - 1];
-  }
   let filename = attribs.src.split('/');
-  let name = _.camelCase(filename[filename.length - 1])+"."+extension;
+  let realFilename = filename[filename.length - 1].split('?')[0];
+  let extentionArray = realFilename.split(".");
+  let extension = extentionArray.length ? extentionArray[extentionArray.length - 1] : "";
+  let name = _.camelCase(realFilename)+"."+extension;
   let path = attribs.src;
-  if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
+  if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1 && path.indexOf("data") === -1) {
     path = "public" + path;
   }
   resources.push({filename: name, path: path, cid: name+"@att"});
@@ -71,39 +68,40 @@ function formatMailTemplate(tepmlateHtml) {
 
 function sendMailWithTemplate(template, mailParams, callback) {
   let parsedTemplate = formatMailTemplate(template.content);
-  transporter.sendMail({
+  sendMail({
     from: mailFrom,
     to: mailParams.email,
     subject: template.subject,
     html: parsedTemplate.html,//template.content
     attachments: parsedTemplate.resources
-  }, callback);
+  }).then((resp) => {
+    callback(null, resp);
+  }, (error) => {
+    callback(error);
+  });
 }
 
 function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
   let parsedTemplate = formatMailTemplate(template.content);
-
-    let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name});
+    let cal = ical({domain: process.env.SERVER_DOMAIN, name: template.name, timezone: mailParams.timeZone});
     let event = cal.createEvent({
-        start: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
-        end:  new Date(moment.tz(mailParams.orginalEndTime, mailParams.timeZone)),
-        timestamp: new Date(moment.tz(mailParams.orginalStartTime, mailParams.timeZone)),
+        start: new Date(mailParams.orginalStartTime),
+        end:  new Date(mailParams.orginalEndTime),
         summary: template.name,
-        timezone: mailParams.timeZone,
         organizer: mailFrom
     });
 
     /*
     // add attendees to event when known
         event.attendees([
-        {email: 'warlockxins@gmail.com', name: 'Person A'},
+        {email: 'someMail@gmail.com', name: 'Person A'},
     ]);
     */
 
     let calendarData =  cal.toString();
     let urlCalendarData = encodeURI(new Buffer(calendarData).toString('base64'));
 
-    transporter.sendMail({
+    sendMail({
       from: mailFrom,
       to: mailParams.email,
       subject: template.subject,
@@ -121,7 +119,11 @@ function sendMailWithTemplateAndCalendarEvent(template, mailParams, callback) {
         cid: "event.ics@att"
       }]
       */
-    }, callback);
+    }).then((resp) => {
+      callback(null, resp);
+    }, (error) => {
+      callback(error);
+    });
 }
 
 module.exports = {

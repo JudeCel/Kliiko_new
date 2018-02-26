@@ -8,6 +8,7 @@ var userFixture = require('./user');
 var subscriptionFixture = require('./subscription');
 var models = require('../../models');
 var SessionMemberService = require('./../../services/sessionMember');
+var sessionTypeService = require('./../../services/sessionType');
 
 var mainData;
 var manualDependencies = {};
@@ -27,6 +28,7 @@ module.exports = {
 
 var functionList = [
   function(callback) { createMainAccount(callback) },
+  createSessionTypes,
   createSessionWithFacilitator,
   createSubAccountsAndSessionMembers,
   createTopics
@@ -35,7 +37,7 @@ var functionList = [
 function createChat(dependencies) {
   let deferred = q.defer();
 
-  setDependenciesManually(dependencies);
+  setDependenciesManually(dependencies || {});
 
   async.waterfall(functionList, function(error, result) {
     if(error) {
@@ -59,6 +61,14 @@ function createMainAccount(callback) {
     }, function(error) {
       callback(error);
     });
+  }, function(error) {
+    callback(error);
+  });
+}
+
+function createSessionTypes(callback) {
+  sessionTypeService.updateSessionTypes().then(function() {
+    callback();
   }, function(error) {
     callback(error);
   });
@@ -214,11 +224,13 @@ function sessionMemberParams(name, role, accountUserId, token) {
 
 function sessionParams(preferenceId) {
   let startTime = new Date();
+  let sessionDeps = getDependency('session')
   return {
     status: 'open',
     accountId: mainData.account.id,
     name: 'cool session',
     type: 'focus',
+    anonymous: sessionDeps.anonymous,
     startTime: startTime,
     endTime: startTime.setHours(startTime.getHours() + 2000),
     timeZone: 'Europe/Riga',
@@ -239,7 +251,8 @@ function setDependenciesManually(dependencies) {
     manualDependencies = {
       participants: dependencies.participants,
       observers: dependencies.observers,
-      topics: dependencies.topics
+      topics: dependencies.topics,
+      session: dependencies.session || { anonymous: false }
     };
   }
 }

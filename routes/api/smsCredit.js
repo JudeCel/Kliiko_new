@@ -6,7 +6,8 @@ var subscriptionAddon = require('./../../services/subscriptionAddon');
 module.exports = {
   get: get,
   creditCount: creditCount,
-  purchase: purchase
+  purchase: purchase,
+  checkout: checkout
 };
 
 function get(req, res, next) {
@@ -18,7 +19,7 @@ function get(req, res, next) {
 }
 
 function creditCount(req, res, next) {
-  let accountId = res.locals.currentDomain.id;
+  let accountId = req.currentResources.account.id;
 
   subscriptionAddon.creditCount(accountId).then(function(result) {
     res.send({creditCount: result});
@@ -29,11 +30,22 @@ function creditCount(req, res, next) {
 
 function purchase(req, res, next) {
   let params = req.body;
-  params.accountId = res.locals.currentDomain.id;
+  params.accountId = req.currentResources.account.id;
 
   subscriptionAddon.chargeAddon(params).then(function(result) {
     res.send(result);
   }, function(error) {
+    res.send(({ error: error }));
+  });
+}
+
+function checkout(req, res, next) {
+  let params = {};
+  params.accountId = req.currentResources.account.id;
+
+  subscriptionAddon.checkout(params).then((result) => {
+    res.send(result);
+  }, (error) => {
     res.send(({ error: error }));
   });
 }

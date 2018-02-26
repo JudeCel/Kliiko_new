@@ -7,13 +7,20 @@ var SurveyQuestion = models.SurveyQuestion;
 var SurveyAnswer = models.SurveyAnswer;
 var ContactList = models.ContactList;
 var validators = require('./../services/validators');
+var urlHeplers = require('./../services/urlHeplers');
 var contactListUserServices = require('./../services/contactListUser');
+var contactListServices = require('./../services/contactList');
 var MessagesUtil = require('./../util/messages');
+var StringHelpers = require('./../util/stringHelpers');
 
 var async = require('async');
 var q = require('q');
 var _ = require('lodash');
+var Bluebird = require('bluebird');
 var surveyConstants = require('../util/surveyConstants');
+var constants = require('../util/constants');
+
+const surveyTypesWithoutValidation = [constants.surveyTypes.sessionPrizeDraw];
 
 const VALID_ATTRIBUTES = {
   manage: [
@@ -22,9 +29,11 @@ const VALID_ATTRIBUTES = {
     'confirmedAt',
     'name',
     'closed',
+    'closedAt',
     'description',
     'thanks',
-    'SurveyQuestions'
+    'SurveyQuestions',
+    'surveyType'
   ],
   survey: [
     'id',
@@ -35,7 +44,9 @@ const VALID_ATTRIBUTES = {
     'thanks',
     'closed',
     'confirmedAt',
-    'url'
+    'closedAt',
+    'url',
+    'surveyType'
   ],
   question: [
     'id',
@@ -52,25 +63,24 @@ const VALID_ATTRIBUTES = {
 
 const SMALL_AGE = 'Under 18';
 
+const CONTACT_DETAILS_STATS_FIELDS = ['gender', 'age'];
+
+const CONTACT_DETAILS_QUESTION_NAME = 'Contact Details';
+
 function simpleParams(data, message) {
   return { data: data, message: message };
 };
 
 // Exports
-function findAllSurveys(account) {
+function findAllSurveys(account, params) {
   let deferred = q.defer();
 
   Survey.findAll({
-    where: { accountId: account.id },
+    where: { accountId: account.id, surveyType: params.surveyType },
     attributes: VALID_ATTRIBUTES.survey,
     order: [
-      ['id', 'asc'],
-      [SurveyQuestion, 'order', 'ASC']
-    ],
-    include: [{
-      model: SurveyQuestion,
-      attributes: VALID_ATTRIBUTES.question,
-    }]
+      ['id', 'asc']
+    ]
   }).then(function(surveys) {
     deferred.resolve(simpleParams(surveys));
   }).catch(Survey.sequelize.ValidationError, function(error) {
@@ -84,7 +94,6 @@ function findAllSurveys(account) {
 
 function findSurvey(params, skipValidations) {
   let deferred = q.defer();
-
   Survey.find({
     where: { id: params.id },
     attributes: VALID_ATTRIBUTES.survey,
@@ -108,6 +117,26 @@ function findSurvey(params, skipValidations) {
         else if(!survey.confirmedAt) {
           deferred.reject(MessagesUtil.survey.notConfirmed);
         }
+        else if(survey.surveyType !== 'recruiter') {
+          const newParams = simpleParams(survey);
+          models.SessionSurvey.find({ where: { surveyId: survey.id } }).then((sessionSurvey) => {
+            if(!sessionSurvey.active) newParams.status = ANSWER_RESPONSES.notActive;
+            return models.SessionMember.find({
+              where: { token: params.token },
+              include: [{
+                model: models.Session,
+                include: [{
+                  model: models.Survey,
+                  where: { id: survey.id }
+                }]
+              }]
+            });
+          }).then((member) => {
+            newParams.isFacilitator = member && member.role === 'facilitator';
+            newParams.data.dataValues.username = member.username;
+            deferred.resolve(newParams);
+          });
+        }
         else {
           deferred.resolve(simpleParams(survey));
         }
@@ -128,67 +157,104 @@ function findSurvey(params, skipValidations) {
 function removeSurvey(params, account) {
   let deferred = q.defer();
 
-  Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
-    if(result > 0) {
-      deferred.resolve(simpleParams(null, MessagesUtil.survey.removed));
-    }
-    else {
+  Survey.find({ where: { id: params.id, accountId: account.id } }).then(function(survey) {
+    if(survey) {
+      var validCloseDate = new Date();
+      validCloseDate.setDate(validCloseDate.getDate() - 1);
+
+      if (survey.closed && (new Date(survey.closedAt) <= validCloseDate) || !survey.confirmedAt) {
+        Survey.destroy({ where: { id: params.id, accountId: account.id } }).then(function(result) {
+          if(result > 0) {
+            deferred.resolve(simpleParams(null, MessagesUtil.survey.removed));
+          } else {
+            deferred.reject(MessagesUtil.survey.notFound);
+          }
+        }).catch(Survey.sequelize.ValidationError, function(error) {
+          deferred.reject(filters.errors(error));
+        }).catch(function(error) {
+          deferred.reject(error);
+        });
+      } else {
+        deferred.reject(MessagesUtil.survey.cantDelete);
+      }
+
+    } else {
       deferred.reject(MessagesUtil.survey.notFound);
     }
-  }).catch(Survey.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
   }).catch(function(error) {
-    deferred.reject(error);
+    deferred.reject(MessagesUtil.survey.notFound);
   });
 
   return deferred.promise;
 };
 
-function createOrUpdateContactList(accountId, fields, t) {
-  let deferred = q.defer();
+function updateContactList(contactList, survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    fillCustomFields(fields, contactList);
+    contactList.customFields = _.uniq(contactList.customFields);
+    contactList.name = survey.name;
 
-  ContactList.find({
-    where: {
-      name: 'Survey',
-      accountId: accountId
-    }
-  }).then(function(contactList) {
-    if(contactList) {
-      fillCustomFields(fields, contactList);
-      contactList.customFields = _.uniq(contactList.customFields);
+    contactList.save({ transaction: t }).then(function(contactList) {
+      resolve(contactList);
+    }).catch(ContactList.sequelize.ValidationError, function(error) {
+      reject(filters.errors(error));
+    }).catch(function(error) {
+      reject(error);
+    });
+  })
+}
+function createContactList(survey, fields, t){
+  return new Bluebird((resolve, reject) => {
+    if (_.includes(surveyTypesWithoutValidation, survey.surveyType)) {
+      resolve();
+    } else {
+      let contactList = ContactList.build({
+          name: survey.name,
+          accountId: survey.accountId,
+          editable: true,
+        }, { transaction: t });
 
-      contactList.save().then(function(contactList) {
-        deferred.resolve(contactList);
-      }).catch(ContactList.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
-    }
-    else {
-      contactList = ContactList.build({
-        name: 'Survey',
-        accountId: accountId,
-        editable: false,
-      }, { transaction: t });
+        fillCustomFields(fields, contactList);
+        contactListServices.create(contactList.dataValues, t).then((contactList) => {
+          survey.update({contactListId: contactList.id}, {transaction: t}).then(() => {
+            resolve(contactList);
+          }, (error) => {
+            reject(filters.errors(error));
+          })
+        }, (error) => {
+          reject(filters.errors(error))
+        });
+      }
+  })
+}
 
-      fillCustomFields(fields, contactList);
+function tryFindContactList(survey, t) {
+   return new Bluebird((resolve, reject) => {
 
-      contactList.save().then(function(contactList) {
-        deferred.resolve(contactList);
-      }).catch(ContactList.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
-    }
-  }).catch(ContactList.sequelize.ValidationError, function(error) {
-    deferred.reject(filters.errors(error));
-  }).catch(function(error) {
-    deferred.reject(error);
-  });
+    ContactList.find({
+      where: {accountId: survey.accountId,
+        $or: [{id: survey.contactListId}, {name: survey.name}]},
+        transaction: t}
+      ).then((contactList) => {
+        resolve(contactList);
+    }, (error) => {
+      reject(error);
+    });
+   });
+}
 
-  return deferred.promise;
+function createOrUpdateContactList(survey, fields, t) {
+   return new Bluebird((resolve, reject) => {
+     tryFindContactList(survey, t).then((contactList) => {
+        if(contactList){
+          resolve(updateContactList(contactList, survey, fields, t));
+        }else{
+          resolve(createContactList(survey, fields, t));
+        }
+      }, (error) => {
+        reject(error);
+      })
+   })
 }
 
 function fillCustomFields(fields, contactList) {
@@ -212,37 +278,56 @@ function getContactListFields(questions) {
   return array;
 }
 
+
+function setupContactListForSurvey(survey, transaction) {
+  let fields = getContactListFields(survey.SurveyQuestions);
+  return createOrUpdateContactList(survey, fields, transaction).then((contactList) => {
+    if(contactList){
+      return updateContactList(contactList, survey, fields, transaction).then(() => {
+        return survey;
+      });
+    }else{
+      return survey;
+    }
+  }, (error) => {
+    throw error;
+  });
+}
+
 function createSurveyWithQuestions(params, account) {
   let deferred = q.defer();
-
   validators.hasValidSubscription(account.id).then(function() {
-    validators.subscription(account.id, 'survey', 1).then(function() {
       let validParams = validateParams(params, VALID_ATTRIBUTES.manage);
       validParams.accountId = account.id;
-
-      models.sequelize.transaction(function (t) {
-        return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
-          let fields = getContactListFields(survey.SurveyQuestions);
-
-          return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
-            return survey;
-          }, function(error) {
-            throw error;
+      let transactionPool = models.sequelize.transactionPool;
+      let tiket = transactionPool.getTiket();
+      transactionPool.once(tiket, () => {
+        models.sequelize.transaction(function (t) {
+          return Survey.create(validParams, { include: [ SurveyQuestion ], transaction: t }).then(function(survey) {
+            if (survey.surveyType == 'recruiter') {
+              return setupContactListForSurvey(survey, t);
+            } else {
+              return survey;
+            }
           });
-
+        }).then(function(survey) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          survey.update({ url: validUrl(survey) }).then(function(survey) {
+            deferred.resolve(simpleParams(survey, MessagesUtil.survey.created));
+          });
+        }).catch(Survey.sequelize.ValidationError, function(error) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(filters.errors(error));
+        }).catch(function(error) {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(error);
         });
-      }).then(function(survey) {
-        survey.update({ url: validUrl(survey) }).then(function(survey) {
-          deferred.resolve(simpleParams(survey, MessagesUtil.survey.created));
-        });
-      }).catch(Survey.sequelize.ValidationError, function(error) {
-        deferred.reject(filters.errors(error));
-      }).catch(function(error) {
-        deferred.reject(error);
-      });
-    }, function(error) {
-      deferred.reject(error);
+      })
+    transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+      deferred.reject("Server Timeoute");
     });
+
+    transactionPool.emit(transactionPool.CONSTANTS.nextTick);
   }, function(error) {
     deferred.reject(error);
   })
@@ -264,18 +349,23 @@ function updateSurvey(params, account) {
       }).then(function(result) {
         if(result[0] == 0) {
           throw MessagesUtil.survey.notFound;
-        }
-        else {
+        } else {
           let survey = result[1][0];
+          let ids = getIds(validParams.SurveyQuestions);
+          let where = ids.length > 0 ? { surveyId: survey.id, id: { $notIn: ids } } : { surveyId: survey.id };
           return SurveyQuestion.destroy({
-            where: {
-              surveyId: survey.id,
-              id: { $notIn: getIds(validParams.SurveyQuestions) }
-            },
+            where: where,
             transaction: t
           }).then(function() {
-            return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(function() {
-              return survey;
+            return bulkUpdateQuestions(survey.id, validParams.SurveyQuestions, t).then(() => {
+              if(survey.surveyType == 'recruiter') {
+                let fields = getContactListFields(survey.SurveyQuestions);
+                return createOrUpdateContactList(survey, fields, t).then(() => {
+                  return survey;
+                });
+              } else {
+                return survey;
+              }
             }, function() {
               t.rollback();
               return survey;
@@ -297,28 +387,41 @@ function updateSurvey(params, account) {
   return deferred.promise;
 };
 
+
+function updateSurveyStatus(params, account, deferred) {
+  Survey.update({ closed: params.closed, closedAt: params.closed? null: new Date()}, {
+    where: { id: params.id, accountId: account.id },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject(MessagesUtil.survey.notFound);
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(simpleParams(survey, survey.closed ? MessagesUtil.survey.closed : MessagesUtil.survey.opened));
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(filters.errors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
 function changeStatus(params, account) {
   let deferred = q.defer();
   validators.hasValidSubscription(account.id).then(function() {
-    Survey.update({ closed: params.closed }, {
-      where: { id: params.id, accountId: account.id },
-      returning: true
-    }).then(function(result) {
-      if(result[0] == 0) {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-      else {
-        let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, survey.closed ? MessagesUtil.survey.closed : MessagesUtil.survey.opened));
-      }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
+    if (params.closed) {
+      updateSurveyStatus(params, account, deferred);
+    } else {
+      validators.subscription(account.id, 'survey', 1).then(function() {
+        updateSurveyStatus(params, account, deferred);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
   }, function(error) {
     deferred.reject(error);
-  })
+  });
 
   return deferred.promise;
 };
@@ -328,7 +431,7 @@ function copySurvey(params, account) {
   validators.hasValidSubscription(account.id).then(function() {
     Survey.find({
       where: { id: params.id, accountId: account.id },
-      attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId'],
+      attributes: ['accountId', 'name', 'description', 'thanks', 'resourceId', 'surveyType'],
       include: [{
           model: SurveyQuestion,
           attributes: ['name', 'question', 'order', 'answers', 'type', 'resourceId'],
@@ -336,6 +439,7 @@ function copySurvey(params, account) {
       ]
     }).then(function(survey) {
       if(survey) {
+        survey.name = "Copy of " + survey.name
         createSurveyWithQuestions(survey, account).then(function(result) {
           findSurvey(result.data, true).then(function(result) {
             deferred.resolve(simpleParams(result.data, MessagesUtil.survey.copied));
@@ -343,6 +447,7 @@ function copySurvey(params, account) {
             deferred.reject(error);
           });
         }, function(error) {
+
           deferred.reject(error);
         });
       }
@@ -361,50 +466,186 @@ function copySurvey(params, account) {
   return deferred.promise;
 };
 
+function addQuestionsToContactListFields(survey, fields) {
+  for (let i = 0; i < survey.SurveyQuestions.length; i++) {
+    let question = survey.SurveyQuestions[i];
+    
+    if (!isContactDetailsQuestion(question)) {
+      fields.push(_.camelCase(question.name));
+    }
+  }
+}
+
+function addAnswersToContactListParams(survey, validParams, clParams) {
+  for (let i = 0; i < survey.SurveyQuestions.length; i++) {
+    let question = survey.SurveyQuestions[i];
+    let answer = getAnswerToQuestion(question, validParams);
+
+    if (answer) {
+      clParams.customFields[_.camelCase(question.name)] = answer.name;
+    }
+  }
+}
+
+function getAnswerToQuestion(question, validParams) {
+  if (isContactDetailsQuestion(question)) return null;
+
+  let answerInValidParams = validParams.answers[question.id];
+
+  if (answerInValidParams.type === 'string') {
+    return { name: answerInValidParams.value };
+  }
+
+  return question.answers[answerInValidParams.value];
+}
+
+function isContactDetailsQuestion(question) {
+  return question.name === CONTACT_DETAILS_QUESTION_NAME;
+}
+
 function answerSurvey(params) {
   let deferred = q.defer();
 
   let validParams = validAnswerParams(params);
 
-  models.sequelize.transaction(function (t) {
-    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then(function(survey) {
-      return SurveyAnswer.create(validParams, { transaction: t }).then(function() {
-        let fields = getContactListFields(survey.SurveyQuestions);
-        return createOrUpdateContactList(survey.accountId, fields, t).then(function(contactList) {
-          if(!_.isEmpty(fields)) {
-            let clParams = findContactListAnswers(contactList, validParams.answers);
-            if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
-              clParams.contactListId = contactList.id;
-              clParams.accountId = survey.accountId;
+  models.sequelize.transaction((t) => {
+    return Survey.find({ where: { id: validParams.surveyId }, include: [SurveyQuestion] }).then((survey) => {
+      if(survey.surveyType === 'sessionPrizeDraw') {
+        const answer = findAnswer(validParams, survey, 'interest');
+        if(answer.value === 1) return survey;
+      }
 
-              return contactListUserServices.create(clParams).then(function(result) {
+      return SurveyAnswer.create(validParams, { transaction: t }).then((surveyAnswer) => {
+         return tryFindContactList(survey, t).then((contactList) => {
+          if(!contactList) { return survey }
+          let fields = getContactListFields(survey.SurveyQuestions);
+
+          addQuestionsToContactListFields(survey, fields);
+          return updateContactList(contactList, survey, fields, t).then((contactList) => {
+              if(!_.isEmpty(fields)) {
+                let clParams = findContactListAnswers(contactList, validParams.answers);
+                if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
+                  clParams.contactListId = contactList.id;
+                  clParams.accountId = survey.accountId;
+
+                  if (survey.surveyType === 'recruiter') {
+                    addAnswersToContactListParams(survey, validParams, clParams);
+                    return createContactListUser(survey, clParams);
+                  } else if(survey.surveyType === 'sessionPrizeDraw') {
+                    return survey;
+                  } else {
+                    const answer = findAnswer(validParams, survey, 'interest');
+                    if (answer.value === 1) {
+                      return survey;
+                    } else {
+                      const contactDetails = findAnswer(validParams, survey, 'contact').contactDetails;
+                      addAnswersToContactListParams(survey, validParams, clParams);
+                      return models.AccountUser.find({
+                        where: { AccountId: survey.accountId, email: contactDetails.email },
+                        include: [{ model: models.ContactListUser, where: { contactListId: clParams.contactListId }, required: true }]
+                      }).then((accountUser) => {
+                        if (accountUser) {
+                          return survey;
+                        } else {
+                          return createContactListUser(survey, clParams);
+                        }
+                      });
+                    }
+                  }
+                } else {
+                  if(survey.surveyType === 'sessionContactList') {
+                    survey.redirect = true;
+                  }
+                  return survey;
+                }
+              } else {
                 return survey;
-              }, function(error) {
-                throw error;
-              });
-            }
-            else {
-              return survey;
-            }
-          }
-          else {
-            return survey;
-          }
-        }, function(error) {
+              }
+           }, (error) => {
+             throw error;
+           })
+         }, (error) => {
           throw error;
         });
       });
     })
-  }).then(function(survey) {
-    deferred.resolve(simpleParams(null, MessagesUtil.survey.completed));
-  }).catch(SurveyAnswer.sequelize.ValidationError, function(error) {
+  }).then((survey) =>{
+    deferred.resolve({ status: correctSurveyAnsweredMessage(validParams, survey) });
+  }).catch(SurveyAnswer.sequelize.ValidationError, (error) => {
     deferred.reject(filters.errors(error));
-  }).catch(function(error) {
+  }).catch((error) => {
     deferred.reject(error);
   });
 
   return deferred.promise;
 };
+
+function createContactListUser(survey, clParams) {
+  return contactListUserServices.create(clParams).then((result) => {
+    return survey;
+  }, (error)  => {
+    throw error;
+  });
+}
+
+const ANSWER_RESPONSES = {
+  recruiter: 100,
+  sessionContactList: {
+    interested: 200,
+    notInterested: 201,
+    notInterestedRedirect: 307
+  },
+  sessionPrizeDraw: {
+    interested: 300,
+    notInterested: 301,
+    notInterestedRedirect: 307
+  },
+  notActive: 400
+};
+
+function correctSurveyAnsweredMessage(params, survey) {
+  if(survey.surveyType === 'recruiter') {
+    return ANSWER_RESPONSES.recruiter;
+  }
+  else {
+    const answer = findAnswer(params, survey, 'interest');
+    if(answer.value === 0) {
+      return ANSWER_RESPONSES[survey.surveyType].interested;
+    }
+    else {
+      if (survey.redirect) {
+        return ANSWER_RESPONSES[survey.surveyType].notInterestedRedirect;
+      } else {
+        return ANSWER_RESPONSES[survey.surveyType].notInterested;
+      }
+      return response;
+    }
+  }
+}
+
+function findAnswer(params, survey, type) {
+  let question;
+  if(type === 'contact') {
+    question = findContactQuestion(survey.SurveyQuestions);
+  }
+  else {
+    question = findInterestQuestion(survey.SurveyQuestions);
+  }
+
+  return params.answers[question.id.toString()];
+}
+
+function findContactQuestion(questions) {
+  return questions.find((item) => item.name === 'Contact Details');
+}
+
+function findFirstChoiceQuestion(questions) {
+  return questions.find((item) => item.name === 'First Choice');
+}
+
+function findInterestQuestion(questions) {
+  return questions.find((item) => item.name === 'Interest');
+}
 
 function findContactListAnswers(contactList, answers) {
   let values;
@@ -438,40 +679,67 @@ function findContactListAnswers(contactList, answers) {
   }
 }
 
+function confirmSurveyDefered(params, account, deferred) {
+  Survey.update({ confirmedAt: new Date() }, {
+    where: { id: params.id, accountId: account.id },
+    returning: true
+  }).then(function(result) {
+    if(result[0] == 0) {
+      deferred.reject(MessagesUtil.survey.notFound);
+    }
+    else {
+      let survey = result[1][0];
+      deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
+    }
+  }).catch(Survey.sequelize.ValidationError, function(error) {
+    deferred.reject(filters.errors(error));
+  }).catch(function(error) {
+    deferred.reject(error);
+  });
+}
+
+function getSurveyType(params) {
+  return new Bluebird(function (resolve, reject) {
+    let deferred = q.defer();
+    Survey.find({
+      where: { id: params.id },
+      attributes: ['surveyType'],
+    }).then(function(survey) {
+      if(survey) {
+        resolve(survey.surveyType);
+      } else {
+        reject(MessagesUtil.survey.notFound);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
 function confirmSurvey(params, account) {
   let deferred = q.defer();
 
-  validators.hasValidSubscription(account.id).then(function() {
-    Survey.update({ confirmedAt: params.confirmedAt }, {
-      where: { id: params.id, accountId: account.id },
-      returning: true
-    }).then(function(result) {
-      if(result[0] == 0) {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-      else {
-        let survey = result[1][0];
-        deferred.resolve(simpleParams(survey, MessagesUtil.survey.confirmed));
-      }
-    }).catch(Survey.sequelize.ValidationError, function(error) {
-      deferred.reject(filters.errors(error));
-    }).catch(function(error) {
-      deferred.reject(error);
-    });
-  }, function(error) {
+  getSurveyType(params).then((type) => {
+    if (_.includes(surveyTypesWithoutValidation, type)) {
+      confirmSurveyDefered(params, account, deferred);
+    } else {
+      validators.subscription(account.id, 'survey', 1).then(function() {
+        confirmSurveyDefered(params, account, deferred);
+      }, function(error) {
+        deferred.reject(error);
+      });
+    }
+  }, (error) => {
     deferred.reject(error);
-  })
-
+  });
   return deferred.promise;
 };
 
-function exportSurvey(params, account) {
-  let deferred = q.defer();
-
-  canExportSurveyData(account).then(function() {
+function getSurveyData(id, accountId) {
+  return new Bluebird(function (resolve, reject) {
     Survey.find({
-      where: { id: params.id, accountId: account.id },
-      attributes: ['id'],
+      where: { id: id, accountId: accountId },
+      attributes: ['id', 'name'],
       include: [{
         model: SurveyQuestion,
         attributes: VALID_ATTRIBUTES.question
@@ -481,22 +749,85 @@ function exportSurvey(params, account) {
       ]
     }).then(function(survey) {
       if(survey) {
+        resolve(survey);
+      } else {
+        reject(MessagesUtil.survey.notFound);
+      }
+    }, function(error) {
+      reject(filters.errors(error));
+    });
+  });
+}
+
+function exportSurvey(params, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyData(account).then(function() {
+      getSurveyData(params.id, account.id).then(function(survey) {
         let header = createCsvHeader(survey.SurveyQuestions);
         let data = createCsvData(header, survey);
-        deferred.resolve(simpleParams({ header: header, data: data }));
-      }
-      else {
-        deferred.reject(MessagesUtil.survey.notFound);
-      }
-    }).catch(function(error) {
-      deferred.reject(filters.errors(error));
+        resolve(simpleParams({ header: header, data: data }));
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
     });
-  }, function(error) {
-    deferred.reject(error);
   });
-
-  return deferred.promise;
 };
+
+function getSurveyStats(id, account) {
+  return new Bluebird(function (resolve, reject) {
+    canExportSurveyStats(account).then(function() {
+      getSurveyData(id, account.id).then(function(survey) {
+        let stats = createStats(survey);
+        resolve(simpleParams(stats));
+      }, function(error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function getSurveyListStats(ids, account) {
+  return new Bluebird(function (resolve, reject) {
+    let allStats = [];
+    canExportSurveyStats(account).then(function() {
+      async.waterfall(ids.map((id) => {
+        return function (nextCallback) {
+          getSurveyData(id, account.id).then(function(survey) {
+            let stats = createStats(survey);
+            if (stats) {
+              allStats.push(simpleParams(stats));
+            }
+            nextCallback(null);
+          }, function(error) {
+            nextCallback(error);
+          });
+        }
+      }), function(error) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(allStats);
+        }
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function canExportSurveyStats(account) {
+  return new Bluebird(function (resolve, reject) {
+    validators.planAllowsToDoIt(account.id, 'exportRecruiterStats').then(function() {
+      resolve({});
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
 
 function canExportSurveyData(account) {
   let deferred = q.defer();
@@ -509,11 +840,11 @@ function canExportSurveyData(account) {
   return deferred.promise;
 }
 
-function constantsSurvey() {
+function constantsSurvey(surveyType) {
   let deferred = q.defer();
-
-  if(surveyConstants) {
-    deferred.resolve(simpleParams(surveyConstants));
+  let surveyData = surveyConstants.getSurveyConstants(surveyType)
+  if(surveyData) {
+    deferred.resolve(simpleParams(surveyData));
   }
   else {
     deferred.reject(MessagesUtil.survey.noConstants);
@@ -555,9 +886,6 @@ function createCsvData(header, survey) {
         case 'string':
           object[header[index + indexDiff]] = answer.value;
           break;
-        case 'boolean':
-          assignBoolean(index + indexDiff, header, object, question, answer);
-          break;
         case 'object':
           if (answer.contactDetails) {
             for(var property in answer.contactDetails) {
@@ -583,15 +911,6 @@ function assignNumber(index, header, object, question, answer) {
       object[header[index]] = questionAnswer.name;
     }
   });
-};
-
-function assignBoolean(index, header, object, question, answer) {
-  object[header[index]] = answer.value ? 'Yes' : 'No';
-  if(answer.contactDetails) {
-    _.map(answer.contactDetails, function(value, key) {
-      object[_.startCase(key)] = value;
-    });
-  }
 };
 
 function validAnswerParams(params) {
@@ -655,25 +974,114 @@ function bulkUpdateQuestions(surveyId, questions, t) {
   return deferred.promise;
 }
 
+function createStats(survey) {
+  let res = {
+    survey: {
+      name: survey.name,
+      id: survey.id,
+      answers: survey.SurveyAnswers.length
+    },
+    questions: { }
+  };
+
+  survey.SurveyQuestions.forEach(function(surveyQuestion) {
+    populateStatsWithQuestionIfNotExists(res.questions, surveyQuestion, surveyQuestion.answers[0].contactDetails);
+
+    surveyQuestion.answers.forEach(function(answer) {
+      if (!_.isEmpty(answer)) {
+        populateStatsWithAnswerIfNotExists(res.questions, surveyQuestion, answer);
+      }
+    });
+
+    survey.SurveyAnswers.forEach(function(surveyAnswer) {
+      let answer = surveyAnswer.answers[surveyQuestion.id];
+
+      switch(answer.type) {
+        case 'number':
+          res.questions[surveyQuestion.id].answers[answer.value].count++;
+          break;
+        case 'string':
+          res.questions[surveyQuestion.id].values.push(answer.value);
+          break;
+        case 'object':
+          if (answer.contactDetails) {
+            CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+              let answerField = res.questions[surveyQuestion.id + field].answers[answer.contactDetails[field]];
+              if (answerField) {
+                answerField.count++;
+              }
+            });
+          }
+          break;
+      }
+
+    });
+  });
+
+  calculateStatsPercents(res.questions, res.survey.answers);
+  return res;
+}
+
+function setObjectKeyValueIfNotExists(object, key, value) {
+  if (!object[key]) {
+    object[key] = value;
+  }
+}
+
+function populateStatsWithQuestionIfNotExists(questions, question, contactDetails) {
+  if (contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      let questionName = StringHelpers.upperCaseFirstLetter(field);
+      setObjectKeyValueIfNotExists(questions, question.id + field, { name: questionName, answers: { } });
+    });
+  } else {
+    if (question.type == "textarea") {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, values: [] });
+    } else {
+      setObjectKeyValueIfNotExists(questions, question.id, { name: question.name, answers: { } });
+    }
+  }
+}
+
+function populateStatsWithAnswerIfNotExists(questions, question, answer) {
+  if (answer.contactDetails) {
+    CONTACT_DETAILS_STATS_FIELDS.forEach(function(field) {
+      let questionKey = question.id + field;
+      let contactDetailsFields = answer.contactDetails[field];
+      if (contactDetailsFields) {
+        answer.contactDetails[field].options.forEach(function(option) {
+          setObjectKeyValueIfNotExists(questions[questionKey].answers, option, { name: option, count: 0, percent: 0 });
+        });
+      }
+    });
+  } else if (question.type != "textarea") {
+    setObjectKeyValueIfNotExists(questions[question.id].answers, answer.order, { name: answer.name, count: 0, percent: 0 });
+  }
+}
+
+function calculateStatsPercents(questions, total) {
+  _.forIn(questions, function(question, questionKey) {
+    if (question.answers) {
+       _.forIn(question.answers, function(value, key) {
+        value.percent = Math.round(100 * value.count / total);
+      });
+    }
+  });
+}
+
 function getIds(questions) {
   let ids = [];
   questions.forEach(function(question, index, array) {
-    ids.push(question.id);
+    if (question.id) {
+      ids.push(question.id);
+    }
   });
   return ids;
 };
 
 function validUrl(survey) {
-  return 'http://' + process.env.SERVER_DOMAIN + getPort() + '/survey/' + survey.id;
+  return urlHeplers.getBaseUrl() + '/survey/' + survey.id;
 };
-
-function getPort() {
-  let port = ''
-  if (process.env.SERVER_PORT && process.env.NODE_ENV != 'production') {
-    port = ':'+ process.env.SERVER_PORT
-  }
-  return port
-}
 
 function validateParams(params, attributes) {
   if(_.isObject(params.SurveyQuestions)) {
@@ -704,5 +1112,7 @@ module.exports = {
   confirmSurvey: confirmSurvey,
   exportSurvey: exportSurvey,
   constantsSurvey: constantsSurvey,
-  canExportSurveyData: canExportSurveyData
+  canExportSurveyData: canExportSurveyData,
+  getSurveyStats: getSurveyStats,
+  getSurveyListStats: getSurveyListStats
 };

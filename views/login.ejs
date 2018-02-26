@@ -4,17 +4,21 @@
     <div class="login-container center-block text-font-family">
         <ul class="nav nav-tabs">
             <li class="active">
-              <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to klzii</a>
+              <a class="background-yellow text-font-family-tabs text-white text-shadow-gray btn login-kliiko-tab" href="#login">Login to cliizii</a>
             </li>
-            <li>
-              <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a klzii Account</a>
-            </li>
+            <% if((!message || (message && message.inviteError == false)) && !email) { %>
+              <li>
+                <a class="background-green text-font-family-tabs text-white text-center text-shadow-gray login-signup-tab" href="/registration">Get a cliizii Account</a>
+              </li>
+            <% } %>
         </ul>
         <div class="tab-content border-yellow">
             <div id="login" class="tab-pane fade in active">
                 <h1 class="text-gray-dark text-center">Welcome!</h1>
                 <div class='text-center background-yellow'>
-                  <b><%= message %></b>
+                  <% if((!message || (message && message.inviteError == false)) && !email) { %>
+                    <b><%= message %></b>
+                  <% } %>
                 </div>
 
                 <div class="error-column has-error" id="warning-email-password">
@@ -35,7 +39,7 @@
                                 <img src="/icons/user.png" />
                               </td>
                               <td class="form-group">
-                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail">
+                                <input type="email" name='email' class="form-control center-block border-brown" id="email" placeholder="E-mail" value="<%= email %>">
                               </td>
                           </tr>
                           <tr>
@@ -68,24 +72,10 @@
                         <a class="btn border-red border-radius-none text-red-dark text-no-decoration pull-left login-btn-size forgot-password-padding" href="/forgotpassword" id="forgot-password">Forgot your Password?</a>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-md-12 form-group">
-                        <div class="form-group center-block">
-                          <div class="check-google center-block">
-                            <a href="/auth/google" class="btn btn-block btn-social btn-google">
-                              <i class="fa fa-google"></i> Login or sign up with Google
-                            </a>
-                          </div>
-                        </div>
-                        <div class="form-group center-block">
-                          <div class="check-facebook center-block">
-                            <a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
-                              <i class="fa fa-facebook"></i> Login or sign up with Facebook
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+
+                    <% googleActionText='Login with Google' %>
+                    <% facebookActionText='Login with Facebook' %>
+                    <% include socialMedia %>
 
                   </div>
 

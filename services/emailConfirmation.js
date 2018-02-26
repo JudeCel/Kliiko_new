@@ -67,7 +67,7 @@ function setEmailConfirmationToken(email, callback) {
     confirmationToken: token,
     confirmationSentAt: new Date()
   }, {
-    where: {email: email}
+    where: {email: { ilike: email } }
   }).then(function (result) {
     if (result[0] > 0) {
       callback(null, token);
@@ -82,11 +82,6 @@ function setEmailConfirmationToken(email, callback) {
 function checkTokenExpired(token, callback) {
   getUserByToken(token, function (err, user) {
     if (err || !user) { return callback(new Error(MessagesUtil.emailConfirmation.error.user)) };
-
-    let tokenCreated = new Date(user.get("confirmationToken"));
-    let tokenEnd = tokenCreated.setHours(tokenCreated.getHours() + 24);
-    let now = new Date().getTime();
-    if (now > tokenEnd) { user = null };
     callback(null, user);
   });
 }
@@ -94,45 +89,55 @@ function checkTokenExpired(token, callback) {
 function confirm(token, accountUserId, callback) {
   getUserByToken(token, function (err, user) {
     if (err || !user) { return callback(new Error(MessagesUtil.emailConfirmation.error.user)) };
+    let transactionPool = models.sequelize.transactionPool;
+    let tiket = transactionPool.getTiket();
+    transactionPool.once(tiket, () => {
+      models.sequelize.transaction().then(function(transaction) {
+        User.update({
+          confirmedAt: new Date(),
+          confirmationToken: null
+        }, {
+          where: { confirmationToken: token },
+          transaction: transaction
+        }).then(function (result) {
 
-    models.sequelize.transaction().then(function(transaction) {
-
-      User.update({
-        confirmedAt: new Date(),
-        confirmationToken: null
-      }, {
-        where: { confirmationToken: token },
-        transaction: transaction
-      }).then(function (result) {
-
-        if (accountUserId) {
-          AccountUser.update({
-            active: true
-          }, {
-            where: { UserId: user.id, id: accountUserId },
-            transaction: transaction
-          }).then(function (accountUserResult) {
+          if (accountUserId) {
+            AccountUser.update({
+              active: true
+            }, {
+              where: { UserId: user.id, id: accountUserId },
+              transaction: transaction
+            }).then(function (accountUserResult) {
+              transaction.commit().then(function() {
+                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                callback(null, result);
+              });
+            }).catch(function (err) {
+              transaction.rollback().then(function() {
+                transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                callback(err);
+              });
+            });
+          } else {
             transaction.commit().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
               callback(null, result);
             });
-          }).catch(function (err) {
-            transaction.rollback().then(function() {
-              callback(err);
-            });
-          });
-        } else {
-          transaction.commit().then(function() {
-            callback(null, result);
-          });
-        }
+          }
 
-      }).catch(function (err) {
-        transaction.rollback().then(function() {
-          callback(err);
+        }).catch(function (err) {
+          transaction.rollback().then(function() {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(err);
+          });
         });
       });
-
     });
+    transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+      callback("Server Timeoute");
+    });
+
+    transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   });
 }

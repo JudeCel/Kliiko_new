@@ -4,20 +4,19 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('./middleware/passport');
+var jwtMiddleware = require('./middleware/jwtMiddleware');
 var subdomain = require('./middleware/subdomain');
-var letsencrypt = require('./middleware/letsencrypt');
-var currentUser = require('./middleware/currentUser');
 var sessionMiddleware = require('./middleware/session');
-
+const { setUpQueue} = require('./services/backgroundQueue.js');
 var app = express();
 var flash = require('connect-flash');
-var fs = require('fs');
-var airbrake = require('./lib/airbrake').instance;
-app.use(airbrake.expressHandler());
+var _ = require('lodash');
+var cors = require('./middleware/cors');
+var winstonMiddleware = require('./middleware/winstonMiddleware');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -27,7 +26,6 @@ app.set('view options', { layout: 'layout.ejs' });
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', extended: true }));
-app.use(letsencrypt);
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,24 +44,31 @@ app.use(session({
   resave: true
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(subdomain);
+app.use(setUpQueue);
 app.use(flash());
-app.use(logger('dev'));
+app.use(winstonMiddleware.logger())
+
+var api = require('./routes/api/index');
+var apiPublic = require('./routes/api/public');
+app.use('/api', cors.setCors(), apiPublic);
+
+app.use('/api', cors.setCors(), jwtMiddleware.jwt, jwtMiddleware.loadResources, api);
 
 var routes = require('./routes/root');
 var dashboard = require('./routes/dashboard');
 var resources = require('./routes/resources');
-var api = require('./routes/api');
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(subdomain);
+
+app.use('/account-hub', sessionMiddleware.extendUserSession, dashboard);
+app.use('/resources', sessionMiddleware.extendUserSession, resources);
 
 app.use('/', routes);
-app.use('/account-hub', sessionMiddleware.extendUserSession, currentUser.assign, dashboard);
-app.use('/resources', sessionMiddleware.extendUserSession, currentUser.assign, resources);
-app.use('/api', sessionMiddleware.extendUserSession, currentUser.assign, api);
-
 // Added socket.io routes
 // catch 404 and forward to error handler
+app.use(winstonMiddleware.errorLogger())
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -88,7 +93,6 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  airbrake.notify(err);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

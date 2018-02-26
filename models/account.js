@@ -1,6 +1,7 @@
 'use strict';
 var constants = require('../util/constants');
 var validations = require('./validations');
+var MessagesUtil = require('../util/messages');
 
 module.exports = (Sequelize, DataTypes) => {
   var Account = Sequelize.define('Account', {
@@ -8,6 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     selectedPlanOnRegistration: {type: DataTypes.STRING, allowNull: true },
     admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     subdomain: {type: DataTypes.STRING, allowNull: false},
+    currency: {type: DataTypes.STRING, allowNull: false, defaultValue: 'AUD'},
     name: {type: DataTypes.STRING, allowNull: false,
       set: function(val) {
         this.setDataValue('name', val)
@@ -16,6 +18,7 @@ module.exports = (Sequelize, DataTypes) => {
         }
       },
       validate: {
+        isCorrectName: validations.notInLower(constants.restrictedAccountNames, MessagesUtil.models.validations.restrictedAccountName),
         notEmpty: true,
         is: constants.accountNameRegExp,
         isUnique: validations.unique(Sequelize, 'Account', 'name', { lower: true }),

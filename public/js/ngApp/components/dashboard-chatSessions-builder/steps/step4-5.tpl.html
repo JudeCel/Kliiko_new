@@ -1,20 +1,20 @@
-<section id='step-4-participants' class='col-xs-12' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep(sbc.participants, sbc.observers)">
+<section id='step-4-participants' class='col-xs-12' ng-controller="SessionStep4-5Controller as lastStepsController" ng-init="lastStepsController.initStep()">
   <div class='row'>
     <div class='text-center'>
       <div id='sessionBuilderParticipant' class='btn-standart btn-red increased-margin' ng-click='sbc.selectParticipantsClickHandle()' ng-show="lastStepsController.isParticipantPage()">
-        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Participants From Contact List</span>
-        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Participants From Contacts List</span>
+        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Guests From Contact List</span>
+        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Guests From Contacts List</span>
       </div>
-      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="!lastStepsController.isParticipantPage()">
-        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Observers From Contact List</span>
-        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Observers From Contacts List</span>
+      <div id='sessionBuilderObserver' class='btn-standart btn-red increased-margin' ng-click='sbc.selectObserversClickHandle()' ng-show="lastStepsController.isObserverPage()">
+        <span ng-if='lastStepsController.stepMembers.length == 0'>Invite Spectators From Contact List</span>
+        <span ng-if='lastStepsController.stepMembers.length > 0'>Invite More Spectators From Contacts List</span>
       </div>
     </div>
   </div>
 
-  <div ng-if='lastStepsController.prepareData(sbc.participants, sbc.observers).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true;'>
-    <div class="text-right filter-row">
-      <a ng-repeat='(key, value) in lastStepsController.filterTypes' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
+<div ng-if='lastStepsController.prepareData(sbc).length > 0' ng-controller='ContactListController as clc' ng-init='clc.hideModalStuff = true'>
+    <div class="text-right filter-row" ng-if="!sbc.canSendCloseEmail()">
+      <a ng-repeat='(key, value) in lastStepsController.correctFilterOptions()' ng-class='{ active: lastStepsController.currentFilter == key || key == "all" && !lastStepsController.currentFilter }' ng-click='lastStepsController.setMembersFilter(key)'>
         <span ng-if="key == 'all'">
           {{ value }}({{ lastStepsController.stepMembers.length }})
         </span>
@@ -27,24 +27,27 @@
       <table class='table table-dashboardElements'>
         <thead>
           <tr class='background-green'>
-            <th>
+            <th ng-click="clc.changeTableSortingFilter('firstName')">
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-header' type='checkbox' name='First Name' ng-model='lastStepsController.selectedAll' ng-change='lastStepsController.selectedAllMembers()' />
-                <label for='checkbox-header'>First Name</label>
+                <input isolate-click class='styled' id='checkbox-header' type='checkbox' name='First Name' ng-model='lastStepsController.selectedAll' ng-change='lastStepsController.selectedAllMembers()' />
+                <label>First Name</label>
               </div>
             </th>
-            <th>Last Name</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th>Status</th>
+            <th ng-click="clc.changeTableSortingFilter('lastName')">Last Name</th>
+            <th ng-click="clc.changeTableSortingFilter('gender')">Gender</th>
+            <th ng-click="clc.changeTableSortingFilter('email')">Email</th>
+            <th ng-click="clc.changeTableSortingFilter('mobile')">Mobile</th>
+            <th ng-click="clc.changeTableSortingFilter('inviteStatusTranscription')" ng-if="!sbc.canSendCloseEmail()">Status</th>
+            <th ng-if="sbc.canCommentAndRate()">Comment</th>
+            <th ng-if="sbc.canCommentAndRate()">Session rating</th>
+            <th ng-click="clc.changeTableSortingFilter('closeEmailSentStatus')" ng-if="sbc.canSendCloseEmail()">Close Session Email</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="member in lastStepsController.stepMembers | filter: (lastStepsController.currentFilter == 'all' ? undefined : { inviteStatus: lastStepsController.currentFilter })" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false'>
+          <tr ng-repeat="member in lastStepsController.stepMembers | filter: lastStepsController.getCurrentFilter(sbc.canSendCloseEmail()) | orderBy: clc.tableSort.by : clc.tableSort.reverse" ng-mouseover='lastStepsController.mouseOveringMember[$index] = true' ng-mouseleave='lastStepsController.mouseOveringMember[$index] = false' ng-disabled="lastStepsController.disableSessionFullMember(member)">
             <td>
               <div class='checkbox checkbox-xs checkbox-success'>
-                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.showCorrectStatus(member)' />
+                <input class='styled' id='checkbox-{{ $index }}' type='checkbox' name='{{ member.firstName }}' ng-model='member.isSelected' ng-disabled='lastStepsController.memberDisabled(member)' />
                 <label for='checkbox-{{ $index }}'>{{ member.firstName }}</label>
               </div>
             </td>
@@ -52,15 +55,35 @@
             <td>{{ member.gender }}</td>
             <td>{{ member.email }}</td>
             <td>{{ member.mobile }}</td>
-            <td class='col-xs-2'>
-              <div ng-if='!lastStepsController.mouseOveringMember[$index]'>
-                {{ lastStepsController.filterTypes[lastStepsController.returnMemberInviteStatus(member)] }}
+            <td class="invite-status-{{member.inviteStatus}} col-xs-2" ng-if="!sbc.canSendCloseEmail()">
+              <div ng-if='!lastStepsController.mouseOveringMember[$index]' class="pull-left">
+                <div ng-if='lastStepsController.showSpinner(member)' style="display: inline;">
+                  <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+                </div>
+
+                {{ lastStepsController.getMembersStatusTranscription(member) }}
               </div>
+              <klzii-tooltip tooltip-text="{{lastStepsController.emailSentFailedTooltip}}" ng-if="member.inviteStatus == 'failed'"></klzii-tooltip>
               <div ng-if='lastStepsController.mouseOveringMember[$index]'>
-                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' />
-                <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" ng-if='!lastStepsController.showCorrectStatus(member)' />
+                <img src='/icons/session_grey.png' ng-click='lastStepsController.modalWindowHandler("showSms", [member])' title="Send SMS" ng-if="lastStepsController.canSendSMS" />
+                <img src='/icons/dashboardElement_edit.png' ng-click="lastStepsController.openEditContactModal(member)" />
                 <img src='/icons/dashboardElement_remove.png' ng-click='lastStepsController.removeFromList(member)' />
               </div>
+            </td>
+            <td ng-if="sbc.canCommentAndRate()">
+              <img src='/icons/add_new_list_blue.png' alt='' ng-click='lastStepsController.openCommentModalWindow(member)'/>
+              <span ng-if="member.sessionMember">
+                {{ member.sessionMember.comment | limitTo: 20 }}{{ member.sessionMember.comment.length > 20 ? '&hellip;' : '' }}
+              </span>
+            </td>
+            <td ng-if="sbc.canCommentAndRate()" class="tableRate">
+              <span ng-if="member.sessionMember">
+                <uib-rating class='session-rating-stars text-vertical-middle' ng-model='member.sessionMember.rating' max='5' aria-labelledby='default-rating' ng-click='lastStepsController.rateMember(member)'>
+                </uib-rating>
+              </span>
+            </td>
+            <td class='col-xs-2' ng-if="sbc.canSendCloseEmail()">
+              {{ lastStepsController.getMembersCloseEmailSentTranscription(member) }}
             </td>
           </tr>
         </tbody>
@@ -71,19 +94,28 @@
     </div>
 
     <div class='row'>
-      <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()'>
+      <div class='btn btn-standart btn-red btn-large-x' ng-click='lastStepsController.sendCloseEmail()' ng-if='sbc.canSendCloseEmail()'>
+        <i class='fa fa-envelope' aria-hidden='true' /> Send Close Session Email
+        ({{ lastStepsController.findSelectedMembersClose().length }})
+      </div>
+      <div class='btn btn-standart btn-red btn-medium' ng-click='lastStepsController.inviteMembers()' ng-if='sbc.canInvite()'>
         <i class='fa fa-envelope' aria-hidden='true' /> Send Invite
-        ({{ lastStepsController.findSelectedMembers().length }})
+        ({{ lastStepsController.findSelectedMembersInvite().length }})
       </div>
       <div class='btn btn-standart btn-green btn-large' ng-click='lastStepsController.sendGenericEmail()'>
         Send Generic Email
+        ({{ lastStepsController.findSelectedMembersGenericEmail().length }})
       </div>
-      <div ng-show="lastStepsController.isParticipantPage() && lastStepsController.canSendSMS" class=' btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembers())'>
+      <div ng-show="lastStepsController.canSendGroupSms" class='btn btn-standart btn-green btn-medium' ng-click='lastStepsController.modalWindowHandler("showSms", lastStepsController.findSelectedMembersSMS())'>
         Send SMS
+        ({{ lastStepsController.findSelectedMembersSMS().length }})
       </div>
     </div>
   </div>
 
   <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/steps/step4-5/contactEditForm.html'"></ng-include>
-
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/memberCommentModal.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/rejectedInviteRemoveModal.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/confirmInviteRemoveModal.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions-builder/modals/confirmInviteRemoveObserverModal.html'"></ng-include>
 </section>

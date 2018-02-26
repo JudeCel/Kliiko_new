@@ -5,9 +5,10 @@ var terms_of_service = require('../lib/terms_of_service');
 var mailTemplate = require('./mailTemplate');
 var mailHelper = require('./mailHelper');
 var mailTemplateService = require('../services/mailTemplate');
+var constants = require('./../util/constants');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 
 function sendInviteAccountManager(inviteParams, callback) {
   let accountId = null;
@@ -20,7 +21,7 @@ function sendInviteAccountManager(inviteParams, callback) {
         lastName: inviteParams.lastName,
         accountName: inviteParams.accountName,
         termsOfUseUrl: terms_of_service.filter(inviteParams),
-        privacyPolicyUrl: helpers.getUrl('', null, '/privacy_policy'),
+        privacyPolicyUrl: constants.externalLinks.privacyPolicy,
       };
 
       helpers.renderMailTemplate('invite/inviteAccountUser', links, function(error, html){
@@ -28,7 +29,7 @@ function sendInviteAccountManager(inviteParams, callback) {
           return callback(error);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: inviteParams.email,
           subject: process.env.MAIL_FROM_NAME + ' - Join account',
@@ -38,7 +39,11 @@ function sendInviteAccountManager(inviteParams, callback) {
             path: 'public/images/mail/system_header.png',
             cid: 'systemHeader@attachment'
           }]
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        })
       });
     } else {
       // found template in db
@@ -60,8 +65,8 @@ function sendInviteAccountManager(inviteParams, callback) {
 };
 
 function sendInviteSession(inviteParams, callback) {
-  inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams)
-  inviteParams.privacyPolicyUrl = helpers.getUrl('', null, '/privacy_policy');
+  inviteParams.termsOfUseUrl = terms_of_service.filter(inviteParams);
+  inviteParams.privacyPolicyUrl = constants.externalLinks.privacyPolicy;
 
   if(inviteParams.role == 'observer') {
     inviteParams.logInUrl = helpers.getUrl(inviteParams.token, null, '/invite/') + '/accept/';

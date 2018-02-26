@@ -1,0 +1,24 @@
+<form id='manageForm' name='sc.manageForm' novalidate class="survey-question-section">
+  <input type="submit" name="noActionButton" value="" class="hidden" />
+  <fieldset ng-if="sc.survey" ng-disabled='sc.formDisabled'>
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/templates/surveyBody.html'"></ng-include>
+
+    <div class='col-sm-12'>
+      <hr class='survey-hr' ng-if="sc.displayPreviewButton || sc.displaySaveButton || sc.displayPublishButton"/>
+      <button ng-if="sc.displayPreviewButton" id='showSurveyPreview' class='btn btn-standart btn-margin btn-green btn-small' data-toggle='modal' data-target='#previewModal' ng-click='sc.showPreview()'>Preview</button>
+      <button ng-if="sc.displaySaveButton" id='saveSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, false)'>Save</button>
+      <button ng-if="sc.displayPublishButton" id='finishSurvey' class='btn btn-standart btn-margin btn-green btn-small' ng-click='sc.saveSurvey(false, true)'>Publish</button>
+
+      <span class='has-error'>
+        <span class='help-block'>{{ sc.submitError }}</span>
+      </span>
+    </div>
+
+    <ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/previewModal.html'"></ng-include>
+  </fieldset>
+
+  <div ng-if="!sc.survey">
+    <ng-include src="'/js/ngApp/components/misc-ui/loading-text-spinner.html'"></ng-include>
+  <div>
+
+</form>

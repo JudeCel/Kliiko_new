@@ -1,5 +1,5 @@
 <section id="session-builder-content" ng-controller="SessionBuilderController as sbc">
-  <section class="row row-centered">
+  <section class="row row-centered" id="{{ sbc.session.sessionData.type }}">
     <div class='col-md-offset-1 col-md-10 сol-centered dashboard-index text-center'>
       <div class="row">
         <div class="col-md-3 text-left">
@@ -7,10 +7,13 @@
             Back to Sessions Tab
           </div>
         </div>
-        <div class="col-md-6"><h1>Chat Session Builder</h1></div>
+        <div class="col-md-6">
+          <h3 class="session-name">{{sbc.session.steps.step1.name}}</h3>
+          <h1>Chat Session Builder</h1>
+        </div>
 
-        <div class="col-md-3">
-          <div ng-show="sbc.session.sessionData.status == 'open' && sbc.session.currentStep == 'inviteSessionObservers'" class="btn btn-standart btn-red btn-large" ng-click="sbc.closeSession()">
+        <div class="col-md-3" ng-if="sbc.session.properties.features.closeSessionButton.enabled">
+          <div ng-show="sbc.session.sessionData.status == 'open'" ng-disabled="sbc.session.sessionData.showStatus == 'Pending'" class="btn btn-standart btn-red btn-large" ng-click="sbc.closeSession()">
             Close Chat Session
             <span class='fa fa-lock'></span>
           </div>
@@ -30,42 +33,58 @@
         <div class=" col-md-12">
           <div id="steps-row" style="margin: 0 auto">
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}" ng-click="sbc.goToStep(1)">
                 1
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(1)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(1), 'done':sbc.stepsClassIsDone(1)}">
                 Set-Up Chat Session
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}">
-                2</span>
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}" ng-click="sbc.goToStep(2)">
+                2
+              </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(2)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(2), 'done':sbc.stepsClassIsDone(2)}">
                 Topics
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}" ng-click="sbc.goToStep(3)">
                 3
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(3)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(3), 'done':sbc.stepsClassIsDone(3)}">
                 Manage Session Emails
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}" ng-click="sbc.goToStep(4)">
                 4
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(4)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(4), 'done':sbc.stepsClassIsDone(4)}">
-                Invite Participants
+                Invite Guests
               </span>
             </div>
             <div class="step-container">
-              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}">
+              <span class="step-number" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}" ng-click="sbc.goToStep(5)">
                 5
               </span>
+              <div class="circle-container" ng-if="sbc.showOkMark(5)">
+                <span class="circle-ok glyphicon glyphicon-ok"></span>
+              </div>
               <span class="step-name" ng-class="{'active': sbc.stepsClassIsActive(5), 'done':sbc.stepsClassIsDone(5)}">
-                Invite Observers
+                Invite Spectators
               </span>
             </div>
           </div>
@@ -76,16 +95,18 @@
 
       <div class="col-md-12" ng-if='!sbc.hideStuff'>
         <div class="row">
-            <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToStep('back')"  ng-hide="sbc.stepsClassIsActive(1)" messages-directive='clear'>
+            <div class="col-md-3 btn btn-standart btn-green btn-large" ng-click="sbc.goToPreviousStep()"  ng-hide="sbc.stepsClassIsActive(1)" messages-directive='clear'>
               Previous step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('next')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep" messages-directive='clear'>
+            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large margin-left-10" ng-click="sbc.goToNextStep()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-hide="sbc.lastStep || sbc.session.properties.steps[sbc.session.sessionData.step].hideNext" messages-directive='clear'>
               Next step
             </div>
-            <div class="col-md-2 btn btn-standart pull-right btn-green btn-large" ng-click="sbc.goToStep('finish')" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" ng-show="sbc.lastStep" messages-directive='clear'>
-              Finish with builder
+            <div ng-show="sbc.lastStep">
+              <div class="col-md-2 btn btn-standart pull-right btn-green btn-large margin-left-10" ng-click="sbc.activateSession()" ng-class="{'btn-forbidden': sbc.cantMoveNextStep}" messages-directive='clear'>
+                Finish with builder
+              </div>
             </div>
-            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue margin020 btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
+            <div ng-if="sbc.canSeeGoToChat(app.accountUser)" class="col-md-2 btn btn-standart pull-right btn-blue btn-large" ng-click="sbc.goToChat(sbc.session)" messages-directive='clear'>
               Enter Chat Room
             </div>
         </div>
@@ -116,6 +137,32 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <section>
+      <div class='modal fade' id='sessionDeleted' role='dialog'>
+        <div class='modal-dialog' style="width: 800px">
+          <div class='modal-content border-green border-radius-none'>
+            <div class='modal-header'>
+              <button type='button' class='close' data-dismiss='modal'>&times;</button>
+              <h1 class='modal-title text-center'>Yikes!</h1>
+            </div>
+
+            <div class='modal-body'>
+              What are the odds... this Session has been Deleted by<br />
+              someone else, your changes will not be saved.
+              <br /><br />
+              You'll be redirected to Session List
+            </div>
+
+            <div class='modal-footer'>
+              <div type='button' data-dismiss='modal' class='pull-right btn btn-standart btn-green btn-large'>
+                OK
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </section> <!-- eof  ng-controller='SurveyController as sc'-->

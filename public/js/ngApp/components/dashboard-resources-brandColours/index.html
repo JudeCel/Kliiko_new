@@ -20,9 +20,9 @@
           <div class='panel-heading'>
             <div class='row'>
               <div class='col-xs-6'>
-                <h3 class='panel-title text-max-width'>{{ scheme.name }}</h3>
+                <h3 class='panel-title text-max-width'>{{ scheme.name | limitTo: 25 }}{{ scheme.name.length > 25 ? '&hellip;' : '' }}</h3>
               </div>
-              <div class='col-xs-6 text-right dashboardElementsEditRemove'>
+              <div class='col-xs-6 text-right dashboardElementsEditRemove' ng-if='!scheme.default'>
                 <img src='/icons/resources_grey.png' alt='' ng-click='bcc.copyScheme(scheme)' />
                 <img src='/icons/dashboardElement_edit.png' alt='' ng-click='bcc.changePage("edit", scheme)' />
                 <img src='/icons/dashboardElement_remove.png' alt='' ng-click='bcc.removeScheme(scheme)' />
@@ -38,7 +38,7 @@
     </div>
 
     <div ng-if="bcc.pagination.schemesTotalItems > bcc.pagination.schemesItemsPerPage" class="paginator">
-      <pagination total-items="bcc.pagination.schemesTotalItems" ng-model="bcc.pagination.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.pagination.schemesItemsPerPage" max-size="10" boundary-links="true" ng-click="bcc.prepareCurrentPageSchemes()"></pagination>
+      <uib-pagination total-items="bcc.pagination.schemesTotalItems" ng-model="bcc.pagination.schemesCurrentPage" class="pagination-sm" items-per-page="bcc.pagination.schemesItemsPerPage" max-size="10" boundary-links="true" ng-click="bcc.prepareCurrentPageSchemes()"></pagination>
     </div>
 
   </div>

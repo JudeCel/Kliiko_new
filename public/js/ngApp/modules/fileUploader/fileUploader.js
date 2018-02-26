@@ -3,18 +3,20 @@
 
   angular.module('KliikoApp.fileUploader', []).factory('fileUploader', fileUploaderFactory);
 
-  fileUploaderFactory.$inject = ['$q', 'globalSettings', '$resource', 'dbg', 'Upload'];
-  function fileUploaderFactory($q, globalSettings, $resource, dbg, Upload) {
-    var fileUploaderApiLocal = $resource(globalSettings.restUrl + '/jwtToken');
+  fileUploaderFactory.$inject = ['$q', 'globalSettings', 'dbg', 'Upload', '$resource'];
+  function fileUploaderFactory($q, globalSettings, dbg, Upload, $resource) {
 
     var requestError = 'Request failed';
     var fileUploaderService = {};
+    // TODO: might be it needs move this const into some storage for cross-project variables
+    // this const is used in chat project: https://github.com/DiatomEnterprises/klzii_chat/blob/master/lib/klzii_chat/endpoint.ex
+    var MAX_FILE_SIZE = 5000000;
 
     fileUploaderService.token = null;
-    fileUploaderService.getToken = getToken;
     fileUploaderService.upload = upload;
     fileUploaderService.list = list;
     fileUploaderService.remove = remove;
+    fileUploaderService.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
     fileUploaderService.zip = zip;
     fileUploaderService.refresh = refresh;
     fileUploaderService.survey = survey;
@@ -24,24 +26,6 @@
 
     return fileUploaderService;
 
-    function getToken() {
-      var deferred = $q.defer();
-      dbg.log2('#KliikoApp.fileUploader > get token');
-
-      fileUploaderApiLocal.get({}, function(res) {
-        dbg.log2('#KliikoApp.fileUploader > get token > server respond >');
-        if(res.error) {
-          deferred.reject(res.error);
-        }
-        else {
-          fileUploaderService.token = res.token;
-          deferred.resolve({ token: res.token });
-        }
-      });
-
-      return deferred.promise;
-    }
-
     function upload(data) {
       var deferred = $q.defer();
       var server = serverData('resources');
@@ -50,13 +34,13 @@
       Upload.upload({
         url: server.url + 'upload',
         method: 'POST',
-        headers: server.headers,
         file: data.file,
         params: {
           scope: data.scope,
           stock: data.stock,
           type: data.type,
-          name: data.name
+          name: data.name,
+          id: data.id
         }
       }).then(function(result) {
         dbg.log2('#KliikoApp.fileUploader > upload file > server respond >', result);
@@ -94,6 +78,21 @@
         deferred.resolve(result);
       }, function(error) {
         dbg.log2('#KliikoApp.fileUploader > remove resources > server error >', error);
+        switchErrors(deferred, error);
+      });
+
+      return deferred.promise;
+    }
+
+    function closedSessionResourcesRemoveCheck(resourceIds) {
+      var deferred = $q.defer();
+      dbg.log2('#KliikoApp.fileUploader > closed session resources check');
+
+      resourceForServer('resources', 'closed_session_delete_check').get({ 'ids[]': resourceIds }, function(result) {
+        dbg.log2('#KliikoApp.fileUploader > closed session resources check > server respond >', result);
+        deferred.resolve(result);
+      }, function(error) {
+        dbg.log2('#KliikoApp.fileUploader > closed session resources check > server error >', error);
         switchErrors(deferred, error);
       });
 
@@ -192,7 +191,6 @@
 
     function serverData(what) {
       return {
-        headers: { 'Authorization': fileUploaderService.token },
         url: globalSettings.serverChatDomainUrl + '/api/' + what +  '/'
       };
     }
@@ -200,7 +198,12 @@
     function switchErrors(deferred, error) {
       switch (true) {
         case error.status == -1:
-          deferred.reject("File is too big");
+          if (error.config.file.size > MAX_FILE_SIZE) {
+            deferred.reject("File is too big");
+          } else {
+            // it would be nice to check "error.status === 504", but status is still "-1"
+            deferred.reject("Request Timeout");
+          }
           break;
         case Array.isArray(getErrorItem(error, 'name')):
           deferred.reject(error.data.errors.name[0]);
@@ -224,9 +227,9 @@
       path = path || '';
       var server = serverData(what);
       return $resource(server.url + path, {}, {
-        get: { method: 'GET', headers: server.headers },
-        delete: { method: 'DELETE', headers: server.headers },
-        post: { method: 'POST', headers: server.headers },
+        get: { method: 'GET' },
+        delete: { method: 'DELETE' },
+        post: { method: 'POST' },
       });
     }
   }

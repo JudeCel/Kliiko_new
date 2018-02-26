@@ -5,7 +5,7 @@ var accountManagerService = require('../../services/accountManager');
 var inviteService = require('../../services/invite');
 
 function get(req, res, next) {
-  accountManagerService.findAccountManagers(res.locals.currentDomain.id).then(function(accountUsers) {
+  accountManagerService.findAccountManagers(req.currentResources.account.id).then(function(accountUsers) {
     res.send({ accountUsers: accountUsers });
   }, function(error) {
     res.send({ error: error });
@@ -13,7 +13,7 @@ function get(req, res, next) {
 };
 
 function canAddAccountManager(req, res, next) {
-  accountManagerService.canAddAccountManager(res.locals.currentDomain.id).then(function(response) {
+  accountManagerService.canAddAccountManager(req.currentResources.account.id).then(function(response) {
     res.send(response);
   }, function(error) {
     res.send({ error: error });
@@ -21,16 +21,18 @@ function canAddAccountManager(req, res, next) {
 }
 
 function post(req, res, next) {
-  accountManagerService.createOrFindAccountManager(req.user, req.body, res.locals.currentDomain.id).then(function(params) {
-    inviteService.createInvite(params).then(function(data) {
-      res.send({ invite: data.invite, message: MessagesUtil.routes.accountManager.invite });
-    }, function(error) {
+  const { currentResources, body } = req;
+  accountManagerService.createOrFindAccountManager(currentResources.user, body, currentResources.account.id)
+    .then((params) => {
+      return inviteService.createInvite(params)
+    })
+    .then((data) => {
+      res.send({ invite: data, message: MessagesUtil.routes.accountManager.invite });
+    })
+    .catch((error) => {
       res.send({ error: error });
     });
-  }, function(error) {
-    res.send({ error: error });
-  });
-};
+}
 
 function put(req, res, next) {
   accountManagerService.updateAccountManager(req.body).then(function(response) {
@@ -43,7 +45,7 @@ function put(req, res, next) {
 function removeInvite(req, res, next) {
   var params = { accountUserId: req.query.id };
 
-  inviteService.findAndRemoveInvite(params, function(error, message) {
+  inviteService.findAndRemoveAccountManagerInvite(params, function(error, message) {
     if(error) {
       res.send({ error: error });
     }
@@ -54,7 +56,7 @@ function removeInvite(req, res, next) {
 };
 
 function removeAccountUser(req, res, next) {
-  accountManagerService.findAndRemoveAccountUser(req.query.id, res.locals.currentDomain.id).then(function(message) {
+  accountManagerService.findAndRemoveAccountUser(req.query.id, req.currentResources.account.id).then(function(message) {
     res.send({ message: message });
   }, function(error) {
     res.send({ error: error });

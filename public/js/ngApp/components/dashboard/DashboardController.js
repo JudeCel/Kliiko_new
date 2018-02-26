@@ -9,10 +9,16 @@
 
     var vm = this;
     initMyDashboard();
+    vm.initMyDashboard = initMyDashboard;
     vm.disablePlayButton = false;
     vm.hasOwnAccount = false;
-    vm.showCreateNewAccount = false;
+    vm.showCreateNewAccountBanner = false;
+    vm.canCreateNewAccount = false;
     vm.hasRoles = false;
+    vm.theOnlySessionIsClosed = false;
+    vm.theOnlySessionIsPending = false;
+    vm.theOnlyPendingSessionTime = null;
+    vm.hideTabs = false;
 
     vm.redirectToChatSession = redirectToChatSession;
     vm.isTabActive = isTabActive;
@@ -22,6 +28,7 @@
     vm.activeTabText = activeTabText;
     vm.sessionBuilderUrl = sessionBuilderUrl;
     vm.isSelectRoleMessageVisible = isSelectRoleMessageVisible;
+    vm.initTimer = initTimer;
 
     function isSelectRoleMessageVisible() {
       return vm.accountUsers && Object.keys(vm.accountUsers).length > 1;
@@ -62,9 +69,24 @@
           vm.dateFormat = res.dateFormat;
           vm.hasOwnAccount = res.hasOwnAccount;
           vm.hasRoles = res.hasRoles;
-          vm.showCreateNewAccount = !vm.hasOwnAccount;
-          setInitialTab();
+          vm.canCreateNewAccount = res.canCreateNewAccount;
+          vm.showCreateNewAccountBanner = !vm.hasOwnAccount;
+          vm.theOnlySessionIsClosed = res.theOnlySessionIsClosed;
+          vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
+          vm.theOnlyPendingSessionTime = res.theOnlyPendingSessionTime;
+          vm.hideTabs = !vm.hasRoles || res.theOnlySessionIsPending || res.theOnlySessionIsClosed;
+          setInitialTabIfAccountHasOneRoleOnly();
         }
+      });
+    }
+
+    function initTimer() {
+      var offset = -(new Date()).getTimezoneOffset()/60;
+      $('#PendingSessionCountdown').countdown({
+        date: vm.theOnlyPendingSessionTime,
+        offset: offset
+      }, function () {
+        vm.initMyDashboard();
       });
     }
 
@@ -80,17 +102,11 @@
       return isTabActive(tab) ? 'active' : '';
     }
 
-    function setInitialTab() {
-      var array = ['accountManager', 'facilitator', 'participant', 'observer'];
+    function setInitialTabIfAccountHasOneRoleOnly() {
+      var roles = Object.keys(vm.accountUsers);
 
-      if(vm.accountUsers) {
-        for(var i in array) {
-          var role = array[i];
-          if(vm.accountUsers[role]) {
-            vm.currentTab = role;
-            break;
-          }
-        }
+      if (roles.length == 1) {
+        vm.currentTab = roles[0];
       }
     }
   }

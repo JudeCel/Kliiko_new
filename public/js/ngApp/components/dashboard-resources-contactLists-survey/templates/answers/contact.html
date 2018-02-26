@@ -9,19 +9,17 @@
     </label>
 
     <div class='col-xs-10 col-md-6'>
-      <div class='input-group' ng-if='cd.input || cd.number'>
-        <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='sc.contactDetailDisabled(cd)'>
+      <div class='input-group'>
+        <input type='text' class='form-control' id='{{ cd.name }}' placeholder='' ng-disabled='sc.contactDetailDisabled(cd)' ng-if='cd.input || cd.number'>
+
+        <select class='form-control' id='{{ cd.name }}' style='text-transform: capitalize;' ng-disabled='sc.contactDetailDisabled(cd)' ng-if='cd.select'>
+          <option ng-repeat='option in cd.options' value='{{ option }}'>{{ option }}</option>
+        </select>
 
         <span class='input-group-addon' ng-if='!cd.canDisable || (cd.canDisable && sc.survey.confirmedAt)'>@</span>
         <span class='input-group-addon' ng-if='cd.canDisable && !sc.survey.confirmedAt'>
           <span class='glyphicon' ng-class="{'glyphicon-remove': sc.contactDetailDisabled(cd), 'glyphicon-ok': !sc.contactDetailDisabled(cd)}" ng-click='sc.addContactDetail(cd, question.answers[0])'></span>
         </span>
-      </div>
-
-      <div ng-if='cd.select'>
-        <select class='form-control' id='{{ cd.name }}' style='text-transform: capitalize;'>
-          <option ng-repeat='option in cd.options' value='{{ option }}'>{{ option }}</option>
-        </select>
       </div>
     </div>
   </div>

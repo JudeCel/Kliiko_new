@@ -1,14 +1,15 @@
 module.exports = {
   account: {
     notFound: 'Account not found',
-    accountExists: 'You already have an Account',
+    accountExists: 'You already have allowed amount of own Accounts',
     created: 'Your New Account has been created, please check your email to Confirm',
     empty: "Account name can't be empty",
   },
   accountDatabase: {
     notFound: 'Account User not found',
     notVerified: 'Account is not verified',
-    selfDisable: 'You cannot disable your account'
+    selfDisable: 'You cannot disable your account',
+    adminNotFound: 'Admin not found with email:'
   },
   accountManager: {
     removed: 'Successfully removed account from Account List',
@@ -64,19 +65,23 @@ module.exports = {
     }
   },
   invite: {
+    alreadyUsed: 'Invite already used.',
     confirmed: 'You have successfully accepted Invite. Please login using your invite e-mail and password.',
     removed: 'Successfully removed Invite',
     cantRemove: "Can't remove this invite",
     sessionIsFull: 'Session is full',
     inviteExpired: 'This invite is not active anymore',
-    declined: 'Successfully declined invite'
+    declined: 'Successfully declined invite',
+    notFound: 'Invite not found'
   },
   mailTemplate: {
     notFound: 'Mail Template not found',
     error: {
       categoryNotFound: 'Mail Template category not found',
-      notProvided: 'Mail Template not provided'
-    }
+      notProvided: 'Mail Template not provided',
+      uniqueName: 'Mail Template name has already been taken',
+    },
+    testMailSent: 'A Test Email has been successfully sent'
   },
   resetPassword: {
     error: {
@@ -91,7 +96,14 @@ module.exports = {
     sessionMemberNotFound: 'Session Member not found',
     rated: 'Session Member rated',
     commentChanged: 'Comment updated successfully',
+    cannotBeChanged: 'Session cannot be changed',
     cantRateSelf: "You can't rate your self",
+    sessionNotClosed: "You can't rate or comment participants because session in not closed",
+    cantSendSMS: "You can't send SMS for this session",
+    actionNotAllowed: "Action not allowed",
+    closed: "Sorry, \"{sessionName}\" has now closed. Thanks for your interest!",
+    contactListLimit: "You have reached your Contact List limit.<br/>If you want to create a new Contact List, you will need to Deactivate one of your existing Lists.<br/>Or upgrade your Plan.<br/><br/>Currently your Social Forum Session, will <u>not</u> include 'It's A Wrap' Topic.",
+    contactListExists: 'Contact List name already exists! Delete first before Publish'
   },
   sessionBuilder: {
     setUp: "You have successfully setted up your chat session.",
@@ -103,9 +115,14 @@ module.exports = {
     sessionMemberRemoved: 'Session Member removed successfully',
     accountUserNotFound: 'Account User not found',
     sessionClosed: "You can't send invites because session has been closed",
+    sessionClosedGuestsInvite: "Sorry, but you cannot yet Invite Guests in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Guests, when you have Closed a Session, or Upgraded your Plan.",
+    sessionClosedObserversInvite: "Sorry, but you cannot yet Invite Spectators in this Session. You already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Invite Spectators, when you have Closed a Session, or Upgraded your Plan.",
+    cantRemoveInvite: {
+      messages: "Is posted messages"
+    },
 
     errors: {
-      cantAddObservers: "Please Update your subscription plan, to invite Observers to your session.",
+      cantAddObservers: "Please Update your subscription plan, to invite Spectators to your session.",
       cantSendCloseMails: "Were not able to send emails to inform all participants, that session was closed.",
       firstStep: {
         nameRequired: 'Name must be provided',
@@ -114,24 +131,27 @@ module.exports = {
         endTimeRequired: 'End time must be provided',
         invalidDateRange: "Start date can't be higher then end date",
         invalidEndTime: "End time can't be equal to start time",
-        facilitator: 'No facilitator provided'
+        facilitator: 'No host provided'
       },
       secondStep: {
-        topics: 'No topics selected'
+        topics: 'No topics selected',
+        stock: "You can't drag a Stock Topic. Edit to suit your needs and Save which creates either a New Topic or a Copy Of."
       },
       thirdStep: {
         emailTemplates: "You need to copy each of the required e-mail template."
       },
       fourthStep: {
-        participants: 'No participants invited'
+        participants: 'No guests invited'
       },
       fifthStep: {
-        observers: 'No observers invited'
-      }
+        observers: 'No specators invited'
+      },
+      invalidStep: "Invalid step"
     }
   },
   sessionMember: {
-    notFound: 'Session Member not found'
+    notFound: 'Session Member not found',
+    nameEmpty: 'Sorry but we need your first name'
   },
   socialProfile: {
     verifyEmail: 'Please verify your email address'
@@ -151,7 +171,7 @@ module.exports = {
     alreadyExists: 'Subscription already exists',
     cantSwitchPlan: "Can't switch to current plan",
     successPlanUpdate: 'Plan was successfully updated.',
-    quoteSent: "Thanks, your email has been sent. We'll be in touch withing 24 hours.",
+    quoteSent: "Thanks, your email has been sent. We'll be in touch within 24 hours.",
     errorInField: 'Please provide: ',
     emailFormat: 'E-mail format is not valid',
     contactNumberFormat: 'Contact Number format is not valid',
@@ -162,10 +182,15 @@ module.exports = {
     notAllowed: 'You must have plan that allows you to buy additional sms credits',
     missingQuantity: 'Quantity not selected'
   },
+  contactList: {
+    notFound: 'Contact List not found!',
+    reachedMaxLimit: 'You have reached max limit for contact list 50'
+  },
   survey: {
     cantExportSurveyData: 'Please Update your subscription plan, to export survey data.',
     notFound: 'Survey not found!',
-    alreadyClosed: 'Survey closed, please contact admin!',
+    cantDelete: 'Sorry, you can\'t delete this survey!',
+    alreadyClosed: 'Sorry, this survey has now closed. Thanks for your interest!',
     notConfirmed: 'Survey not confirmed, please contact admin!',
     removed: 'Successfully removed survey!',
     completed: 'Successfully completed survey!',
@@ -197,7 +222,11 @@ module.exports = {
   topics: {
     updatedSessionTopic: 'Session Topic was successfully updated.',
     error: {
-      relatedSession: "Can't delete topic is related session"
+      relatedSession: "This Topic is currently being used in a Session, and can't be deleted.",
+      default: "Can't delete default topic",
+      stock: "Can't delete stock topic",
+      notFound: "No topic found",
+      inviteAgain: "Can't delete \"It's A Wrap\" stock topic"
     }
   },
   users: {
@@ -205,10 +234,8 @@ module.exports = {
     alreadyChanged: 'Password already changed.',
     dialog: {
       emailExists: "You already have a Role in the system. Please Login.",
-      emailExistsCanCreateAccount: "You already have a Role in the system, you can Create a New Account from your Dashboard. Please Login.",
-      emailExistsContinueToCheckIn: "Sorry, you currently cannot Create a New Account, because you have already Accepted a Session Invitation. \
-        Please continue to Ckeck-In from your Confirmation Email to enter the Session. \
-        You will be able to Create a New Account when you Leave the Session and go to My Dashboard."
+      emailExistsCanCreateAccount: "That's great you want your own Account! Because you already have a Role in cliizii, you can login as normal. Then click on My Details, to create a Free Account.",
+      invitationAccepted: "Hey, we see you have Accepted an invitation to a Session. Create your password, then you can create your Account from My Dashboard later."
     }
   },
   validators: {
@@ -216,13 +243,22 @@ module.exports = {
       error: {
         inactiveSubscription: "Your subscription is expired, please update your subscription plan.",
         noSubscription: "You don't have a subscription. Please purchase a plan.",
-        account: 'Account not found'
+        account: 'Account not found',
+        brandLogoAndCustomColors: 'but _planName_ does not allow you to upload a Brand Logo or change Color Scheme of the Chat Room. Please Upgrade Your Plan.',
+        uploadToGallery: 'but _planName_ does not allow you to upload Upload any Multimedia files for viewing in your Chat Session. Multimedia is a valuable part of the Chat Room experience, and we have supplied some Stock files for your use. But if you would like to Upload your own files, please Upgrade Your Plan.',
+        exportContactListAndParticipantHistory: 'but reporting function is only available on Paid Plans. If you want to view either a PDF, CSV, or TXT Report you can Upgrade your Plan now, to access a Report of this Session.',
+        accountUserCount: 'you have reached the limit of Account Managers available for your current Plan. Please Upgrade your Plan to add more.'
       },
       planDoesntAllowToDoThis: 'Please update your subscription plan to one that includes this feature.',
       notFound: 'No subscription found',
       notValidDependency: 'Not valid dependency',
       inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-      countLimit: 'You have reached limit for XXXs (max: YYY)'
+      countLimit: 'You have reached limit for _name_s (max: _max_number_)',
+      recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter on the ',
+      recruiterCountLimitCore: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
+      recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.',
+      recruiterCountLimitEssentials: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Essentials Plan.',
+      sessionsTimeInputDisabledMessage: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
     }
   },
   models: {
@@ -232,7 +268,7 @@ module.exports = {
       email: 'Email has already been taken'
     },
     session: {
-      date: "Start date can't be higher then end date."
+      date: "Start date can't be higher than End Date."
     },
     user: {
       password: 'Make sure your Password is at least 7 characters'
@@ -242,11 +278,13 @@ module.exports = {
         min: ' must be longer than XXX characters',
         max: ' must not be longer than XXX characters'
       },
-      firstLastName: 'Invalid XXX format'
+      firstLastName: 'Invalid XXX format',
+      restrictedAccountName: 'This Account name is restricted'
     },
     filters: {
       uniqueAccountName: 'Name has already been taken',
       empty: " can't be empty",
+      not: ' contains restricted symbols',
       format: ' has invalid format',
       unique: ' has already been taken',
     }
@@ -273,6 +311,11 @@ module.exports = {
       allSmsSent: 'All sms have been sent'
     }
   },
+  smsService: {
+    validation: {
+      failed: "You want to send ${smsCount} SMS but current available SMS count is ${currentSmsCount}"
+    }
+  },
   routes: {
     accountDatabase: {
       success: 'Successfully updated account user'
@@ -284,10 +327,11 @@ module.exports = {
       invite: 'Successfully invited contacts'
     },
     user: {
-      updateContactDetails: 'Contact details updated successfully.'
+      updateContactDetails: 'Contact details updated successfully.',
+      updateEmailNotifications: 'Email notifications updated successfully.'
     },
     sessionMember: {
-      addFacilitator: 'Facilitator was successfully set'
+      addFacilitator: 'Host was successfully set'
     },
     contactList: {
       created: 'Successfully created contact list',
@@ -296,7 +340,7 @@ module.exports = {
     },
     contactListUser: {
       newUser: 'New contact was added sucessfully',
-      newFacilitator: 'New facilitator was added sucessfully',
+      newFacilitator: 'New host was added sucessfully',
       updated: 'Contact has been updated sucessfully',
       imported: 'Contacts has been imported sucessfully'
     },
@@ -308,5 +352,12 @@ module.exports = {
       updated: 'Topic updated successfully',
       removed: 'Topic removed successfully',
     }
+  },
+  sessionBuilderValidateChanges: {
+    canChange: "What are the odds of you and someone else editing the same thing at the same time... so which edit do you want saved?",
+    canNotChange: "Sorry, you can not change this option anymore, because it was already changed by someone else."
+  },
+  geoip: {
+    noIp: 'No IP provided'
   }
 };

@@ -25,8 +25,7 @@
                         <thead>
                         <tr>
 
-                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                                >
+                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)">
                                 <span class="white-sort-text th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel:'reverse'}}</span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
@@ -54,8 +53,7 @@
                         <thead>
                         <tr>
 
-                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                                >
+                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)">
                                 <span class="white-sort-text th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel :'reverse'}}</span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>
@@ -87,8 +85,7 @@
                         <thead>
                         <tr>
 
-                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)"
-                               >
+                            <th ng-repeat="rowHeader in clc.getPreviewFields() track by $index" ng-click="clc.changeTableSortingFilter(rowHeader)">
                                 <span class="white-sort-text th-name" ng-drop="true" ng-drop-success="clc.updateTableSorting($data,$index)">{{rowHeader | human2Camel : 'reverse'}}</span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-top" ng-show="clc.tableSort.by == rowHeader && clc.tableSort.reverse"></i></span>
                                 <span><i class="white-sort-text glyphicon glyphicon-triangle-bottom" ng-show="clc.tableSort.by == rowHeader && !clc.tableSort.reverse"></i></span>

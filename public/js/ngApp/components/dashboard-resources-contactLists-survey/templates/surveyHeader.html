@@ -1,12 +1,8 @@
-<h4 class='text-center'>
-  Modify & Enable this Introduction & Questions Template for your own needs. Then post the survey link and your Contact List will start building instantly. In Advanced Recruiter you can add 3 extra questions with multi-media.
-</h4>
-
 <div id='panel-introduction' class='panel panel-default border-radius-none'>
   <div class='panel-heading'><strong>Introduction</strong></div>
   <div class='panel-body'>
     <div class='form-horizontal'>
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.name">
         <div class='col-xs-offset-2 col-xs-10 has-error' ng-messages='sc.manageForm.surveyName.$error'>
           <div ng-repeat='error in sc.validationErrors'>
             <div class='help-block' ng-message='{{ error.type }}'>{{ sc.replaceErrorMessage(error, "input") }}</div>
@@ -15,21 +11,21 @@
 
         <label class='col-xs-2 control-label' for='surveyName'>Name</label>
         <div class='col-xs-10 col-md-6'>
-          <input type='text' class='form-control' id='surveyName' placeholder='Name' name='surveyName'
-            ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm'>
+          <input type='text' class='form-control' id='surveyName' placeholder='Name' name='surveyName' ng-blur="sc.autoSaveChanges()" ng-change="sc.changed()"
+            ng-model='sc.survey.name' ng-minlength='sc.minsMaxs.input.min' ng-maxlength='sc.minsMaxs.input.max' ng-required='sc.submitedForm' alt-maxlength='{{sc.minsMaxs.input.max}}'>
         </div>
       </div>
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.logo">
         <label class='col-xs-2 control-label' for='brandLogo'>Survey Logo</label>
-        <div class='col-xs-10 col-md-6'>
+        <div class='col-xs-10 col-md-8'>
           {{ upload = sc.galleryDropdownData("survey", sc.survey); resource = gc.getResourceFromList(sc.survey); "" }}
           <div ng-include="gc.templatesDir + 'viewRendered.html'" ng-if='resource'></div>
-          <img ng-src='/icons/Klzii_RGB_72.png' ng-if='!resource'/></br>
-          <ng-include class="dropdown" src="gc.templatesDir + 'dropdown.html'" style="padding-bottom: 9px;"></ng-include>
+          <img ng-src='/icons/Cliizii_RGB_72.png' ng-if='!resource'/></br>
+          <ng-include class="dropdown" src="gc.templatesDir + 'dropdown.html'" style="padding-bottom: 9px;" ng-init="uploadText = { headerText: 'Upload your Logo', modalTitle: 'Upload your Brand Logo'}"></ng-include>
         </div>
       </div>
 
-      <div class='form-group'>
+      <div class='form-group' ng-if="section.headerContent.textArea">
         <div class='col-md-8'>
           <div class='has-error' ng-messages='sc.manageForm.description.$error'>
             <div ng-repeat='error in sc.validationErrors'>
@@ -37,8 +33,8 @@
             </div>
           </div>
 
-          <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5'
-            ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm'>
+          <textarea class='form-control' id='description' placeholder='{{ sc.defaultIntroduction }}' name='description' rows='5' ng-blur="sc.autoSaveChanges()" ng-change="sc.changed()"
+            ng-model='sc.survey.description' ng-maxlength='sc.minsMaxs.textarea.max' ng-required='sc.submitedForm' alt-maxlength='{{sc.minsMaxs.textarea.max}}'>
           </textarea>
         </div>
       </div>

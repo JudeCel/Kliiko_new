@@ -29,7 +29,9 @@
   function AccountDatabaseController(dbg, AccountDatabaseServices, $scope, $filter, messenger, domServices) {
     dbg.log2('#AccountDatabaseController started');
 
-    $scope.accounts = {};
+    $scope.accounts = [];
+    $scope.modalObject = {addAdminForm: {'email': ""}}
+
     init();
 
     function init() {
@@ -45,6 +47,48 @@
       domServices.modal('accountDatabaseCommentModal');
     };
 
+    $scope.addAdmin = function(account) {
+      account.hasActiveAdmin = !account.hasActiveAdmin;
+      $scope.modalObject.account = account;
+      if(!account.hasActiveAdmin) {
+        domServices.modal('addAdminModal');
+      }
+      else {
+        $scope.removeAdmin(account);
+      }
+    };
+
+    $scope.removeAdmin = function(account) {
+      var params = { accountId: account.id };
+      AccountDatabaseServices.removeAdmin(params).then(function(res) {
+         if(res.error) {
+          messenger.error(res.error);
+        }else{
+          account.hasActiveAdmin = res.account.hasActiveAdmin;
+          account.AccountUsers = res.account.AccountUsers;
+          $scope.modalObject = {};
+        }
+      });
+    };
+
+    $scope.getActivateDeactivateButtonText = function(isActive) {
+      return isActive ? "Deactivate" : "Activate";
+    };
+
+    $scope.submitAddAdminForm = function() {
+      var params = {email: $scope.modalObject.addAdminForm.email, accountId: $scope.modalObject.account.id}
+      AccountDatabaseServices.addAdmin(params).then(function(res) {
+         if(res.error) {
+          messenger.error(res.error);
+        }else{
+          messenger.ok(res.message);
+          $scope.modalObject.account.hasActiveAdmin = true
+          $scope.modalObject = {};
+          domServices.modal('addAdminModal', true);
+        }
+      });
+    };
+
     $scope.closeModal = function() {
       domServices.modal('accountDatabaseCommentModal', 1);
     };
@@ -54,7 +98,7 @@
 
       $scope.changeAccountStatusSending = true;
       var accountUser = $scope.findRightAccountUser(account, user);
-      var params = { accountId: account.id, userId: user.UserId, active: !accountUser.active };
+      var params = { accountId: account.id, userId: user.id, accountUserId: accountUser.id, active: !accountUser.active };
       dbg.log2('#AccountDatabaseController > changeAccountStatus', params);
 
       AccountDatabaseServices.updateAccountUser(params).then(function(res) {
@@ -83,8 +127,7 @@
       }
     };
 
-    $scope.chooseIconForUser = function(account, user) {
-      var accountUser = $scope.findRightAccountUser(account, user);
+    $scope.chooseIconForUser = function(account, accountUser) {
       if(accountUser.active) {
         return '/icons/ic_tick.png';
       }

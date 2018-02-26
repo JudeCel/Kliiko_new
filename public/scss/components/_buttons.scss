@@ -1,15 +1,14 @@
 // STANDART BUTTONS //
 
 .btn-standart {
-  display: initial;
-  padding: 8px;
+  display: inline-block !important;
+  padding: 3px 8px;
   border: 2px solid lightgrey;
   border-radius: 0px;
   cursor: pointer;
   background: white;
   height: 36px;
   line-height: 26px;
-  padding-top: 3px;
 
   @mixin buttonColor($color) {
     color: $color;
@@ -133,6 +132,14 @@
   height: 36px;
 }
 
+.btn-large-x {
+  display: inline-block !important;
+  min-width:250px;
+  width: 250px;
+  max-width: 250px;
+  height: 36px;
+}
+
 // SPECIAL BUTTONS //
 
 .btn-simple {
@@ -222,4 +229,26 @@ input.kliiko-checkbox:checked + label{
   margin-right: 60px;
   text-decoration: none;
   border: 2px solid $green;
+}
+
+.go-to-green-button,
+.go-to-green-button:focus,
+.go-to-green-button:hover,
+.go-to-green-button:active {
+  background-color: $green;
+  text-decoration: none;
+  color: #fff;
+  padding: 7px;
+  vertical-align: middle;
+  margin-top: -2px;
+  height: 32px;
+  white-space: nowrap;
+}
+
+.btn-container {
+  margin: 10px 0 0 5px;
+}
+
+.margin-sides-5 {
+  margin-left: 0 5px;
 }

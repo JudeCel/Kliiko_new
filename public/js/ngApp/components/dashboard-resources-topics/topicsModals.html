@@ -8,20 +8,28 @@
         <form>
           <div class='form-group'>
             <label for='topicName'>Name Your Topic</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name'>
+            <input type='text' class='form-control' id='topicName' placeholder='Name Your Topic' maxlength='{{ topics.validations.name }}' ng-model='topics.topicData.name' ng-disabled="topics.topicData.stock && topics.topicData.sessionId">
             <span class='help-block'>Characters left: {{ topics.charactersLeft("name") }}</span>
           </div>
 
           <div class='form-group'>
-            <label for='topicBoard'>Facilitator Billboard</label>
-            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Facilitator Billboard' maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
+            <label for='topicBoard'>Host Billboard</label>
+            <span emoji-picker="topics.topicData.boardMessage" placement="right" title="Emoji" recent-limit="10" output-format="unicode" emoji-picker-helper close-emoji-popup-in-modal='topicModalWindow' emoji-focus-to="topicBoard"></span>
+            <textarea rows='3' class='form-control' id='topicBoard' placeholder='Host Billboard' alt-maxlength='{{ topics.validations.boardMessage }}' required ng-model='topics.topicData.boardMessage' />
             <span class='help-block'>Characters left: {{ topics.charactersLeft("boardMessage") }}</span>
           </div>
 
           <div class='form-group'>
-            <label for='topicName'>Message Sign</label>
-            <input type='text' class='form-control' id='topicName' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='topics.topicData.landing'>
+            <label for='topicSign'>Message Sign</label>
+            <input type='text' class='form-control' id='topicSign' placeholder='Message Sign' maxlength='{{ topics.validations.sign }}' ng-model='topics.topicData.sign' ng-disabled='(topics.topicData.landing || topics.topicData.sessionId && topics.topicData.inviteAgain) && topics.topicData.disabledSignEdit'>
             <span class='help-block'>Characters left: {{ topics.charactersLeft("sign") }}</span>
+          </div>
+
+          <div class='form-group' ng-if='topics.canSetStock(topics.topicData, app.hasPermissions("canStockCreateTopics"))'>
+            <div class='checkbox checkbox-sm checkbox-success survey-input'>
+              <input class='styled' id='checkbox' type='checkbox' name='checkbox' ng-model='topics.topicData.stock'>
+              <label for='checkbox'>Stock?</label>
+            </div>
           </div>
         </form>
       </div>

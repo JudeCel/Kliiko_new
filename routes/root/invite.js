@@ -5,78 +5,54 @@ var inviteService = require('../../services/invite');
 var middlewareFilters = require('../../middleware/filters');
 var _ = require('lodash');
 
+var MessagesUtil = require('./../../util/messages');
+
 function views_path(action) {
   return 'invite/' + action;
 }
 
 function index(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error == 'Invite not found') {
-      res.redirect('/login');
-    }
-    else {
-      if(invite.userType == 'existing') {
-        acceptGet(req, res, next);
+  inviteService.findInvite(req.params.token).then((invite) => {
+    inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+      if (user) {
+        accept(req, res, next);
+      } else {
+        res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
       }
-      else {
-        res.render(views_path('index'), simpleParams('Invite', invite, error));
-      }
-    }
+    });
+  }, (error) => {
+    res.redirect('/login');
   });
 }
 
 function decline(req, res, next) {
-  inviteService.declineInvite(req.params.token, function(error, invite, message) {
-    if(error) {
-      res.render(views_path('index'), simpleParams('Invite', invite, error));
-    }
-    else {
-      req.flash('message', message);
-      res.redirect('/login');
-    }
+  inviteService.declineInvite(req.params.token).then(({invite, message}) => {
+    req.flash('message', message);
+    res.redirect('/login');
+  }, (error) => {
+    res.render(views_path('index'), simpleParams('Invite', {}, error));
   });
 }
 
-function acceptGet(req, res, next) {
-  inviteService.acceptInviteExisting(req.params.token, function(error, invite, message) {
-    if(error == 'Invite not found') {
-      res.redirect('/login');
-    }
-    else {
-      if(invite && invite.userType == 'new') {
-        res.render(views_path('index'), simpleParams('Accept Invite', invite, error));
+function accept(req, res, next) {
+  inviteService.findInvite(req.params.token).then((invite) => {
+    inviteService.acceptInvite(req.params.token, req.body).then(({user}) => {
+      loginUser(req, res, next, user);
+    }, (error) => {
+      if (error == MessagesUtil.invite.sessionIsFull) {
+        res.render(views_path('sessionFull'), {title: "Session Full"});
+      } else {
+        inviteService.findUserInSystemByEmail(invite.AccountUser.email).then((user) => {
+          if (user) {
+            loginUser(req, res, next, user);
+          } else {
+            res.render(views_path('newUser'), simpleParams('Invite', invite, error));
+          }
+        });
       }
-      else {
-        req.flash('message', message);
-        res.redirect('/login');
-      }
-    }
-  });
-}
-
-function acceptPost(req, res, next) {
-  inviteService.findInvite(req.params.token, function(error, invite) {
-    if(error) {
-      return res.render(views_path('index'), simpleParams('Invite', invite, error));
-    }
-
-    if(invite.sessionId) {
-      inviteService.sessionAccept(req.params.token, req.body).then(function(data) {
-        loginUser(req, res, next, data.user);
-      }, function(error) {
-        res.render(views_path('index'), simpleParams('Invite', invite, error));
-      });
-    }
-    else {
-      inviteService.acceptInviteNew(req.params.token, req.body, function(error, invite, user, message) {
-        if(error) {
-          res.render(views_path('index'), simpleParams('Invite', invite, error));
-        }
-        else {
-          loginUser(req, res, next, user);
-        }
-      });
-    }
+    });
+  }, (error) => {
+    res.redirect('/login');
   });
 };
 
@@ -85,10 +61,9 @@ function loginUser(req, res, next, user) {
     req.login(user, function(err) {
       middlewareFilters.myDashboardPage(req, res, next);
     });
-  }
-  else {
+  } else {
     req.body.email = user.email;
-    userRoutes.login(req, res, next);
+    userRoutes.login(req, res, next, true);
   }
 }
 
@@ -98,7 +73,9 @@ function simpleParams(title, invite, errors, message) {
     invite: invite || {},
     errors: processedErrosMessage(errors || {}),
     message: message || '',
-    applicationName: process.env.MAIL_FROM_NAME
+    applicationName: process.env.MAIL_FROM_NAME,
+    googleUrl: '/invite/auth/google/' + invite.token,
+    facebookUrl: '/invite/auth/facebook/' + invite.token,
   };
 };
 function processedErrosMessage(errors) {
@@ -112,37 +89,51 @@ function processedErrosMessage(errors) {
 }
 
 function sessionAccept(req, res, next) {
-  inviteService.acceptSessionInvite(req.params.token).then(function(result) {
-    res.render(views_path('accepted'), simpleParams('Invite', result.invite));
+  inviteService.acceptSessionInvite(req.params.token).then(function({invite, message}) {
+    if(!invite) {
+      req.flash('message', message);
+      res.redirect("/login");
+    } else if (invite.AccountUser.UserId) {
+      req.params.token = invite.token;
+      accept(req, res, next);
+    } else {
+      res.render(views_path('newUser'), simpleParams('Invite', invite, {}));
+    }
   }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
 function sessionNotThisTime(req, res, next) {
   inviteService.declineSessionInvite(req.params.token, 'notThisTime').then(function(result) {
-    res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    if(!result.invite) {
+      req.flash('message', result.message);
+      res.redirect("/login");
+    } else {
+      res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    }
   }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
 function sessionNotAtAll(req, res, next) {
-  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then(function(result) {
-    res.render(views_path('declined'), simpleParams('Invite', result.invite));
-  }, function(error) {
-    req.flash('message', error);
-    res.redirect('/login');
+  inviteService.declineSessionInvite(req.params.token, 'notAtAll').then((result) => {
+    if(!result.invite) {
+      req.flash('message', result.message);
+      res.redirect("/login");
+    } else {
+      res.render(views_path('declined'), simpleParams('Invite', result.invite));
+    }
+  }, (error) => {
+    res.render(views_path('notFound'), {title: "Invite", error: error});
   });
 }
 
 module.exports = {
   index: index,
   decline: decline,
-  acceptGet: acceptGet,
-  acceptPost: acceptPost,
+  accept: accept,
   sessionAccept: sessionAccept,
   sessionNotThisTime: sessionNotThisTime,
   sessionNotAtAll: sessionNotAtAll

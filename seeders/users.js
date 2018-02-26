@@ -4,6 +4,9 @@ require('dotenv-extended').load({
 });
 
 var UserService = require('./../services/users');
+var resourcesService = require('./../services/resources');
+var topicsService = require('./../services/topics');
+var Constants = require('./../util/constants');
 var async = require('async');
 
 let createNewUserFunctionList = [
@@ -33,7 +36,26 @@ function createAdmin(callback) {
         let account = results[0].AccountUser;
         if (account) {
           account.update({ role: 'admin' });
-          callback(null)
+          resourcesService.addDefaultTopicVideo(account, Constants.defaultTopic.video.focus, "Focus").then(function() {
+            resourcesService.addDefaultTopicVideo(account, Constants.defaultTopic.video.forum, "Forum").then(function() {
+              let inviteAgainTopicParams = {
+                accountId: account.id,
+                name: "It's A Wrap",
+                boardMessage: "Thanks for all your help! I have lots to take with me. Are you up for another chat some time? Then click on the Green Button. (where the Console was)",
+                stock: true,
+                inviteAgain: true
+              };
+              topicsService.create(inviteAgainTopicParams, true).then(function() {
+                callback(null);
+              }, function(error) {
+                callback(error);
+              });
+            }, function(error) {
+              callback(error);
+            });
+          }, function(error) {
+            callback(error);
+          });
         }else{
           callback("Account not found for user")
         }

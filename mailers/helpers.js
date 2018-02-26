@@ -2,55 +2,21 @@
 
 var ejs = require('ejs');
 var fs = require('fs');
-var nodemailer = require('nodemailer');
-var stubTransport = {
-    name: 'testsend',
-    version: '1',
-    send: function(data, callback) { callback(null, data) }
-};
-var helpers = exports;
+var urlHeplers = require('./../services/urlHeplers');
 
-function envConfig() {
-  switch (process.env.NODE_ENV) {
-    case "test":
-      return stubTransport;
-      break;
-    default:
-      let confObject = {
-        host: process.env.MAIL_TRANSPORT_SERVICE,
-        auth: {
-          user: process.env.MAIL_TRANSPORT_AUTH_USER,
-          pass: process.env.MAIL_TRANSPORT_AUTH_PASS
-        },
-        debug: true,
-        logger: true,
-        secureConnection: process.env.MAIL_TRANSPORT_SECURE_CONNECTION == "true",
-        port: parseInt(process.env.MAIL_TRANSPORT_PORT)
-      };
-      console.log(confObject);
-      return confObject;
-  }
-}
+var helpers = exports;
 
 helpers.mailFrom = function(){
   return process.env.MAIL_FROM_NAME + " <" + process.env.MAIL_FROM_EMAIL + ">";
 };
 
 helpers.getUrl = function(token, accountUserId, path){
-  let url = "http://" + process.env.SERVER_DOMAIN + returnPort() + path + token;
+  let url = urlHeplers.getBaseUrl() + path + token;
   if (accountUserId) {
     url += '/' + encodeURI(new Buffer(accountUserId.toString()).toString('base64'))
   }
   return url;
 };
-
-function returnPort() {
-  if(process.env.NODE_ENV == "production"){
-    return '';
-  }else{
-    return ":" + process.env.SERVER_PORT;
-  }
-}
 
 helpers.renderMailTemplate = function(filename, params, callback){
   let tplfile = __dirname + '/templates/' + filename + '.ejs';
@@ -62,8 +28,4 @@ helpers.renderMailTemplate = function(filename, params, callback){
 
     callback(null, ejs.render(tpl, params));
   });
-};
-
-helpers.createTransport = function(token){
-  return nodemailer.createTransport(envConfig());
 };

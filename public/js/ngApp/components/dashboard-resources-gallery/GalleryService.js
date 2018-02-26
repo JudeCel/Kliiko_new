@@ -8,13 +8,26 @@
     var upServices = {};
 
     upServices.listResources = listResources;
-    upServices.createResource = createResource;
+    upServices.createOrReplaceResource = createOrReplaceResource;
     upServices.removeResources = removeResources;
     upServices.zipResources = zipResources;
     upServices.refreshResource = refreshResource;
     upServices.surveyResources = surveyResources;
+    upServices.closedSessionResourcesRemoveCheck = closedSessionResourcesRemoveCheck;
+    upServices.prepareVideoServiceUrl = prepareVideoServiceUrl;
 
     return upServices;
+
+    function prepareVideoServiceUrl(id, source) {
+      switch (source) {
+        case "youtube":
+          return 'https://www.youtube.com/watch?v=' + id;
+        case "vimeo":
+          return 'https://vimeo.com/' + id;
+        default:
+          return null;
+      }
+    }
 
     function listResources(params) {
       var deferred = $q.defer();
@@ -28,7 +41,7 @@
       return deferred.promise;
     }
 
-    function createResource(params) {
+    function createOrReplaceResource(params) {
       var deferred = $q.defer();
 
       fileUploader.upload(params).then(function(result) {
@@ -44,6 +57,18 @@
       var deferred = $q.defer();
 
       fileUploader.remove(resourceIds).then(function(result) {
+        deferred.resolve(result);
+      }, function(error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function closedSessionResourcesRemoveCheck(resourceIds) {
+      var deferred = $q.defer();
+
+      fileUploader.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
         deferred.resolve(result);
       }, function(error) {
         deferred.reject(error);

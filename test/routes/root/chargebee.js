@@ -7,6 +7,7 @@ var chargebeeRoutes = require('./../../../routes/root/chargebee.js');
 var userFixture = require('./../../fixtures/user');
 var subscriptionPlansFixture = require('./../../fixtures/subscriptionPlans');
 var subscriptionServices = require('./../../../services/subscription');
+var testDatabase = require("../../database");
 
 var _ = require('lodash');
 var assert = require('chai').assert;
@@ -15,26 +16,22 @@ describe('ROUTE - Chargebee Webhooks', function() {
   var testData, testSubscription;
 
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testData = result;
-      return subscriptionPlansFixture.createPlans();
-    }).then(function(results) {
-      subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
-        testSubscription = subscription;
-        done();
-      }, function(error) {
+    testDatabase.prepareDatabaseForTests().then(function() {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testData = result;
+        return subscriptionPlansFixture.createPlans();
+      }).then(function(results) {
+        subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: 'SomeUniqueID' })).then(function(subscription) {
+          testSubscription = subscription;
+          done();
+        }, function(error) {
+          done(error);
+        });
+      }).catch(function(error) {
         done(error);
       });
-    }).catch(function(error) {
-      done(error);
     });
 
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(function() {
-      done();
-    });
   });
 
   function successProvider(params) {
@@ -42,7 +39,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free_trial' },
+            subscription: { id: params.id, plan_id: 'free_trial_AUD', current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
@@ -82,8 +79,12 @@ describe('ROUTE - Chargebee Webhooks', function() {
     function resObject(expectedStatus, done) {
       return {
         sendStatus: function(status) {
-          assert.equal(expectedStatus, status);
-          done();
+          try {
+            assert.equal(expectedStatus, status);
+            done();
+          } catch (e) {
+            done(e)
+          }
         }
       };
     }
@@ -108,7 +109,8 @@ describe('ROUTE - Chargebee Webhooks', function() {
           request: function(callback) {
             callback(null, {
               id: "",
-              plan_id: params.plan_id
+              plan_id: params.plan_id,
+              current_term_end: new Date()
             });
           }
         }
@@ -122,7 +124,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
           updateProvider: updateProvider({ id: testSubscription.subscriptionId, plan_id: testSubscription.planId })
         }
 
-        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'core_monthly', skipCardCheck: true}, providers).then(function() {
+        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'essentials_monthly_aud', skipCardCheck: true}, providers).then(function() {
           chargebeeRoutes.endPoint(reqObject(testSubscription.subscriptionId), resObject(200, done));
         });
       });

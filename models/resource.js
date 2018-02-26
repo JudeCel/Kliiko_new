@@ -23,8 +23,10 @@ module.exports = (Sequelize, DataTypes) => {
       values: [ 'video', 'audio', 'image', 'file', 'link']
     },
     scope: { type: DataTypes.ENUM, allowNull: false,
-      values: [ 'participant', 'facilitator', 'co-facilitator', 'observer', 'report', 'vote',
-        'collage', 'brandLogo', 'youtube', 'zip', 'pdf', 'csv', 'banner', 'txt', 'pinboard' ]
+      values: ['collage', 'brandLogo', 'zip', 'pdf', 'csv', 'banner', 'txt', 'pinboard', 'videoService' ]
+    },
+    source: { type: DataTypes.ENUM, allowNull: true,
+      values: [ 'youtube', 'vimeo' ]
     }
   }, {
     timestamps: true,
@@ -42,6 +44,7 @@ module.exports = (Sequelize, DataTypes) => {
         Resource.hasMany(models.Survey, { foreignKey: 'resourceId' });
         Resource.hasMany(models.SurveyQuestion, { foreignKey: 'resourceId' });
         Resource.belongsToMany(models.Session, {through: {model: models.SessionResource, onDelete: 'cascade'}, foreignKey: 'resourceId'});
+        Resource.belongsToMany(models.MailTemplate, {through: {model: models.MailTemplateResource, onDelete: 'cascade'}, foreignKey: 'resourceId'});
       }
     }
   });

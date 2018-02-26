@@ -13,6 +13,8 @@ var bcrypt = require('bcrypt');
 var uuid = require('node-uuid');
 var async = require('async');
 var constants = require('./../util/constants');
+var infusionsoft = require('./../lib/infusionsoft');
+var Bluebird = require('bluebird');
 
 module.exports = {
   create: create,
@@ -54,7 +56,7 @@ function create(params, callback) {
         for(let i2=0; i2<result[i1].Invites.length; i2++) {
           if (result[i1].Invites[i2].status == constants.inviteStatuses[constants.inviteStatuses.length-1]) {
             canCreate = false;
-            errorWithDialog.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsContinueToCheckIn}
+            errorWithDialog.dialog = {link: { url: '/invite/' + result[i1].Invites[i2].token + '/accept/', title: "Continue to Check In" }, message: MessagesUtil.users.dialog.emailExistsCanCreateAccount}
           }
         }
       }
@@ -65,7 +67,11 @@ function create(params, callback) {
         if (error) {
           callback(error);
         } else {
-          callback(null, result);
+          infusionEmail(result).then(() => {
+            callback(null, result);
+          }, (error) => {
+            callback(error);
+          });
         }
       });
     }
@@ -77,6 +83,25 @@ function create(params, callback) {
     return callback(error);
   });
 };
+
+function infusionEmail(user) {
+
+  if (!user.infusionEmail) {
+    return Promise.resolve();
+  }
+
+  return infusionsoft.contact.find({ Email: user.email })
+    .then((contact) => {
+      if (!contact) {
+        return;
+      }
+
+      return Promise.all([
+        infusionsoft.contact.tagRemove(contact.Id, infusionsoft.TAGS.optIn),
+        infusionsoft.contact.tagAdd(contact.Id, infusionsoft.TAGS.activated),
+      ]);
+    });
+}
 
 function update(req, callback){
   User.update(req.body, {
@@ -91,38 +116,51 @@ function update(req, callback){
 }
 
 function createUser(params, callback) {
+
   parsePhoneParams(params);
 
-  let createNewUserFunctionList = [
-    function (cb) {
-      models.sequelize.transaction().then(function(t) {
-        User.create(params, { transaction: t } ).then(function (result) {
-          cb(null, { params: params, user: result, transaction: t, errors: {} });
-        }, function(error) {
-          cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    let createNewUserFunctionList = [
+      function (cb) {
+        models.sequelize.transaction().then(function(t) {
+          User.create(params, { transaction: t } ).then(function (result) {
+            cb(null, { params: params, user: result, transaction: t, errors: {} });
+          }, function(error) {
+            cb(null, { params: params, user: {}, transaction: t, errors: filters.errors(error) })
+          });
         });
-      });
-    },
-    accountService.create,
-    accountUserService.createAccountManager,
-  ]
+      },
+      accountService.create,
+      accountUserService.createAccountManager,
+    ]
 
-  if (params.socialProfile) {
-    createNewUserFunctionList.push(socialProfileService.create);
-  }
+    if (params.socialProfile) {
+      createNewUserFunctionList.push(socialProfileService.create);
+    }
+    async.waterfall(createNewUserFunctionList, function(_error, object) {
 
-  async.waterfall(createNewUserFunctionList, function(_error, object) {
-    if(_.isEmpty(object.errors)) {
-      object.transaction.commit().then(function() {
-        callback(null, object.user);
-      });
-    }
-    else {
-      object.transaction.rollback().then(function() {
-        callback(object.errors, object.user);
-      });
-    }
+      if(_.isEmpty(object.errors)) {
+        object.transaction.commit().then(function() {
+         transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          callback(null, object.user);
+        });
+      }
+      else {
+        object.transaction.rollback().then(function() {
+         transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          callback(object.errors, object.user);
+        });
+      }
+    })
   });
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function parsePhoneParams(params) {
@@ -190,7 +228,7 @@ function setEmailConfirmationToken(email, callback) {
     confirmationToken: token,
     confirmationSentAt: new Date()
   }, {
-    where: {email: email}
+    where: {email: { ilike: email }}
   })
   .then(function (result) {
     if (result[0] > 0) {
@@ -222,7 +260,9 @@ function prepareParams(req, errors) {
     tipsAndUpdate: 'on',
     termsAndConditions: 'false',
     errors: (errors || {}),
-    socialProfile: null
+    socialProfile: null,
+    selectedPlanOnRegistration: null,
+    showOptionalFields: true
   }, req.body);
 }
 
@@ -279,7 +319,7 @@ function setResetToken(email, callback) {
 
   var token = uuid.v1();
   User.find({
-    where: {email: email},
+    where: {email: { ilike: email }},
     include: {model: AccountUser, attributes: ['firstName']}
   }).done(function (foundUser) {
     if (!foundUser) {
@@ -290,7 +330,7 @@ function setResetToken(email, callback) {
       resetPasswordToken: token,
       resetPasswordSentAt: new Date()
     }, {
-      where: {email: email}
+      where: {email: { ilike: email }}
     })
     .then(function (result) {
       if (result[0] > 0) {

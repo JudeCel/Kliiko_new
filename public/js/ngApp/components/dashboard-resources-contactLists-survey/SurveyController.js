@@ -1,101 +1,54 @@
 (function () {
   'use strict';
 
-  angular.module('KliikoApp').controller('SurveyController', SurveyController);
-  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$anchorScroll', '$location', '$window'];
+  angular.module('KliikoApp').controller('SurveyListController', SurveyController);
+  SurveyController.$inject = ['dbg', 'surveyServices', 'angularConfirm', 'messenger', '$timeout', '$interval', '$anchorScroll', '$location', '$window', 'errorMessenger', 'domServices'];
 
-  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $anchorScroll, $location, $window) {
+  function SurveyController(dbg, surveyServices, angularConfirm, messenger, $timeout, $interval, $anchorScroll, $location, $window, errorMessenger, domServices) {
     dbg.log2('#SurveyController started');
 
     var vm = this;
     vm.surveys = {};
     vm.uploadTypes = {};
+    vm.autoSave = null;
+    vm.stats = {};
+    vm.currentSurveyId = null;
 
     vm.defaultIntroduction = "(Brand/Organisation) would like your fast feedback on (issue). It will only take 2 minutes, and you'll be in the draw for (prize). Thanks for your help!";
     vm.defaultThanks = "Thanks for all your feedback and help with our survey! We'll announce the lucky winner of the draw for (prize) on (Facebook/website) on (date).";
 
     vm.popOverMessages = {
-      remove: 'Remove survey',
-      edit: 'Edit survey',
-      copy: 'Copy survey',
-      status: 'Change status',
-      confirm: 'Confirm survey',
-      export: 'Export survey'
+      create: 'Create',
+      remove: 'Delete',
+      edit: 'Edit',
+      copy: 'Copy',
+      export: 'Export',
+      report: 'Stats'
     };
+
+    vm.userTemplates = {
+      "intro": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/recruiter-intro.html",
+      "0": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/advanced-recruiter-header.html",
+      "1": "/js/ngApp/components/dashboard-resources-contactLists-survey/recruiter/empty-header.html"
+    }
 
     // Uses services
     vm.removeSurvey = removeSurvey;
     vm.changeStatus = changeStatus;
     vm.copySurvey = copySurvey;
-    vm.finishManage = finishManage;
-    vm.confirmSurvey = confirmSurvey;
     vm.exportSurvey = exportSurvey;
-
-    // Inits
-    vm.initQuestion = initQuestion;
-    vm.initAnswers = initAnswers;
-    vm.initContacts = initContacts;
-    vm.initGallery = initGallery;
+    vm.showStats = showStats;
+    vm.exportStatsUrl = exportStatsUrl;
 
     // Helpers
-    vm.showPreview = showPreview;
-    vm.replaceErrorMessage = replaceErrorMessage;
-    vm.statusIcon = statusIcon;
-    vm.canChangeAnswers = canChangeAnswers;
-    vm.changeAnswers = changeAnswers;
-    vm.defaultArray = defaultArray;
-    vm.changePage = changePage;
-    vm.addContactDetail = addContactDetail;
-    vm.pickValidClass = surveyServices.pickValidClass;
-    vm.changeQuestions = changeQuestions;
-    vm.contactDetailDisabled = contactDetailDisabled;
-    vm.onDropComplete = onDropComplete;
-    vm.galleryDropdownData = galleryDropdownData;
     vm.checkTag = surveyServices.checkTag;
-
-    function onDropComplete(index, data, evt) {
-      var answer = data.answer;
-      var question = vm.survey.SurveyQuestions[data.questionOrder].answers;
-      answer.order = index;
-
-      var otherObj = question[index];
-      var otherIndex = question.indexOf(answer);
-      otherObj.order = otherIndex;
-
-      question[index] = answer;
-      question[otherIndex] = otherObj;
-    }
-
-    initConstants();
-    changePage('index');
-
-    function showPreview() {
-      var selected = findSelected();
-      vm.previewSurvey = JSON.parse(JSON.stringify(vm.survey));
-      vm.previewSurvey.SurveyQuestions = selected;
-    }
-
-    function replaceErrorMessage(error, type) {
-      if(vm.minsMaxs) {
-        return error.message.replace('XXX', vm.minsMaxs[type].max);
-      }
-    }
-
-    function initConstants() {
-      surveyServices.getConstants().then(function(res) {
-        vm.defaultQuestions = res.data.defaultQuestions;
-        vm.contactDetails = res.data.contactDetails;
-        vm.constantErrors = res.data.validationErrors;
-        vm.validationErrors = vm.constantErrors.field;
-        vm.minsMaxs = res.data.minsMaxs;
-        vm.minQuestions = res.data.minQuestions;
-      });
-    };
+    vm.canDelete = canDelete;
 
     function init() {
-      surveyServices.getAllSurveys().then(function(res) {
+      surveyServices.getAllSurveys({surveyType: vm.surveySettings.surveyType}).then(function(res) {
         vm.surveys = res.data;
         vm.dateFormat = res.dateFormat;
+        vm.currentSurveyId = null;
         dbg.log2('#SurveyController > getAllSurveys > res ', res.data);
       });
     };
@@ -117,127 +70,51 @@
       });
     };
 
+    function showStats(survey) {
+      surveyServices.getSurveyStats(survey.id).then(function(res) {
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          vm.stats = res.data;
+          domServices.modal('statsModal');
+        }
+      });
+    };
+
+    function exportStatsUrl(surveyId, type) {
+      return surveyServices.exportSurveyStatsUrl(surveyId, type);
+    };
+
     function changeStatus(survey) {
-      surveyServices.changeStatus({ id: survey.id, closed: !survey.closed }).then(function(res) {
+      surveyServices.changeStatus({ id: survey.id, closed: !survey.switchValue}).then(function(res) {
         dbg.log2('#SurveyController > changeStatus > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          survey.closed = !survey.closed;
+          errorMessenger.showError(res.error);
+        } else {
+          survey.closed = res.data.closed;
+          survey.closedAt = res.data.closedAt;
           messenger.ok(res.message);
         }
+        survey.switchValue = !survey.closed;
       });
     };
 
-    function findSelected() {
-      var array = [];
-      for(var i in vm.survey.SurveyQuestions) {
-        var question = vm.survey.SurveyQuestions[i];
-        if(question.active) {
-          array.push(question);
-        }
-      }
-      return array;
+    function canDelete(survey) {
+      var date = new Date();
+      date.setDate(date.getDate() - 1);
+      return survey.closed && (new Date(survey.closedAt) <= date) || !survey.confirmedAt;
     }
-
-    function finishManage() {
-      vm.submitedForm = true;
-      vm.submitingForm = true;
-
-      $timeout(function() {
-        if(vm.manageForm.$valid) {
-          var selected = findSelected();
-          if(selected.length < vm.minQuestions) {
-            vm.submitError = vm.constantErrors.minQuestions + vm.minQuestions;
-          }
-          else {
-            delete vm.submitError;
-            var object = JSON.parse(JSON.stringify(vm.survey));
-            object.SurveyQuestions = selected;
-            if(vm.currentPage.type == 'create') {
-              finishCreate(object);
-            }
-            else {
-              finishEdit(object);
-            }
-          }
-        }
-        else {
-          vm.submitError = vm.constantErrors.default;
-          $timeout(function() {
-            var form = angular.element('#manageForm');
-            var elem = form.find('.ng-invalid:first');
-            var panel = elem.children('.panel:first');
-            if(panel.length == 0) {
-              panel = elem.parents('.panel:first');
-            }
-
-            var panelParent = panel.scope().$parent;
-            if(panelParent.hasOwnProperty('accordion')) {
-              panelParent.object.open = true;
-            }
-            moveBrowserTo(panel[0].id);
-          });
-        }
-
-        vm.submitingForm = false;
-      }, 1000);
-    };
-
-    function finishCreate(survey) {
-      surveyServices.createSurvey(survey).then(function(res) {
-        dbg.log2('#SurveyController > finishCreate > res ', res);
-
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          changePage('index');
-          messenger.ok(res.message);
-        }
-      });
-    };
-
-    function finishEdit(survey) {
-      surveyServices.updateSurvey(survey).then(function(res) {
-        dbg.log2('#SurveyController > finishEdit > res ', res);
-
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          changePage('index');
-          messenger.ok(res.message);
-        }
-      });
-    };
 
     function copySurvey(survey) {
       surveyServices.copySurvey({ id: survey.id }).then(function(res) {
         dbg.log2('#SurveyController > copySurvey > res ', res);
 
         if(res.error) {
-          messenger.error(res.error);
+          errorMessenger.showError(res.error);
         }
         else {
           vm.surveys.push(res.data);
-          messenger.ok(res.message);
-        }
-      });
-    };
-
-    function confirmSurvey(survey) {
-      var date = new Date();
-      surveyServices.confirmSurvey({ id: survey.id, confirmedAt: date }).then(function(res) {
-        dbg.log2('#SurveyController > confirmSurvey > res ', res);
-
-        if(res.error) {
-          messenger.error(res.error);
-        }
-        else {
-          survey.confirmedAt = date;
           messenger.ok(res.message);
         }
       });
@@ -253,181 +130,21 @@
       });
     };
 
-    function changeQuestions(question, order) {
-      question.active = !question.active;
-
-      if(question.active) {
-        question.order = order;
-        vm.survey.SurveyQuestions[order] = question;
-      }
-      else {
-        delete vm.survey.SurveyQuestions[order];
-      }
+    vm.showStartPage = function() {
+      vm.currentPage = { page: 'index' };
+      init();
     };
 
-    function statusIcon(survey) {
-      if(survey && survey.closed) {
-        return '/icons/password_red.png';
-      }
-      else {
-        return '/icons/password_grey.png';
-      }
-    };
-
-    function initQuestion(object, sq) {
-      var question = sq || {};
-      question.minAnswers = object.minAnswers;
-      question.maxAnswers = object.maxAnswers;
-      question.contactDetails = object.contactDetails;
-      if (object.link) {
-        question.link = object.link;
-        if(question.answers && question.answers.length > 0) {
-          question.answers[0].link = object.link;
-        }
-      }
-      if (object.handleTag) {
-        question.handleTag = object.handleTag;
-      }
-
-      if(object.hardcodedName) {
-        question.name = object.name;
-      }
-
-      return question;
-    };
-
-    function initAnswers(object, question) {
-      if(question.required) {
-        question.active = true;
-      }
-
-      if(question.answers) {
-        if(!question.isDefault) {
-          question.active =  true;
-        }
-        return question.answers;
-      }
-      else {
-        return defaultArray(object.minAnswers);
-      }
-    };
-
-    function initContacts(question) {
-      question.type = "input"
-      if(!vm.currentContacts) {
-        question.answers.push({});
-        var answer = question.answers[0];
-        if(!answer.contactDetails) {
-          seedContactDetails(answer);
-        }
-        if (question.handleTag) {
-          answer.handleTag = question.handleTag;
-        }
-
-        vm.currentContacts = {};
-        for(var i in answer.contactDetails) {
-          var contact = answer.contactDetails[i];
-          vm.currentContacts[contact.model] = contact.name;
-        }
-      }
-    };
-
-    function galleryDropdownData(type, dependency) {
-      return {
-        types: vm.uploadTypes[type],
-        modal: { upload: true, select: true, set: type },
-        dependency: dependency
-      };
+    vm.showCreatePage = function() {
+      vm.currentSurveyMode = vm.popOverMessages.create;
+      vm.currentPage = { page: 'manage' };
     }
 
-    function initGallery(gc) {
-      vm.uploadTypes = {
-        survey: [gc.getUploadType('brandLogo')],
-        questions: [gc.getUploadType('video'), gc.getUploadType('audio'), gc.getUploadType('youtube')]
-      }
-
-      gc.listResources({ type: ['image', 'video', 'audio', 'link'], scope: ['brandLogo', 'collage', 'youtube'], stock: true }).then(function(result) {
-        gc.resourceList = result.resources;
-        for(var i in result.resources) {
-          var resource = result.resources[i];
-          var type = gc.getUploadTypeFromResource(resource);
-          gc.selectionList[type].push(resource);
-        }
-      });
+    vm.editSurvey = function(survey) {
+      vm.currentSurveyMode = vm.popOverMessages.edit;
+      vm.currentSurveyId = survey.id;
+      vm.currentPage = { page: 'manage' };
     }
-
-    function seedContactDetails(answer) {
-      answer.contactDetails = {};
-      for(var i in vm.contactDetails) {
-        var contact = vm.contactDetails[i];
-        if(!contact.disabled) {
-          answer.contactDetails[contact.model] = contact;
-        }
-      }
-    };
-
-    function canChangeAnswers(value, question) {
-      if(vm.survey.confirmedAt)
-        return false;
-
-      if(value == 'add') {
-        return (question.answers.length < question.maxAnswers);
-      }
-      else {
-        return (question.answers.length > question.minAnswers);
-      }
-    };
-
-    function changeAnswers(value, question, index) {
-      if(vm.survey.confirmedAt)
-        return false;
-
-      if(value == 'add') {
-        question.answers.push({ order: question.answers.length });
-      }
-      else {
-        question.answers.splice(index, 1);
-      }
-    };
-
-    function defaultArray(size) {
-      return Array.apply(null, Array(size)).map(function(cv, index) { return { order: index } });
-    };
-
-    function changePage(page, survey) {
-      vm.submitedForm = false;
-      if(page == 'index') {
-        init();
-        vm.currentPage = { page: page };
-      }
-      else {
-        if(survey && survey.SurveyQuestions instanceof Array) {
-          var object = {};
-          for(var i in survey.SurveyQuestions) {
-            var question = survey.SurveyQuestions[i];
-            object[question.order] = question;
-          }
-          for(var i in vm.defaultQuestions) {
-            var question = vm.defaultQuestions[i];
-            if(!object[question.order]) {
-              object[question.order] = defaultQuestionParams(question);
-            }
-          }
-
-          survey.SurveyQuestions = object;
-          vm.currentSurveyMode = 'Edit';
-        }
-        else {
-          vm.currentSurveyMode = 'Create';
-        }
-
-        vm.submitError = null;
-        vm.currentContacts = null;
-        vm.survey = survey || defaultSurveyData();
-        vm.currentPage = { page: 'manage', type: page };
-        moveBrowserTo('');
-      }
-    };
 
     function defaultQuestionParams(question) {
       return {
@@ -462,20 +179,14 @@
       });
     }
 
-    function addContactDetail(cd, answer) {
-      cd.disabled = vm.currentContacts[cd.model] ? true : false;
-      if(!cd.disabled) {
-        vm.currentContacts[cd.model] = cd.name;
-        answer.contactDetails[cd.model] = cd;
-      }
-      else {
-        delete vm.currentContacts[cd.model];
-        delete answer.contactDetails[cd.model];
-      }
-    };
+    //Pass these to SurveyEditController
+    vm.surveySettings = {
+      surveyType: 'recruiter',
+      onFinished: vm.showStartPage,
+      onSaved: vm.showStartPage,
+      userTemplates: vm.userTemplates
+    }
 
-    function contactDetailDisabled(cd) {
-      return (vm.currentContacts[cd.model] ? false : cd.disabled);
-    };
+    vm.showStartPage();
   };
 })();

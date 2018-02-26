@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('BrandColourController', BrandColourController);
 
-  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state'];
-  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state) {
+  BrandColourController.$inject = ['dbg', 'brandColourServices', 'angularConfirm', 'messenger', '$timeout', 'domServices', '$stateParams', '$state', '$confirm', 'errorMessenger'];
+  function BrandColourController(dbg, brandColourServices, angularConfirm, messenger, $timeout, domServices, $stateParams, $state, $confirm, errorMessenger) {
     dbg.log2('#BrandColourController started');
 
     var vm = this;
@@ -23,6 +23,7 @@
     vm.setType = setType;
     vm.openModalCreate = openModalCreate;
     vm.createSchemeSelected = createSchemeSelected;
+    vm.resetToDefaultScheme = resetToDefaultScheme;
 
     vm.schemes = {};
     vm.scheme = {};
@@ -34,7 +35,7 @@
     vm.pagination = {
       schemesTotalItems: 0,
       schemesCurrentPage: 1,
-      schemesItemsPerPage: 12,
+      schemesItemsPerPage: 6,
       schemes: {}
     }
 
@@ -189,6 +190,29 @@
       });
     };
 
+    function resetToDefaultScheme() {
+      if (vm.scheme.id) {
+        brandColourServices.resetScheme(vm.scheme).then(function(res) {
+          dbg.log2('#BrandColourController > resetScheme > res ', res);
+          if(res.error) {
+            messenger.error(res.error);
+          } else {
+            angular.copy(res.data, vm.scheme, vm.previewScheme);
+          }
+        });
+      } else {
+        resetFieldsLocally(vm.manageFields.chatRoom);
+        resetFieldsLocally(vm.manageFields.email);
+      }
+
+      function resetFieldsLocally(fields) {
+        for (var i = 0; i < fields.length; i++) {
+          var fieldName = fields[i].model;
+          vm.scheme.colours[fieldName] = fields[i].colour;
+        }
+      }
+    };
+
     function finishEdit() {
       brandColourServices.updateScheme(vm.scheme).then(function(res) {
         dbg.log2('#BrandColourController > finishEdit > res ', res);
@@ -244,7 +268,7 @@
       else {
         brandColourServices.canCreateCustomColors().then(function(res) {
           if(res.error) {
-            messenger.error(res.error);
+            errorMessenger.showError(res.error);
           }else{
             if(page == 'edit') {
               vm.originalScheme = {};

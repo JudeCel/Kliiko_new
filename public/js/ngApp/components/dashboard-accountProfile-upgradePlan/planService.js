@@ -2,13 +2,14 @@
   'use strict';
   angular.module('KliikoApp').factory('planService', planService);
 
-  planService.$inject = ['$q', 'globalSettings', '$resource', 'dbg',  '$injector'];
-  function planService($q, globalSettings, $resource, dbg, $injector) {
+  planService.$inject = ['$q', '$resource', 'dbg',  '$injector'];
+  function planService($q, $resource, dbg, $injector) {
 
-    var subscriptionPlanRestApi = $resource(globalSettings.restUrl + '/subscriptionPlan/:path', null, {
+    var subscriptionPlanRestApi = $resource('/subscriptionPlan/:path', null, {
       updatePlan: { method: 'PUT', params: { path: 'updatePlan' } },
       UpdateViaCheckout: { method: 'PUT', params: { path: 'UpdateViaCheckout' } },
-      postQuote: { method: 'POST', params: { path: 'postQuote' } }
+      postQuote: { method: 'POST', params: { path: 'postQuote' } },
+      checkPlanFeatures: { method: 'GET', params: { path: 'checkPlanFeatures' } }
     });
 
     var spService = {};
@@ -17,6 +18,7 @@
     spService.updatePlan = updatePlan;
     spService.retrievCheckoutAndUpdateSub = retrievCheckoutAndUpdateSub;
     spService.submitContactusForm = submitContactusForm;
+    spService.checkPlanFeatures = checkPlanFeatures;
     return spService;
 
     function submitContactusForm(params) {
@@ -41,10 +43,10 @@
       return deferred.promise;
     };
 
-    function updatePlan(planId) {
+    function updatePlan(planId, sessionCount) {
       var deferred = $q.defer();
       dbg.log2('#SubscriptionPlanService > updatePlan > make rest call');
-      subscriptionPlanRestApi.updatePlan({planId: planId}, function(res) {
+      subscriptionPlanRestApi.updatePlan({planId: planId, sessionCount: sessionCount}, function(res) {
         dbg.log2('#SubscriptionPlanService > updatePlan > rest call responds');
         deferred.resolve(res);
       });
@@ -60,6 +62,16 @@
       });
       return deferred.promise;
     }
+
+    function checkPlanFeatures(features) {
+      var deferred = $q.defer();
+      dbg.log2('#SubscriptionPlanService > checkPlanFeatures > make rest call');
+      subscriptionPlanRestApi.checkPlanFeatures({features: features}, function(res) {
+        dbg.log2('#SubscriptionPlanService > checkPlanFeatures > rest call responds');
+        deferred.resolve(res);
+      });
+      return deferred.promise;
+    };
 
   }
 })();

@@ -16,7 +16,7 @@ function get(req, res, next) {
 }
 
 function post(req, res, next) {
-  subscriptionServices.createSubscription(res.locals.currentDomain.id, req.user.id).then(function() {
+  subscriptionServices.createSubscription(req.currentResources.account.id, req.user.id).then(function() {
     if(req.body.planType == 'paidPlan') {
       res.redirect('/account-hub#/account-profile/upgrade-plan');
     }

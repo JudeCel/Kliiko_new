@@ -7,7 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
     recieverId: { type: DataTypes.INTEGER, allowNull: false },
     sessionId: { type: DataTypes.INTEGER, allowNull: false },
     readAt: { type : DataTypes.DATE, allowNull: true },
-    text: { type : DataTypes.STRING, allowNull: false, validate: { notEmpty: true } }
+    text: { type : DataTypes.TEXT, allowNull: false, validate: { notEmpty: true } }
   }, {
     timestamps: true,
     classMethods: {

@@ -4,13 +4,14 @@
   angular.module('topicsAndSessions', [])
     .factory('topicsAndSessions', topicsAndSessionsFactory);
 
-  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource'];
-  function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource) {
+  topicsAndSessionsFactory.$inject = ['dbg', 'globalSettings','$q', '$resource', 'changesValidation'];
+  function topicsAndSessionsFactory(dbg, globalSettings, $q, $resource, changesValidation) {
     var restApi = {
-      topics: $resource(globalSettings.restUrl +'/topics'),
-      topic: $resource(globalSettings.restUrl +'/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
-      sessionTopic: $resource(globalSettings.restUrl +'/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
-      sessionByInvite: $resource(globalSettings.restUrl +'/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}})
+      topics: $resource('/topics/:sessionType', {sessionType: '@sessionType'}),
+      topic: $resource('/topic/:id', {id:'@id'}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      sessionTopic: $resource('/topic/updateSessionTopic', {id:'@id'}, {put: {method: 'PUT'}}),
+      sessionByInvite: $resource('/session/getByInvite', {}, {post: {method: 'POST'}, put: {method: 'PUT'}}),
+      defaultTopic: $resource('/topic/updateDefaultTopic/:id', {id:'@id'}, {put: {method: 'PUT'}}),
     };
 
     var topicsAndSessionsFactory = {};
@@ -23,29 +24,55 @@
 
     return topicsAndSessionsFactory;
 
-    function updateSessionTopic(params) {
+    function updateSessionTopic(params, session) {
       var deferred = $q.defer();
 
-      restApi.sessionTopic.put({}, params, function(result) {
-        if(result.error) {
-          deferred.reject(result.error);
-        }else{
-          deferred.resolve(result);
-        }
-      })
+      if (!params.snapshot) {
+        params.snapshot = session.snapshot;
+      }
+
+      params.isCurrentSessionTopic = true;
+
+      if(params.default) {
+        restApi.defaultTopic.put({id: params.topicId}, {topic: params}, function(result) {
+          processSessionTopicUpdateResponse(result, session, params, deferred);
+        });
+      } else {
+        restApi.sessionTopic.put({}, params, function(result) {
+          processSessionTopicUpdateResponse(result, session, params, deferred);
+        });
+      }
 
       return deferred.promise;
+    }
+
+    function processSessionTopicUpdateResponse(result, session, params, deferred) {
+      if (result.error) {
+          deferred.reject(result.error);
+        } else if (result.validation && !result.validation.isValid) {
+          changesValidation.validationConfirm(result, updateSessionTopic, params, session).then(function(newRes) {
+            deferred.resolve(newRes);
+          }, function(err) {
+            deferred.reject(err);
+          });
+        } else {
+          if (result.snapshot) {
+            session.snapshot = result.snapshot;
+            params.snapshot = null;
+          }
+          deferred.resolve(result.data);
+        }
     }
 
     /**
      * Get all topics list
      * @returns {* | Array }
      */
-    function getAllTopics() {
+    function getAllTopics(sessionType) {
       var deferred = $q.defer();
 
       dbg.log2('#topicsAndSessions > getAllTopics > call to API');
-      restApi.topics.get(success, error);
+      restApi.topics.get({sessionType: sessionType}, success, error);
 
       return deferred.promise;
 
@@ -82,7 +109,7 @@
         dbg.log2('#topicsAndSessions > createNewTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message || res.error)
           : deferred.resolve(res);
       }
 
@@ -98,7 +125,12 @@
 
       dbg.log2('#topicsAndSessions > updateTopic > call to API');
 
-      restApi.topic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      if(topicObj.default) {
+        restApi.defaultTopic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      } else {
+        restApi.topic.put({id: topicObj.id}, {topic: topicObj}, success, error);
+      }
+
 
       return deferred.promise;
 
@@ -106,7 +138,7 @@
         dbg.log2('#topicsAndSessions > updateTopic > call to API > success');
 
         res.error
-          ? deferred.reject(res.error)
+          ? deferred.reject(res.error.message || res.error)
           : deferred.resolve(res);
       }
       function error(err) {

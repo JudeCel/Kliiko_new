@@ -1,26 +1,32 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('chatSessionsServices', chatSessionsServices);
-  chatSessionsServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  chatSessionsServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function chatSessionsServices(globalSettings, $q, $resource, dbg) {
-    var chatSessionApi = $resource(globalSettings.restUrl + '/session/:id', null, {
+  function chatSessionsServices($q, $resource, dbg) {
+    var chatSessionApi = $resource('/session/:id', null, {
       get: { method: 'get', params: { id: 'list' } },
       copy: { method: 'post', params: { id: '@id' } },
-      remove: { method: 'delete', params: { id: '@id' } }
+      remove: { method: 'delete', params: { id: '@id' } },
+      put: { method: 'put', params: { id: '@id' } },
+
     });
 
-    var sessionMemberApi = $resource(globalSettings.restUrl + '/sessionMember/:path/:id', null, {
+   var sessionMemberApi = $resource('/sessionMember/:path/:id', null, {
       comment: { method: 'post', params: { id: '@id', path: 'comment' } },
       rate: { method: 'post', params: { id: '@id', path: 'rate' } }
+    });
+
+    var sessionSurveyApi = $resource('/session/surveyStats/:id', null, {
+      surveyStats: { method: 'get', params: { id: '@id'} }
     });
 
     var csServices = {};
     csServices.findAllSessions = findAllSessions;
     csServices.removeSession = removeSession;
     csServices.copySession = copySession;
-    csServices.rateSessionMember = rateSessionMember;
-    csServices.saveComment = saveComment;
+    csServices.setOpen = setOpen;
+    csServices.getSessionSurveyStats = getSessionSurveyStats;
     return csServices;
 
     function findAllSessions() {
@@ -34,18 +40,6 @@
 
       return deferred.promise;
     };
-
-    function saveComment(member) {
-      var deferred = $q.defer();
-
-      dbg.log2('#ChatSessions > saveComment > make rest call');
-      sessionMemberApi.comment({ id: member.id }, { comment: member.comment }, function(res) {
-        dbg.log2('#ChatSessions > comment > rest call responds');
-        deferred.resolve(res);
-      });
-
-      return deferred.promise;
-    }
 
     function removeSession(data) {
       var deferred = $q.defer();
@@ -71,15 +65,27 @@
       return deferred.promise;
     }
 
-    function rateSessionMember(data) {
+    function setOpen(sessionId, open) {
       var deferred = $q.defer();
-      dbg.log2('#ChatSessions > rateSessionMember > make rest call');
-      sessionMemberApi.rate(data, function(res) {
-        dbg.log2('#ChatSessions > rateSessionMember > rest call responds');
+
+      dbg.log2('#ChatSessions > setOpen > make rest call');
+      chatSessionApi.put({id: sessionId, open: open}, function(res) {
+        dbg.log2('#ChatSessions > setOpen > rest call responds');
         deferred.resolve(res);
       });
 
       return deferred.promise;
     }
+
+    function getSessionSurveyStats(id) {
+      var deferred = $q.defer();
+
+      dbg.log2('#ChatSessions > findAllSessions > make rest call');
+      sessionSurveyApi.surveyStats({id: id}, function(res) {
+        deferred.resolve(res);
+      });
+
+      return deferred.promise;
+    };
   };
 })();

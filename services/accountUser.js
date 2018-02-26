@@ -10,6 +10,9 @@ var SessionMember = models.SessionMember;
 var User = models.User;
 var _ = require('lodash');
 var q = require('q');
+var Bluebird = require('bluebird');
+var sessionMemberService = require('./sessionMember');
+const perrmissions = require("./permissions")
 
 const VALID_ATTRIBUTES = {
   accountUser: [
@@ -22,6 +25,101 @@ const VALID_ATTRIBUTES = {
     'sessionId'
   ]
 };
+
+function getPermissions(data) {
+  return models.Account.find({
+    where: { id: data.account.id },
+    include: [{
+      model: models.AccountUser,
+      where: { id: data.accountUser.id }
+    }, {
+      model: models.Subscription,
+      include: [models.SubscriptionPreference]
+    }]
+  }).then((account) => {
+    return perrmissions.forAccount(account, account.AccountUsers[0], account.Subscription.SubscriptionPreference.data);
+  });
+}
+
+function deleteOrRecalculate(id, addRole, removeRole, transaction) {
+  // can't remove owner account user!
+  let query = {
+    where: {
+      id: id,
+    },
+    transaction: transaction,
+    include: [
+      { model: models.Account },
+      { model: SessionMember },
+    ],
+  };
+
+  return AccountUser.find(query)
+    .then((accountUser) => {
+      if (!accountUser) {
+        throw MessagesUtil.accountUser.notFound;
+      }
+
+      return [accountUser, recalculateRole(accountUser, addRole, removeRole)];
+    })
+    .spread((accountUser, params) => {
+      return accountUser.update(params, { transaction: transaction });
+    });
+}
+
+function recalculateRole(accountUser, newRole, removeRole) {
+  return new Bluebird((resolve, reject) => {
+    const roles = ['admin', 'accountManager', 'facilitator', 'participant', 'observer'] // order is important!
+    if (newRole && removeRole) {
+      reject("Can do only add or remove at one time");
+    }
+
+    if (newRole || removeRole) {
+      if (!_.includes(roles, (newRole || removeRole))) {
+        reject(`This role not valid: ${(newRole || removeRole)}`);
+      }
+    }
+
+    const currentRole = accountUser.role;
+
+    let  relatedRoles = _.uniq((accountUser.SessionMembers || []).map((sm) => { return sm.role }));
+
+    if (removeRole && roles.indexOf(currentRole) < roles.indexOf(removeRole)) {
+      relatedRoles.push(currentRole);
+    }
+
+    if (newRole && roles.indexOf(currentRole) >= roles.indexOf(newRole)) {
+      relatedRoles.push(newRole);
+    }
+
+    if (newRole && roles.indexOf(currentRole) < roles.indexOf(newRole)) {
+      relatedRoles.push(currentRole);
+    }
+
+    let destinationRoll = null;
+    let index = 0;
+
+    while (index < roles.length) {
+      if (_.includes(relatedRoles, roles[index])) {
+        destinationRoll = roles[index];
+        break;
+      }
+      index++
+    };
+
+    const params = { active: !!destinationRoll };
+    if(destinationRoll) {
+      params.role = destinationRoll;
+    }
+
+    setRemoveStatus(destinationRoll, removeRole, params);
+    resolve(params);
+  })
+}
+
+function setRemoveStatus(destinationRole, removeRole, params) {
+  return params.isRemoved = !destinationRole && removeRole == 'admin' || removeRole == 'accountManager';
+}
 
 function createAccountManager(object, callback) {
   object.errors = object.errors || {};
@@ -70,10 +168,12 @@ function selectAccountManagerContactList(contactLists) {
 
 function prepareAccountManagerParams(params, account, user) {
   let  defaultStruct = {
-    role: 'accountManager',
     owner: true,
     AccountId: account.id,
     UserId: user.id
+  }
+  if (params.role != 'admin') {
+    params.role = 'accountManager';
   }
   return _.merge(params, defaultStruct);
 }
@@ -81,7 +181,7 @@ function prepareAccountManagerParams(params, account, user) {
 function create(params, accountId, role, t) {
   let deferred = q.defer();
 
-  AccountUser.create(buidAttrs(validateParams(params, role), accountId, role), { transaction: t }).then(function(result) {
+  AccountUser.create(buidAttrs(validateParams(params), accountId, role), { transaction: t }).then(function(result) {
     deferred.resolve(result);
   }, function(error) {
     deferred.reject(error);
@@ -89,17 +189,14 @@ function create(params, accountId, role, t) {
   return deferred.promise;
 }
 
-function validateParams(params, role) {
-  return validateGender(params, role);
+function validateParams(params) {
+  return validateGender(params);
 }
 
-function validateGender(params, role) {
-  let roles = ['accountManager', 'facilitator'];
+function validateGender(params) {
+  params.gender = params.gender ? params.gender : params.gender = "";
 
-  if (_.includes(roles, role)) {
-    params.gender = params.gender ? params.gender : params.gender = "";
-  };
-  return params
+  return params;
 }
 
 function buidAttrs(params, accountId, role) {
@@ -127,35 +224,57 @@ function updateAccountUserWithId(data, userId, transaction, callback) {
 }
 
 function updateWithUserId(data, userId, callback) {
-    models.sequelize.transaction().then(function(t) {
-      User.find({
-        where: {
-          id: userId
-        }
-      }).then(function (result) {
-        result.update(data, {transaction: t}).then(function(updateResult) {
-          updateAccountUserWithId(data, userId, t, function(err, accountUserResult) {
-            if (err) {
-              t.rollback().then(function() {
-              callback(filters.errors(err));
-              });
-            } else {
-              t.commit().then(function() {
-                callback();
-              });
-            }
+    let permitList = [
+      "gender", "firstName", "lastName", "email", "gender", "mobile",
+      "phoneCountryData", "landlineNumberCountryData", "landlineNumber", "companyName",
+      "country", "postCode", "state", "city", "city", "postalAddress", "emailNotification"
+    ]
+
+    let accountUserPermitParams = _.pick(data, permitList)
+    let userPermitParams = _.pick(data, ['email'])
+    let transactionPool = models.sequelize.transactionPool;
+    let tiket = transactionPool.getTiket();
+    transactionPool.once(tiket, () => {
+      models.sequelize.transaction().then(function(t) {
+        User.find({
+          where: {
+            id: userId
+          }
+        }).then(function (result) {
+          result.update(userPermitParams, {transaction: t}).then(function(updateResult) {
+            updateAccountUserWithId(accountUserPermitParams, userId, t, function(err, accountUserResult) {
+              if (err) {
+                t.rollback().then(function() {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  callback(filters.errors(err));
+                });
+              } else {
+                t.commit().then(function() {
+                  transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                  callback();
+                });
+              }
+            });
+          }).catch(function(updateError) {
+            t.rollback().then(function() {
+              transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+              callback(filters.errors(updateError));
+            });
           });
-        }).catch(function(updateError) {
+        }).catch(function (err) {
           t.rollback().then(function() {
-            callback(filters.errors(updateError));
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            callback(filters.errors(err));
           });
         });
-      }).catch(function (err) {
-        t.rollback().then(function() {
-          callback(filters.errors(err));
-        });
-      });
+    });
+  })
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 }
 
 function findWithSessionMembers(userId, accountId) {
@@ -254,6 +373,73 @@ function prepareValidAccountUserParams() {
   return safeAccountUserParams;
 }
 
+function updateNotInFutureInfo(id, sessionId) {
+  return new Bluebird(function (resolve, reject) {
+    sessionMemberService.isCloseEmailSentToSessionMember(id, sessionId).then(function(isSent) {
+      if (isSent) {
+        updateInfo(id, "NoInFuture").then(function(result) {
+          resolve();
+        }, function(error) {
+          reject(error);
+        });
+      } else {
+        reject(constants.closeSession.emailNotSent);
+      }
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+//sessionName should be passed only if valueToIncrease == 'Accept'
+function updateInfo(id, valueToIncrease, sessionName, transaction) {
+  return new Bluebird(function (resolve, reject) {
+    AccountUser.find({
+      where: { id: id }
+    }).then(function(accountUser) {
+      let info = prepareInfo(accountUser.invitesInfo, valueToIncrease, sessionName);
+      AccountUser.update({invitesInfo: info}, { where: { id: id }, transaction: transaction }).then(function (result) {
+        resolve();
+      }).catch(function (error) {
+        reject(error);
+      });
+    }, function(error) {
+      reject(error);
+    });
+  });
+}
+
+function prepareInfo(info, valueToIncrease, sessionName) {
+  if (valueToIncrease) {
+    if (valueToIncrease == "NoInFuture" || valueToIncrease == "NotAtAll") {
+      info[valueToIncrease] = 1;
+    } else {
+      info[valueToIncrease]++;
+    }
+    switch(valueToIncrease) {
+      case "Invites":
+        info["NoReply"]++;
+        break;
+      case "NoInFuture":
+        info["Future"] = "N";
+        break;
+      case "NotThisTime":
+      case "NotAtAll":
+        info["Future"] = "N";
+        info["NoReply"]--;
+        break;
+      case "Accept":
+        info["Future"] = "Y";
+        info["NoReply"]--;
+        if (sessionName) {
+          info["LastSession"] = sessionName;
+        }
+        break;
+    }
+  }
+  return info;
+}
+
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
@@ -262,5 +448,10 @@ module.exports = {
   findWithSessionMembers: findWithSessionMembers,
   validateParams: validateParams,
   findWithEmail: findWithEmail,
-  findById: findById
+  findById: findById,
+  updateInfo: updateInfo,
+  deleteOrRecalculate: deleteOrRecalculate,
+  recalculateRole: recalculateRole,
+  getPermissions: getPermissions,
+  updateNotInFutureInfo: updateNotInFutureInfo
 }

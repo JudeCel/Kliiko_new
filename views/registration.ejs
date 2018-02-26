@@ -3,14 +3,23 @@
 <main class="main-first-page-registration">
   <div class="login-container center-block text-font-family">
     <ul class="nav nav-tabs">
-      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to klzii</a></li>
-      <li class="active"><a class="background-green text-white text-shadow-gray text-center login-signup-tab" data-toggle="tab" href="#signup">Get a klzii Account</a>
+      <li><a class="background-yellow text-white text-shadow-gray btn login-kliiko-tab" href="/login">Login to cliizii</a></li>
+      <li class="active"><a class="background-green text-white text-shadow-gray text-center login-signup-tab" data-toggle="tab" href="#signup">Get a cliizii Account</a>
       </li>
     </ul>
     <div class="tab-content border-green">
         <div id="signup" class="tab-pane fade in active">
-          <h2 class="text-center text-gray-dark">Welcome!</h2>
-          <h5 class="text-center text-gray-light">Sign up to klzii and host your own Chat Sessions.</h5>
+      <% showOptionalFields %>
+          <% if((firstName || email) && selectedPlanOnRegistration) { %>
+            <div class="progress registration-progress-bar">
+              <div class="progress-bar background-green" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="progress-status">50% COMPLETE</div>
+            </div>
+            <h5 class="text-center text-gray-light">Almost done! Complete the form below to activate your Free Trial.</h5>
+          <% } else { %>
+              <h2 class="text-center text-gray-dark">Welcome!</h2>
+              <h5 class="text-center text-gray-light">Sign up to cliizii and host your own Chat Sessions.</h5>
+          <% } %>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -19,6 +28,8 @@
                  <input type="hidden" name="socialProfile[provider]" value="<%=socialProfile.provider%>">
                  <input type="hidden" name="socialProfile[id]" value="<%=socialProfile.id%>">
                 <% } %>
+                <input type="hidden" name="selectedPlanOnRegistration" value="<%=selectedPlanOnRegistration%>">
+                <input type="hidden" name="currency" value="<%=currency%>">
                 <table class="table table-no-inside-borders text-left text-gray-medium table-v-content-middle">
                   <tr>
                     <td>
@@ -85,6 +96,9 @@
                     </td>
                     <td>
                       <input type="email" value="<%= email %>" class="form-control" name="email" id="email" placeholder="Email">
+                      <% if(email && selectedPlanOnRegistration) { %>
+                      <input type="hidden" value="<%= email %>" class="form-control" name="infusionEmail" id="infusionEmail" placeholder="Email">
+                      <% } %>
                     </td>
                     <td class="text-red-dark">
                       <h6>*</h6>
@@ -122,58 +136,61 @@
                     </td>
                     <% } %>
                   </tr>
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="mobile">
-                        Mobile Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
-                      <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
-                    </td>
-                  </tr>
+                  <% if(showOptionalFields) { %>
+                      <tr>
+                        <td>
+                          <label class="text-no-bold text-login-page" for="mobile">
+                            Mobile Number
+                          </label>
+                        </td>
+                        <td>
+                          <input type="tel" value="<%= mobile %>" id="mobilePhone" name="mobile" placeholder="Mobile Number" class="form-control">
+                          <input type="hidden" name="phoneCountryData" id="phoneCountryData" value="<%= JSON.stringify(phoneCountryData) %>">
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
-                    </td>
-                  </tr>
+                      <tr>
+                        <td></td>
+                        <td class="error-column">
+                          <div class="has-error" id="mobilePhoneError"><%= errors.mobile %></div>
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td>
-                      <label class="text-no-bold text-login-page" for="landlineNumber">
-                        Landline Number
-                      </label>
-                    </td>
-                    <td>
-                      <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
-                      <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
-                    </td>
-                  </tr>
+                      <tr>
+                        <td>
+                          <label class="text-no-bold text-login-page" for="landlineNumber">
+                            Landline Number
+                          </label>
+                        </td>
+                        <td>
+                          <input type="tel" value="<%= landlineNumber %>" id="landline_number" name="landlineNumber" placeholder="Landline Number" class="form-control">
+                          <input type="hidden" name="landlineNumberCountryData" id="landlineNumberCountryData" value="<%= JSON.stringify(landlineNumberCountryData) %>">
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td></td>
-                    <td class="error-column">
-                      <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
-                    </td>
-                  </tr>
+                      <tr>
+                        <td></td>
+                        <td class="error-column">
+                          <div class="has-error" id="landline_number_error"><%= errors.landlineNumber %></div>
+                        </td>
+                      </tr>
+                  <% } %>
                 </table>
 
                 <div class="form-group">
                   <div class="check">
                     <input type="checkbox" class="checkbox-login" name="termsAndConditions" id="termsAndConditions" value='true'/>
                     <label for="termsAndConditions"></label>
-                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="/terms_of_use" target="_blank">Account Terms & Conditions</a>.</span>
+                    <span class="checkbox-signup" id="termsAndConditions">You have read and agree to the <a class="text-red-dark" href="https://cliizii.com/terms-of-use" target="_blank">Account Terms & Conditions</a>.</span>
                   </div>
                   <span class="has-error error-column text-center"><%= errors.termsAndConditions %></span>
-
-                  <div class="check">
-                    <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
-                    <label for="reveiveNewsLetters"></label>
-                    <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the klzii Newsletter which includes tips and updates.</span>
-                  </div>
+                  <% if(showOptionalFields) { %>
+                    <div class="check">
+                      <input type="checkbox" class="checkbox-login" name="reveiveNewsLetters" id="reveiveNewsLetters" value='on'/>
+                      <label for="reveiveNewsLetters"></label>
+                      <span class="checkbox-signup" id="reveiveNewsLetters">Yes send me the cliizii Newsletter which includes tips and updates.</span>
+                    </div>
+                  <% } %>
                 </div>
 
                 <div class="form-group text-right">
@@ -181,6 +198,13 @@
                     <button type="submit" value="Register" class="btn btn-standart btn-green btn-small">Sign up</button>
                   </div>
                 </div>
+
+                <div class='col-xs-12 text-center separator-block'><hr>or</div>
+
+                <% googleActionText='Sign up with Google' %>
+                <% facebookActionText='Sign up with Facebook' %>
+                <% include socialMedia %>
+                <input type="hidden" name="showOptionalFields" value="<%=showOptionalFields%>">
               </form>
             </div>
           </div>

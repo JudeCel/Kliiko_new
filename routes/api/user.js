@@ -16,15 +16,18 @@ var MessagesUtil = require('./../../util/messages');
 module.exports = {
   userGet: userGet,
   userPost: userPost,
-  changePassword:changePassword
+  changePassword:changePassword,
+  reloadPermissions:reloadPermissions,
 };
 
 function userPost(req, res, next) {
-  AccountUserService.updateWithUserId(req.body, req.user.id, function(err) {
+  AccountUserService.updateWithUserId(req.body, req.currentResources.user.id, function(err) {
     if (err) {
       res.send({error:err});
     } else {
-      res.send({ user: req.body, message: MessagesUtil.routes.user.updateContactDetails });
+      var isOnlyEmailNotificationCahnged = Object.keys(req.body).length == 1 && req.body.emailNotification;
+      var message = isOnlyEmailNotificationCahnged ? MessagesUtil.routes.user.updateEmailNotifications : MessagesUtil.routes.user.updateContactDetails;
+      res.send({ user: req.body, message: message });
     }
   });
 }
@@ -33,24 +36,20 @@ function userPost(req, res, next) {
  * Get All current user data, that can be required by app at the start
  */
 function userGet(req, res, next) {
-  if(req.user.accountUserId) {
-    res.send(req.user);
-  }
-  else {
-    AccountUserService.findWithUser(req.user).then(function(result) {
-      res.send(result)
-    }, function(error) {
-      res.status(404).send(error);
-    });
-  }
+  res.send(req.currentResources);
 }
 
 function changePassword(req, res, next) {
   changePasswordService.save(req, function(errors, message, user){
     if (errors) {
       res.send({ error: errors.message, message: message });
-    }else{
+    } else {
       res.send({ message: message });
     }
   });
+}
+
+function reloadPermissions(req, res, next) {
+  const data = req.currentResources;
+  AccountUserService.getPermissions(req.currentResources).then((permissions) => res.send({ permissions }));
 }

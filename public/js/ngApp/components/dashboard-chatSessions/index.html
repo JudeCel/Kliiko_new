@@ -7,7 +7,7 @@
         </h2>
       </div>
       <div class='text-right'>
-        <button ng-if='!app.accountUser.isFacilitator' id='dashboard-build-new-session'class='btn btn-standart btn-margin btn-green btn-large' ui-sref="account-hub.chatSessions.builder" messages-directive='skip'>Build New Session</button>
+        <button ng-if='app.hasPermissions("canCreateNewSession")' id='dashboard-build-new-session'class='btn btn-standart btn-margin btn-green btn-large' ui-sref="account-hub.chatSessions.builder" messages-directive='skip'>Build New Session</button>
       </div>
     </div>
 
@@ -27,7 +27,7 @@
             </th>
             <th>
               <a class="white-sort-text" href="" ng-click="csc.changeOrder('facilitator.username')">
-                Facilitator
+                Host
               </a>
             </th>
             <th>
@@ -42,7 +42,7 @@
             </th>
             <th>
               <a class="white-sort-text" href="" ng-click="csc.changeOrder('expireDate')">
-                Expiration Date
+                Billing Period End
               </a>
             </th>
             <th>
@@ -50,33 +50,58 @@
                 Status
               </a>
             </th>
+            <th>
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('publicUid')">
+                URL
+              </a>
+            </th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr class='{{ csc.rowClass(session) }}' ng-repeat='session in csc.sessions | orderBy:csc.orderByField'>
+          <tr ng-class='session.rowClass' ng-repeat='session in csc.pagination.sessions | orderBy:csc.orderByField' ng-init="csc.initRowClass(session)">
             <td>
               {{ session.name }}
               <i ng-if='session.name == ""'>untitled</i>
             </td>
-            <td class="capitalize">{{ session.type }}</td>
-            <td>{{ session.facilitator.username }}</td>
-            <td>{{ session.startTime | date:sc.dateFormat }}</td>
-            <td>{{ session.endTime | date:sc.dateFormat }}</td>
-            <td>{{ session.expireDate | date:sc.dateFormat }}</td>
-            <td>{{ session.showStatus }}</td>
-            <td class='text-right col-xs-3'>
+            <td ng-init="typeName = csc.getSessionTypeName(session)">{{ typeName }}</td>
+            <td>{{ session.facilitator.AccountUser.firstName }} {{ session.facilitator.AccountUser.lastName }}</td>
+            <td>{{ session.startTime | date:csc.dateFormat }}</td>
+            <td>{{ session.endTime | date:csc.dateFormat }}</td>
+            <td>{{ session.expireDate | date:csc.dateFormat }}</td>
+            <td ng-init="csc.initShouldShowStatusLabel(session)">
+              <span ng-if="!session.showStatusLabel">
+                <toggle-switch
+                  ng-model="session.isOpen"
+                  ng-change="csc.setOpen(session)"
+                  on-label="OPEN"
+                  off-label="CLOSE"
+                  >
+                </toggle-switch>
+              </span>
+              <span ng-if="session.showStatusLabel">
+                {{ session.showStatus }}
+              </span>
+            </td>
+            <td>
+              <span class="text-underline" ng-click="csc.showPublicUrl(session)" ng-if="session.publicUid">Guest Session URL</span>
+            </td>
+            <td class='text-right table-item-buttons dashboardActions'>
 
-              <span id='dashboard-session-rating' uib-popover-template="'averageRating.html'" popover-trigger='mouseenter' class='glyphicon glyphicon-star' aria-hidden='true' ng-if='csc.hasAccess(session.id, app.accountUser)' ng-click='csc.changePage("sessionRating", session)'></span>
-              <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.copySession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
-              <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session.id, app.accountUser)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
-              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session.id, app.accountUser)'/>
+              <span class="fa fa-bar-chart" ng-if='session.SessionType.properties.features.survay.enabled' ng-click='csc.showStats(session)'></span>
+              <img id='dashboard-copy-session' src='/icons/resources_grey.png' alt='' ng-click='csc.openCopySessionDialog(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
+              <img id='dashboard-edit-session' src='/icons/dashboardElement_edit.png' alt='' ng-if='csc.hasAccess(session, app.accountUser.id)' ui-sref="account-hub.chatSessions.builder({id:session.id})" ng-click=""/>
+              <img src='/icons/dashboardElement_remove.png' alt='' ng-click='csc.removeSession(session)' ng-if='csc.hasAccess(session, app.accountUser.id)'/>
 
               <span id="dashboard-enter-chat-room" class='glyphicon glyphicon-play' aria-hidden='true' ng-click='csc.redirectToChatSession(session.id)'></span>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+    <div ng-if="csc.pagination.totalChatSessions > csc.pagination.itemsPerPage" class="paginator">
+      <uib-pagination total-items="csc.pagination.totalChatSessions" ng-model="csc.pagination.currentPage" class="pagination-sm"
+      items-per-page="csc.pagination.itemsPerPage" max-size="10" boundary-links="true" ng-click="csc.prepareSessionsPagination()"></pagination>
     </div>
 
     <div class='col-xs-12 build-session-text' ng-if='csc.queriedForSessions && !csc.sessions.length'>
@@ -85,11 +110,7 @@
 
     <div class='col-xs-12 fixed-bottom-margin'></div>
   </div>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modals/copySessionModel.html'"></ng-include>
+  <ng-include src="'/js/ngApp/components/dashboard-chatSessions/modals/publicUrlModal.html'"></ng-include>
+  <survey-list-stats stats="csc.stats" />
 </div>
-
-<script type='text/ng-template' id='averageRating.html'>
-  <div>
-    <uib-rating class='session-rating-stars text-vertical-middle no-pointer-events' ng-model='session.averageRating' max='5' aria-labelledby='default-rating' readonly='true' tabindex=''>
-    </uib-rating>
-  </div>
-</script>

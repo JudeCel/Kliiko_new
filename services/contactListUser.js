@@ -12,6 +12,7 @@ var AccountUserService = require('./accountUser');
 var dataWrappers = require('./../models/dataWrappers');
 var validators = require('./validators');
 var async = require('async');
+var Bluebird = require('bluebird');
 
 module.exports = {
   findByContactList: findByContactList,
@@ -22,7 +23,8 @@ module.exports = {
   updatePositions: updatePositions,
   bulkCreate: bulkCreate,
   contactListUserParams: contactListUserParams,
-  destroyByToken: destroyByToken
+  destroyByToken: destroyByToken,
+  comments: comments
 };
 
 function wrappersContactListUser(item, list) {
@@ -139,19 +141,32 @@ function bulkCreate(list, accountId) {
   let errors = {required: false};
   let deferred = q.defer();
 
-  models.sequelize.transaction().then(function(t) {
-    async.map(list, transactionFun(t, accountId, errors), function(err, results) {
-      if (errors.required) {
-        t.rollback().then(function() {
-          deferred.reject(errors);
-        });
-      }else {
-        t.commit().then(function() {
-          deferred.resolve(results);
-        });
-      }
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+
+  transactionPool.once(tiket, () => {
+    models.sequelize.transaction().then((t) => {
+      async.map(list, transactionFun(t, accountId, errors), (err, results) => {
+        if (errors.required) {
+          t.rollback().then(() => {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.reject(errors);
+          });
+        }else {
+          t.commit().then(() => {
+            transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+            deferred.resolve(results);
+          });
+        }
+      });
     });
   });
+
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    deferred.reject("Server Timeoute");
+  });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   return deferred.promise;
 }
@@ -164,7 +179,7 @@ function validateUniqEmail(params, transaction) {
       accountId: params.accountId
     },
     include: [{model: AccountUser, where: {
-      email: params.defaultFields.email
+      email: { ilike: params.defaultFields.email }
     }}]
   },{ transaction: transaction }).then(function(result) {
     if (result) {
@@ -194,13 +209,13 @@ function create(params, transaction) {
 
       AccountUser.find(
         { where: {
-          email: params.defaultFields.email,
+          email: { ilike: params.defaultFields.email },
           AccountId: params.accountId
         }
       }).then(function(accountUser) {
         if (accountUser && !_.has(errors, 'email')) {
           if(!accountUser.UserId) {
-            updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(au) {
+            updateAccountUserIfUserFound(accountUser, params.defaultFields.email, transaction).then(function(au) {
               ContactListUser.create(contactListUserParams(params, au), {transaction: transaction}).then(function(contactListUser) {
                 buildWrappedResponse(contactListUser.id, deferred, transaction);
               }, function(err) {
@@ -246,8 +261,8 @@ function create(params, transaction) {
 function createNewAccountUser(params, transaction) {
   let deferred = q.defer();
   ContactList.find({where: {id: params.contactListId}}).then(function(contactList) {
-    AccountUserService.create(params.defaultFields, params.accountId, contactList.role, transaction).then(function(accountUser) {
-      updateAccountUserIfUserFound(accountUser, params.defaultFields.email).then(function(accountUser) {
+    AccountUserService.create(params.defaultFields, params.accountId, (params.role || contactList.role), transaction).then(function(accountUser) {
+      updateAccountUserIfUserFound(accountUser, params.defaultFields.email, transaction).then(function(accountUser) {
         deferred.resolve(accountUser);
       }, function(error) {
         deferred.reject(error);
@@ -264,12 +279,12 @@ function createNewAccountUser(params, transaction) {
   return deferred.promise;
 }
 
-function updateAccountUserIfUserFound(accountUser, email) {
+function updateAccountUserIfUserFound(accountUser, email, transaction) {
   let deferred = q.defer();
 
-  models.User.find({ where: { email: email } }).then(function(user) {
+  models.User.find({ where: { email: { ilike: email } } }).then(function(user) {
     if(user) {
-      accountUser.update({ UserId: user.id }, { returning: true }).then(function(au) {
+      accountUser.update({ UserId: user.id }, { transaction: transaction, returning: true }).then(function(au) {
         deferred.resolve(au);
       }, function(error) {
         deferred.reject(filters.errors(error));
@@ -297,7 +312,9 @@ function update(params) {
   let deferred = q.defer();
 
   validators.hasValidSubscription(params.accountId).then(function() {
-    ContactListUser.find({where: {id: params.id}, include: [AccountUser, ContactList]}).then(function(contactListUser) {
+    //params.id can be AccountUser Id or ContactListUser Id depends on input data from frontend - is it invited or not
+    let where = params.sessionBuilder ? {accountId: params.accountId, accountUserId: params.id} : {id: params.id};
+    ContactListUser.find({where: where, include: [AccountUser, ContactList]}).then(function(contactListUser) {
       let customFields = _.merge(contactListUser.customFields,  params.customFields)
       contactListUser.updateAttributes({customFields: customFields}).then(function(result) {
         contactListUser.AccountUser.updateAttributes(params.defaultFields).then(function(accountUser) {
@@ -314,4 +331,25 @@ function update(params) {
   })
 
   return deferred.promise;
+}
+
+function comments(params) {
+  return new Bluebird(function (resolve, reject) {
+    models.SessionMember.findAll({
+      include: [
+        { model: AccountUser, include: [{ model: ContactListUser, where: {id: params.id, contactListId: params.contactListId} }] },
+        { model: models.Session, attributes: ['name'] },
+      ],
+      where: { $and: [{comment: {$ne: null}}, {comment: {$ne: ''}}] },
+      attributes: ['comment']
+    }).then(function(res) {
+      let result = [];
+      _.map(res, (item) => {
+        result.push({session: item.Session.dataValues.name, comment: item.dataValues.comment});
+      });
+      resolve(result);
+    }, function(error) {
+      reject(error);
+    });
+  });
 }

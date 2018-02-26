@@ -6,8 +6,8 @@
    */
   angular.module('KliikoApp').factory('ListItemModel', ListItemModel);
 
-  ListItemModel.$inject = ['$q', 'dbg','contactListServices', 'Upload', 'globalSettings', 'ListItemMemberModel'];
-  function ListItemModel($q, dbg, contactListServices, Upload, globalSettings, Member)  {
+  ListItemModel.$inject = ['$q', 'dbg','contactListServices', 'Upload', 'ListItemMemberModel'];
+  function ListItemModel($q, dbg, contactListServices, Upload, Member)  {
     var ListItemModel;
 
     ListItemModel = ListItemModel;

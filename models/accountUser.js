@@ -30,11 +30,19 @@ module.exports = (Sequelize, DataTypes) => {
       validate: { validateNumber: function() { validations.phone(this.mobile, MessagesUtil.models.accountUser.mobile); } }
     },
     comment: { type: DataTypes.TEXT, allowNull: true, validate: { isLength: validations.length('comment', { max: 200 }) } },
-    email: {type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true, is: constants.emailRegExp, isLength: validations.length('email', { max: 60 }) } },
+    email: { type: DataTypes.STRING, allowNull: false, validate: {
+      notEmpty: true,
+      is: constants.emailRegExp,
+      isUnique: validations.unique(Sequelize, 'AccountUser', 'email', { accountContext: true }),
+      isLength: validations.length('email', { max: 60 })
+    } },
+    invitesInfo: { type: DataTypes.JSON, allowNull: false, defaultValue: {NoInFuture: 0, NotAtAll: 0, Invites: 0, NoReply: 0, NotThisTime: 0, Future: "-", Accept: 0, LastSession: "-"} },
+    emailNotification: { type: DataTypes.ENUM, allowNull: false, values: constants.emailNotifications, defaultValue: 'all' },
+    isRemoved: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   }, {
     indexes: [{
         name: 'compositeUserIdAndAccountIdAndEmail',
-        unique: { msg: MessagesUtil.models.accountUser.email },
+        unique: true,
         fields: ['email', 'UserId', 'AccountId']
       },
       { fields: ['email'] },

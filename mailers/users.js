@@ -6,10 +6,12 @@ var mailTemplate = require('./mailTemplate');
 var mailTemplateService = require('../services/mailTemplate');
 
 var mailFrom = helpers.mailFrom();
-var transporter = helpers.createTransport();
+var { sendMail } = require('./adapter');
 var constants = require('../util/constants');
 
 users.sendReactivateOrDeactivate = function(params, callback){
+  callback = callback || function(){}
+
   let templateType = !params.active ? 'deactivatedAccount' : 'reactivatedAccount';
   mailTemplateService.getActiveMailTemplate(templateType, null, function(error, result) {
     //if failed to find mail template from DB, use old version
@@ -21,12 +23,16 @@ users.sendReactivateOrDeactivate = function(params, callback){
         }
 
         let reactivatedorDeactivated = params.active ? 'Reactivated' : 'Deactivated';
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: reactivatedorDeactivated,
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -54,12 +60,16 @@ users.sendResetPasswordToken = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Reset password',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -87,12 +97,16 @@ users.sendEmailConfirmationToken = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Verify Email Address',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -116,12 +130,16 @@ users.sendEmailConfirmationSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Email Confirmation Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -139,12 +157,16 @@ users.sendPasswordChangedSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db
@@ -170,12 +192,16 @@ users.sendResetPasswordSuccess = function(params, callback) {
           return callback(err);
         }
 
-        transporter.sendMail({
+        sendMail({
           from: mailFrom,
           to: params.email,
           subject: process.env.MAIL_FROM_NAME + ' - Change password Success',
           html: html
-        }, callback);
+        }).then((resp) => {
+          callback(null, resp);
+        }, (error) => {
+          callback(error);
+        });
       });
     } else {
       // found template in db

@@ -5,44 +5,43 @@ var userFixture = require('./../fixtures/user');
 var subscriptionFixture = require('./../fixtures/subscription');
 var mailFixture = require('./../fixtures/mailTemplates');
 var constants = require('../../util/constants');
+var sessionTypesConstants = require('../../util/sessionTypesConstants');
 var models = require('./../../models');
-
+var testDatabase = require("../database");
 var sessionBuilderServices = require('./../../services/sessionBuilder');
+var sessionMemberService = require('./../../services/sessionMember');
+var inviteService = require('./../../services/invite');
 var async = require('async');
 var _ = require('lodash');
 
 describe('SERVICE - SessionBuilder', function() {
   var testUser, testAccount, testAccountUser, subscriptionId;
-
   beforeEach(function(done) {
-    userFixture.createUserAndOwnerAccount().then(function(result) {
-      testUser = result.user;
-      testAccount = result.account;
-      testAccountUser = result.accountUser;
-      subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
-        subscriptionId = subscription.id;
-        models.SubscriptionPreference.update({'data.sessionCount': 2}, { where: { subscriptionId: subscription.id } }).then(function(result) {
-          done();
+    testDatabase.prepareDatabaseForTests().then(() => {
+      userFixture.createUserAndOwnerAccount().then(function(result) {
+        testUser = result.user;
+        testAccount = result.account;
+        testAccountUser = result.accountUser;
+        subscriptionFixture.createSubscription(testAccount.id, testUser.id).then(function(subscription) {
+          subscriptionId = subscription.id;
+          models.SubscriptionPreference.update({ 'data.sessionCount': 2, 'data.contactListCount': 2 }, { where: { subscriptionId: subscription.id } }).then(function(result) {
+            done();
+          }, function(error) {
+            done(error);
+          })
         }, function(error) {
           done(error);
         })
       }, function(error) {
         done(error);
-      })
-    }, function(error) {
-      done(error);
-    });
-  });
-
-  afterEach(function(done) {
-    models.sequelize.sync({ force: true }).then(() => {
-      done();
+      });
     });
   });
 
   function accountParams() {
     return {
       accountId: testAccount.id,
+      userId: testUser.id,
       timeZone: 'Europe/Riga',
       type: 'focus',
     };
@@ -53,9 +52,17 @@ describe('SERVICE - SessionBuilder', function() {
       id: data.sessionBuilder.id,
       accountId: testAccount.id,
       name: 'untitled',
-      startTime: (new Date()).toString(),
-      endTime: getNextDate().toString(),
-      timeZone: 'Europe/Riga'
+      startTime: (new Date()).toISOString(),
+      endTime: getNextDate().toISOString(),
+      timeZone: 'Europe/Riga',
+      snapshot: data.sessionBuilder.snapshot,
+      isVisited: {    
+        setUp: false, 
+        facilitatiorAndTopics: false, 
+        manageSessionEmails: false,
+        manageSessionParticipants: false,
+        inviteSessionObservers: false
+      }
     };
   };
 
@@ -79,27 +86,50 @@ describe('SERVICE - SessionBuilder', function() {
     describe('happy path', function(done) {
       it('should initialize builder', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          assert.equal(result.sessionBuilder.currentStep, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
-          assert.equal(result.sessionBuilder.steps.step1.name, '');
-          assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
-          assert.equal(result.sessionBuilder.steps.step2.facilitator, null);
-          assert.deepEqual(result.sessionBuilder.steps.step2.topics, []);
-          assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
-          assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
-          assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
-          assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
-          assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
-          assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
-          assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
-          done();
+          try {
+            assert.equal(result.sessionBuilder.currentStep, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.stepName, 'setUp');
+            assert.equal(result.sessionBuilder.steps.step1.name, '');
+            assert.equal(result.sessionBuilder.steps.step1.facilitator, null);
+            assert.equal(result.sessionBuilder.steps.step2.stepName, 'facilitatiorAndTopics');
+            assert.isArray(result.sessionBuilder.steps.step2.topics);
+            assert.equal(result.sessionBuilder.steps.step3.stepName, 'manageSessionEmails');
+            assert.equal(result.sessionBuilder.steps.step3.incentive_details, null);
+            assert.deepEqual(result.sessionBuilder.steps.step3.emailTemplates, []);
+            assert.equal(result.sessionBuilder.steps.step4.stepName, 'manageSessionParticipants');
+            assert.deepEqual(result.sessionBuilder.steps.step4.participants, []);
+            assert.equal(result.sessionBuilder.steps.step5.stepName, 'inviteSessionObservers');
+            assert.deepEqual(result.sessionBuilder.steps.step5.observers, []);
+            assert.isObject(result.sessionBuilder.snapshot);
+            assert.isObject(result.sessionBuilder.properties);
+
+            for (var i = 1; i <= 5; i++) {
+              assert.equal(result.sessionBuilder.steps['step' + i].isVisited, i == 1);
+            }
+            done();
+          } catch (e) {
+            done(e);
+          }
         }, function(error) {
           done(error);
         });
       });
-    });
 
-    describe('happy path', function(done) {
+      it('should create default topic', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+          models.SessionTopics.find({where: {sessionId: result.sessionBuilder.id}}).then(function(result) {
+            try {
+              assert.isTrue(result != null);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+
       it('should create new session when expired session exists', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -111,22 +141,16 @@ describe('SERVICE - SessionBuilder', function() {
           done(error);
         });
       });
-    });
 
-    describe('happy path', function(done) {
       it('should new expired session when other open session exists', function(done) {
         models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
             let params = sessionParams(result);
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
-                  done();
-                }, function(error) {
-                  done(error);
-                });
-              }, function(error) {
                 done();
+              }, function(error) {
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -141,6 +165,26 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
+      it('should fail update without valid snapshot', function(done) {
+        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+            let params = sessionParams(result);
+            params.snapshot = { test: true }
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              assert.isObject(result.validation);
+              assert.equal(result.validation.isValid, false);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
       it('should fail opening new session when other open session exists', function(done) {
         models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
@@ -151,10 +195,10 @@ describe('SERVICE - SessionBuilder', function() {
                 sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
                   done('Should not open second session!');
                 }, function(error) {
-                  done(error);
+                  done();
                 });
               }, function(error) {
-                done();
+                done(error);
               });
             }, function(error) {
               done(error);
@@ -176,6 +220,20 @@ describe('SERVICE - SessionBuilder', function() {
           sessionBuilderServices.findSession(result.sessionBuilder.id, testAccount.id).then(function(session) {
             assert.equal(session.id, result.sessionBuilder.id);
             assert.equal(session.accountId, testAccount.id);
+            done();
+          }, function(error) {
+            done(error);
+          });
+        }, function(error) {
+          done(error);
+        });
+      });
+
+      it('should return rigth type properties', function(done) {
+        let params = accountParams();
+        sessionBuilderServices.initializeBuilder(params).then(function(result) {
+          sessionBuilderServices.findSession(result.sessionBuilder.id, testAccount.id).then(function(session) {
+            assert.deepEqual(result.sessionBuilder.properties, sessionTypesConstants[params.type]);
             done();
           }, function(error) {
             done(error);
@@ -221,23 +279,50 @@ describe('SERVICE - SessionBuilder', function() {
     });
   });
 
+  describe('#publish', function(done) {
+    describe('happy path', function(done) {
+      it('should generate publicUid', function(done) {
+        sessionBuilderServices.initializeBuilder(accountParams()).then(function(sessionBuilder) {
+          let params = sessionParams(sessionBuilder);
+          sessionBuilderServices.publish(params.id, params.accountId).then(function(result) {
+            assert.equal(result.id, params.id);
+            assert.isString(result.publicUid);
+            models.Session.find({ where: { id: params.id } }).then(function(session) {
+              assert.equal(session.publicUid, result.publicUid);
+              done();
+            }, function(error) {
+              done(error);
+            });
+          }, function(error) {
+            done(error);
+          });
+        });
+      });
+    });
+  });
+
   describe('#nextStep', function(done) {
     describe('happy path', function(done) {
       it('should go to next step', function(done) {
         mailFixture.createMailTemplate().then(function() {
           sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
             let params = sessionParams(result);
+            let nextStepIndex = 2;
             params.name = 'My first session';
-
-            models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+            sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   assert.equal(result.sessionBuilder.steps.step1.name, params.name);
+                  assert.equal(result.sessionBuilder.steps.step1.isVisited, true);
                   done();
                 }, function(error) {
                   done(error);
                 });
+              }, (error) => {
+                done(error)
               });
+            }, (error) => {
+              done(error);
             });
           }, function(error) {
             done(error);
@@ -251,11 +336,12 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
           params.step = 'inviteSessionObservers';
+          let nextStepIndex = 6;
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, params.step);
 
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               assert.equal(result.sessionBuilder.currentStep, params.step);
               done();
             }, function(error) {
@@ -272,13 +358,15 @@ describe('SERVICE - SessionBuilder', function() {
       it('should go to previous step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 2;
           params.step = 'manageSessionEmails';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, params.step);
 
-            sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
+            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               assert.equal(result.sessionBuilder.currentStep, 'facilitatiorAndTopics');
+              assert.equal(result.sessionBuilder.steps.step2.isVisited, true);
               done();
             }, function(error) {
               done(error);
@@ -292,12 +380,13 @@ describe('SERVICE - SessionBuilder', function() {
       it('should fail on moving to previous step because first step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 0;
           assert.equal(result.sessionBuilder.currentStep, 'setUp');
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             assert.equal(result.sessionBuilder.currentStep, 'setUp');
 
-            sessionBuilderServices.prevStep(params.id, params.accountId).then(function(result) {
+            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
               assert.equal(result.sessionBuilder.currentStep, 'setUp');
               done();
             }, function(error) {
@@ -346,20 +435,40 @@ describe('SERVICE - SessionBuilder', function() {
       };
 
       it('should send sms to numbers', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = {
-            message: 'random message',
-            recievers: [{
-              mobile: mobileNumber
-            }, {
-              mobile: mobileNumber
-            }]
-          };
+        const smsParams = {
+          message: 'random message',
+          sessionId: null,
+          recievers: [{
+            mobile: mobileNumber
+          }, {
+            mobile: mobileNumber
+          }]
+        };
 
-          sessionBuilderServices.sendSms(params, provider).then(function(result) {
-            assert.equal(result, 'All sms have been sent');
-            done();
-          }, function(error) {
+        const subscriptionPreferenceParams = {
+          'data.sessionCount': 10,
+          'data.planSmsCount': 1,
+          'data.paidSmsCount': 1
+        }
+
+        models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
+          sessionBuilderServices.initializeBuilder(accountParams()).then((session) => {
+            smsParams.sessionId = session.sessionBuilder.id;
+            sessionBuilderServices.sendSms(testAccount.id, smsParams, provider).then((result) => {
+              models.SubscriptionPreference.find({ where: { subscriptionId: subscriptionId } }).then((sp) => {
+                try {
+                  assert.equal(result, 'All sms have been sent');
+                  assert.equal(sp.data.planSmsCount, 0);
+                  assert.equal(sp.data.paidSmsCount, 0);
+                  done();
+                } catch (e) {
+                  done(e);
+                }
+              });
+            }, function(error) {
+              done(error);
+            });
+          }, (error) => {
             done(error);
           });
         });
@@ -377,57 +486,36 @@ describe('SERVICE - SessionBuilder', function() {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = {
             message: 'random message',
+            sessionId: null,
             recievers: [{
               mobile: 'nonNumberMobile'
             }]
           };
 
+          const subscriptionPreferenceParams = {
+            'data.sessionCount': 1,
+            'data.planSmsCount': 10,
+            'data.paidSmsCount': 10
+          }
+
           let errorMessage = "The 'To' number nonNumberMobile is not a valid phone number.";
           let provider = errorProvider(errorMessage);
-
-          sessionBuilderServices.sendSms(params, provider).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error, errorMessage);
-            done();
-          });
-        });
-      });
-    });
-  });
-
-  describe('#removeSessionMember', function(done) {
-    describe('happy path', function(done) {
-      it('should remove session member from session', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-
-            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id, sessionMemberId: member.id }).then(function(result) {
-              assert.equal(result, sessionBuilderServices.messages.sessionMemberRemoved);
-              done();
+          models.SubscriptionPreference.update(subscriptionPreferenceParams, { where: { subscriptionId: subscriptionId } }).then(() => {
+            sessionBuilderServices.initializeBuilder(accountParams()).then((session) => {
+              params.sessionId = session.sessionBuilder.id;
+              sessionBuilderServices.sendSms(testAccount.id, params, provider).then(function(result) {
+                done('Should not get here!');
+              }, function(error) {
+                try {
+                  assert.equal(error, errorMessage);
+                  done();
+                } catch (e) {
+                  done(e);
+                }
+              });
             }, function(error) {
               done(error);
             });
-          }).catch(function(error) {
-            done(error);
-          });
-        });
-      });
-    });
-
-    describe('sad path', function(done) {
-      it('should fail on finding session member to remove', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-
-            sessionBuilderServices.removeSessionMember({ id: result.sessionBuilder.id + 100, sessionMemberId: member.id }).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error, sessionBuilderServices.messages.sessionMemberNotFound);
-              done();
-            });
-          }).catch(function(error) {
-            done(error);
           });
         });
       });
@@ -439,7 +527,6 @@ describe('SERVICE - SessionBuilder', function() {
       return {
         token: 'randomtoken',
         sentAt: new Date(),
-        expireAt: new Date(),
         role: 'facilitator',
         sessionId: sessionId,
         accountUserId: testAccountUser.id
@@ -480,25 +567,6 @@ describe('SERVICE - SessionBuilder', function() {
           });
         });
       });
-
-      it('should fail on finding invite because status not pending', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = inviteParams(result.sessionBuilder.id);
-          params.status = 'confirmed';
-
-          models.Invite.create(params).then(function(invite) {
-
-            sessionBuilderServices.removeInvite({ id: result.sessionBuilder.id, inviteId: invite.id }).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error, sessionBuilderServices.messages.inviteNotFound);
-              done();
-            });
-          }).catch(function(error) {
-            done(error);
-          });
-        });
-      });
     });
   });
 
@@ -507,14 +575,15 @@ describe('SERVICE - SessionBuilder', function() {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 2;
           params.name = 'My first session';
-
-          models.SessionMember.create(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
-            mailFixture.createMailTemplate().then(function() {
-              sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              inviteService.createFacilitatorInvite({sessionId: member.sessionId, accountUserId: member.accountUserId}).then(function() {
+                sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                   sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                     assert.equal(session.step, 'facilitatiorAndTopics');
+                    assert.equal(result.sessionBuilder.steps.step2.isVisited, true);
                     done();
                   }, function(error) {
                     done(error);
@@ -525,25 +594,14 @@ describe('SERVICE - SessionBuilder', function() {
               }, function(error) {
                 done(error);
               });
-            })
+            }, function(error) {
+              done(error);
+            });
           }, function(error) {
             done(error);
           });
-        });
-      });
-    });
-
-    describe('sad path', function(done) {
-      it('should fail on #update', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-
-          sessionBuilderServices.update(params.id, params.accountId, { endTime: null }).then(function(result) {
-            done('Should not get here!');
-          }, function(error) {
-            assert.equal(error.endTime, "End Time can't be empty");
-            done();
-          });
+        }, function(error) {
+          done(error);
         });
       });
     });
@@ -565,7 +623,7 @@ describe('SERVICE - SessionBuilder', function() {
             cb();
           }
           else {
-            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(params.id)).then(function(member) {
               cb();
             }, function(error) {
               cb(error);
@@ -580,9 +638,7 @@ describe('SERVICE - SessionBuilder', function() {
             models.Topic.create(topicParams(params.accountId)).then(function(topic) {
               sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                 session.addTopics([topic]).then(function() {
-                  models.SessionTopics.findAll().then(function(result) {
-                    cb();
-                  })
+                  cb();
                 }, function(error) {
                   cb(error);
                 });
@@ -601,6 +657,7 @@ describe('SERVICE - SessionBuilder', function() {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 3;
           params.step = 'facilitatiorAndTopics';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
@@ -610,9 +667,10 @@ describe('SERVICE - SessionBuilder', function() {
               }
               else {
                 mailFixture.createMailTemplate().then(function() {
-                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+                  sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                     sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                       assert.equal(session.step, 'manageSessionEmails');
+                      assert.equal(result.sessionBuilder.steps.step3.isVisited, true);
                       done();
                     }, function(error) {
                       done(error);
@@ -633,49 +691,31 @@ describe('SERVICE - SessionBuilder', function() {
     describe('sad path', function(done) {
       it('should fail because no topics', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          params.step = 'facilitatiorAndTopics';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
+          //remove default topic from DB
+          models.SessionTopics.destroy({where: {sessionId: result.sessionBuilder.id}}).then(() => {
+            let params = sessionParams(result);
+            let nextStepIndex = 3;
+            params.step = 'facilitatiorAndTopics';
+            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                try {
+                  assert.equal(result.sessionBuilder.steps.step2.error.topics, 'No topics selected');
+                  assert.equal(result.sessionBuilder.steps.step3.isVisited, false);
+                  done();
+                } catch (error) {
+                  done(error);
+                }
+              });
             }, function(error) {
-              assert.equal(error.topics, 'No topics selected');
-              done();
+              done(error);
             });
-          }, function(error) {
-            done(error);
-          });
-        });
-      });
-
-      it('should fail', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          params.step = 'facilitatiorAndTopics';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            createDependencies(params, { topics: true }, function(error) {
-              if(error) {
-                done(error);
-              }
-              else {
-                mailFixture.createMailTemplate().then(function() {
-                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                    done('Should not get here!');
-                  }, function(error) {
-                    assert.equal(error.topics, sessionBuilderServices.messages.errors.secondStep.topics);
-                    done();
-                  });
-                })
-              }
-            });
-          }, function(error) {
+          }, (error) => {
             done(error);
           });
         });
       });
     });
+
   });
 
   describe('#thirdStep', function(done) {
@@ -683,6 +723,7 @@ describe('SERVICE - SessionBuilder', function() {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 4;
           params.step = 'manageSessionEmails';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
@@ -693,20 +734,36 @@ describe('SERVICE - SessionBuilder', function() {
                   where: { category: { $in: constants.sessionBuilderEmails } }
                 }]
               }).then(function(result) {
+                
                 let ids = _.map(result, 'id');
-
-                models.MailTemplate.update({ sessionId: params.id, isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
-                  sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                    sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                      assert.equal(session.step, 'manageSessionParticipants');
-                      done();
-                    }, function(error) {
-                      done(error);
+                models.MailTemplate.update({ isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
+                  models.MailTemplate.findAll({ where: { MailTemplateBaseId: { $in: ids } } }).then(function(result) {
+                    var dataToCopy = [];
+                    _.map(result, function(item, index) {
+                      dataToCopy.push({sessionId: params.id, mailTemplateId: item.id});
+                    });
+                    models.SessionMailTemplate.bulkCreate(dataToCopy).done(function(res) {
+                      sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+                        sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
+                          assert.equal(session.step, 'manageSessionParticipants');
+                          assert.equal(result.sessionBuilder.steps.step4.isVisited, true);
+                          done();
+                        }, function(error) {
+                          done(error);
+                        });
+                      }, function(error) {
+                        done(error);
+                      });
+                    }, function(err) {
+                      done(err);
                     });
                   }, function(error) {
                     done(error);
                   });
-                })
+                }, function(error) {
+                  done(error);
+                });
+
               }, function(error) {
                 done(error);
               });
@@ -719,16 +776,17 @@ describe('SERVICE - SessionBuilder', function() {
     });
 
     describe('sad path', function(done) {
-      it('should fail because mail templates less then 5', function(done) {
+      it('should fail because mail templates less then 4', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 4;
           params.step = 'manageSessionEmails';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error.emailTemplates, sessionBuilderServices.messages.errors.thirdStep.emailTemplates);
+            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+              let error = result.sessionBuilder.steps.step3.error.emailTemplates;
+              assert.equal(error, sessionBuilderServices.messages.errors.thirdStep.emailTemplates);
+              assert.equal(result.sessionBuilder.steps.step4.isVisited, false);
               done();
             });
           }, function(error) {
@@ -744,7 +802,6 @@ describe('SERVICE - SessionBuilder', function() {
       return {
         token: 'randomtoken',
         sentAt: new Date(),
-        expireAt: new Date(),
         role: 'participant',
         sessionId: sessionId,
         accountUserId: testAccountUser.id
@@ -755,13 +812,15 @@ describe('SERVICE - SessionBuilder', function() {
       it('should succeed on moving to next step', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 5;
           params.step = 'manageSessionParticipants';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
             models.Invite.create(inviteParams(params.id)).then(function() {
-              sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
+              sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
                 sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
                   assert.equal(session.step, 'inviteSessionObservers');
+                  assert.equal(result.sessionBuilder.steps.step5.isVisited, true);
                   done();
                 }, function(error) {
                   done(error);
@@ -783,13 +842,14 @@ describe('SERVICE - SessionBuilder', function() {
       it('should fail because no participants', function(done) {
         sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
           let params = sessionParams(result);
+          let nextStepIndex = 5;
           params.step = 'manageSessionParticipants';
 
           sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error.participants, sessionBuilderServices.messages.errors.fourthStep.participants);
+            sessionBuilderServices.goToStep(params.id, params.accountId, nextStepIndex).then(function(result) {
+              let error = result.sessionBuilder.steps.step4.error.participants;
+              assert.equal(error, sessionBuilderServices.messages.errors.fourthStep.participants);
+              assert.equal(result.sessionBuilder.steps.step5.isVisited, false);
               done();
             });
           }, function(error) {
@@ -800,54 +860,58 @@ describe('SERVICE - SessionBuilder', function() {
     });
   });
 
-  describe('#fifthStep', function(done) {
+  describe('#closeSession', function(done) {
     describe('happy path', function(done) {
-      it.only('should succeed on moving to next step', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          params.step = 'inviteSessionObservers';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            models.SessionMember.create(sessionMemberParams(params.id)).then(function(member) {
+      it('should go to fourth step', function(done) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
               mailFixture.createMailTemplate().then(function() {
-                sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-                  sessionBuilderServices.findSession(params.id, params.accountId).then(function(session) {
-                    assert.equal(session.step, 'inviteSessionObservers');
-                    done();
+                let params = sessionParams(result);
+                params.status = "closed";
+                sessionBuilderServices.update(params.id, params.accountId, params).then(function(closeResult) {
+                  assert.equal(closeResult.sessionBuilder.currentStep, "manageSessionParticipants");
+                  done();
+                }, function(error) {
+                  done(error);
+                });
+              });
+            });
+          }, function(error) {
+            done(error);
+          });
+      });
+    });
+  });
+
+  describe('#reopenSession', function(done) {
+    describe('happy path', function(done) {
+      it('should go to fourth step', function(done) {
+          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
+           sessionMemberService.createWithTokenAndColour(sessionMemberParams(result.sessionBuilder.id)).then(function(member) {
+              mailFixture.createMailTemplate().then(function() {
+                let closeParams = sessionParams(result);
+                closeParams.status = "closed";
+                sessionBuilderServices.update(closeParams.id, closeParams.accountId, closeParams).then(function(closeResult) {
+                  sessionBuilderServices.goToStep(closeParams.id, closeParams.accountId, 1).then(function(nextStepResult) {
+                    let openParams = sessionParams(nextStepResult);
+                    openParams.status = "open";
+                    sessionBuilderServices.update(closeParams.id, openParams.accountId, openParams).then(function(openResult) {
+                      assert.equal(openResult.sessionBuilder.currentStep, "setUp");
+                      done();
+                    }, function(error) {
+                      done(error);
+                    });
                   }, function(error) {
                     done(error);
                   });
                 }, function(error) {
                   done(error);
                 });
-              })
-            }, function(error) {
-              done(error);
+              });
             });
           }, function(error) {
             done(error);
           });
-        });
-      });
-    });
-
-    describe('sad path', function(done) {
-      it('should fail because no observers', function(done) {
-        sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-          let params = sessionParams(result);
-          params.step = 'manageSessionParticipants';
-
-          sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-            sessionBuilderServices.nextStep(params.id, params.accountId, params).then(function(result) {
-              done('Should not get here!');
-            }, function(error) {
-              assert.equal(error.observers, sessionBuilderServices.messages.errors.fourthStep.observers);
-              done();
-            });
-          }, function(error) {
-            done(error);
-          });
-        });
       });
     });
   });

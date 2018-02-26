@@ -10,12 +10,13 @@ module.exports = (Sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
         isUnique: validations.unique(Sequelize, 'BrandProjectPreference', 'name', { accountContext: true }),
-        isLength: validations.length('name', { max: 255 })
+        isLength: validations.length('name', { max: 100 })
       }
     },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
     colours: { type: DataTypes.JSONB, allowNull: false, defaultValue: brandProjectConstants.preferenceColours },
     type: { type: DataTypes.ENUM, allowNull: false, values: ['focus', 'forum'], defaultValue: 'focus' },
+    default: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     timestamps: true,
     classMethods: {

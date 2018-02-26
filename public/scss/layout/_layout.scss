@@ -17,6 +17,17 @@ textarea {
   resize: none;
 }
 
+.test-email-input {
+  font-size: 14px;
+  padding: 0 10px;
+  width: 220px;
+  height: 35px;
+}
+
+.full-width {
+  width: 100%;
+}
+
 /* Borders */
 
 .border-standart {
@@ -59,6 +70,9 @@ textarea {
 .login-header {
   height: 100px;
   padding-top: 30px;
+  a img {
+    max-width: 100vw;
+  }
 }
 
 .page-banner {
@@ -393,7 +407,16 @@ input#reveiveNewsLetters{
 .selectRoleMessage {
   text-align: center;
   margin-bottom: 30px;
-  margin-top: -25px;
+  -webkit-animation: fadeInUp 2s ease;
+  -moz-animation: fadeInUp 2s ease;
+  -ms-animation: fadeInUp 2s ease;
+  animation: fadeInUp 2s ease;
+
+  h1 {
+    text-align: center;
+    color: #59595b;
+    margin-bottom: 50px;
+  }
 }
 
 #small-screen {
@@ -494,7 +517,7 @@ input#reveiveNewsLetters{
   }
 }
 
-.noRolesBlock {
+.rolesInfoBlock {
   text-align: center;
   @media (min-width: 768px) {
     padding-top: 50px;
@@ -504,4 +527,156 @@ input#reveiveNewsLetters{
 .modal-content-wide {
   width: 800px;
   margin-left: -101px;
+}
+
+.dashboardActions {
+  .fa {
+    color: #a7a7a9;
+    border: 2px solid #a7a7a9;
+    padding: 6px;
+    font-size: 14px;
+    height: 30px;
+  }
+}
+
+.intl-tel-input .country-list {
+  font-size: 14px;
+}
+
+.separator-block {
+  margin: 10px 0 20px 0;
+  font-size: 16px;
+  font-weight: bold;;
+}
+.confirmModalText {
+  line-height: 1.3;
+}
+
+.modal-footer.choiceButtons .btn {
+  max-width: 100px;
+  width: 100px;
+}
+
+/*Animation*/
+@-webkit-keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+.inmplayer-launcher-top {
+  z-index: 9999 !important;
+}
+
+.login-ghost {
+  @media (min-width: 768px) {
+    background: #F7F7F7;
+    border: 1px solid #dfdfdf;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 767px) {
+    h4 {
+      display: block;
+      width: 100% !important;
+      text-align: center;
+    }
+    input {
+      width: 100% !important;
+    }
+  }
+  @media (max-width: 338px) {
+    .g-recaptcha {
+      transform:scale(0.7);
+      transform-origin:0 0;
+    }
+  }
+  padding: 20px;
+
+  a.black {
+    color: #111 !important;
+    text-decoration: underline;
+  }
+
+  #accept-button {
+    z-index: 1;
+    position: relative;
+  }
+
+  #signup {
+    h4, input {
+      width: auto;
+      display: inline-block;
+    }
+    input {
+      @media (min-width: 768px) {
+        width: 420px;
+      }
+      margin-left: 2px;
+    }
+    margin-top: 20px;
+    margin-bottom: -15px;
+  }
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+.table-item-buttons {
+  width: 165px;
+}
+
+.url-input {
+  width: 85%;
+  padding: 3px;
+  color: #1B15C6;
+  text-decoration: underline;
+  font-size: 13px;
+  cursor: text;
+}
+
+uib-accordion div span.text-muted {
+  color: #aaa;
+}
+
+
+.sneakPreviewIntro {
+  position: fixed;   
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  vertical-align: top;
+  background: #EE7B20;
+  z-index: 999;
+  img {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .letsGoButton {
+    position: absolute;
+    cursor: pointer;
+    left: 50vw;
+  }
 }

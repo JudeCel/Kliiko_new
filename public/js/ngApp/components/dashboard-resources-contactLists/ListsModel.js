@@ -21,11 +21,13 @@
     ListsModel.prototype.addNewContact = addNewContact;
     ListsModel.prototype.updateContact = updateContact;
     ListsModel.prototype.deleteContacts = deleteContacts;
+    ListsModel.prototype.getContactComments = getContactComments;
 
     ListsModel.prototype.parseImportFile = parseImportFile;
     ListsModel.prototype.generateImportPreview = generateImportPreview;
     ListsModel.prototype.addImportedContacts = addImportedContacts;
     ListsModel.prototype.validateContactImportData = validateContactImportData;
+    ListsModel.prototype.toggleListState = toggleListState;
 
     return ListsModel;
 
@@ -102,6 +104,24 @@
       return list;
     }
 
+    /**
+     * toggle list active
+     */
+    function toggleListState(id) {
+      var deferred = $q.defer();
+      var self = this;
+
+      contactListServices.toggleListState(id).then(
+        function(res) {
+          deferred.resolve();
+        },
+        function(err) { 
+          deferred.reject(err)
+         }
+      );
+
+      return deferred.promise;
+    }
     /**
      * Get all lists, store them as ListItemModel and sort by 'id'
      */
@@ -327,6 +347,21 @@
           deferred.reject(err);
         }
       );
+      return deferred.promise;
+    }
+
+    function getContactComments(id) {
+      var deferred = $q.defer();
+
+      contactListServices.getContactComments(this.activeList.id, id).then(
+        function(res) {
+          deferred.resolve(res);
+        },
+        function(err) {
+          deferred.reject(err)
+        }
+      );
+
       return deferred.promise;
     }
 

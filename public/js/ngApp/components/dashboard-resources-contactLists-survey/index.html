@@ -6,7 +6,7 @@
         <h2 class='text-center'>Recruiter</h2>
       </div>
       <div class='col-md-3 text-right'>
-        <button id='createNewSurvey' class='btn btn-standart btn-margin btn-green btn-large' ng-click="sc.changePage('create')">Create New Survey</button>
+        <button id='createNewSurvey' class='btn btn-standart btn-margin btn-green btn-large' ng-click="surveyListController.showCreatePage()">Create New Survey</button>
       </div>
       <div class='col-md-12'>
         <p>
@@ -25,30 +25,40 @@
           <th>Name</th>
           <th>Date Confirmed</th>
           <th>URL Link</th>
-          <th>Closed</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat='survey in sc.surveys'>
+        <tr ng-repeat='survey in surveyListController.surveys'>
           <td>{{ survey.name }}</td>
-          <td>{{ (survey.confirmedAt | date:sc.dateFormat) || 'unconfirmed' }}</td>
-          <td><a href='{{ survey.url }}' target="_blanks">{{ survey.url }}</a></td>
-          <td>{{ survey.closed }}</td>
-          <td class='text-right dashboardElementsEditRemove'>
-            <img src='/icons/brand_colour_grey.png' ng-click='sc.exportSurvey(survey.id)' ng-if='survey.confirmedAt'
-              data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.export }}' />
-
-            <img src='/icons/calendar_grey.png' ng-click='sc.confirmSurvey(survey)' ng-if='!survey.confirmedAt'
-              data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.confirm }}' />
-
-            <img ng-src='{{ sc.statusIcon(survey) }}' ng-click='sc.changeStatus(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.status }}' />
-            <img src='/icons/resources_grey.png' ng-click='sc.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.copy }}' />
-            <img src='/icons/dashboardElement_edit.png' ng-click='sc.changePage("edit", survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.edit }}' ng-if="app.account.isActiveSubscription"/>
-            <img src='/icons/dashboardElement_remove.png' ng-click='sc.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ sc.popOverMessages.remove }}' />
+          <td>{{ (survey.confirmedAt | date:surveyListController.dateFormat) }}</td>
+          <td>
+            <a ng-if="survey.confirmedAt" href='{{ survey.url }}' target="_blanks">{{ survey.url }}</a>
+          </td>
+          <td>
+            <div ng-if="!survey.confirmedAt">Unpublished</div>
+            <div ng-if="survey.confirmedAt" ng-init="survey.switchValue = !survey.closed">
+              <toggle-switch
+                ng-model="survey.switchValue"
+                ng-change="surveyListController.changeStatus(survey)"
+                on-label="OPEN"
+                off-label="CLOSE"
+                >
+              </toggle-switch>
+            </div>
+          </td>
+          <td class='text-right dashboardElementsEditRemove dashboardActions'>
+            <span class="fa fa-copy" ng-click='surveyListController.copySurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.copy }}' ></span>
+            <span class="fa fa-edit" ng-click='surveyListController.editSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.edit }}'></span>
+            <span class="fa fa-bar-chart" title='{{ surveyListController.popOverMessages.report }}' ng-if='survey.confirmedAt' ng-click='surveyListController.showStats(survey)'></span>
+            <span class="fa fa-mail-forward" ng-click='surveyListController.exportSurvey(survey.id)' ng-if='survey.confirmedAt' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.export }}' ></span>
+            <span class="fa fa-remove" ng-if="surveyListController.canDelete(survey)" ng-click='surveyListController.removeSurvey(survey)' data-toggle='tooltip' data-placement='bottom' title='{{ surveyListController.popOverMessages.remove }}'></span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<ng-include src="'/js/ngApp/components/dashboard-resources-contactLists-survey/statsModal.html'"></ng-include>

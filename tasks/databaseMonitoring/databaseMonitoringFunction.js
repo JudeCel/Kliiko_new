@@ -7,34 +7,20 @@ const query = `
   CREATE OR REPLACE FUNCTION table_update_notify() RETURNS trigger AS $$
     DECLARE
       id bigint;
-      session_id bigint DEFAULT null;
+      data jsonb;
     BEGIN
 
-      IF quote_ident(TG_TABLE_NAME) = '"SessionTopics"' THEN
-        IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-          id = NEW.id;
-          session_id = NEW."sessionId";
-        ELSE
-          id = OLD.id;
-          session_id = OLD."sessionId";
-        END IF;
-      END IF;
+    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+      data = row_to_json(NEW);
+    ELSE
+      data = row_to_json(OLD);
+    END IF;
 
-      IF quote_ident(TG_TABLE_NAME) = '"Sessions"' THEN
-        IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-          id = NEW.id;
-          session_id = NEW.id;
-        ELSE
-          id = OLD.id;
-          session_id = OLD.id;
-        END IF;
-      END IF;
+    PERFORM pg_notify('table_update', json_build_object('table', TG_TABLE_NAME, 'data', data, 'type', TG_OP)::text);
 
-      PERFORM pg_notify('table_update', json_build_object('table', TG_TABLE_NAME, 'id', id, 'session_id', session_id, 'type', TG_OP)::text);
-
-      RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;`
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql;`
 
 
 function createTableChangeNotify() {

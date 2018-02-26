@@ -27,7 +27,7 @@
     vm.submitSurvey = submitSurvey;
     vm.init = init;
     vm.checkTag = surveyServices.checkTag;
-
+    vm.defaultBaseQuestions = [];
     initConstants();
 
     function initConstants() {
@@ -35,28 +35,62 @@
         vm.unfilled = res.data.validationErrors.unfilled;
         vm.validationErrors = res.data.validationErrors.answer;
         vm.minsMaxs = res.data.minsMaxs;
+        vm.defaultBaseQuestions = res.data.defaultQuestions;
       });
     };
 
-    function init(surveyId) {
-      surveyServices.findSurvey({ id: surveyId }).then(function(res) {
+    function mapHandleTags() {
+      for(var i in vm.survey.SurveyQuestions) {
+        var question = vm.survey.SurveyQuestions[i];
+
+        for(var i in vm.defaultBaseQuestions) {
+          var baseQuestion = vm.defaultBaseQuestions[i];
+          if (question.name == baseQuestion.name) {
+            question.handleTag = baseQuestion.handleTag;
+          }
+        }
+      }
+    }
+
+    function init(surveyId, chatUrl, token, redirectSurveyLink) {
+      vm.chatUrl = chatUrl;
+      vm.token = token;
+      if (redirectSurveyLink) {
+        vm.redirectSurveyLink = redirectSurveyLink + "?token=" + vm.token;
+      }
+      surveyServices.findSurvey({ id: surveyId, token: token }).then(function(res) {
         dbg.log2('#SurveyClientController > findSurvey > res ', res);
 
         if(res.error) {
           vm.message = res.error;
         }
         else {
+          vm.status = res.status;
           vm.survey = res.data;
+          vm.isFacilitator = res.isFacilitator;
+          mapHandleTags();
+          $('#GalleryController').removeClass('hidden');
+
           GalleryServices.surveyResources(vm.survey.id).then(function(result) {
             mapSurveyResources(result.survey);
           }, function() {
             messenger.error(messagesUtil.gallery.cantLoad);
           });
+
+          autoFillNameField();
         }
       });
     };
 
+    function autoFillNameField () {
+      $timeout(function() {
+        $('#contact-firstName').val(vm.survey.username).trigger('input');
+      });
+    }
+
     function submitSurvey() {
+      if(vm.isFacilitator) return messenger.error('Only Guests can answer these questions');
+
       vm.submitedSurvey = true;
       vm.submitingSurvey = true;
 
@@ -72,7 +106,13 @@
               messenger.error(res.error);
             }
             else {
-              vm.message = res.message;
+              if (res.status == 307) {
+                if (vm.redirectSurveyLink) {
+                  window.location = vm.redirectSurveyLink;
+                }
+                vm.status = res.status;
+              } else
+                vm.status = res.status;
             }
           });
         }

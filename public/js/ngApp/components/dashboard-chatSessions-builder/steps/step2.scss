@@ -11,6 +11,13 @@
 
   .check {
     float: left;
+    margin-right: 5px;
+  }
+
+  .check-empty {
+    float: left;
+    width: 22px;
+    margin-right: 5px;
   }
 
   #topics-list {
@@ -37,4 +44,10 @@
       font-size: medium;
     }
   }
+}
+
+.topic-survey-label {
+  line-height: 2.2;
+  display: inline-block;
+  vertical-align: middle;
 }

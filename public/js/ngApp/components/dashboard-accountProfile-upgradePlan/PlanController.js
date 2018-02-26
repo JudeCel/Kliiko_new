@@ -14,44 +14,26 @@
 
     vm.planInModal = null;
     vm.selectedPlan = null;
+    vm.sessionCount = null;
+    vm.possibleNumOfSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     vm.currentStep = 1;
     vm.currentPlan = null;
-    vm.monthlyPlan = null;
-    vm.yearlyPlan = null;
     vm.purchaseWasSuccessfull = true;
-    vm.subPlans = [];
     vm.contactUsUser = {};
-    vm.monthlyPlans = [];
-    vm.annualPlans = [];
+
+    vm.currencySymbols = {
+      AUD: '$',
+      USD: '$',
+      CAD: '$',
+      NZD: '$',
+      GBP: '£',
+      EUR: '€',
+    };
 
     vm.pricePerEnding = {
-      monthly: 'mth',
-      annual: 'year'
-    }
-
-    vm.planOptions = [
-      'Number of Active Sessions',
-      'Number of Contact Lists',
-      'Recruiter lists \n (build Contact Lists on demand)',
-      'Import and manage your \n existing contacts',
-      'Custom logo and branding',
-      'Contacts per account',
-      'Managers per account',
-      'Export contact and \n participation history',
-      'Export Recruiter survey results',
-      'Access klzii Forum',
-      'Access klzii Focus',
-      'Observers can watch sessions',
-      'Paid SMS reminders for participants',
-      'Tips for guiding discussions',
-      'Whiteboard functionality',
-      'Upload and store multimedia',
-      'Reporting and analysis',
-      'Mobile and tablet compatible',
-      'Customise email invitations \n and reminders',
-      'Number of topics',
-      'Private and secure sessions (SSL)'
-    ]
+      month: 'per Month',
+      year: 'per Year'
+    };
 
     vm.stepLayouts = [
       {
@@ -98,20 +80,26 @@
     vm.wantThisPlan = wantThisPlan;
     vm.submitOrder = submitOrder;
     vm.isCurrentPlan = isCurrentPlan;
-    vm.showPlanInList = showPlanInList;
     vm.switchPlan = switchPlan;
-    vm.showCalculatedPrice = showCalculatedPrice;
     vm.checkRadioButton = checkRadioButton;
-    vm.optionBackground = optionBackground;
     vm.openGetQuoteModal = openGetQuoteModal;
     vm.submitContactusForm = submitContactusForm;
     vm.buttonClassName = buttonClassName;
     vm.switchPlanView = switchPlanView;
-    vm.planOptionColor = planOptionColor;
     vm.selectPlanBtnColor = selectPlanBtnColor;
     vm.mostPopular = mostPopular;
+    vm.upgradePlanText = upgradePlanText;
+    vm.displayFeatureValue = displayFeatureValue;
+    vm.finishedRenderingPlans = finishedRenderingPlans;
+    vm.changePlanList = changePlanList;
 
     init();
+    vm.setup = function() {
+      if ($stateParams.step && $stateParams.plan) {
+        vm.shouldShowPlan = $stateParams.plan;
+        vm.currentStep = parseInt($stateParams.step);
+      }
+    };
 
     function init() {
       errorWhileCretingSubscription()
@@ -146,25 +134,41 @@
         if(result.error){
           messenger.error(result.error);
         }else {
-          result.plans.map(function (subPlan) {
-            if (canPush('month', subPlan)) {
-              vm.monthlyPlans.push(subPlan);
-            }
+          vm.currencyData = result.currencyData;
+          vm.currentCurrency = vm.currencyData.client;
+          vm.currencyList = Object.keys(vm.currencyData.rates);
+          vm.currencyList.unshift(vm.currencyData.base);
+          vm.annualOrMonthly = 'month';
+          // vm.free_account = result.free_account;
+          vm.plans = result.plans;
+          vm.additionalParams = result.additionalParams;
+          changePlanList();
 
-            if (canPush('year', subPlan)) {
-              vm.annualPlans.push(subPlan);
-            }
-          });
-
-          vm.annualOrMonthly = 'monthly';
-          vm.subPlans = vm.monthlyPlans;
+          if(vm.shouldShowPlan) {
+            setSelectedPlan(vm.plans[vm.currentCurrency].year);
+            setSelectedPlan(vm.plans[vm.currentCurrency].month);
+          }
           vm.currentPlan = result.currentPlan;
+          vm.features = result.features;
         }
       })
     }
 
-    function canPush(period, subPlan) {
-      return subPlan.plan.period_unit == period && subPlan.additionalParams.priority > 0;
+    function setSelectedPlan(array) {
+      if (!array) {
+        return;
+      }
+      array.forEach(function(item) {
+        if(item.plan.preference === vm.shouldShowPlan) {
+          vm.selectedPlan = item;
+          vm.sessionCount = 1;
+        }
+      });
+    }
+
+    function changePlanList() {
+      vm.plansList = angular.copy(vm.plans[vm.currentCurrency][vm.annualOrMonthly]);
+      //vm.plansList.unshift(vm.free_account);
     }
 
     function succeededCheckout(params) {
@@ -173,6 +177,7 @@
           vm.purchaseWasSuccessfull = false;
           messenger.error(result.error);
         }else{
+          user.reloadPermissions();
           messenger.ok(result.message);
         }
       })
@@ -182,12 +187,12 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id).then(function(response) {
+        planService.updatePlan(vm.selectedPlan.plan.id, vm.sessionCount).then(function(response) {
           if(response.error){
             messenger.error(response.error);
           }else {
             if(response.redirect){
-              window.location = response.hosted_page.url;
+              window.location = response.redirect_url || response.hosted_page.url;
             }else{
               nextStep();
             }
@@ -198,19 +203,17 @@
 
     function wantThisPlan(selectedSubPlan) {
       vm.selectedPlan = selectedSubPlan;
-
-      vm.subPlans.map(function(subPlan) {
-        if(subPlan.plan.id == vm.selectedPlan.plan.id) {
-          vm.monthlyPlan = subPlan;
-        }
-
-        if(subPlan.plan.period_unit == "year" && subPlan.plan.name.indexOf(vm.selectedPlan.plan.name) != -1) {
-          vm.yearlyPlan = subPlan;
-        }
-      });
-
+      vm.sessionCount = 1;
+      $(".planHint").hide();
       nextStep();
     }
+
+    vm.dropdownSelectedPlan = function(planItem) {
+      if (!vm.isCurrentPlan(planItem)) {
+        vm.selectedPlan = planItem;
+        vm.sessionCount = 1;
+      }
+    };
 
     function checkRadioButton(currentPlan, checkPlan) {
       if(currentPlan && checkPlan) {
@@ -223,14 +226,14 @@
     }
 
     function previouseStep() {
+      vm.selectedPlan = null;
+      vm.sessionCount = null;
       return --vm.currentStep;
     }
 
     function checkTheCount(count) {
-      if(count == -1){
+      if(count < 0){
         return "Unlimited";
-      } else if(count == 0) {
-        return "false";
       }else{
         return count;
       }
@@ -241,7 +244,7 @@
     }
 
     function isCurrentPlan(subPlan) {
-      return vm.currentPlan.chargebeePlanId == subPlan.plan.id;
+      return subPlan.plan.id.includes(vm.currentPlan.preferenceName);
     }
 
     function stepIsActive(step, additionalStyle) {
@@ -264,24 +267,9 @@
       domServices.modal('plansModal');
     }
 
-    function showPlanInList(plan){
-      return plan.additionalParams.priority > 0;
-    }
-
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
-    }
-
-    function showCalculatedPrice(price) {
-      return price / 100;
-    }
-
-    function optionBackground(index) {
-      if(index%2 > 0) {
-        return "plan-option-dark-grey"
-      }else{
-        return "plan-option-light-grey"
-      }
+      vm.sessionCount = 1;
     }
 
     function openGetQuoteModal(user) {
@@ -302,13 +290,10 @@
 
     function switchPlanView(view) {
       vm.annualOrMonthly = view;
-
-      if (view == 'annual') {
-        vm.subPlans = vm.annualPlans;
-      }
-      if (view == 'monthly') {
-        vm.subPlans = vm.monthlyPlans;
-      }
+      changePlanList()
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
+      });
     }
 
     function submitContactusForm() {
@@ -321,21 +306,64 @@
       });
     }
 
-    function planOptionColor(plan, number) {
-      if (number == 'odd') {
-        return plan + "_light";
-      }
-      if (number == "even") {
-        return plan + "_dark";
-      }
-    }
-
     function selectPlanBtnColor(plan) {
       return plan + "_btn"
     }
 
     function mostPopular(planId) {
       return 'core_monthly' == planId;
+    }
+
+    function upgradePlanText(plan) {
+      return plan.price ? "BUY" : "GET STARTED"
+    }
+
+    vm.showBoolean = function(feature, plan) {
+      return (feature.type == 'Boolean' && vm.getFeatureValue(feature.key, plan));
+    }
+
+    vm.getFeatureValue = function(key, plan) {
+      return vm.additionalParams[plan.preference][key];
+    }
+
+    vm.showNumber = function(feature) {
+      return (feature.type == 'Number' || feature.type == 'NumberLimit');
+    }
+
+    vm.multipleDays = function () {
+      return (vm.currentPlan.daysLeft > 1);
+    }
+
+    function displayFeatureValue(feature, plan) {
+      var result = checkTheCount(vm.getFeatureValue(feature.key, plan));
+      if (feature.type == 'NumberLimit') {
+        result = 'up to ' + result + "/mth";
+      }
+      return result;
+    }
+
+    function setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable) {
+      highlightElement.width(currentElement.width());
+      highlightElement.height(hostTable.height());
+    }
+
+    function updateCurrentPlanStyle(planStyle) {
+      var style = "."+planStyle;
+      var highlightElement = $(".included-plan-fader");
+      var currentElement = $(style);
+      var hostTable = $('.plans-table table');
+
+      setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable);
+
+      jQuery(window).resize(function() {
+        setCurrentPlanOverlaySize(highlightElement, currentElement, hostTable)
+      });
+    }
+
+    function finishedRenderingPlans() {
+      setTimeout(function () {
+        updateCurrentPlanStyle(vm.currentPlan.preferenceName);
+      });
     }
   }
 })();

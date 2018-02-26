@@ -1,11 +1,13 @@
 'use strict';
 
 var MessagesUtil = require('./../util/messages');
+var Constants = require('./../util/constants');
 var models = require('./../models');
 var Account  = models.Account;
 var filters = require('./../models/filters');
 var contactListService  = require('./contactList');
 var brandColourService  = require('./brandColour');
+var topicsService  = require('./topics');
 var subscriptionPreferencesCosnt  = require('../util/planConstants.js')
 var accountUserService = require('./accountUser');
 var async = require('async');
@@ -13,18 +15,22 @@ var _ = require('lodash');
 var q = require('q');
 
 
-function createNewAccountIfNotExists(params, userId) {
+function createNewAccountIfNotExists(params, userId, isAdmin) {
   let deferred = q.defer();
 
   if (!params.accountName || params.accountName == '') {
     deferred.reject(filters.errors(MessagesUtil.account.empty));
   } else {
-    models.AccountUser.find({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(result) {
-      if (result) {
+    models.AccountUser.count({ where: { UserId: userId, role: "accountManager", owner: true } }).then(function(ownAccounts) {
+      if (ownAccounts >= Constants.maxAccountsAmount) {
         deferred.reject(filters.errors(MessagesUtil.account.accountExists));
       } else {
-        createNewAccount(params, userId).then(function(createResult) {
-          deferred.resolve(createResult);
+        models.AccountUser.find({ where: { UserId: userId, role: { $in: ["facilitator", "accountManager"] } } }).then(function(result) {
+          createNewAccount(params, userId, !result, isAdmin).then(function(createResult) {
+            deferred.resolve(createResult);
+          }, function(error) {
+            deferred.reject(error);
+          });
         }, function(error) {
           deferred.reject(error);
         });
@@ -37,72 +43,113 @@ function createNewAccountIfNotExists(params, userId) {
   return deferred.promise;
 }
 
-function createNewAccount(params, userId) {
+function createNewAccount(params, userId, freeTrial, isAdmin) {
   let deferred = q.defer();
+  let transactionPool = models.sequelize.transactionPool;
+  let tiket = transactionPool.getTiket();
+  transactionPool.once(tiket, () => {
+    let createNewAccountFunctionList = [
+      function (cb) {
+        models.sequelize.transaction().then(function(t) {
+          models.User.find({
+            where: { id: userId },
+            include: [models.AccountUser]
+          }).then(function(result) {
 
-  let createNewAccountFunctionList = [
-    function (cb) {
-      models.sequelize.transaction().then(function(t) {
-        models.User.find({
-          where: { id: userId },
-          include: [models.AccountUser]
-        }).then(function(result) {
+            let createParams = getCreateNewAccountParams(params.accountName, result.email, freeTrial, isAdmin);
 
-          let createParams = getCreateNewAccountParams(params.accountName, result.email, false);
-          if (result.AccountUsers[0]) {
-            createParams.firstName = result.AccountUsers[0].firstName;
-            createParams.lastName = result.AccountUsers[0].lastName;
-            createParams.gender = result.AccountUsers[0].gender;
-          }
-          cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+            models.AccountUser.count({
+              where: {
+               email: result.email,
+               role: "accountManager",
+               owner: true
+              }
+            }).then(function(count) {
+              if(count > 0) {
+                createParams.selectedPlanOnRegistration = 'free_account';
+              }
 
-        }, function(error) {
-          cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+              if (result.AccountUsers[0]) {
+                createParams.firstName = result.AccountUsers[0].firstName;
+                createParams.lastName = result.AccountUsers[0].lastName;
+                createParams.gender = result.AccountUsers[0].gender;
+              }
+
+              cb(null, { params: createParams, user: {id: userId}, transaction: t, errors: {} });
+            });
+          }, function(error) {
+            cb(null, { params: params, transaction: t, errors: filters.errors(error) })
+          });
         });
-      });
-    },
-    create,
-    accountUserService.createAccountManager,
-  ];
+      },
+      create,
+      accountUserService.createAccountManager,
+    ];
 
-  async.waterfall(createNewAccountFunctionList, function(_error, object) {
-    if (_.isEmpty(object.errors)) {
-      object.transaction.commit().then(function() {
-        deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
-      });
-    } else {
-      object.transaction.rollback().then(function() {
-        deferred.reject(object.errors);
-      });
-    }
+    async.waterfall(createNewAccountFunctionList, function(_error, object) {
+      if (_.isEmpty(object.errors)) {
+        object.transaction.commit().then(function() {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.resolve({ data: object.account, message: MessagesUtil.account.created });
+        });
+      } else {
+        object.transaction.rollback().then(function() {
+          transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+          deferred.reject(object.errors);
+        });
+      }
+    });
+
+  })
+  transactionPool.once(transactionPool.timeoutEvent(tiket), () => {
+    callback("Server Timeoute");
   });
+
+  transactionPool.emit(transactionPool.CONSTANTS.nextTick);
 
   return deferred.promise;
 }
 
-function getCreateNewAccountParams(accountName, email, freeTrial) {
-  return {
+function getCreateNewAccountParams(accountName, email, freeTrial, isAdmin) {
+  let res = {
     accountName: accountName,
     firstName: accountName,
     gender: '',
     lastName: accountName,
     email: email,
     active: false,
-    selectedPlanOnRegistration: freeTrial ? 'free_trial' : 'free_account',
+    selectedPlanOnRegistration: freeTrial ? 'free_trial' : null
   };
+
+  if (isAdmin) {
+    res.role = 'admin';
+    res.selectedPlanOnRegistration = null;
+  }
+
+  return res;
 }
 
 function create(object, callback) {
   object.account = {};
   object.errors = object.errors || {};
 
-  Account.create({ name: object.params.accountName, selectedPlanOnRegistration: object.params.selectedPlanOnRegistration }, { transaction: object.transaction }).then(function(result) {
+  Account.create({
+    name: object.params.accountName,
+    selectedPlanOnRegistration: object.params.selectedPlanOnRegistration,
+    admin: object.params.role == "admin",
+    currency: getCorrectCurrency(object.params.currency)
+  }, { transaction: object.transaction }).then(function(result) {
     contactListService.createDefaultLists(result.id, object.transaction).then(function(contactLists) {
       brandColourService.createDefaultForAccount({ accountId: result.id, type: 'focus', name: 'Default Focus Scheme', colours: {} }, object.transaction).then(function() {
         brandColourService.createDefaultForAccount({ accountId: result.id, type: 'forum', name: 'Default Forum Scheme', colours: {} }, object.transaction).then(function() {
-          object.account = result;
-          object.contactLists = contactLists.results;
-          callback(null, object);
+          topicsService.createDefaultForAccount({ accountId: result.id, name: 'Getting Started', boardMessage: Constants.defaultTopic.billboardText }, object.transaction).then(function() {
+            object.account = result;
+            object.contactLists = contactLists.results;
+            callback(null, object);
+          }, function(error) {
+            _.merge(object.errors, filters.errors(error));
+            callback(null, object);
+          });
         }, function(error) {
           _.merge(object.errors, filters.errors(error));
           callback(null, object);
@@ -119,6 +166,11 @@ function create(object, callback) {
     _.merge(object.errors, filters.errors(error));
     callback(null, object);
   });
+}
+
+function getCorrectCurrency(currency) {
+  const valid = Constants.supportedCurrencies.includes(currency);
+  return valid ? currency : undefined;
 }
 
 function updateInstance(account, params, callback) {

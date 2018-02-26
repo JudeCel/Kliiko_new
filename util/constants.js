@@ -9,6 +9,7 @@ module.exports = {
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
   gender: ["", "male", "female"],
+  surveyTypes: {recruiter: "recruiter", sessionContactList: "sessionContactList", sessionPrizeDraw: "sessionPrizeDraw"},
   safeAccountUserParams: [
     'id',
     'firstName',
@@ -28,17 +29,20 @@ module.exports = {
     'comment',
     'phoneCountryData',
     'landlineNumberCountryData',
-    'reveiveNewsLetters'
+    'reveiveNewsLetters',
+    'isRemoved'
   ],
   safeUserParams: [
     'id',
-    'email'
+    'email',
+    'selectedPlanOnRegistration'
   ],
   contactListDefaultFields: [
     "firstName", "lastName", "gender", "email", 'postalAddress',
     "city", "state", "country", "postCode", "companyName",
     "landlineNumber", "mobile"
   ],
+  contactListParticipantsFields: ['Invites', 'Accept', 'NotThisTime', 'NotAtAll', 'NoReply', 'Future', 'LastSession', 'Comments'],
   contactListReqiredFields: [
     "firstName", "lastName", "email"
   ],
@@ -47,10 +51,11 @@ module.exports = {
   ],
   mailTemplateFields: [
     'id', 'name', 'subject', 'content',
-    'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy', 'sessionId'
+    'updatedAt',
+    'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateFieldsForList: [
-    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy', 'sessionId'
+    'id', 'name', 'MailTemplateBaseId', 'AccountId', 'systemMessage', 'isCopy'
   ],
   mailTemplateType : {
     'firstInvitation' : "First Invitation",
@@ -62,9 +67,9 @@ module.exports = {
     'accountManagerConfirmation' : "Account Manager Confirmation",
     'reactivatedAccount' : "Reactivated Account",
     'deactivatedAccount' : "Deactivated Account",
-    'facilitatorConfirmation': "Facilitator Confirmation",
-    'observerInvitation' : "Observer Invitation",
-    'facilitatorOverQuota' : "Facilitator Over-Quota",
+    'facilitatorConfirmation': "Host Confirmation",
+    'observerInvitation' : "Spectator Invitation",
+    'facilitatorOverQuota' : "Host Over-Quota",
     'invitationAcceptance' : "Invitation Acceptance",
     'sessionClosed' : "Session Closed",
     'sessionFull' : "Session Full",
@@ -73,28 +78,72 @@ module.exports = {
     'passwordResetRequest': "Reset Password Request",
     'passwordChangeSuccess': "Change Password Success",
     'registerConfirmationEmail': "Confirmation Email",
-    'registerConfirmationEmailSuccess': "Confirmation Email Success"
+    'registerConfirmationEmailSuccess': "Confirmation Email Success",
+    'emailNotification': 'Email Notification'
+  },
+  externalLinks: {
+    termsOfUse: 'https://cliizii.com/terms-of-use',
+    termsOfUseGuest: 'https://cliizii.com/guest-terms-use',
+    privacyPolicy: 'https://cliizii.com/privacy-policy/',
+    privacyPolicyGuest: 'https://cliizii.com/guest-privacy-policy',
   },
   sessionListManageRoles: {
     accountUser: ['accountManager', 'admin'],
     sessionMember: ['facilitator'],
   },
   accountNameRegExp: ["^[a-zA-Z0-9 ]+$",'i'],
+  restrictedAccountNames: ['chat', 'www', 'focus', 'forum', 'social forum'],
   mobileRegExp: ["^[0-9]+$",'i'],
-  galleryUploadTypes: ['image', 'brandLogo', 'audio', 'youtubeLink', 'text'],
-  dateFormat: 'MM-dd-yyyy',
-  dateFormatWithTime: 'MM-dd-yyyy, HH:mm',
+  dateFormat: 'dd-MM-yyyy',
+  dateFormatWithTime: 'dd-MM-yyyy, HH:mm',
   sessionBuilderSteps: ['setUp', 'facilitatiorAndTopics', 'manageSessionEmails',
     'manageSessionParticipants', 'inviteSessionObservers'],
-  inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired', 'inProgress'],
+  inviteStatuses: ['pending', 'confirmed', 'rejected', 'notThisTime', 'notAtAll', 'expired', 'inProgress', 'sessionFull'],
+  inviteEmailStatuses: ['waiting', 'sent', 'failed'],
   sessionBuilderEmails: ['firstInvitation', 'confirmation', 'generic', 'notThisTime', 'notAtAll', 'closeSession'],
+  sessionMemberNoGender: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: -1 },
   sessionMemberMan: { base: 0, face: 5, body: 5, hair: -1, desk: -1, head: -1 },
   sessionMemberWoman: { base: 0, face: 5, body: -1, hair: -1, desk: -1, head: 2 },
-  validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy'],
+  validRoutePaths : ['invite', 'survey', 'my-dashboard', 'chargebee', 'api', 'unsubscribe', 'terms_of_use', 'privacy_policy', 'contactlist', 'close_session', 'system_requirements'],
   maxSessionsAmount: 1000,
-  membersAllowedCount: {
-    observers: -1,
-    participantsFocus: 8,
-    participantsForum: -1,
-  }
+  maxAccountsAmount: 100,
+  defaultTopic: {
+    billboardText: 'Exciting to see you all here, so let\'s get started! Click on the green button below to view the video on how to use this Chat Room.',
+    video: {
+      focus: {
+        source: 'vimeo',
+        link: '187510116'
+      },
+      forum: {
+        source: 'vimeo',
+        link: '187585089'
+      },
+      socialForum: {
+        source: 'vimeo',
+        link: '187585089'
+      }
+    }
+  },
+  sessionBuilderValidateChanges: {
+    session: {
+      changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details", "facilitatorId"],
+      notChangableFields: ["type", "anonymous", "participantListId" ]
+    },
+    topic: {
+      listFields: ["order", "landing", "active"],
+      propertyFields: ["name", "boardMessage", "sign"]
+    },
+    mailTemplate: {
+      fields: ["content", "subject"]
+    }
+  },
+  closeSession: {
+    confirmedParticipationMessage: "That\'s great thanks, we\'ll let you know when we have another Chat Session.",
+    declinedParticipationMessage: "Thanks, we\'ll make sure your\'re not asked again.",
+    emailNotSent: "No close session emails sent."
+  },
+  emailNotifications: ['none', 'privateMessages', 'all'],
+  supportedCurrencies: ['USD', 'NZD'],
+  defaultCurrency: 'USD',
+  loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
 }

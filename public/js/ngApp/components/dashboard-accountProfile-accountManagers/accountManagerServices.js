@@ -1,10 +1,10 @@
 (function () {
   'use strict';
   angular.module('KliikoApp').factory('accountManagerServices', accountManagerServices);
-  accountManagerServices.$inject = ['globalSettings', '$q', '$resource', 'dbg'];
+  accountManagerServices.$inject = ['$q', '$resource', 'dbg'];
 
-  function accountManagerServices(globalSettings, $q, $resource, dbg) {
-    var accountManagerRestApi = $resource(globalSettings.restUrl + '/accountManager/:path', null, {
+  function accountManagerServices($q, $resource, dbg) {
+    var accountManagerRestApi = $resource('/accountManager/:path', null, {
       update: { method: 'PUT' },
       deleteAccountUser: { method: 'DELETE', params: { path: 'accountUser' } },
       canAddAccountManager: { method: 'GET', params: { path: 'canAddAccountManager' } }

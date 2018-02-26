@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionBuilderController', SessionBuilderController);
 
-  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil'];
-  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil) {
+  SessionBuilderController.$inject = ['dbg', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices',  '$q', '$window', 'ngProgressFactory', '$rootScope', '$scope', 'chatSessionsServices', 'goToChatroom', 'messagesUtil', '$confirm', 'socket', 'infoMessenger', 'errorMessenger'];
+  function SessionBuilderController(dbg, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices,  $q, $window, ngProgressFactory,  $rootScope, $scope, chatSessionsServices, goToChatroom, messagesUtil, $confirm, socket, infoMessenger, errorMessenger) {
     dbg.log2('#SessionBuilderController started');
 
     var vm = this;
@@ -32,6 +32,8 @@
       initStep().then(function (step) {
         vm.currentStep = step;
       });
+
+      subscribeCannel();
     }, function (error) {
       window.history.back();
       messenger.error(error);
@@ -42,9 +44,13 @@
 
     vm.closeSession = closeSession;
     vm.openSession = openSession;
+    vm.activateSession = activateSession;
     vm.stepsClassIsActive = stepsClassIsActive;
     vm.updateStep = updateStep;
     vm.goToStep = goToStep;
+    vm.goToNextStep = goToNextStep;
+    vm.goToPreviousStep = goToPreviousStep;
+    vm.finishSessionBuilder = finishSessionBuilder;
     vm.goToChat = goToChat;
     vm.canSeeGoToChat = canSeeGoToChat;
     vm.currentPageToDisplay = currentPageToDisplay;
@@ -55,58 +61,197 @@
     vm.finishSelectingMembers = finishSelectingMembers;
     vm.selectParticipantsClickHandle = selectParticipantsClickHandle;
     vm.selectObserversClickHandle = selectObserversClickHandle;
+    vm.isSelectObserverStep = isSelectObserverStep;
+    vm.isSelectParticipantStep = isSelectParticipantStep;
+    vm.isSessionClosed = isSessionClosed;
+    vm.canSendCloseEmail = canSendCloseEmail;
+    vm.canCommentAndRate = canCommentAndRate;
+    vm.canInvite = canInvite;
+    vm.showOkMark = showOkMark;
+
+    var stepNames = ["setUp", "facilitatiorAndTopics", "manageSessionEmails", "manageSessionParticipants", "inviteSessionObservers"];
+
+    var currentState = { };
+    vm.onlineUsers = [];
+    vm.lastOnlineUsersDumpForMessage = [];
+
+    function subscribeCannel() {
+      socket.sessionsBuilderChannel($scope, vm.session.id, function(channel) {
+
+        function syncState(state) {
+          if (state) {
+            currentState = Phoenix.Presence.syncState(currentState, state, onJoin(state), onLeave(state));
+          }
+        }
+
+        function syncDiff(diff) {
+          if (diff) {
+            currentState = Phoenix.Presence.syncDiff(currentState, diff, onJoin(diff), onLeave(diff));
+          }
+        }
+
+        function onJoin(state) {
+          return function(id, current, newPres) {
+            if (!current) {
+             vm.onlineUsers.push(newPres.accountUser);
+             whenNewUserInSessionBuilder();
+            }
+          }
+        }
+
+        function onLeave(state) {
+          return function(id, current, leftPres) {
+            //if current.metas exists than user has other instances opened
+            //https://hexdocs.pm/phoenix/Phoenix.Presence.html
+            if (current.metas.length == 0) {
+              for (var i=0; i<vm.onlineUsers.length; i++) {
+                if (vm.onlineUsers[i].id == current.accountUser.id) {
+                  vm.onlineUsers.splice(i, 1);
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        channel.on("presence_state", function(state) {
+          syncState(state);
+        });
+
+        channel.on("presence_diff", function(diff) {
+          syncDiff(diff);
+        });
+
+        channel.on("session_deleted", function(diff) {
+          $('#sessionDeleted').on('hidden.bs.modal', function() {
+            document.location.href = '/account-hub#/chatSessions';
+          });
+          domServices.modal('sessionDeleted');
+        });
+
+      });
+    }
+
+    function isSameOnlineUsersDumpForMessage(newDump) {
+      return newDump.length == vm.lastOnlineUsersDumpForMessage.length && newDump.every(function(element, index) {
+        return element == vm.lastOnlineUsersDumpForMessage[index];
+      });
+    }
+
+    function whenNewUserInSessionBuilder() {
+      if (vm.onlineUsers.length > 1) {
+        var message = "";
+        var onlineUsersDump = [];
+        for (var i=0; i<vm.onlineUsers.length; i++) {
+          if (message != "") {
+            message += ", ";
+          }
+          message += vm.onlineUsers[i].firstName + " " + vm.onlineUsers[i].lastName;
+          onlineUsersDump.push(vm.onlineUsers[i].id);
+        }
+        onlineUsersDump.sort();
+        if (!isSameOnlineUsersDumpForMessage(onlineUsersDump)) {
+          vm.lastOnlineUsersDumpForMessage = onlineUsersDump;
+          message += " are currently editing this Session";
+          infoMessenger.message(message);
+        }
+      }
+    }
 
     function closeSession() {
-      vm.session.setOpen('closed').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus != 'Pending' && vm.session.sessionData.showStatus != 'Closed') {
+        $confirm({ text: "Do you want to Close this Chat Session? You will be able to send the Close Email to Guests, and make Comments." }).then(function() {
+          vm.session.setOpen('closed').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
     }
 
     function openSession() {
-      vm.session.setOpen('open').then(function(res) {
-      }, function(err) {
-        messenger.error(err);
-      });
+      if (vm.session.sessionData.showStatus == 'Closed') {
+        $confirm({ text: "Do you want to Re-Open this Chat Session?" }).then(function() {
+          vm.session.setOpen('open').then(function(res) {
+            initStep().then(function (step) {
+              vm.currentStep = step;
+            });
+          }, function(err) {
+            messenger.error(err);
+          });
+        });
+      }
+    }
+
+    function goToNextStep() {
+      goToStep(vm.currentStep + 1);
+    }
+
+    function goToPreviousStep() {
+      goToStep(vm.currentStep - 1);
     }
 
     function goToStep(step) {
-      vm.listIgnoring = null;
-      if (!angular.isNumber(step)) {
-        if (step === 'back')  handlePreviousStep();
-        if (step === 'next') handleNextStep();
-        if (step === 'finish') {
-          $state.go('account-hub.chatSessions');
+      if (!vm.session.properties || vm.session.properties.steps[stepNames[step - 1]].enabled) {
+        vm.listIgnoring = null;
+        var routerProgressbar = ngProgressFactory.createInstance();
+        routerProgressbar.start();
+
+        vm.session.goCertainStep(step).then(function(result) {
+          handleStepSwitch(result, step);
+          routerProgressbar.complete();
+        }, function(error) {
+          routerProgressbar.complete();
+          messenger.error(error);
+        });
+      } else {
+        $confirm({ text: vm.session.properties.steps.message, title: null, closeOnly: true, showAsError: false });
+      }
+    }
+
+    function finishSessionBuilder() {
+      $state.go('account-hub.chatSessions');
+    }
+
+    function handleStepSwitch(result, step) {
+      var session = result.data.sessionBuilder;
+       vm.session.steps = session.steps;
+
+      for (var i = vm.currentStep; i < step; i++) {
+        var stepPropertyName = "step" + i;
+        if (session.steps[stepPropertyName].error) {
+          messenger.error(session.steps[stepPropertyName].error);
         }
       }
 
-      function handlePreviousStep() {
-        vm.cantMoveNextStep = false;
-        vm.session.goPreviouseStep().then(function(result) {
-          initStep().then(function (step) {
-            vm.currentStep = step;
-          });
-        }, function(error) {
-          messenger.error(err)
-        }) ;
-      }
+      initStep().then(function(stepNumber) {
+        vm.searchingParticipants = false;
+        vm.searchingObservers = false;
+        vm.currentStep = stepNumber;
+      });
+    }
 
-      function handleNextStep() {
-        var routerProgressbar = ngProgressFactory.createInstance();
-        routerProgressbar.start();
-        vm.session.goNextStep().then(
-          function (res) {
-            initStep().then(function(step) {
-              vm.currentStep = step;
-            });
-            routerProgressbar.complete();
-          },
-          function (err) {
-            routerProgressbar.complete();
-            messenger.error(err)
-          }
-        );
-      }
+    function showOkMark(step) {
+      return isValidStep(step) && isNotActiveStep(step) && isVisited(step);
+    }
+
+    function isValidStep(step) {
+      return vm.session.steps && vm.session.steps[getStepPropertyName(step)].error == null;
+    }
+
+    function isVisited(step) {
+      return vm.session.steps[getStepPropertyName(step)].isVisited;
+    }
+
+    function getStepPropertyName(step) {
+      return "step" + step;
+    }
+
+    function isNotActiveStep(step) {
+      return vm.currentStep && vm.currentStep !== step;
     }
 
     function goToChat(session) {
@@ -181,6 +326,7 @@
         deferred.resolve(3);
       }
       else if (vm.session.sessionData.step == "manageSessionParticipants") {
+        resetParticipantListIfNeed();
         deferred.resolve(4);
       }
       else if (vm.session.sessionData.step == "inviteSessionObservers") {
@@ -203,11 +349,11 @@
       return (vm.currentStep == step);
     }
 
-
     function updateStep(dataObj) {
-        vm.session.updateStep(dataObj).then(null, function (err) {
-            messenger.error(err);
-          }
+      vm.session.updateStep(dataObj, vm.session).then(null,
+        function (err) {
+          errorMessenger.showError(err);
+        }
       );
     }
 
@@ -243,7 +389,7 @@
     function selectParticipantsClickHandle() {
       var id = vm.session.sessionData.participantListId;
       if(id) {
-        vm.listIgnoring = { includes: true, active: { id: id }, ids: [id] };
+        vm.listIgnoring = { include: true, active: { id: id }, ids: [id] };
       }
       else {
         vm.listIgnoring = false;
@@ -262,8 +408,33 @@
       });
     }
 
+    function mapToAccountUser(list){
+      return list.map(function(i) {
+        var copy = angular.copy(i);
+        copy.id = i.accountUserId;
+        return copy;
+      })
+    }
+
+    function resetParticipantListIfNeed() {
+      if(vm.participants.length == 0 && vm.session.sessionData.participantListId != null) {
+        vm.session.updateStep({ participantListId: null }, vm.session).then(function(res) {
+          if (!res.ignored) {
+            vm.session.sessionData.participantListId = null;
+          }
+        }, function (error) {
+          messenger.error(error);
+        });
+      }
+    }
+
+    function addParticipantsFromList(list) {
+      vm.participants = vm.participants.concat(mapToAccountUser(list));
+      vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
+    }
+
     function finishSelectingMembers(activeList) {
-      if(!activeList) {
+      if (!activeList) {
         vm.searchingParticipants = false;
         vm.searchingObservers = false;
         return;
@@ -272,34 +443,32 @@
       var list = builderServices.selectMembers(activeList.id, activeList.members);
 
       if (vm.searchingParticipants) {
-        if(list.length > 0) {
-          if(!vm.session.sessionData.participantListId) {
-            vm.session.sessionData.participantListId = activeList.id;
-            vm.session.updateStep({ participantListId: activeList.id }).then(function(res) {
+        if (list.length > 0) {
+          if (!vm.session.sessionData.participantListId) {
+            vm.session.updateStep({ participantListId: activeList.id }, vm.session).then(function(res) {
+              if (!res.ignored) {
+                vm.session.sessionData.participantListId = activeList.id;
+                addParticipantsFromList(list);
+              }
             }, function (error) {
               messenger.error(error);
             });
+          } else {
+            if (vm.session.sessionData.participantListId == activeList.id) {
+              addParticipantsFromList(list);
+            } else {
+              messenger.error(messagesUtil.sessionBuilder.cantSelect);
+            }
           }
-
-          if(vm.session.sessionData.participantListId == activeList.id) {
-
-            vm.participants = vm.participants.concat(list);
-            vm.participants = builderServices.removeDuplicatesFromArray(vm.participants);
-          }
-          else {
-            messenger.error(messagesUtil.sessionBuilder.cantSelect);
-          }
-
           vm.searchingParticipants = false;
-        }
-        else {
+        } else {
           messenger.error(messagesUtil.sessionBuilder.noContacts);
         }
       }
 
       if (vm.searchingObservers) {
         if(list.length > 0) {
-          vm.observers = vm.observers.concat(list);
+          vm.observers = vm.observers.concat(mapToAccountUser(list));
           vm.observers = builderServices.removeDuplicatesFromArray(vm.observers);
           vm.searchingObservers = false;
         }
@@ -308,6 +477,43 @@
         }
       }
     }
+
+    function isSelectObserverStep() {
+      return vm.session.currentStep == "inviteSessionObservers";
+    }
+
+    function isSelectParticipantStep() {
+      return vm.session.currentStep == "manageSessionParticipants";
+    }
+
+    function isSessionClosed() {
+      return vm.session.sessionData.showStatus == 'Closed';
+    }
+
+    function canInvite() {
+      return !isSessionClosed();
+    }
+
+    function canSendCloseEmail() {
+      return isSelectParticipantStep() && isSessionClosed();
+    }
+
+    function canCommentAndRate() {
+      return isSelectParticipantStep() && isSessionClosed();
+    }
+
+    function activateSession() {
+      if (vm.session.sessionData.isInactive) {
+        vm.session.activateSession().then(function(res) {
+          finishSessionBuilder();
+        }, function(error) {
+          messenger.error(error);
+        });
+      } else {
+        finishSessionBuilder();
+      }
+    }
+
   }
 
 })();

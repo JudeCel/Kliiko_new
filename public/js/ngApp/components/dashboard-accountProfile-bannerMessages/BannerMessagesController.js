@@ -18,28 +18,18 @@
     vm.upload = upload;
     vm.update = update;
     vm.remove = remove;
-    vm.isAdmin = isAdmin;
 
     $scope.$watch(function() {
       return sessionStorage.getItem('bannerType');
     }, function(next, prev) {
-      if(!vm.currentBanner) {
-        vm.currentBanner = next;
-        waitForToken(next);
-      }
-      else if(next != prev) {
+      if(!vm.currentBanner || next != prev) {
         vm.currentBanner = next;
         mapBanners(next);
       }
     });
 
     function init() {
-      if(isAdmin()) {
-        mapBanners();
-      }
-      else {
-        $window.location.href = '/';
-      }
+      mapBanners();
     }
 
     function upload(bannerType) {
@@ -50,6 +40,9 @@
         type: 'image',
         name: bannerType
       };
+      if (!banner.file) {
+        return;
+      }
 
       fileUploader.upload(data).then(function(result) {
         var resource = result.data.resource;
@@ -85,10 +78,6 @@
       });
     }
 
-    function isAdmin() {
-      return accountUser.isAdmin();
-    }
-
     function mapBanners(next) {
       fileUploader.banner().then(function(result) {
         for(var i in result.banners) {
@@ -96,17 +85,6 @@
           vm.file[banner.page] = banner;
         }
       });
-    }
-
-    function waitForToken(next) {
-      setTimeout(function() {
-        if(fileUploader.token) {
-          mapBanners(next);
-        }
-        else {
-          waitForToken(next);
-        }
-      }, 10);
     }
   }
 })();

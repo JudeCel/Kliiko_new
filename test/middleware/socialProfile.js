@@ -43,8 +43,8 @@ describe('Social Profile Middleware', () => {
     }
 
     socialProfileMiddleware.assignProfileData(attrs, {}).then( function(result) {
-      assert.equal(result.firstName, attrs.name.familyName);
-      assert.equal(result.lastName, attrs.name.givenName);
+      assert.equal(result.firstName, attrs.name.givenName);
+      assert.equal(result.lastName, attrs.name.familyName);
       assert.equal(result.email, attrs.emails[0].value);
       assert.equal(result.socialProfile.provider, attrs.provider);
       assert.equal(result.socialProfile.id, attrs.id);

@@ -10,7 +10,9 @@ function userName(fieldName) {
       value = value.replace(/\s\s+/g, '');
     }
 
-    if(!constants.validNameRegExp.test(value) || value.length < 2) {
+    const minNameLength  = 1;
+
+    if(!constants.validNameRegExp.test(value) || value.length < minNameLength) {
       let message = MessagesUtil.models.validations.firstLastName.replace('XXX', _.startCase(fieldName));
       next(message);
     }

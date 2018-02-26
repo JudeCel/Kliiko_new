@@ -4,11 +4,10 @@
   angular.module('KliikoApp').controller('GalleryController', GalleryController);
   angular.module('KliikoApp.Root').controller('GalleryController', GalleryController);
 
-  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil'];
-  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil) {
+  GalleryController.$inject = ['$q', 'dbg', 'GalleryServices', 'domServices', 'messenger', '$sce', 'messagesUtil', '$confirm', 'account', 'planService', 'errorMessenger'];
+  function GalleryController($q, dbg, GalleryServices, domServices, messenger, $sce, messagesUtil, $confirm, accountData, planService, errorMessenger) {
     dbg.log2('#GalleryController started');
     var vm = this;
-
     vm.templatesDir = '/js/ngApp/components/dashboard-resources-gallery/templates/';
     vm.newResource = {};
     vm.resourceList = [];
@@ -16,26 +15,30 @@
     vm.currentList = [];
     vm.currentPage = { page: 'index', viewType: 'panel', viewClass: 'glyphicon glyphicon-th-list', upload: null, filter: null };
     vm.uploadTypes = [
-      { id: 'image',     type: 'image', text: 'Image',      scope: 'collage',   format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { id: 'brandLogo', type: 'image', text: 'Brand Logo', scope: 'brandLogo', format: '.gif, .jpeg, .jpg, .png, .bmp' },
-      { id: 'audio',     type: 'audio', text: 'Audio',      scope: 'collage',   format: '.mpeg, .mp3' },
-      { id: 'pdf',       type: 'file',  text: 'PDF',        scope: 'pdf',       format: '.pdf' },
-      { id: 'video',     type: 'video', text: 'Video',      scope: 'collage',   format: '.oog, .mp4' },
-      { id: 'youtube',   type: 'link',  text: 'Youtube',    scope: 'youtube',   format: 'url' },
-      { id: 'zip',       type: 'file',  text: 'Archive',     scope: 'zip',       format: null },
+      { id: 'image',         type: 'image', text: 'Image',             scope: 'collage',       format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'brandLogo',     type: 'image', text: 'Brand Logo',        scope: 'brandLogo',     format: '.gif, .jpeg, .jpg, .png, .bmp' },
+      { id: 'audio',         type: 'audio', text: 'Audio',             scope: 'collage',       format: '.mpeg, .mp3' },
+      { id: 'pdf',           type: 'file',  text: 'PDF',               scope: 'pdf',           format: '.pdf' },
+      { id: 'video',         type: 'video', text: 'Video',             scope: 'collage',       format: '.oog, .mp4' },
+      { id: 'videoService',  type: 'link',  text: 'Youtube or Vimeo',  scope: 'videoService',  format: 'url' }
     ];
-
-    for(var i in vm.uploadTypes) {
-      var upload = vm.uploadTypes[i];
-      vm.selectionList[upload.id] = [];
+    vm.modalTab = {};
+    vm.pagination = {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 9,
+      items: {}
     }
+
+    resetSelectionList();
 
     vm.init = initController;
     vm.listResources = GalleryServices.listResources;
     vm.removeResources = removeResources;
+    vm.replaceStockResource = replaceStockResource;
     vm.zipResources = zipResources;
     vm.refreshResource = refreshResource;
-    vm.createResource = createResource;
+    vm.createOrReplaceResource = createOrReplaceResource;
     vm.changeView = changeView;
     vm.isTypeOf = isTypeOf;
     vm.getUploadType = getUploadType;
@@ -44,14 +47,28 @@
     vm.removeDependency = removeDependency;
     vm.getResourceFromList = getResourceFromList;
     vm.openUploadModal = openUploadModal;
+    vm.openSelectOrUploadModal = openSelectOrUploadModal;
     vm.openSelectModal = openSelectModal;
     vm.selectAllResources = selectAllResources;
     vm.massAction = massAction;
     vm.filterResources = filterResources;
     vm.getFilterResources = getFilterResources;
-    vm.youtubeUrl = youtubeUrl;
-    vm.normalYoutubeUrl = normalYoutubeUrl;
+    vm.videoServiceUrl = videoServiceUrl;
+    vm.normalVideoServiceUrl = normalVideoServiceUrl;
     vm.resourceUrl = resourceUrl;
+    vm.fileSelected = fileSelected;
+    vm.setModalTab = setModalTab;
+    vm.preloadResources = preloadResources;
+    vm.prepareCurrentPageItems = prepareCurrentPageItems;
+    vm.handleUploadPermission = handleUploadPermission;
+
+    function resetSelectionList(params) {
+      vm.selectionList = {};
+      for(var i in vm.uploadTypes) {
+        var upload = vm.uploadTypes[i];
+        vm.selectionList[upload.id] = [];
+      }
+    }
 
     function initController() {
       vm.currentPage.viewType = sessionStorage.getItem('viewType') || vm.currentPage.viewType;
@@ -77,15 +94,50 @@
       });
     }
 
-    function removeResources(resourceIds) {
-      GalleryServices.removeResources(resourceIds).then(function(result) {
-        result.ids.map(function(deleted) {
-          var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
-          ~removeIndex && vm.resourceList.splice(removeIndex, 1);
-        });
+    function replaceStockResource(resource, parent) {
+      var id = resource.id;
+      var type = null;
+      for (var i=0; i<=parent.types.length; i++ ) {
+        if (parent.types[i].type == resource.type && parent.types[i].scope == resource.scope) {
+          type = parent.types[i];
+          break;
+        }
+      }
+      if (type) {
+        openUploadModal(type, parent, resource);
+      }
+    }
 
-        filterResources(vm.currentPage.filter);
-        messenger.ok(result.message);
+    function removeResources(resourceIds) {
+      GalleryServices.closedSessionResourcesRemoveCheck(resourceIds).then(function(result) {
+        if (result.used_in_closed_session.items.length > 0) {
+          $confirm({ text: result.used_in_closed_session.message }).then(function() {
+            removeResourcesConfirmed(resourceIds);
+          });
+        } else {
+          removeResourcesConfirmed(resourceIds);
+        }
+      }, function(error) {
+        messenger.error(error);
+      });
+    }
+
+    function removeResourcesConfirmed(resourceIds) {
+      GalleryServices.removeResources(resourceIds).then(function(result) {
+        if (result.removed.items.length > 0) {
+          result.removed.items.map(function(deleted) {
+            var removeIndex = vm.resourceList.map(function(resource) { return resource.id; }).indexOf(deleted.id);
+            ~removeIndex && vm.resourceList.splice(removeIndex, 1);
+          });
+          filterResources(vm.currentPage.filter);
+          messenger.ok(result.removed.message);
+        }
+        if (result.not_removed_stock.items.length > 0) {
+          messenger.error(result.not_removed_stock.message);
+        }
+        if (result.not_removed_used.items.length > 0) {
+          messenger.error(result.not_removed_used.message);
+        }
       }, function(error) {
         messenger.error(error);
       });
@@ -99,7 +151,7 @@
         else {
           vm.modalWindowDisabled = true;
           GalleryServices.zipResources(vm.newResource.file, vm.newResource.name).then(function(result) {
-            closeModalAndSetVariables(result);
+            closeModalAndSetVariables(result, false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -123,15 +175,19 @@
       return deferred.promise;
     }
 
-    function createResource() {
+    function createOrReplaceResource() {
+      if (vm.currentPage.canSelect && vm.modalTab.link && vm.newResource.type == 'video') {
+        var type = vm.getUploadType("videoService");
+        vm.newResource.type = type.type;
+        vm.newResource.scope = type.scope;
+      }
       validateResource(function(errors) {
         if(errors) {
           messenger.error(errors);
-        }
-        else {
+        } else {
           vm.modalWindowDisabled = true;
-          GalleryServices.createResource(vm.newResource).then(function(result) {
-            closeModalAndSetVariables(result.data);
+          GalleryServices.createOrReplaceResource(vm.newResource).then(function(result) {
+            closeModalAndSetVariables(result.data, vm.newResource.id ? true : false);
           }, function(error) {
             vm.modalWindowDisabled = false;
             messenger.error(error);
@@ -162,7 +218,7 @@
         audio: resource.type == 'audio' && resource.scope == 'collage',
         video: resource.type == 'video' && resource.scope == 'collage',
         brandLogo: resource.type == 'image' && resource.scope == 'brandLogo',
-        youtube: resource.type == 'link' && resource.scope == 'youtube',
+        videoService: resource.type == 'link' && resource.scope == 'videoService',
         pdf: resource.type == 'file' && resource.scope == 'pdf',
         zip: resource.type == 'file' && resource.scope == 'zip',
       };
@@ -226,17 +282,114 @@
 
     function resourceSelected(resource) {
       setDependency(resource);
-      domServices.modal('selectResource', 'close');
+      if (vm.currentCallback) {
+        domServices.modal('selectOrUploadResource', 'close');
+        vm.currentCallback(resource);
+      } else {
+        domServices.modal('selectResource', 'close');
+      }
     }
 
-    function openUploadModal(current, parent) {
+    function openSelectOrUploadModal(current, parent) {
+      var type = current.type == 'link' ? vm.getUploadType("video") : current;
+      vm.newResource = { type: current.type, scope: current.scope, typeId: type.id };
+      vm.currentPage.upload = current.id;
+      parent.modal.replace = false;
+      parent = parent || { modal: {} };
+      vm.currentModalSet = parent.modal.set;
+      vm.currentDependency = parent.dependency;
+      vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = true;
+      vm.setModalTab('gallery');
+
+      var params = { type:[current.type], scope:[current.scope], stock: true };
+      if (type.type == "video") {
+        var videoServiceType = vm.getUploadType("videoService");
+        params.type.push(videoServiceType.type);
+        params.scope.push(videoServiceType.scope);
+      }
+      vm.pagination.currentPage = 1;
+      preloadResources(params).then(function() {
+        prepareCurrentPageItems();
+        domServices.modal('selectOrUploadResource');
+      });
+    }
+
+    function preloadResources(params) {
+      var deferred = $q.defer();
+
+      vm.listResources(params).then(function(result) {
+        resetSelectionList();
+        vm.resourceList = result.resources;
+        for(var i in result.resources) {
+          var resource = result.resources[i];
+          var resType = vm.getUploadTypeFromResource(resource);
+          vm.selectionList[resType].push(resource);
+        }
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
+    function fileSelected() {
+      if ((!vm.newResource.name || vm.newResource.lastAutopopulatedName == vm.newResource.name) && vm.newResource.file) {
+        vm.newResource.lastAutopopulatedName = vm.newResource.name = vm.newResource.file.name;
+      }
+    }
+
+    function setModalTab(modalTab) {
+      vm.modalTab = {};
+      vm.modalTab[modalTab] = true;
+    }
+
+    function prepareCurrentPageItems() {
+      var items = vm.selectionList[vm.newResource.typeId];
+      if (vm.newResource.typeId == "video") {
+        items = items.concat(vm.selectionList["videoService"]);
+      }
+      if (items.length > 0) {
+        vm.pagination.totalItems = items.length;
+        vm.pagination.items = items.slice(((vm.pagination.currentPage - 1) * vm.pagination.itemsPerPage), ((vm.pagination.currentPage) * vm.pagination.itemsPerPage));
+      } else {
+        vm.pagination.items = {};
+        vm.pagination.totalItems = 0;
+      }
+    }
+
+    function handleUploadPermission(validation) {
+      planService.checkPlanFeatures(validation || 'uploadToGallery').then(function(response) {
+        if(response.error) {
+          errorMessenger.showError(response.error);
+        }
+      });
+    }
+
+    function openUploadModal(current, parent, replaceResource, modalTitle) {
       vm.newResource = { type: current.type, scope: current.scope };
       vm.currentPage.upload = current.id;
+      vm.isReplacingStock = replaceResource && replaceResource.stock;
+      if (replaceResource) {
+        vm.modalTitle = "Replace resource";
+        parent.modal.replace = true;
+        vm.newResource.stock = replaceResource.stock;
+        vm.newResource.name = replaceResource.name;
+        vm.newResource.id = replaceResource.id;
+      } else {
+        vm.modalTitle = "New resource";
+        parent.modal.replace = true;
+      }
+
+      if (modalTitle) {
+        vm.modalTitle = modalTitle;
+      }
+
       domServices.modal('uploadResource');
       parent = parent || { modal: {} };
       vm.currentModalSet = parent.modal.set;
       vm.currentDependency = parent.dependency;
       vm.currentCallback = parent.callback;
+      vm.currentPage.canSelect = false;
     }
 
     function openSelectModal(parent) {
@@ -266,8 +419,7 @@
           default:
 
         }
-      }
-      else {
+      } else {
         messenger.error(messagesUtil.gallery.noResource);
       }
     }
@@ -281,33 +433,45 @@
     function getFilterResources(filter, key) {
       var array = [];
 
-      if(filter) {
-        var upload = getUploadType(filter);
-        for(var i in vm.resourceList) {
+      if (filter == 'stock') {
+        for (var i in vm.resourceList) {
           var resource = vm.resourceList[i];
-          if(resource.type == upload.type && resource.scope == upload.scope) {
-            if(key) {
+          if (resource.stock) {
+            array.push(resource);
+          }
+        }
+      } else if (filter) {
+        var upload = getUploadType(filter);
+        for (var i in vm.resourceList) {
+          var resource = vm.resourceList[i];
+          if (resource.type == upload.type && resource.scope == upload.scope) {
+            if (key) {
               array.push(resource[key]);
-            }
-            else {
+            } else {
               array.push(resource);
             }
           }
         }
-      }
-      else {
+      } else {
         array = vm.resourceList;
       }
 
       return array;
     }
 
-    function normalYoutubeUrl(url) {
-      return 'https://www.youtube.com/watch?v=' + url;
+    function normalVideoServiceUrl(url, source) {
+      return GalleryServices.prepareVideoServiceUrl(url, source);
     }
 
-    function youtubeUrl(url) {
-      return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+    function videoServiceUrl(url, source) {
+      switch (source) {
+        case "youtube":
+          return $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + url);
+        case "vimeo":
+          return $sce.trustAsResourceUrl('https://player.vimeo.com/video/' + url);
+        default:
+          return null;
+      }
     }
 
     function resourceUrl(url) {
@@ -349,15 +513,30 @@
       return !(string && string.length);
     }
 
-    function closeModalAndSetVariables(data) {
+    function closeModalAndSetVariables(data, replace) {
       vm.modalWindowDisabled = false;
-      vm.resourceList.push(data.resource);
-      vm.selectionList[vm.currentPage.upload].push(data.resource);
-      domServices.modal('uploadResource', 'close');
+      if (replace) {
+        for (var i=0; i<vm.resourceList.length; i++) {
+          if (vm.resourceList[i].id == data.resource.id) {
+            vm.resourceList[i] = data.resource;
+            break;
+          }
+        }
+        for (var i=0; i<vm.selectionList[vm.currentPage.upload].length; i++) {
+          if (vm.selectionList[vm.currentPage.upload][i].id == data.resource.id) {
+            vm.selectionList[vm.currentPage.upload][i] = data.resource;
+            break;
+          }
+        }
+      } else {
+        vm.resourceList.push(data.resource);
+        vm.selectionList[vm.currentPage.upload].push(data.resource);
+      }
+      domServices.modal(vm.currentPage.canSelect ? 'selectOrUploadResource' : 'uploadResource', 'close');
       setDependency(data.resource)
       filterResources(vm.currentPage.filter);
       messenger.ok(data.message);
-      if(vm.currentCallback) {
+      if (vm.currentCallback) {
         vm.currentCallback(data.resource);
       }
     }
