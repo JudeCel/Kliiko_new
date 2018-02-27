@@ -1537,83 +1537,120 @@ function sessionMailTemplateExists(sessionId, accountId, templateName) {
   return deferred.promise;
 }
 
+/**
+ * @param {Session} session
+ * @param {number} accountId
+ * @return {Session}
+ */
 function addContactListToSession(session, accountId) {
-  return new Bluebird((resolve, reject) => {
-    if (session) {
-      contactList.create({name: session.name, customFields: [], accountId: accountId}).then(function(cList) {
-        sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id).then(function() {
-          resolve(session);
-        }, function(error) {
-          reject(error);
-        });
-      }, function(error) {
-        if (error.name) {
-          reject(MessagesUtil.session.contactListExists);
-        } else {
-          reject(error);
-        }
-      });
-    } else {
-      reject(MessagesUtil.session.notFound);
-    }
-  });
+  if (!session) {
+    throw MessagesUtil.session.notFound;
+  }
+
+  return contactList.create({ name: _.upperFirst(_.lowerCase(session.publicUid)), customFields: [], accountId: accountId })
+    .then((cList) => {
+      return sessionSurvey.assignContactListToSessionSurveys(cList.id, session.id);
+    })
+    .then(() => {
+      return session;
+    })
+    .catch((error) => {
+      if (error.name) {
+        throw MessagesUtil.session.contactListExists;
+      } else {
+        throw error;
+      }
+    });
 }
 
+/**
+ * @param {number} sessionId
+ * @param {number} accountId
+ * @returns {Promise.<{id: number, publicUid: string}>}
+ */
 function publish(sessionId, accountId) {
-  return new Bluebird((resolve, reject) => {
-    Session.find({
+  return Session
+    .find({
       where: {
         id: sessionId,
         accountId: accountId,
       },
       include: [Account],
-    }).then(function(session) {
-      return addContactListToSession(session, accountId);
-    }).then(function(session) {
-      if (session) {
-        if (session.publicUid) {
-          resolve({ id: session.id, publicUid: session.publicUid });
-        } else {
-          validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
-            .then(function () {
-              // do not need to allocate a new session for admin
-              if (session.Account.admin) {
-                return null;
-              }
-              return SessionService.allocateSession(accountId, session);
-            })
-            .then(function () {
-              generatePublicUid(session, resolve, reject);
-            })
-            .catch(function (reason) {
-              reject(reason);
-            });
-        }
-      } else {
-        reject(MessagesUtil.session.notFound);
+    })
+    .then((session) => {
+      if (!session) {
+        throw MessagesUtil.session.notFound;
       }
-    }).catch(function(error) {
-      reject(error);
-    });
-  });
+      if (session.publicUid) {
+        return { id: session.id, publicUid: session.publicUid };
+      }
 
-  function generatePublicUid(session, resolve, reject) {
-    session.update({ publicUid: uuid.v1() }).then(function(updatedSession) {
-      resolve({ id: updatedSession.id, publicUid: updatedSession.publicUid });
+      return validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
+        .then(() => {
+          // do not need to allocate a new session for admin
+          if (session.Account.admin) {
+            return null;
+          }
+          return SessionService.allocateSession(accountId, session);
+        })
+        .then(() => {
+          return generatePublicUid(session);
+        })
+        .then((updatedSession) => {
+          return addContactListToSession(updatedSession, accountId);
+        })
+        .then(function (updatedSession) {
+          return { id: updatedSession.id, publicUid: updatedSession.publicUid };
+        });
     });
-  }
+}
 
-  function getRelatedInviteAgainTopic(sessionId) {
-    return models.Topic.find({
-      where: {
-        inviteAgain: true
-      },
-      include: [{
-        model: models.SessionTopics,
-        where: {
-          sessionId: sessionId
+/**
+ * @param {object} session
+ * @param {string} session.name
+ * @returns {Promise.<Session>}
+ */
+function generatePublicUid(session) {
+  return generateUniqueSlugFor(session)
+    .then(function (slug) {
+      return session.update({ publicUid: slug });
+    });
+}
+
+/**
+ * That generates <b>root (no numeric suffixes)</b> slug for provided session
+ * @param {{name:String,}} session
+ * @returns {string} resulting slug, <b>uniqueness</b> is not guaranteed
+ */
+function generateBaseSlugFor(session) {
+  return _.kebabCase(session.name);
+}
+
+/**
+ * That generates <b>unique (suffixed if necessary)</b> slug for provided session
+ * @param {{name:String}} session
+ * @returns {Promise.<String,Error>} resulting <b>unique</b> slug
+ */
+function generateUniqueSlugFor(session) {
+  let slug = generateBaseSlugFor(session);
+
+  return Session.findAll({ where: { publicUid: { $like: `${slug}%` } }, raw: true, attributes: ['publicUid'] })
+    .then(function (results) {
+      let slugIndex = Math.max.apply(Math, _.map(results, 'publicUid')
+        .map(RegExp.prototype.exec.bind(/(-(\d+))?$/i))
+        .map(regexResultArray => ~~regexResultArray[2]));
+
+      if (_.isFinite(slugIndex)) { //not infinite
+        if (slugIndex === 0) {
+          //because root slug has no index
+          //examples:
+          //slug: my-test-session   -   slugIndex === 0 //!! in this case we need additional "+1" for index
+          //slug: my-test-session-2 -   slugIndex === 2
+          //slug: my-test-session-3 -   slugIndex === 3
+          slugIndex++;
         }
-      }]
+        slug = `${slug}-${slugIndex + 1}`;
+      }
+      return slug;
     });
-  }
 }
