@@ -11,6 +11,7 @@ var selectPlanRoutes = require('./selectPlan.js');
 var appData = require('../../services/webAppData');
 var middlewareFilters = require('../../middleware/filters');
 var subscriptionService = require('../../services/subscription');
+var vimeoService = require('../../services/vimeoClient.js');
 
 function views_path(action) {
   let views_name_space = 'dashboard/';
@@ -37,8 +38,9 @@ router.get('/landing', function(req, res) {
   if(req.query.id && req.query.state == 'succeeded' ){
     subscriptionService.retrievCheckoutAndUpdateSub(req.query.id)
   }
-
-  res.render(views_path('landing'), { title: 'Landing page' });
+  vimeoService.getUserVideos(function(data) {
+    res.render(views_path('landing'), { title: 'Landing page', videos: data });
+  });
 });
 
 router.get('/tour', function(req, res) {

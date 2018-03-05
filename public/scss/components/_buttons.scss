@@ -25,6 +25,17 @@
   &.btn-green{@include buttonColor($green);}
   &.btn-lightgreen {@include buttonColor($greenLight);}
   &.btn-yellow {@include buttonColor($yellowDarker);}
+  &.btn-full-green{
+    color: white;
+    background-color: $green;
+    border-color: $green !important;
+    &.active,
+    &:hover,
+    &:focus {
+      background-color: #2a8e5e !important;
+      border-color: #2a8e5e !important;
+    }
+  }
 
   &.btn-text-middle {
     font-size: 80%;
@@ -59,11 +70,13 @@
   &:hover,
   &:focus {
     background-color: $colorDarker !important;
+    color: white;
   }
 }
 .btn-header-red {@include headerButtons($red, $redDarker);}
 .btn-header-yellow {@include headerButtons($yellow, $yellowDarker);}
 .btn-header-green{@include headerButtons($greenHeader, $greenDarker);}
+.btn-header-blue{@include headerButtons($blue, $blueHover);}
 
 // DASHBOARD BUTTONS //
 

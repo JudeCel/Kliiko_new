@@ -3,14 +3,13 @@
 <main class="main-welcome">
   <div class="welcome">
     <h1 class="text-gray-dark text-center">Welcome to cliizii!</h1>
-    <h4 class="text-gray-dark text-center">Watch the video to see how it works.</h4>
-
+    <h4 class="text-gray-dark text-center">We're here to help <i class="fa fa-smile-o"></i></h4>
+    
     <div id="play-video">
-      <div id="video-placeholder" class="box-shadow border-yellow">
-        <div class="play-btn"></div>
-        <div id="video" style="display: none;">
+      <div id="video-placeholder">
+        <div id="video">
           <div id="player">
-            <iframe src='//player.vimeo.com/video/209699775' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe src='' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
           </div>
         </div>
       </div>
@@ -18,21 +17,58 @@
 
     <div class="row landing-btn-group">
       <div class="col-md-12 form-group">
-        <a class="btn btn-standart btn-green btn-medium pull-right" href="/">
-          Lets Go!
+        <a class="btn btn-standart btn-full-green btn-large btn-go" href="/">
+          Let's Go!
         </a>
       </div>
     </div>
-  </div>
+
+    <div class="thumbnails-container">
+        <div class="navigation-arrow">
+          <i class="left-arrow glyphicon glyphicon-chevron-left"></i> 
+        </div>
+        <div id="thumbnails">
+          <table>
+            <tr>
+              <% videos.forEach(function(video, i) {%>
+                <td class='thumb-preview'>
+                  <img src='<%= video.pictures.sizes[2].link %>' onclick="select('<%=video.uri %>', '<%= i %>')" id="thumb-<%= i %>" />
+                  <label><%= video.name %></label>
+                </td>
+              <% }); %>
+            </tr>
+          </table>
+        </div>
+        <div class="navigation-arrow">
+            <i class="right-arrow glyphicon glyphicon-chevron-right"></i>
+        </div>
+    </div>
 </main>
 
+
 <script>
-  var holder = $('#video-placeholder');
-  holder.click(function() {
-    holder.find('.play-btn').css('display', 'none');
-    holder.find('#video').css('display', 'block');
-    holder.off('click');
-  });
+    function select(video, index) {
+      var src = 'http://player.vimeo.com' + video.replace("videos", "video"),
+          prevThumb = document.getElementsByClassName("active");
+
+      $("#player iframe").attr('src', src);
+      $(prevThumb).removeClass("active");
+      $("#thumb-" + index).addClass('active');
+    }
+
+    function animateScroll(scrollPosition) {
+      $("#thumbnails").animate({scrollLeft: scrollPosition}, 100);
+    }
+
+    $(".left-arrow").click(function () { 
+      animateScroll($('#thumbnails').scrollLeft() - 317);
+    });
+
+    $(".right-arrow").click(function () { 
+      animateScroll($('#thumbnails').scrollLeft() + 317);
+    });
+
+    $("#thumb-0").click();
 </script>
 
 <% include ../footer %>
