@@ -1,7 +1,7 @@
 var Vimeo = require('vimeo').Vimeo;
-var client = new Vimeo('13cab2bd03d6db3f88aff0f0e05f2034f3e6339e',
-                        '52qFDkQNFpS/fnPR+3KWe9n0pvlXnqZHWuGBhk1TzqB14pOCEwDUNKX+nj8+I73FXQKkC8oUCmSuMDlZQVk659tfLEX5uGe8M093f/78r58pmbAYqcmaDLTbRTXzjIQU',
-                        'bcd27d93d62c8acd8adfb7b1c6830516');
+var client = new Vimeo(process.env.VIMEO_CLIENT_ID,
+                        process.env.VIMEO_SECRET,
+                        process.env.VIMEO_ACCESS_TOKEN);
 /*
 {
     "access_token": "bcd27d93d62c8acd8adfb7b1c6830516",
