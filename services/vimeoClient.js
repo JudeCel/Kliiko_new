@@ -20,7 +20,7 @@ module.exports = {
 
 function getUserVideos(callback) {
     client.request({
-        path: '/users/50909844/videos?sort=modified_time',
+        path: '/users/50909844/videos',
         query: {
             //page: 1,
             //per_page: 10,
@@ -29,8 +29,10 @@ function getUserVideos(callback) {
     }, function (error, body, status_code, headers) {
         if (error) {
             console.log('Vimeo error: ', error);
+            callback([]);
         } else {
-            callback(body.data);
+            var sortedList = body.data.sort((a,b) => a.name.localeCompare(b.name, 'en', {numeric: true}));
+            callback(sortedList);
         }
     });
 }
