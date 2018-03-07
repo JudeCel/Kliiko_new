@@ -336,9 +336,9 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
   })(req, res, next)
 }, function() {});
 
-function createUserAndSendEmail(req, res, userParams, renderInfo) {
+function createUserAndSendEmail(req, res, next, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
-    if(error) {
+    if (error) {
       let params = usersRepo.prepareParams(req, error);
       prepareUrlParams(params, req.query);
 
@@ -348,8 +348,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
       }
 
       res.render(renderInfo.failed, params);
-    }
-    else {
+    } else {
       let tplData = {
         title: 'Email Confirmation',
         error: '',
@@ -360,12 +359,17 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
 
       let email = req.body.email;
       emailConfirmation.sendEmailConfirmationToken(email, function (err) {
-        if (err) {
-          tplData.error = 'Failed to send data. Please try later';
+        //keep old render logic for welcome, maybe will need it sometimes
+        if (renderInfo.success == "welcome") {
+          login(req, res, next, result, 0);
         } else {
-          tplData.success = 'Email confirmation sent to ' + email;
+          if (err) {
+            tplData.error = 'Failed to send data. Please try later';
+          } else {
+            tplData.success = 'Email confirmation sent to ' + email;
+          }
+          res.render(renderInfo.success, tplData);
         }
-        res.render(renderInfo.success, tplData);
       });
     };
   });
@@ -373,27 +377,27 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
 
 router.post('/paidPlanRegistration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
-  createUserAndSendEmail(req, res, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
+  createUserAndSendEmail(req, res, next, userParams, { failed: 'paidPlanRegistration', success: 'welcome' });
 });
 
 router.post('/freeTrialRegistration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
   userParams.selectedPlanOnRegistration = 'free_trial';
-  createUserAndSendEmail(req, res, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
+  createUserAndSendEmail(req, res, next, userParams, { failed: 'freeTrialRegistration', success: 'welcome' });
 });
 
 router.post('/registration', function (req, res, next) {
   let userParams = usersRepo.prepareParams(req);
   prepareUrlParams(userParams, req.body);
   if(userParams.currency) {
-    createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+    createUserAndSendEmail(req, res, next, userParams, { failed: 'registration', success: 'welcome' });
   }
   else {
     ipCurrency.get({ ip: req.headers[ 'x-real-ip'] }).then((data) => {
       userParams.currency = data.client;
-      createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+      createUserAndSendEmail(req, res, next, userParams, { failed: 'registration', success: 'welcome' });
     }, () => {
-      createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
+      createUserAndSendEmail(req, res, next, userParams, { failed: 'registration', success: 'welcome' });
     });
   }
 });
@@ -441,17 +445,21 @@ router.route('/VerifyEmail/:token/:accountUserId?')
             tplData.errors.password = "Something is wrong with email confirmation";
             res.render('/login', tplData);
           } else {
-            req.logout();
-            user.increment('signInCount').done(function(result) {
-              req.login(user, function(err) {
-                middlewareFilters.myDashboardPage(req, res, next, accountUserId, true);
-              });
-            });
+            login(req, res, next, user, accountUserId);
           };
         });
       }
     });
   });
+
+function login(req, res, next, user, accountUserId) {
+  req.logout();
+  user.increment('signInCount').done(function(result) {
+    req.login(user, function(err) {
+      middlewareFilters.myDashboardPage(req, res, next, accountUserId, true);
+    });
+  });
+};
 
 router.get('/logout', function (req, res) {
     req.logout();
