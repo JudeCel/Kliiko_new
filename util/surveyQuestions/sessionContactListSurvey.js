@@ -36,7 +36,7 @@ module.exports = {
       model: 'gender',
       name: 'Gender',
       select: true,
-      options: ['male', 'female'],
+      options: ['male', 'female', 'neither'],
       canDisable: true,
       order: 4,
       required: false

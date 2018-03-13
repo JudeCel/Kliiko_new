@@ -8,7 +8,7 @@ module.exports = {
   urlRegExp: /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/,
   systemRoles: ['admin', 'accountManager', 'facilitator', 'observer', 'participant'],
   sessionMemberRoles: ['facilitator', 'observer', 'participant'],
-  gender: ["", "male", "female"],
+  gender: ["", "male", "female", "neither"],
   surveyTypes: {recruiter: "recruiter", sessionContactList: "sessionContactList", sessionPrizeDraw: "sessionPrizeDraw"},
   safeAccountUserParams: [
     'id',

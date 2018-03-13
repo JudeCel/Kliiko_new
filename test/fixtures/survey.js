@@ -80,7 +80,7 @@ var sampleSurvey = {
           "contactDetails":[
             { order: 0, "model": "firstName", "name":"First Name", "input":true },
             { order: 1, "model": "lastName", "name":"Last Name", "input":true },
-            { order: 2, "model": "gender", "name":"Gender", "select":true, "options":[ "male", "female" ] },
+            { order: 2, "model": "gender", "name":"Gender", "select":true, "options":[ "male", "female", "neither" ] },
             { order: 3, "model": "age", "name":"Age", "input":true },
             { order: 4, "model": "email", "name":"Email", "input":true },
             { order: 5, "model": "mobile", "name":"Mobile", "input":true },
