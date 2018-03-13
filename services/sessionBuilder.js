@@ -27,6 +27,7 @@ var helpers = require('./../mailers/helpers');
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
 var contactList = require('./contactList');
+var zapierSubscriptionsNotifier = require('./zapierSubscriptionsNotifier');
 
 var async = require('async');
 var _ = require('lodash');
@@ -1600,9 +1601,33 @@ function publish(sessionId, accountId) {
           return addContactListToSession(updatedSession, accountId);
         })
         .then(function (updatedSession) {
+          notifySubscribersIfNotWrapTopic(updatedSession);
+
           return { id: updatedSession.id, publicUid: updatedSession.publicUid };
         });
     });
+}
+
+function notifySubscribersIfNotWrapTopic(session) {
+  if (session.type !== 'socialForum') {
+    return;
+  }
+
+  let where = {
+    sessionId:  session.id,
+    active: true,
+    landing: true
+  };
+
+  models.SessionTopics.find({where: where}).then((topic) => {
+    if(isNotWrapTopic(topic)) {
+      zapierSubscriptionsNotifier.notify(constants.zapierHookEvents.socialForumCreated);
+    }
+  });
+}
+
+function isNotWrapTopic(topic) {
+  return !topic || topic.name !== constants.wrapTopicName;
 }
 
 /**
