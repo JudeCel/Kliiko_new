@@ -402,6 +402,10 @@ router.post('/login', function(req, res, next) {
   userRoutes.login(req, res, next);
 });
 
+router.post('/auth', function(req, res, next) {
+  userRoutes.auth(req, res, next);
+});
+
 router.get('/login', function (req, res, next) {
   res.render('login', {
     title: 'Login',
