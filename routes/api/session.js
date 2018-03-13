@@ -14,7 +14,9 @@ module.exports = {
   getAllSessionRatings: getAllSessionRatings,
   getSessionByInvite: getSessionByInvite,
   setOpen: setOpen,
-  getSessionSurveyStats: getSessionSurveyStats
+  getSessionSurveyStats: getSessionSurveyStats,
+  getLatestSocialForumSession: getLatestSocialForumSession,
+  getSocialForumSessions: getSocialForumSessions
 };
 
 function setOpen(req, res, next) {
@@ -31,11 +33,29 @@ function comment(req, res, next) {
   );
 }
 
-function get(req, res, next) {
+function get(req, res, next) {  
   sessionServices.findAllSessions(req.currentResources.user.id, req.currentResources.accountUser, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
   );
+}
+
+function getLatestSocialForumSession(req, res, next) {
+  var accountId = req.currentResources.accountUser.AccountId;
+  sessionServices.findLatestSocialForumSession(accountId).then((result) => {
+    res.send(result);
+  }, (error) => {
+    res.status(500).send();
+  });
+}
+
+function getSocialForumSessions(req, res, next) {
+  var accountId = req.currentResources.accountUser.AccountId;
+  sessionServices.findAllSoccialForumSessions(accountId).then((result) => {
+    res.send(result);
+  }, (error) => {
+    res.status(500).send();
+  });
 }
 
 function getAllSessionRatings(req, res, next) {

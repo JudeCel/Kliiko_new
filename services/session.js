@@ -56,7 +56,9 @@ module.exports = {
   checkSessionByPublicUid: checkSessionByPublicUid,
   allocateSession: allocateSession,
   deallocateSession: deallocateSession,
-  setOpen: setOpen
+  setOpen: setOpen,
+  findLatestSocialForumSession: findLatestSocialForumSession,
+  findAllSoccialForumSessions: findAllSoccialForumSessions
 };
 
 function isInviteSessionInvalid(resp) {
@@ -258,6 +260,51 @@ function findAllSessions(userId, accountUser, account) {
 
   return deferred.promise;
 };
+
+function findLatestSocialForumSession(accountId) {
+  return new Bluebird((resolve, reject) => {
+    Session.find(getSocialForumQuery(accountId)).then((session) => { 
+      resolve(prepareSocialForumData(session));
+    }, (error) => { 
+        reject(error); 
+      });
+  });
+}
+
+function findAllSoccialForumSessions(accountId) {
+  return new Bluebird((resolve, reject) => {
+    Session.findAll(getSocialForumQuery(accountId)).then((result) => { 
+      var sessions = _.map(result, (item) => {
+        return prepareSocialForumData(item);
+      });
+      resolve(sessions);
+    }, (error) => { reject(error); });
+  });
+}
+
+function getSocialForumQuery(accountId) {
+  let where = {
+    accountId: accountId,
+    type: 'socialForum'
+  };
+
+  return {
+    where: where,
+    order: [[ 'createdAt', 'DESC' ]]
+  };
+}
+
+function prepareSocialForumData(session) {
+  return {
+    name: session.name, 
+    id: session.id, 
+    guestUrl: getSocialForumGuestUrl(session)
+  }
+}
+
+function getSocialForumGuestUrl(session) {
+  return urlHeplers.getBaseUrl() + '/session/' + session.publicUid;
+}
 
 function getAllSessionRatings() {
   let deferred = q.defer();

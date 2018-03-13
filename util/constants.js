@@ -146,5 +146,11 @@ module.exports = {
   supportedCurrencies: ['USD', 'NZD'],
   defaultCurrency: 'USD',
   supportedPlanPeriods: ['monthly', 'annual'],
-  loadTestSubscriptionId: "IG5rylpQC9iyNsEON" //generate new one if you have problems
+  loadTestSubscriptionId: "IG5rylpQC9iyNsEON", //generate new one if you have problems
+  zapierHookEvents: {
+    socialForumCreated: 'social_forum_created',
+    socialForumWithWrapTopicCreated: 'social_forum_with_wrap_topic_created'
+  },
+  zapierSubscriptionNotFoundError: 'Subscription not found',
+  wrapTopicName: 'It\'s A Wrap'
 }
