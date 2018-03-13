@@ -293,7 +293,8 @@ module.exports = {
     passport: {
       userPasswordMatch: 'Sorry, your Email and Password do not match. Please try again.',
       userNotFound: 'User not found',
-      notConfirmed: 'Your account has not been confirmed, please check your e-mail and follow the link.'
+      notConfirmed: 'Your account has not been confirmed, please check your e-mail and follow the link.',
+      credentialsNotProvided: 'Email or/and password is/are not provided'
     },
     policy: {
       noAccess: 'Access denied to this page!'

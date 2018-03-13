@@ -137,6 +137,7 @@ router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 router.get('/session/surveyStats/:id',  PERMISSIONS.facilitatorManagerAdmin, session.getSessionSurveyStats);
 router.get('/session/soccialForum/getLatestSocialForumSession',  PERMISSIONS.facilitatorManagerAdmin, session.getLatestSocialForumSession);
+router.get('/session/list/soccialForum',  PERMISSIONS.facilitatorManagerAdmin, session.getSocialForumSessions);
 
 // Session Member
 router.post('/sessionMember/comment/:id', PERMISSIONS.facilitatorManagerAdmin, session.comment);
