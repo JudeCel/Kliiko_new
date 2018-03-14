@@ -1,15 +1,45 @@
 <% include header %>
 
-<div class='login-container login-container-wide center-block text-font-family'>
-  <div class='tab-content border-green'>
-    <center><br/><img alt='email' src="/images/email-icon.png"/></center>
-    <h1 class='text-gray-dark text-center'>Confirm your details.</h1>
-    <p class='text-center welcome-page info-message-text'>
-      Thanks for signing up to <%= applicationName %>!<br/>
-      Please check your email for the Confirmation link.<br/>
-      Don't forget to check your spam folder, if you can't see the email.
-    </p>
+<main class="main-welcome">
+  <div class="welcome">
+    <h1 class="text-gray-dark text-center">Welcome to cliizii!</h1>
+    <h4 class="text-gray-dark text-center">We're here to help <i class="fa fa-smile-o"></i></h4>
+    
+    <div id="play-video">
+      <div id="video-placeholder" class="box-shadow border-yellow">
+        <div id="video">
+          <div id="player">
+            <iframe src='//player.vimeo.com/video/257834241' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row landing-btn-group">
+      <div class="col-md-12 form-group">
+        <form method="post" id="welcomeForm">
+          <button class="btn btn-standart btn-full-green btn-large btn-go pull-right" type='submit'>
+            Let's Go!
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
+</main>
+<script>
+  var holder = $('#video-placeholder');
+  holder.click(function() {
+    holder.find('.play-btn').css('display', 'none');
+    holder.find('#video').css('display', 'block');
+    holder.off('click');
+  });
+</script>
 
 <% include footer %>
+
+<% include _notConfirmedEmailDialogModal %>
+
+<% if(isConfirmed == false) {%>
+  <script type='text/javascript'>
+    $('#notConfirmedEmailDialogModal').modal('show');
+  </script>
+<% } %>
