@@ -4,7 +4,8 @@ let zapierSubscriptionService = require('./../../services/zapierSubscription');
 let constants = require('../../util/constants');
 
 function subscribe(req, res, next) {
-  zapierSubscriptionService.subscribe(req.body.event, req.body.targetUrl, req.currentResources.account.id)
+  let accountId = req.currentResources.accountUser.AccountId;
+  zapierSubscriptionService.subscribe(req.body.event, req.body.targetUrl, accountId)
   .then((subscription) => {
     res.send({ subscription: subscription })
   }, (error) => {
