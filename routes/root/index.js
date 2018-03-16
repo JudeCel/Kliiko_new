@@ -209,8 +209,6 @@ function replaceToString(value) {
 }
 
 router.get('/welcome', function (req, res, next) {
-  console.log('\n\nWELCOME');
-  console.log('session: ', req.session);
   loadWelcomePage(req, res, true, null);
 });
 
@@ -379,9 +377,6 @@ router.get("/auth/googlePaiedPlanRegistration", function (req, res, next) {
 function createUserAndSendEmail(req, res, userParams, renderInfo) {
   usersRepo.create(userParams, function(error, result) {
     if(error) {
-      //TODO: remove after debug
-      console.log('ERROR: ', error);
-
       let params = usersRepo.prepareParams(req, error);
       prepareUrlParams(params, req.query);
 
@@ -410,14 +405,8 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
         }
         //res.render(renderInfo.success, tplData);
 
-        //TODO: remove after debug
-        console.log('SESSION: ', req.session);
         req.session.email = tplData.email; 
-        //TODO: remove after debug
-        console.log("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        res.locals.email = tplData.email;
-        console.log('EMAIL: ', res.locals);
-        res.redirect('/welcome');
+        res.redirect('/welcome')
       });
     };
   });
@@ -435,23 +424,16 @@ router.post('/freeTrialRegistration', function (req, res, next) {
 });
 
 router.post('/registration', function (req, res, next) {
-  console.log('POST REGISTRATION');
   let userParams = usersRepo.prepareParams(req);
   prepareUrlParams(userParams, req.body);
   if(userParams.currency) {
-    //TODO: remove after debug
-    console.log('HAS CURRENCY: ', userParams.currency);
     createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
   }
   else {
     ipCurrency.get({ ip: req.headers[ 'x-real-ip'] }).then((data) => {
       userParams.currency = data.client;
-      //TODO: remove after debug
-      console.log('FOUND CURRENCY: ', data.client);
       createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
     }, () => {
-      //TODO: remove after debug
-      console.log('NO CURRENCY');
       createUserAndSendEmail(req, res, userParams, { failed: 'registration', success: 'welcome' });
     });
   }

@@ -46,8 +46,7 @@ app.use(session({
 
 app.use(setUpQueue);
 app.use(flash());
-//TODO: uncomment after debug
-// app.use(winstonMiddleware.logger())
+app.use(winstonMiddleware.logger())
 
 var api = require('./routes/api/index');
 var apiPublic = require('./routes/api/public');
