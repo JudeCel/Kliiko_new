@@ -19,7 +19,8 @@ module.exports = (Sequelize, DataTypes) => {
     rating: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0, max: 5 } },
     closeEmailSent: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     typeOfCreation: { type: DataTypes.ENUM, allowNull: false, values: ['system', 'invite'], defaultValue: 'invite'},
-    ghost: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    ghost: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    device: { type: DataTypes.STRING, allowNull: true, defaultValue: null }
   }, {
     indexes: [
       { fields: ['sessionId'] },
