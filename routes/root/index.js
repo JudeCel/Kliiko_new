@@ -401,7 +401,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
         if (err) {
           tplData.error = 'Failed to send data. Please try later';
         } else {
-          tplData.success = 'Email confirmation sent to ' + email;
+          tplData.success = 'Email confirmation sent to ' + tplData.email;
         }
         //res.render(renderInfo.success, tplData);
 
