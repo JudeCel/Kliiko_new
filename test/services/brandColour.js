@@ -168,7 +168,7 @@ describe('SERVICE - BrandColour', function() {
           })
           .catch(function (error) {
             try {
-              assert.deepEqual(error, 'You have reached limit for Brand Logo And Custom Colorss (max: 1)');
+              assert.deepEqual(error, 'You have reached limit for Brand Logo And Custom Colors (max: 1)');
               done();
             } catch (e) {
               done(e);

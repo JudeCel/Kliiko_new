@@ -8,6 +8,7 @@ var User = require('./../models').User;
 var AccountUser = require('./../models').AccountUser;
 var uuid = require('node-uuid');
 var mailers = require('../mailers');
+const Bluebird = require('bluebird');
 
 function sendEmailConfirmationToken(email, callback) {
   async.waterfall([
@@ -46,6 +47,38 @@ function sendEmailAccountConfirmationToken(email, accountUserId, callback) {
       }
     }
   ], callback);
+}
+
+function isConfirmed(email, callback) {
+  return new Bluebird(function (resolve, reject) {
+      User.find({
+        where: {
+          email: email
+        },
+        attributes: ['id', 'confirmedAt', 'email', 'confirmationToken']
+      }).then((user) => {
+        if(user != null && user.confirmedAt != null) { 
+          AccountUser.find({
+            where: {
+              UserId: user.id
+            },
+            attributes: ['UserId', 'AccountId']
+          }).then((userAccount)=> {
+            resolve({
+              isConfirmed: true, 
+              token: user.confirmationToken,
+              accountId: userAccount.AccountId
+            })
+          }, (error) => {
+            reject(error);
+          });
+        } else {
+          resolve({isConfirmed: false})
+        }
+      }, (error) => {
+        reject(error);
+      })
+  });
 }
 
 function getUserByToken(token, callback) {
@@ -153,5 +186,6 @@ module.exports = {
   sendEmailConfirmationToken: sendEmailConfirmationToken,
   getEmailConfirmationByToken: getEmailConfirmationByToken,
   checkTokenExpired: checkTokenExpired,
-  sendEmailAccountConfirmationToken
+  sendEmailAccountConfirmationToken: sendEmailAccountConfirmationToken,
+  isConfirmed: isConfirmed
 }

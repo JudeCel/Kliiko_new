@@ -43,7 +43,11 @@ function unique(sequelize, model, fieldName, otherValue) {
 
       sequelize.models[model].find({ where: where }).then(function(result) {
         if(result) {
-          next(_.startCase(fieldName) + ' must be unique');
+          let errorMsg = _.startCase(fieldName) + ' must be unique';
+          if (model === 'Session' && fieldName === "name") {
+            errorMsg = 'This name already exists. Please give it a unique name.';
+          }
+          next(errorMsg);
         }
         else {
           next();

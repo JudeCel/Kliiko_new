@@ -13,7 +13,8 @@ module.exports = (Sequelize, DataTypes) => {
     participantListId: { type: DataTypes.INTEGER, allowNull: true  },
     brandProjectPreferenceId: { type: DataTypes.INTEGER, allowNull: true  },
     name: { type: DataTypes.STRING, allowNull: false,  defaultValue: '', validate: {
-      isLength: validations.length('name', { max: 40 })
+      isLength: validations.length('name', { max: 40 }),
+      isUnique: validations.unique(Sequelize, 'Session', 'name', { accountContext: true }),
     } },
     startTime: { type: DataTypes.DATE, allowNull: true, validate: { isValid: validateDate } },
     endTime: { type: DataTypes.DATE, allowNull: true, validate: { isValid: validateDate }  },

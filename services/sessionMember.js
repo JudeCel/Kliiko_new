@@ -195,13 +195,21 @@ function processSessionMember(accountUser, sessionMember, session, params, defer
 }
 
 function getAvatarData(gender) {
-  if (gender == 'male') {
-    return constants.sessionMemberMan;
-  } else if (gender == 'female') {
-    return constants.sessionMemberWoman;
-  } else {
-    return constants.sessionMemberNoGender;
+  let data;
+  switch (gender) {
+    case 'male':
+      data = constants.sessionMemberMan;
+      break;
+    case 'female':
+      data = constants.sessionMemberWoman;
+      break;
+    case 'neither':
+    default:
+      data = constants.sessionMemberNoGender;
+      break;
   }
+
+  return data;
 }
 
 function updateHelper(deferred, params, sessionMember) {
