@@ -59,7 +59,7 @@ function create(plan) {
         deferred.reject(filters.errors(error));
       });
   } else {
-    deferred.reject('Can\'t find plan in constants!');
+    deferred.reject(`Can\'t find plan in constants: [${plan.id}]!`);
   }
 
   return deferred.promise;

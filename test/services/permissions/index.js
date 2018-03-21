@@ -46,7 +46,7 @@ describe('SERVICE - permissions', () => {
         });
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, false)});
         it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, true)});
-        it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
+        it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, true)});
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, false)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, false)});
         it("canSeeFreeTrialWarning", () => {assert.equal(permisssions.canSeeFreeTrialWarning, false)});
@@ -74,12 +74,12 @@ describe('SERVICE - permissions', () => {
 
         it("canAccountDatabase", () => {assert.equal(permisssions.canAccountDatabase, false)});
         it("canAccountManagers", () => {assert.equal(permisssions.canAccountManagers, true)});
-        it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, false)});
+        it("canUpgradePlan", () => {assert.equal(permisssions.canUpgradePlan, true)});
         it("canSessionRating", () => {assert.equal(permisssions.canSessionRating, false)});
         it("canSystemMailTemplates", () => {assert.equal(permisssions.canSystemMailTemplates, false)});
         it("canSeeFreeTrialWarning", () => {assert.equal(permisssions.canSeeFreeTrialWarning, true)});
         it("canSmsCredits", () => {assert.equal(permisssions.canSmsCredits, true)});
-        it("canPaymentDetails", () => {assert.equal(permisssions.canPaymentDetails, false)});
+        it("canPaymentDetails", () => {assert.equal(permisssions.canPaymentDetails, true)});
         it("canStockCreateTopics", () => {assert.equal(permisssions.canStockCreateTopics, false)});
         it("canUploadBanners", () => {assert.equal(permisssions.canUploadBanners, false)});
         it("canCreateNewSession", () => {assert.equal(permisssions.canCreateNewSession, true)});

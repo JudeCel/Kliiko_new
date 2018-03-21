@@ -56,6 +56,18 @@ const hasBoughtSessions = (account, accountUser, sub) => {
   return checkRoles(accountUser.role, ['admin']) || (_.some(sub.availableSessions, (s) => moment().isBefore(s.endDate)) || sub.sessionCount > 0);
 };
 
+const canCreateSocialForum = (account, accountUser, sub) => {
+  return checkRoles(accountUser.role, ['admin']) || checkSub(account, accountUser, sub, 'accessKlzziSocialForum');
+};
+
+const canCreateFocus = (account, accountUser, sub) => {
+  return checkRoles(accountUser.role, ['admin']) || checkSub(account, accountUser, sub, 'accessKlzziFocus');
+};
+
+const canCreateForum = (account, accountUser, sub) => {
+  return checkRoles(accountUser.role, ['admin']) || checkSub(account, accountUser, sub, 'accessKlzziForum');
+};
+
 
 const permissionsObject = {
     canAccountDatabase: canAccountDatabase,
@@ -73,8 +85,11 @@ const permissionsObject = {
     canSeeChatSessions: canSeeChatSessions,
     canUploadToGallery: canUploadToGallery,
     hasBoughtSessions: hasBoughtSessions,
-    canAccountProfile: canAccountProfile
-}
+    canAccountProfile: canAccountProfile,
+    canCreateSocialForum: canCreateSocialForum,
+    canCreateFocus: canCreateFocus,
+    canCreateForum: canCreateForum,
+};
 
 const Bluebird = require('bluebird');
 const forAccount = (account, accountUser, sub)  => {

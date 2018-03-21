@@ -8,6 +8,7 @@ var userFixture = require('./../../fixtures/user');
 var subscriptionPlansFixture = require('./../../fixtures/subscriptionPlans');
 var subscriptionServices = require('./../../../services/subscription');
 var testDatabase = require("../../database");
+var constants = require('./../../../util/constants');
 
 var _ = require('lodash');
 var assert = require('chai').assert;
@@ -39,7 +40,7 @@ describe('ROUTE - Chargebee Webhooks', function() {
       return {
         request: function(callback) {
           callback(null, {
-            subscription: { id: params.id, plan_id: 'free_trial_AUD', current_term_end: new Date() },
+            subscription: { id: params.id, plan_id: `free_trial_${constants.defaultCurrency}`, current_term_end: new Date() },
             customer: { id: params.id }
           });
         }
@@ -123,8 +124,13 @@ describe('ROUTE - Chargebee Webhooks', function() {
           creditCard: validCreditCardProvider(),
           updateProvider: updateProvider({ id: testSubscription.subscriptionId, plan_id: testSubscription.planId })
         }
-
-        subscriptionServices.updateSubscription({accountId: testSubscription.accountId, newPlanId: 'essentials_monthly_aud', skipCardCheck: true}, providers).then(function() {
+        let params = {
+          accountId: testSubscription.accountId,
+          newPlanId: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`,
+          skipCardCheck: true,
+          resources: { sessionCount: 1 },
+        };
+        subscriptionServices.updateSubscription(params, providers).then(function() {
           chargebeeRoutes.endPoint(reqObject(testSubscription.subscriptionId), resObject(200, done));
         });
       });

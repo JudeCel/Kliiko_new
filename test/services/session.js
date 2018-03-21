@@ -139,6 +139,10 @@ describe('SERVICE - Session', function() {
     describe('#setOpen)', function(done) {
       describe('happy path', function(done) {
         it('should open', function(done) {
+          // there is the open session
+          // close the existing open session
+          sessionServices.setOpen(testData.session.id, false, testData.session.accountId).then(function() {
+            //try to open it
           sessionServices.setOpen(testData.session.id, true, testData.session.accountId).then(function(result) {
             assert.deepEqual(result, { data: { status: "open", showStatus: "Pending" } });
             models.Session.find({ where: { id: testData.session.id } }).then(function(session) {
@@ -150,9 +154,14 @@ describe('SERVICE - Session', function() {
           }, function(error) {
             done(error);
           });
+        }, function(error) {
+          done(error);
+        });
         });
 
         it('should close', function(done) {
+          // there is the open session
+          // try to close it
           sessionServices.setOpen(testData.session.id, false, testData.session.accountId).then(function(result) {
             assert.deepEqual(result, { data: { status: "closed", showStatus: "Closed" } });
             models.Session.find({ where: { id: testData.session.id } }).then(function(session) {

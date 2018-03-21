@@ -194,7 +194,8 @@ function findSession(id, accountId) {
     where: {
       id: id,
       accountId: accountId
-    }
+    },
+    include: [{ model: models.Account }],
   }).then(function(session) {
     if (session) {
       deferred.resolve(session);
@@ -302,7 +303,16 @@ function doUpdate(originalSession, params) {
       return validators.planAllowsToDoIt(originalSession.accountId, permissions);
     }).then(function() {
       let count = isSessionChangedToActive(params) ? 1 : 0;
-      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
+      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id })
+        .then(function () {
+          // do not need to allocate a new session for admin
+          if (originalSession.Account.admin) {
+            return null;
+          }
+          return count === 0
+            ? SessionService.deallocateSession(originalSession.accountId, originalSession)
+            : SessionService.allocateSession(originalSession.accountId, originalSession);
+        });
     }).then(function() {
       if (params["status"] && params["status"] != originalSession.status) {
         if (params["status"] == "open") {
@@ -1137,6 +1147,7 @@ function step2Queries(session, step) {
         order: '"SessionTopics.order" ASC, "SessionTopics.topicId" ASC',
         include: [{
           model: models.SessionTopics,
+          include: [{ model: models.Topic }],
           where: {
             sessionId: session.id
           }

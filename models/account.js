@@ -9,7 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     selectedPlanOnRegistration: {type: DataTypes.STRING, allowNull: true },
     admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     subdomain: {type: DataTypes.STRING, allowNull: false},
-    currency: {type: DataTypes.STRING, allowNull: false, defaultValue: 'AUD'},
+    currency: {type: DataTypes.STRING, allowNull: false, defaultValue: constants.defaultCurrency},
     name: {type: DataTypes.STRING, allowNull: false,
       set: function(val) {
         this.setDataValue('name', val)
