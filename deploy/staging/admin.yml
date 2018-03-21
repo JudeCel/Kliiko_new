@@ -105,7 +105,7 @@ spec:
         - name: COOKIE_SECRET
           value: "384ea4460f93543b5df82b039ff9da764bfd6393e16dd0913dfaf91b380baa409ed7587865b76d8cb2ac70bd5a7db538280778ac6bc2c73b737709e5ef7df98e"
         - name: CHARGEBEE_SITE
-          value: "kliikotst"
+          value: "cliizii"
         - name: CHARGEBEE_API_KEY
           value: "live_0NcdNIGs7shJK60fOa91BVhFOBmxKwl6h"
         - name: TWILIO_ACCOUNT_SID
