@@ -247,7 +247,9 @@ function loadWelcomePage(req, res, isConfirmed, error) {
 }
 
 router.post('/resendEmail', function(req, res, next) {
-  emailConfirmation.sendEmailConfirmationToken(req.session.email);
+  emailConfirmation.sendEmailConfirmationToken(req.session.email, function (err) {
+    res.status(err ? 500 : 200).send({});
+  });
 });
 
 router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
@@ -405,7 +407,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
         }
         //res.render(renderInfo.success, tplData);
 
-        req.session.email = tplData.email; 
+        req.session.email = tplData.email;
         res.redirect('/welcome')
       });
     };
