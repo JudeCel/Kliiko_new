@@ -163,12 +163,16 @@ function prepareUrlParams(parameters, query) {
   }
 }
 
+function prepareViewFormParams(params) {
+      params.showSignUpToNewsletter = process.env.REGISTRATION_SHOW_SIGN_UP_TO_NEWSLETTER !== 'false';
+}
+
 router.get('/registration', function (req, res, next) {
   let params = getParams(req);
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
-
   prepareUrlParams(params, req.query);
+  prepareViewFormParams(params);
   params.currency = params.currency || "";
   res.render('registration', params);
 });
