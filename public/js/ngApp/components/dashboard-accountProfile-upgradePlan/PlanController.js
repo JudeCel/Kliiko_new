@@ -98,6 +98,7 @@
       if ($stateParams.step && $stateParams.plan) {
         vm.shouldShowPlan = $stateParams.plan;
         vm.currentStep = parseInt($stateParams.step);
+        vm.stateCurrency = $stateParams.currency;
       }
     };
 
@@ -135,7 +136,7 @@
           messenger.error(result.error);
         }else {
           vm.currencyData = result.currencyData;
-          vm.currentCurrency = vm.currencyData.client;
+          vm.currentCurrency = (vm.stateCurrency || vm.currencyData.client).toUpperCase();
           vm.currencyList = Object.keys(vm.currencyData.rates);
           vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';

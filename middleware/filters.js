@@ -18,8 +18,9 @@ module.exports = {
   myDashboardPage: myDashboardPage
 }
 
-function createPlanSelectRedirectUrl(req, plan) {
-  return subdomains.url(req, req.currentResources.account.subdomain, '/account-hub#/account-profile/upgrade-plan?step=2&plan=' + plan);
+function createPlanSelectRedirectUrl(req, plan, currency) {
+  let uri = `/account-hub#/account-profile/upgrade-plan?step=2&plan=${plan}&currency=${currency}`;
+  return subdomains.url(req, req.currentResources.account.subdomain, uri);
 }
 
 function planSelectPage(req, res, next) {
@@ -40,8 +41,12 @@ function planSelectPage(req, res, next) {
               let freePlans = ["free_account", "free_trial"];
 
               if (response.selectedPlanOnRegistration && !_.includes(freePlans, response.selectedPlanOnRegistration)) {
-                let redirectUrl = createPlanSelectRedirectUrl(req, response.selectedPlanOnRegistration);
-                res.redirect(redirectUrl);
+                models.Account.findById(req.currentResources.account.id)
+                  .then((account) => {
+                    let currency = account.currency;
+                    let redirectUrl = createPlanSelectRedirectUrl(req, account.selectedPlanOnRegistration, currency);
+                    res.redirect(redirectUrl);
+                  });
               } else {
                 next();
               }
