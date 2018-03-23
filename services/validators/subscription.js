@@ -237,6 +237,7 @@ function canAddManager(allowedBySubscription, currentManagerCount) {
 function countMessage(type, maxCount) {
   let message = MessagesUtil.validators.subscription.countLimit;
   message = message.replace('_name_', _.startCase(type));
+  message = message.replace('ss (', 's (');
   message = message.replace('_max_number_', maxCount);
   return message;
 }

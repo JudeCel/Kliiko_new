@@ -20,7 +20,7 @@ module.exports = {
       model: 'gender',
       name: 'Gender',
       select: true,
-      options: ['male', 'female'],
+      options: ['male', 'female', 'neither'],
       order: 2,
       required: true
     },

@@ -24,6 +24,7 @@ var myDashboard = require('./myDashboard');
 let contactList = require('./contactList');
 let contactListUser = require('./contactListUser');
 let sessionMember = require('./sessionMember');
+let zapierSubscription = require('./zapierSubscription');
 module.exports = router;
 
 var PERMISSIONS = {
@@ -135,6 +136,8 @@ router.delete('/session/:id', PERMISSIONS.managerAdmin, session.remove);
 router.post('/session/:id', PERMISSIONS.managerAdmin, session.copy);
 router.put('/session/:id',  PERMISSIONS.facilitatorManagerAdmin, session.setOpen);
 router.get('/session/surveyStats/:id',  PERMISSIONS.facilitatorManagerAdmin, session.getSessionSurveyStats);
+router.get('/session/soccialForum/getLatestSocialForumSession',  PERMISSIONS.facilitatorManagerAdmin, session.getLatestSocialForumSession);
+router.get('/session/list/soccialForum',  PERMISSIONS.facilitatorManagerAdmin, session.getSocialForumSessions);
 
 // Session Member
 router.post('/sessionMember/comment/:id', PERMISSIONS.facilitatorManagerAdmin, session.comment);
@@ -164,3 +167,7 @@ router.post('/sessionBuilder/:id/addSurvey', PERMISSIONS.facilitatorManagerAdmin
 router.post('/sessionBuilder/:id/setSurveyEnabled', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.setSurveyEnabled);
 router.post('/sessionBuilder/:id/publish', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.publish);
 router.post('/sessionBuilder/:id/step/:arg', PERMISSIONS.facilitatorManagerAdmin, sessionBuilder.goToStep);
+
+// Zapier subscriptions
+router.post('/zapierSubscription', PERMISSIONS.facilitatorManagerAdmin, zapierSubscription.subscribe);
+router.delete('/zapierSubscription/:id', PERMISSIONS.facilitatorManagerAdmin, zapierSubscription.unsubscribe);

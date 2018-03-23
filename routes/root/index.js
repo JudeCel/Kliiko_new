@@ -209,7 +209,45 @@ function replaceToString(value) {
 }
 
 router.get('/welcome', function (req, res, next) {
-  res.render('welcome', usersRepo.prepareParams(req));
+  loadWelcomePage(req, res, true, null);
+});
+
+router.post('/welcome', function(req, res, next) {
+  emailConfirmation.isConfirmed(req.session.email).then((response) => {
+    emailConfirmation.checkTokenExpired(response.token, function (err, user) {
+      let accountUserId = response.accountUserId ? parseInt(new Buffer(response.accountUserId, 'base64').toString('ascii')) : null;
+        if(response.isConfirmed) {
+          req.logout();
+          user.increment('signInCount').done(function(result) {
+            req.session.landed = true;
+            req.login(user, function(err) {
+              middlewareFilters.myDashboardPage(req, res, next, accountUserId, false);
+            });
+          });
+        } else {
+          loadWelcomePage(req, res, response.isConfirmed, null);
+        }
+      });
+  }, (error) => {
+    loadWelcomePage(req, res, true, error);
+  });
+});
+
+function loadWelcomePage(req, res, isConfirmed, error) {
+  let tplData = {
+    title: 'Welcome',
+    error: error,
+    success: '',
+    email: req.session.email,
+    isConfirmed: isConfirmed,
+    applicationName: process.env.MAIL_FROM_NAME
+  };
+
+  res.render('welcome', tplData);
+}
+
+router.post('/resendEmail', function(req, res, next) {
+  emailConfirmation.sendEmailConfirmationToken(req.session.email);
 });
 
 router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
@@ -354,18 +392,21 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
         title: 'Email Confirmation',
         error: '',
         success: '',
-        email: '',
+        email: req.body.email,
         applicationName: process.env.MAIL_FROM_NAME
       };
 
-      let email = req.body.email;
-      emailConfirmation.sendEmailConfirmationToken(email, function (err) {
+      //let email = req.body.email;
+      emailConfirmation.sendEmailConfirmationToken(tplData.email, function (err) {
         if (err) {
           tplData.error = 'Failed to send data. Please try later';
         } else {
-          tplData.success = 'Email confirmation sent to ' + email;
+          tplData.success = 'Email confirmation sent to ' + tplData.email;
         }
-        res.render(renderInfo.success, tplData);
+        //res.render(renderInfo.success, tplData);
+
+        req.session.email = tplData.email; 
+        res.redirect('/welcome')
       });
     };
   });
@@ -400,6 +441,10 @@ router.post('/registration', function (req, res, next) {
 
 router.post('/login', function(req, res, next) {
   userRoutes.login(req, res, next);
+});
+
+router.post('/auth', function(req, res, next) {
+  userRoutes.auth(req, res, next);
 });
 
 router.get('/login', function (req, res, next) {
