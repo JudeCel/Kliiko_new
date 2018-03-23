@@ -163,12 +163,16 @@ function prepareUrlParams(parameters, query) {
   }
 }
 
+function prepareViewFormParams(params) {
+      params.showSignUpToNewsletter = process.env.REGISTRATION_SHOW_SIGN_UP_TO_NEWSLETTER !== 'false';
+}
+
 router.get('/registration', function (req, res, next) {
   let params = getParams(req);
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
-
   prepareUrlParams(params, req.query);
+  prepareViewFormParams(params);
   params.currency = params.currency || "";
   res.render('registration', params);
 });
@@ -247,7 +251,9 @@ function loadWelcomePage(req, res, isConfirmed, error) {
 }
 
 router.post('/resendEmail', function(req, res, next) {
-  emailConfirmation.sendEmailConfirmationToken(req.session.email);
+  emailConfirmation.sendEmailConfirmationToken(req.session.email, function (err) {
+    res.status(err ? 500 : 200).send({});
+  });
 });
 
 router.route('/session/:uid').get(ghostUserRoutes.get).post(ghostUserRoutes.post);
@@ -405,7 +411,7 @@ function createUserAndSendEmail(req, res, userParams, renderInfo) {
         }
         //res.render(renderInfo.success, tplData);
 
-        req.session.email = tplData.email; 
+        req.session.email = tplData.email;
         res.redirect('/welcome')
       });
     };

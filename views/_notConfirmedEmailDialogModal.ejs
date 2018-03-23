@@ -3,10 +3,20 @@
     <div class='modal-content border-green border-radius-none'>
       <script type="text/javascript">
         function resend() {
+          var modalContent = $("#notConfirmedEmailDialogModal .modal-content");
+          $(modalContent).find(".btn-resend").prop('disabled', true);
           $.ajax({
             url: "/resendEmail",
             type: "POST"
-          });
+          })
+            .done(function () {
+              var modalBody = $(modalContent).find(".modal-body");
+              $(modalBody).children(":not(.done)").toggle();
+              $(modalBody).children(".done").fadeIn();
+            })
+            .error(function() {
+              $(modalContent).find(".btn-resend").prop('disabled', false);
+            });
         }
       </script>
 
@@ -15,10 +25,15 @@
         <h5 class="text-gray-dark text-center">I've just sent an email to <b><%= email %></b>.</h5>
         <h5 class="text-gray-dark text-center">Please check your inbox, or spam folder, then click on the link within the email.</h5>
         <h5 class="text-gray-dark text-center">Need the Confirmation Email resent ?!</h5>
+
+        <h2 class="text-gray-dark text-center done">Thank you!</h2>
+        <h5 class="text-gray-dark text-center done">Please check your inbox, or spam folder, then click on the link within the email.</h5>
+        <h5 class="text-gray-dark text-center done">We have just resent your confirmation email to <b><%= email %></b>!</h5>
       </div>
       <div class='modal-footer'>
         <button type="button" data-dismiss="modal" class="btn btn-standart btn-green btn-small pull-right btn-ok">OK</button>
         <button type="button" onclick='resend()' class="btn btn-standart btn-red btn-small pull-right btn-resend">Resend Confirmation</button>
       </div>
   </div>
+</div>
 </div>
