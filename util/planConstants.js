@@ -62,15 +62,14 @@ function preferenceName(chargebeePlanId) {
 
 module.exports = {
   // active plans
-  //TODO: TA2061 yearly plans
   free_trial:     plans.trial,
   free_account:   plans.account,
   starter_monthly:  plans.starter,
-  // starter_annual:
+  starter_annual: plans.starter_annual,
   essentials_monthly:  plans.essentials,
-  // essentials_annual:
+  essentials_annual: plans.essentials_annual,
   pro_monthly:  plans.pro,
-  // pro_annual:
+  pro_annual: plans.pro_annual,
 
   // inactive plans
   senior_monthly: plans.senior,
