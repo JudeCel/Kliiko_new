@@ -59,7 +59,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-class='session.rowClass' ng-repeat='session in csc.pagination.sessions | orderBy:csc.orderByField' ng-init="csc.initRowClass(session)">
+          <tr ng-class='session.rowClass' ng-repeat='session in csc.pagination.sessions | orderBy:csc.orderByField' ng-init="csc.initRowClass(session)" ng-click="csc.rowClick($event)" role="presentation">
             <td>
               {{ session.name }}
               <i ng-if='session.name == ""'>untitled</i>

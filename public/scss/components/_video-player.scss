@@ -2,9 +2,9 @@
   width: 50%;
   margin: 0 auto;
   #video-placeholder{
-    width: 100%;
+    width: 570px;
     background-color: white;
-    margin-top: 20px;
+    margin: 20px auto 0 auto;
     cursor: pointer;
 
     .play-btn {
@@ -22,7 +22,7 @@
     }
 
     #video{
-      height: 540px;
+      height: 295px;
       #player {
         height: 100%;
         iframe {
