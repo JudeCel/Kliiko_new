@@ -199,7 +199,6 @@
         vm.selectedRow.classList.remove('row-selected');
       }
       vm.selectedRow = $event.currentTarget;
-      console.log($event.currentTarget);
       vm.selectedRow.classList.add('row-selected');
     }
 
