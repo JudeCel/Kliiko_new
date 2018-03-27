@@ -6,7 +6,7 @@
   <div class="table-content">
     <div class="row table-header" >
       <div class="col-sm-3">Plan</div>
-      <div class="col-sm-3"># Sessions</div>
+      <div class="col-sm-3"># {{up.resourceToSellLbl}}s</div>
       <div class="col-sm-3">Amount Due</div>
       <div class="col-sm-2">Period</div>
     </div>
@@ -21,15 +21,24 @@
       </div>
       <div class="col-sm-3">
         <select
+          ng-if="up.resourceToSell === 'session'"
           class="form-control border-radius-none"
           ng-model="up.sessionCount"
           ng-options="val as val for val in up.possibleNumOfSessions"
           ng-selected="{{val == up.sessionCount}}"
           required>
         </select>
+        <select
+          ng-if="up.resourceToSell === 'brandColor'"
+          class="form-control border-radius-none"
+          ng-model="up.brandColorCount"
+          ng-options="val as val for val in up.possibleNumOfBrandColors"
+          ng-selected="{{val == up.brandColorCount}}"
+          required>
+        </select>
       </div>
       <div class="col-sm-3">
-        {{ (up.selectedPlan.plan.price * up.sessionCount) | price:up.currencySymbols[up.currentCurrency]:0 }}
+        {{ (up.selectedPlan.plan.price * (up.sessionCount || up.brandColorCount)) | price:up.currencySymbols[up.currentCurrency]:0 }}
       </div>
       <div class="col-sm-2">
         1&nbsp;<span class="text-capitalize">{{up.selectedPlan.plan.period_unit}}</span>

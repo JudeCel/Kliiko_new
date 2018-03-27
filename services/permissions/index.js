@@ -56,6 +56,10 @@ const hasBoughtSessions = (account, accountUser, sub) => {
   return checkRoles(accountUser.role, ['admin']) || (_.some(sub.availableSessions, (s) => moment().isBefore(s.endDate)) || sub.sessionCount > 0);
 };
 
+const hasBoughtBrandColors = (account, accountUser, sub) => {
+  return checkRoles(accountUser.role, ['admin']) || sub.brandColorCount > 0;
+};
+
 const canCreateSocialForum = (account, accountUser, sub) => {
   return checkRoles(accountUser.role, ['admin']) || checkSub(account, accountUser, sub, 'accessKlzziSocialForum');
 };

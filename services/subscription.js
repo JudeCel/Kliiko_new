@@ -575,6 +575,7 @@ function gatherInformation(accountId, newPlanId) {
  * @param {string} params.newPlanId
  * @param {object} [params.resources]
  * @param {number} [params.resources.sessionCount]
+ * @param {number} [params.resources.brandColorCount]
  * @param {string} [params.redirectUrl]
  * @param providers
  */
@@ -610,6 +611,7 @@ function updateSubscription(params, providers) {
  * @param {string} params.newPlanId
  * @param {object} [params.resources]
  * @param {number} [params.resources.sessionCount]
+ * @param {number} [params.resources.brandLogoAndCustomColors]
  * @param {string} [params.redirectUrl]
  * @param {object} result
  * @param {string} result.accountName
@@ -629,10 +631,10 @@ function buyMoreSubscriptions(params, result, resources, providers) {
           chargebeeSubParams(accountUser, result.newPlan.chargebeePlanId),
           params.redirectUrlSessionPage,
           providers.viaCheckout
-        )
-          .then(function (hostedPage) {
-            return { hosted_page: hostedPage, redirect: true };
-          });
+        );
+    })
+    .then(function (hostedPage) {
+      return { hosted_page: hostedPage, redirect: true };
     });
 }
 
@@ -750,6 +752,24 @@ function calculateAvailableSessions(subscription, passThruContent) {
 }
 
 /**
+ * @param {object} subscription
+ * @param {object} passThruContent
+ * @return {array}
+ */
+function calculateAvailableBrandColors(subscription, passThruContent) {
+  // check if there were any resource bought previously
+  let availableBrandColors = _.get(subscription.SubscriptionPreference, 'data.availableBrandColors', []);
+  // add additional bought resources
+  let availableBrandColor = _.clone(passThruContent);
+  availableBrandColor.brandColorCount = 1;
+  _.times(passThruContent.brandColorCount, () => {
+    availableBrandColors.push(availableBrandColor);
+  });
+
+  return availableBrandColors;
+}
+
+/**
  *
  * @param {object} passThruContent
  * @param {number} passThruContent.id
@@ -757,6 +777,7 @@ function calculateAvailableSessions(subscription, passThruContent) {
  * @param {string} passThruContent.subscriptionPlanId
  * @param {date} passThruContent.endDate
  * @param {number} passThruContent.sessionCount
+ * @param {number} passThruContent.brandColorCount
  */
 function updateSubscriptionData(passThruContent){
   let deferred = q.defer();
@@ -767,13 +788,18 @@ function updateSubscriptionData(passThruContent){
       let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-      // increase count of additional bought sessions
+      // increase count of additional bought resources
       if (passThruContent.sessionCount) {
         const currentSessionCount = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
         params.sessionCount = currentSessionCount + passThruContent.sessionCount;
       }
+      if (passThruContent.brandColorCount) {
+        const currentBrandColorCount = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.brandColorCount;
+        params.brandColorCount = currentBrandColorCount + passThruContent.brandColorCount;
+      }
       // recalc available sessions
       params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
+      params.availableBrandColors = calculateAvailableBrandColors(subscription, passThruContent);
 
       updatedSub.SubscriptionPreference.update({ data: params })
         .then(function (preference) {
@@ -813,7 +839,9 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
     });
     disableSubDependencies(subscription.accountId, subscriptionId).then(function() {
       if (active) {
+        //TODO: plans
         preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
+        preference.data.brandColorsCount = preference.data.brandColorsCount - chargebeeSub.plan_quantity;
         preference.update({ data: preference.data })
           .then(function() {
             deferred.resolve();
@@ -915,10 +943,11 @@ function chargebeeSubCreateViaCheckout(params, subParams, redirectUrl, provider)
     provider = chargebee.hosted_page.checkout_new;
   }
 
+  //TODO: plans
   const reqBody = {
     subscription: {
       plan_id: params.planId,
-      plan_quantity: params.sessionCount,
+      plan_quantity: params.sessionCount || params.brandColorCount,
     },
     customer: subParams.customer,
     billing_address: subParams.billing_address,
@@ -972,12 +1001,6 @@ function chargebeeSubCreate(params, provider) {
   return deferred.promise;
 }
 
-function chargebeeSubCreateForCustomer(params, subParams, customerId) {
-  let provider = chargebee.subscription.create_for_customer;
-  subParams.plan_quantity = params.sessionCount
-  return provider(customerId, subParams).request();
-}
-
 function subscriptionParams(accountId, chargebeeSub, subscriptionPlanId) {
   return {
     accountId: accountId,
@@ -1003,6 +1026,7 @@ function chargebeePortalParams(subscription, callbackUrl) {
  * @param {object} subscription - subscription object from ChargeBee
  * @param {object} [resources]
  * @param {number} resources.sessionCount
+ * @param {number} resources.brandColorCount
  * @return {{id, subscriptionId, planId: (*|string|chargebeePlanId|{type, allowNull, validate}), subscriptionPlanId, paidSmsCount: (*|number), planSmsCount: (*|number|planSmsCount|{type, allowNull, defaultValue}), oldPriority, accountName, endDate}}
  */
 function chargebeePassParams(result, subscription, resources = {}) {
@@ -1014,6 +1038,7 @@ function chargebeePassParams(result, subscription, resources = {}) {
     paidSmsCount: result.subscription.SubscriptionPreference.data.paidSmsCount,
     planSmsCount: result.subscription.SubscriptionPreference.data.planSmsCount,
     sessionCount: resources.sessionCount,
+    brandColorCount: resources.brandColorCount,
     oldPriority: result.subscription.SubscriptionPlan.priority,
     accountName: result.accountName,
     endDate: getSubscriptionEndDate(subscription)
@@ -1174,6 +1199,7 @@ function validateIfNotCurrentPlan(accountId, newPlan) {
   }
 }
 
+//TODO: may be remove?
 function validateSessionCount(accountId, newPlan) {
   return function(cb) {
     models.Session.count({
