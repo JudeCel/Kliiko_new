@@ -85,16 +85,7 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
         res.redirect(myDashboardUrl);
       }
     } else {
-      // let redirectURL;
-      // const account = selectManager(result.accountManager, result.facilitator, accountUserId);
-      // const subDomain = account.subdomain;
-
-      // if (isBillingRequired(req, forceBilling)) {
       req.session.landed = true;
-      //   redirectURL = subdomains.url(req, subDomain, '/account-hub/landing');
-      // } else {
-      //   redirectURL = myDashboardUrl;
-      // }
       res.redirect(myDashboardUrl);
     }
   }, function(error) {
