@@ -463,7 +463,7 @@ function removeDeactivated(id) {
           }
         }).then((au2) => {
           if (au2) {
-            Bluebird.resolve();
+            return Bluebird.resolve();
           } else {
             return models.ContactListUser.destroy({
               where: {
@@ -498,7 +498,7 @@ function removeDeactivated(id) {
           }
         }).then((au2) => {
           if (au2) {
-            Bluebird.resolve();
+            return Bluebird.resolve();
           } else {
             return models.SocialProfile.destroy({
               where: {
@@ -516,7 +516,7 @@ function removeDeactivated(id) {
       });
 
     } else {
-      Bluebird.resolve();
+      return Bluebird.resolve();
     }
   });
 }
