@@ -263,20 +263,20 @@ function findAllSessions(userId, accountUser, account) {
 
 function findLatestSocialForumSession(userId) {
   return getAccountByOwnerUserId(userId)
-    .then((accountUser) => {
-      let accountId = accountUser.Account.id;
+    .then((account) => {
+      let accountId = account.id;
       return Session.find(getSocialForumQuery(accountId));
     })
     .then((session) => {
-      let sessoinWrapper = session ? prepareSocialForumData(session) : {};
+      let sessionWrapper = session ? prepareSocialForumData(session) : {};
       return sessionWrapper;
     });
 }
 
 function findAllSoccialForumSessions(userId) {
   return getAccountByOwnerUserId(userId)
-    .then((accountUser) => {
-      let accountId = accountUser.Account.id;
+    .then((account) => {
+      let accountId = account.id;
       return Session.find(getSocialForumQuery(accountId));
     })
     .then((result) => {
@@ -316,11 +316,11 @@ function getSocialForumGuestUrl(session) {
 function getAccountByOwnerUserId(userId) {
   let query = {
     where: { owner: true, UserId: userId },
-    includes: [{ model: 'Account' }],
+    include: [{ model: Account }],
     order: [['createdAt', 'DESC']],
   };
   return AccountUser.findOne(query)
-    .then((accountUser) => accountUser.account);
+    .then((accountUser) => accountUser.Account);
 }
 
 function getAllSessionRatings() {
