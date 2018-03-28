@@ -440,6 +440,105 @@ function prepareInfo(info, valueToIncrease, sessionName) {
   return info;
 }
 
+function removeDeactivated(id) {
+  return new Bluebird((resolve, reject) => {
+    models.AccountUser.find({
+      attributes: ['id', 'AccountId', 'UserId'],
+      where: {
+        active: false,
+        id: id
+      }
+    }).then((au) => {
+      if (au) {
+        let r = au.dataValues;
+
+        return models.AccountUser.destroy({
+          where: {
+              id: r.id
+          }
+        }).then(() => {
+          return new Bluebird((resolve2, reject2) => {
+            models.AccountUser.find({
+              attributes: ['id'],
+              where: {
+                AccountId: r.AccountId
+              }
+            }).then((au2) => {
+              if (au2) {
+                resolve2();
+              } else {
+                models.ContactListUser.destroy({
+                  where: {
+                    accountId: r.AccountId
+                  }
+                }).then(() => {
+                  return models.Resource.destroy({
+                    where: {
+                      accountId: r.AccountId
+                    }
+                  })
+                }).then(() => {
+                  return models.Survey.destroy({
+                    where: {
+                      accountId: r.AccountId
+                    }
+                  })
+                }).then(() => {
+                  return models.Account.destroy({
+                    where: {
+                        id: r.AccountId
+                    }
+                  })
+                }).then(() => {
+                  resolve2();
+                }).catch((error) => {
+                  reject2(error);
+                });
+              }
+            });
+          });
+        }).then(() => {
+          return new Bluebird((resolve2, reject2) => {
+            models.AccountUser.find({
+              attributes: ['id'],
+              where: {
+                UserId: r.UserId
+              }
+            }).then((au2) => {
+              if (au2) {
+                resolve2();
+              } else {
+                models.SocialProfile.destroy({
+                  where: {
+                    userId: r.UserId
+                  }
+                }).then(() => {
+                  return models.User.destroy({
+                    where: {
+                        id: r.UserId
+                    }
+                  })
+                }).then(() => {
+                  resolve2();
+                }).catch((error) => {
+                  reject2(error);
+                });
+              }
+            });
+          });
+        });
+
+      } else {
+        resolve();
+      }
+    }).then(() => {
+      resolve();
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
 module.exports = {
   create: create,
   createAccountManager: createAccountManager,
@@ -453,5 +552,6 @@ module.exports = {
   deleteOrRecalculate: deleteOrRecalculate,
   recalculateRole: recalculateRole,
   getPermissions: getPermissions,
-  updateNotInFutureInfo: updateNotInFutureInfo
+  updateNotInFutureInfo: updateNotInFutureInfo,
+  removeDeactivated: removeDeactivated
 }
