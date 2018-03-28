@@ -3,6 +3,7 @@
 var constants = require('../../util/constants');
 var accountDatabaseService = require('../../services/admin/accountDatabase');
 var usersService = require('../../services/users');
+var accountUserService = require('../../services/accountUser');
 var MessagesUtil = require('./../../util/messages');
 
 function get(req, res, next) {
@@ -44,14 +45,21 @@ function update(req, res, next) {
 };
 
 function deleteAccountUser(req, res, next) {
-  usersService.comparePassword(req.currentResources.user.email, req.body.password, function(error, user) {
-    if (error) {
-      res.send({ error: error });
-    } else {
-      //todo:
-      res.send({ });
-    }
-  });
+  if (req.currentResources.user.email == '') {
+    res.send({ error: MessagesUtil.users.passwordNotProvided });
+  } else {
+    usersService.comparePassword(req.currentResources.user.email, req.body.password, function(error, user) {
+      if (error) {
+        res.send({ error: MessagesUtil.users.wrongPassword });
+      } else {
+        accountUserService.removeDeactivated(req.body.accountUserId).then(function (result) {
+          res.send({ });
+        }).catch(function (error) {
+          res.send({ error: error });
+        });
+      }
+    });
+  }
 };
 
 function updateAccountUserComment(req, res, next) {
