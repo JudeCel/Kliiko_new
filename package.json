@@ -33,7 +33,8 @@
     "createInviteAgainTopic": "node ./tasks/createInviteAgainTopic.js",
     "updatePlanName": "node ./tasks/updatePlanName.js",
     "createPlans": "node ./tasks/createPlans.js",
-    "tidyUpDataSessionSurveys": "node ./tasks/sessionSurveys/tidyUpData.js"
+    "tidyUpDataSessionSurveys": "node ./tasks/sessionSurveys/tidyUpData.js",
+    "removeDeactivated": "node ./tasks/removeDeactivated.js"
   },
   "engineStrict": true,
   "engine": {
