@@ -76,7 +76,7 @@
     };
 
     $scope.canDelete = function(isActive, isOwner) {
-      return true || isOwner && !isActive;
+      return isOwner && !isActive;
     };
 
     $scope.submitAddAdminForm = function() {
