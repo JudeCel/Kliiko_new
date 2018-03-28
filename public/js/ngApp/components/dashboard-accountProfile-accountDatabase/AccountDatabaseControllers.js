@@ -75,6 +75,10 @@
       return isActive ? "Deactivate" : "Activate";
     };
 
+    $scope.canDelete = function(accountUser) {
+      return !accountUser.isActive;
+    };
+
     $scope.submitAddAdminForm = function() {
       var params = {email: $scope.modalObject.addAdminForm.email, accountId: $scope.modalObject.account.id}
       AccountDatabaseServices.addAdmin(params).then(function(res) {
@@ -91,6 +95,10 @@
 
     $scope.closeModal = function() {
       domServices.modal('accountDatabaseCommentModal', 1);
+    };
+
+    $scope.deleteAccountUser = function(accountUser) {
+      //todo:
     };
 
     $scope.changeAccountStatus = function(account, user) {
