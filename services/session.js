@@ -261,25 +261,28 @@ function findAllSessions(userId, accountUser, account) {
   return deferred.promise;
 };
 
-function findLatestSocialForumSession(accountId) {
-  return new Bluebird((resolve, reject) => {
-    Session.find(getSocialForumQuery(accountId)).then((session) => { 
-      resolve(prepareSocialForumData(session));
-    }, (error) => { 
-        reject(error); 
-      });
-  });
+function findLatestSocialForumSession(userId) {
+  return getAccountByOwnerUserId(userId)
+    .then((accountUser) => {
+      let accountId = accountUser.Account.id;
+      return Session.find(getSocialForumQuery(accountId));
+    })
+    .then((session) => {
+      let sessoinWrapper = session ? prepareSocialForumData(session) : {};
+      return sessionWrapper;
+    });
 }
 
-function findAllSoccialForumSessions(accountId) {
-  return new Bluebird((resolve, reject) => {
-    Session.findAll(getSocialForumQuery(accountId)).then((result) => { 
-      var sessions = _.map(result, (item) => {
-        return prepareSocialForumData(item);
-      });
-      resolve(sessions);
-    }, (error) => { reject(error); });
-  });
+function findAllSoccialForumSessions(userId) {
+  return getAccountByOwnerUserId(userId)
+    .then((accountUser) => {
+      let accountId = accountUser.Account.id;
+      return Session.find(getSocialForumQuery(accountId));
+    })
+    .then((result) => {
+      let sessions = _.map(result, prepareSocialForumData);
+      return sessions;
+    });
 }
 
 function getSocialForumQuery(accountId) {
@@ -296,14 +299,28 @@ function getSocialForumQuery(accountId) {
 
 function prepareSocialForumData(session) {
   return {
-    name: session.name, 
-    id: session.id, 
+    name: session.name,
+    id: session.id,
     guestUrl: getSocialForumGuestUrl(session)
   }
 }
 
 function getSocialForumGuestUrl(session) {
   return urlHeplers.getBaseUrl() + '/session/' + session.publicUid;
+}
+
+/**
+ * @param {number} userId
+ * @return {Account}
+ */
+function getAccountByOwnerUserId(userId) {
+  let query = {
+    where: { owner: true, UserId: userId },
+    includes: [{ model: 'Account' }],
+    order: [['createdAt', 'DESC']],
+  };
+  return AccountUser.findOne(query)
+    .then((accountUser) => accountUser.account);
 }
 
 function getAllSessionRatings() {
