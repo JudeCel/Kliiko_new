@@ -97,7 +97,14 @@
       domServices.modal('accountDatabaseCommentModal', 1);
     };
 
-    $scope.deleteAccountUser = function(accountUser) {
+    $scope.deleteAccountUser = function(account, user) {
+      if($scope.changeAccountStatusSending) return;
+
+      $scope.changeAccountStatusSending = true;
+      var accountUser = $scope.findRightAccountUser(account, user);
+      var params = { accountUserId: accountUser.id };
+      dbg.log2('#AccountDatabaseController > deleteAccountUser', params);
+
       //todo:
     };
 
