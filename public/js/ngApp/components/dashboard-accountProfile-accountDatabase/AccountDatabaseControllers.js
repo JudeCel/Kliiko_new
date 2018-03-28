@@ -30,7 +30,7 @@
     dbg.log2('#AccountDatabaseController started');
 
     $scope.accounts = [];
-    $scope.modalObject = {addAdminForm: {'email': ""}}
+    $scope.modalObject = {addAdminForm: {'email': ""}, deleteForm: {'password': ""}};
 
     init();
 
@@ -75,8 +75,8 @@
       return isActive ? "Deactivate" : "Activate";
     };
 
-    $scope.canDelete = function(accountUser) {
-      return !accountUser.isActive;
+    $scope.canDelete = function(isActive, isOwner) {
+      return true || isOwner && !isActive;
     };
 
     $scope.submitAddAdminForm = function() {
@@ -98,15 +98,35 @@
     };
 
     $scope.deleteAccountUser = function(account, user) {
+      $scope.modalObject.account = account;
+      $scope.modalObject.user = user;
+      domServices.modal('deleteModal');
+    };
+
+    $scope.submitDeleteForm = function() {
       if($scope.changeAccountStatusSending) return;
 
       $scope.changeAccountStatusSending = true;
-      var accountUser = $scope.findRightAccountUser(account, user);
-      var params = { accountUserId: accountUser.id };
+      var accountUser = $scope.findRightAccountUser($scope.modalObject.account, $scope.modalObject.user);
+      var params = { accountUserId: accountUser.id, password: $scope.modalObject.deleteForm.password };
       dbg.log2('#AccountDatabaseController > deleteAccountUser', params);
 
-      //todo:
-    };
+      AccountDatabaseServices.deleteAccountUser(params).then(function(res) {
+        $scope.changeAccountStatusSending = false;
+        if (res.error) {
+          messenger.error(res.error);
+        } else {
+          var index = $filter('findPositionById')($scope.modalObject.account, $scope.accounts);
+          if (index > -1) {
+            $scope.accounts.splice(index, 1);
+          }
+          var message = 'Account has been deleted';
+          messenger.ok(message);
+          $scope.modalObject = {};
+          domServices.modal('deleteModal', true);
+        }
+      });
+    }
 
     $scope.changeAccountStatus = function(account, user) {
       if($scope.changeAccountStatusSending) return;

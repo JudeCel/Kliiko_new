@@ -2,6 +2,7 @@
 
 var constants = require('../../util/constants');
 var accountDatabaseService = require('../../services/admin/accountDatabase');
+var usersService = require('../../services/users');
 var MessagesUtil = require('./../../util/messages');
 
 function get(req, res, next) {
@@ -42,6 +43,17 @@ function update(req, res, next) {
   });
 };
 
+function deleteAccountUser(req, res, next) {
+  usersService.comparePassword(req.currentResources.user.email, req.body.password, function(error, user) {
+    if (error) {
+      res.send({ error: error });
+    } else {
+      //todo:
+      res.send({ });
+    }
+  });
+};
+
 function updateAccountUserComment(req, res, next) {
   accountDatabaseService.updateAccountUserComment(req.body).then(function(account) {
     res.send({ account: account, message: MessagesUtil.routes.accountDatabase.success });
@@ -54,6 +66,7 @@ module.exports = {
   get: get,
   updateAccountUserComment: updateAccountUserComment,
   update: update,
+  delete: deleteAccountUser,
   addAdmin: addAdmin,
   removeAdmin: removeAdmin
 };
