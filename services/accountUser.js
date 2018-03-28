@@ -441,101 +441,83 @@ function prepareInfo(info, valueToIncrease, sessionName) {
 }
 
 function removeDeactivated(id) {
-  return new Bluebird((resolve, reject) => {
-    models.AccountUser.find({
-      attributes: ['id', 'AccountId', 'UserId'],
-      where: {
-        active: false,
-        id: id
-      }
-    }).then((au) => {
-      if (au) {
-        let r = au.dataValues;
+  return models.AccountUser.find({
+    attributes: ['id', 'AccountId', 'UserId'],
+    where: {
+      active: false,
+      id: id
+    }
+  }).then((au) => {
+    if (au) {
+      let r = au.dataValues;
 
-        return models.AccountUser.destroy({
+      return models.AccountUser.destroy({
+        where: {
+            id: r.id
+        }
+      }).then(() => {
+        return models.AccountUser.find({
+          attributes: ['id'],
           where: {
-              id: r.id
+            AccountId: r.AccountId
           }
-        }).then(() => {
-          return new Bluebird((resolve2, reject2) => {
-            models.AccountUser.find({
-              attributes: ['id'],
+        }).then((au2) => {
+          if (au2) {
+            Bluebird.resolve();
+          } else {
+            return models.ContactListUser.destroy({
               where: {
-                AccountId: r.AccountId
+                accountId: r.AccountId
               }
-            }).then((au2) => {
-              if (au2) {
-                resolve2();
-              } else {
-                models.ContactListUser.destroy({
-                  where: {
-                    accountId: r.AccountId
-                  }
-                }).then(() => {
-                  return models.Resource.destroy({
-                    where: {
-                      accountId: r.AccountId
-                    }
-                  })
-                }).then(() => {
-                  return models.Survey.destroy({
-                    where: {
-                      accountId: r.AccountId
-                    }
-                  })
-                }).then(() => {
-                  return models.Account.destroy({
-                    where: {
-                        id: r.AccountId
-                    }
-                  })
-                }).then(() => {
-                  resolve2();
-                }).catch((error) => {
-                  reject2(error);
-                });
-              }
+            }).then(() => {
+              return models.Resource.destroy({
+                where: {
+                  accountId: r.AccountId
+                }
+              })
+            }).then(() => {
+              return models.Survey.destroy({
+                where: {
+                  accountId: r.AccountId
+                }
+              })
+            }).then(() => {
+              return models.Account.destroy({
+                where: {
+                    id: r.AccountId
+                }
+              })
             });
-          });
-        }).then(() => {
-          return new Bluebird((resolve2, reject2) => {
-            models.AccountUser.find({
-              attributes: ['id'],
-              where: {
-                UserId: r.UserId
-              }
-            }).then((au2) => {
-              if (au2) {
-                resolve2();
-              } else {
-                models.SocialProfile.destroy({
-                  where: {
-                    userId: r.UserId
-                  }
-                }).then(() => {
-                  return models.User.destroy({
-                    where: {
-                        id: r.UserId
-                    }
-                  })
-                }).then(() => {
-                  resolve2();
-                }).catch((error) => {
-                  reject2(error);
-                });
-              }
-            });
-          });
+          }
         });
+      }).then(() => {
+        return models.AccountUser.find({
+          attributes: ['id'],
+          where: {
+            UserId: r.UserId
+          }
+        }).then((au2) => {
+          if (au2) {
+            Bluebird.resolve();
+          } else {
+            return models.SocialProfile.destroy({
+              where: {
+                userId: r.UserId
+              }
+            }).then(() => {
+              return models.User.destroy({
+                where: {
+                    id: r.UserId
+                }
+              })
+            });
+          }
+        });
+      });
 
-      } else {
-        resolve();
-      }
-    }).then(() => {
-      resolve();
-    }).catch((error) => {
-      reject(error);
-    });
+    } else {
+      Bluebird.resolve();
+    }
   });
 }
 
