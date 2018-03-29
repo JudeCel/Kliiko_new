@@ -29,7 +29,7 @@ var ipCurrency = require('../../lib/ipCurrency');
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 var planConstants = require('./../../util/planConstants');
-
+var InfusionSoft = require('./../../lib/infusionsoft');
 
 router.route('/ics').get(ics.render);
 
@@ -250,6 +250,24 @@ function loadWelcomePage(req, res, isConfirmed, error) {
 
   res.render('welcome', tplData);
 }
+
+/**
+ * Only contacts with paid Infusion tags can access TUTORIAL_PAGE_URL
+ */
+router.get('/tutorials', function (req, res, next) {
+  let email = req.user.email;
+  return InfusionSoft.contact.find({ Email: email })
+    .then((contact) => {
+      let redirectURL = process.env.TUTORIAL_PAGE_URL;
+      let contactId = contact ? contact.Id : '';
+      redirectURL = redirectURL.replace("{ContactId}", contactId).replace("{ContactEmail}", email)
+
+      return res.redirect(redirectURL);
+    })
+    .catch((err) => {
+      return res.redirect('/');
+    });
+});
 
 router.post('/resendEmail', function(req, res, next) {
   emailConfirmation.sendEmailConfirmationToken(req.session.email, function (err) {
