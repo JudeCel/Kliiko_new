@@ -49,7 +49,7 @@
               {{ accountUser.firstName }} {{ accountUser.lastName }}
             </td>
             <td>
-              <button ng-if="accountUser.owner" ng-click='changeAccountStatus(app)'>{{ getActivateDeactivateButtonText(accountUser.active) }}</button>
+              <button ng-if="accountUser.owner" ng-click='changeAccountStatus(account, accountUser)'>{{ getActivateDeactivateButtonText(accountUser.active) }}</button>
             </td>
             <td ng-if="app.accountUser.owner">
               <button ng-if="canDelete(accountUser.active, app.accountUser.owner)" ng-click='deleteAccountUser(account, accountUser)'>Delete</button>
