@@ -788,15 +788,26 @@ function updateSubscriptionData(passThruContent){
       let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
       params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-      // increase count of additional bought resources
-      if (passThruContent.sessionCount) {
-        const currentSessionCount = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
-        params.sessionCount = currentSessionCount + passThruContent.sessionCount;
+      const currentAmountSessions = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
+      // check if user already has infinite amount of resources
+      if (currentAmountSessions === -1) {
+        params.sessionCount = -1;
+      } else {
+        // check if user bought additional amount of resources
+        if (params.sessionCount !== -1) {
+          params.sessionCount = currentAmountSessions + (passThruContent.sessionCount || 0);
+        }
       }
-      if (passThruContent.brandColorCount) {
-        const currentBrandColorCount = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.brandColorCount;
-        params.brandColorCount = currentBrandColorCount + passThruContent.brandColorCount;
+
+      const currentAmountBrandLogoAndCustomColors = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.brandLogoAndCustomColors;
+      if (currentAmountBrandLogoAndCustomColors === -1) {
+        params.brandLogoAndCustomColors = -1;
+      } else {
+        if (params.brandLogoAndCustomColors !== -1) {
+          params.brandLogoAndCustomColors = currentAmountBrandLogoAndCustomColors + (passThruContent.brandColorCount || 0);
+        }
       }
+
       // recalc available sessions
       params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
       params.availableBrandColors = calculateAvailableBrandColors(subscription, passThruContent);
