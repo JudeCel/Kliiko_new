@@ -761,7 +761,7 @@ function calculateAvailableBrandColors(subscription, passThruContent) {
   let availableBrandColors = _.get(subscription.SubscriptionPreference, 'data.availableBrandColors', []);
   // add additional bought resources
   let availableBrandColor = _.clone(passThruContent);
-  availableBrandColor.brandColorCount = 1;
+  availableBrandColor.brandColorCount = passThruContent.brandColorCount ? 1 : 0;
   _.times(passThruContent.brandColorCount, () => {
     availableBrandColors.push(availableBrandColor);
   });
@@ -800,6 +800,9 @@ function updateSubscriptionData(passThruContent){
       }
 
       const currentAmountBrandLogoAndCustomColors = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.brandLogoAndCustomColors;
+      if (subscription.SubscriptionPlan.brandLogoAndCustomColors === 0) {
+        passThruContent.brandColorCount = 0;
+      }
       if (currentAmountBrandLogoAndCustomColors === -1) {
         params.brandLogoAndCustomColors = -1;
       } else {

@@ -277,8 +277,11 @@
         vm.brandColorCount = null;
         vm.resourceToSell = 'session';
         vm.resourceToSellLbl = 'Session';
+        vm.resourceToSellDisabled = false;
       }
       if (vm.selectedPlan.plan.preference.indexOf('_annual') !== -1) {
+        let isStarterAnnualPlan = vm.selectedPlan.plan.preference.indexOf('starter_annual') !== -1;
+        vm.resourceToSellDisabled = !vm.getFeatureValue('brandLogoAndCustomColors', vm.selectedPlan.plan);
         vm.sessionCount = null;
         vm.brandColorCount = 1;
         vm.resourceToSell = 'brandColor';
