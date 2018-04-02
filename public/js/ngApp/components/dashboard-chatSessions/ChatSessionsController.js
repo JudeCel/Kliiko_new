@@ -21,6 +21,7 @@
 
     vm.changePage = changePage;
     vm.initRowClass = initRowClass;
+    vm.rowClick = rowClick;
     vm.hasAccess = hasAccess;
     vm.redirectToChatSession = redirectToChatSession;
     vm.changeOrder = changeOrder;
@@ -39,6 +40,7 @@
     vm.inAction = false;
     vm.reverseSort = false;
     vm.queriedForSessions = false;
+    vm.selectedRow = null;
 
     vm.pagination = {
       totalChatSessions: 0,
@@ -190,6 +192,14 @@
       } else {
         session.rowClass = 'session-' + session.showStatus.toLowerCase();
       }
+    }
+
+    function rowClick($event) {
+      if (vm.selectedRow) {
+        vm.selectedRow.classList.remove('row-selected');
+      }
+      vm.selectedRow = $event.currentTarget;
+      vm.selectedRow.classList.add('row-selected');
     }
 
     function hasAccess(session, accountUserId) {

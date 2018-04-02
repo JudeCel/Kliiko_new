@@ -232,6 +232,8 @@ module.exports = {
   users: {
     agreeTOC: 'You must agree to the Terms & Conditions before Sign up.',
     alreadyChanged: 'Password already changed.',
+    wrongPassword: 'Sorry, your Password do not match. Please try again.',
+    passwordNotProvided: 'Password is not provided',
     dialog: {
       emailExists: "You already have a Role in the system. Please Login.",
       emailExistsCanCreateAccount: "That's great you want your own Account! Because you already have a Role in cliizii, you can login as normal. Then click on My Details, to create a Free Account.",

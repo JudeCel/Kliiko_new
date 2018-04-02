@@ -123,6 +123,7 @@ function prepareErrorMessage(keyError, subscription) {
   let error = MessagesUtil.validators.subscription.error[keyError];
   if (error) {
     let planName = _.startCase(_.lowerCase(subscription.dataValues.planId));
+    planName = planName.replace(new RegExp(constants.supportedCurrencies.join('|'), 'gi'), '');
     let newError = {
       name: "dialog",
       message: error.replace('_planName_', planName),
