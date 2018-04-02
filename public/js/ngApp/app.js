@@ -200,6 +200,7 @@
   function AppController($rootScope, dbg, user, $cookies, $injector, domServices, $scope, sessionExpire) {
     var vm = this;
     vm.openModal = openModal;
+    vm.openWindow = openWindow;
     vm.hasPermissions = hasPermissions
     dbg.log2('#AppController started ');
     $rootScope.$on('app.user', init);
@@ -217,6 +218,14 @@
       setTimeout(function () {
         domServices.modal(id);
       }, 10);
+    }
+
+    function openWindow(url, formatUserData) {
+      if (formatUserData) {
+        window.open(url.replace("{ContactId}", vm.accountUser.id).replace("{ContactEmail}", vm.accountUser.email));
+      } else {
+        window.open(url);
+      }
     }
 
     function hasPermissions(perrmission){

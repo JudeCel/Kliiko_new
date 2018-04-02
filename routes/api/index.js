@@ -57,6 +57,7 @@ router.put('/accountDatabase/:id', PERMISSIONS.admin, accountDatabase.update);
 router.post('/accountDatabase/:id/addAdmin', PERMISSIONS.admin, accountDatabase.addAdmin);
 router.post('/accountDatabase/:id/removeAdmin', PERMISSIONS.admin, accountDatabase.removeAdmin);
 router.put('/accountDatabase/:accountUserId/comment', PERMISSIONS.admin, accountDatabase.updateAccountUserComment);
+router.post('/accountDatabase/:accountUserId/delete', PERMISSIONS.admin, accountDatabase.delete);
 
 router.post('/banners', PERMISSIONS.admin, banners.create);
 router.put('/banners', PERMISSIONS.admin, banners.update);
