@@ -72,7 +72,7 @@ function getResponses(req, res) {
         dateFormat: constants.dateFormat,
         hasOwnAccount: ownAccounts > 0,
         hasRoles: Object.keys(result).length > 0,
-        canCreateNewAccount: ownAccounts < constants.maxAccountsAmount,
+        canCreateNewAccount: false, //ownAccounts < constants.maxAccountsAmount,
         theOnlySessionIsPending: theOnlySessionIsPending,
         theOnlySessionIsClosed: theOnlySessionIsClosed,
         theOnlyPendingSessionTime: theOnlyPendingSessionTime
