@@ -39,5 +39,6 @@ module.exports = {
     "unlimitedTopicChanges": false,
     "recruitNewContactList": false,
     "accessThreeChatRooms": false,
+    "zapierGuestInvitationHistory": false,
   }
 }

@@ -28,6 +28,7 @@ module.exports = (Sequelize, DataTypes) => {
     priority: { type: DataTypes.INTEGER, allowNull: false },
     surveyCount: { type: DataTypes.INTEGER, allowNull: false },
     canBuySms: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    zapierGuestInvitationHistory: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 
     preferenceName: { type: DataTypes.STRING, allowNull: false, defaultValue: '',
       validate: {

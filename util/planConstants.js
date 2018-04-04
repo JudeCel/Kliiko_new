@@ -42,6 +42,7 @@ const mand_keys = [
   "unlimitedTopicChanges",
   "recruitNewContactList",
   "accessThreeChatRooms",
+  "zapierGuestInvitationHistory",
 ].sort();
 
 keys.forEach((plan_key) => {

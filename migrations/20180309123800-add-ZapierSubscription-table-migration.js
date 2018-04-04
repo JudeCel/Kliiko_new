@@ -11,7 +11,9 @@
           id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
           event: { type: Sequelize.ENUM, allowNull: false, values: [
             constants.zapierHookEvents.socialForumCreated, 
-            constants.zapierHookEvents.socialForumWithWrapTopicCreated ] 
+            constants.zapierHookEvents.socialForumWithWrapTopicCreated,
+            constants.zapierHookEvents.guestInvitationHistory,
+           ] 
           },
           targetUrl: { type : Sequelize.STRING, allowNull: false, validate: { isUrl: true }},
           accountId: { type: Sequelize.INTEGER,  allowNull: false, references: { model: 'Accounts', key: 'id' }},

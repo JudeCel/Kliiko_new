@@ -19,6 +19,7 @@ var mailTemplates = require('./mailTemplate');
 let topic = require('./topic');
 var brandColour = require('./brandColour');
 var session = require('./session');
+var invite = require('./invite');
 var sessionBuilder = require('./sessionBuilder');
 var myDashboard = require('./myDashboard');
 let contactList = require('./contactList');
@@ -114,6 +115,9 @@ router.post('/contactListsUser', PERMISSIONS.facilitatorManagerAdmin, contactLis
 router.post('/contactListsUsersToRemove', PERMISSIONS.facilitatorManagerAdmin, contactListUser.destroy);
 router.put('/contactListsUser/:id', PERMISSIONS.facilitatorManagerAdmin, contactListUser.update);
 router.post('/contactListsUser/comments', PERMISSIONS.facilitatorManagerAdmin, contactListUser.comments);
+
+router.get('/invite/invitesHistory/getLatest',  PERMISSIONS.facilitatorManagerAdmin, invite.getLatestGuestInvitationHistory);
+router.get('/invite/list/invitesHistory',  PERMISSIONS.facilitatorManagerAdmin, invite.getGuestInvitationHistories);
 
 router.get('/topics/:sessionType?', PERMISSIONS.facilitatorManagerAdmin, topic.get);
 router.post('/topic', PERMISSIONS.facilitatorManagerAdmin, topic.post);

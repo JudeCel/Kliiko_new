@@ -39,5 +39,6 @@ module.exports = {
     "canInviteObserversToSession": true,
     "paidSmsCount": 0,
     "canBuySms": true,
+    "zapierGuestInvitationHistory": false,
   }
 };

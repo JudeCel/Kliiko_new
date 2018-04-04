@@ -28,6 +28,7 @@ module.exports = {
     { key: "planSmsCount",                              type: "NumberLimit", title: "SMS Alerts"              },
     { key: "whiteboardFunctionality",                   type: "Boolean",     title: "Interactive Whiteboard"          },
     { key: "pinboardDisplay",                           type: "Boolean",     title: "Pinboard"                        },
+    { key: "zapierGuestInvitationHistory",              type: "Boolean",     title: "Zapier Guest Invitation History" },
 
     // { key: "sessionCount",                              type: "Number",      title: " Chat Sessions"              },
     // { key: "recruiterContactListCount",                 type: "Number",      title: " Recruiter Social/Surveys"   },

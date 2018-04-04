@@ -4,7 +4,8 @@ let constants = require('../util/constants');
 
 let hookEvents = [
     constants.zapierHookEvents.socialForumCreated, 
-    constants.zapierHookEvents.socialForumWithWrapTopicCreated
+    constants.zapierHookEvents.socialForumWithWrapTopicCreated,
+    constants.zapierHookEvents.guestInvitationHistory,
 ];
 
 module.exports = (Sequelize, DataTypes) => {
