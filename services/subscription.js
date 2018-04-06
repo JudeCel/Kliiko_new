@@ -779,67 +779,81 @@ function calculateAvailableBrandColors(subscription, passThruContent) {
  * @param {number} passThruContent.sessionCount
  * @param {number} passThruContent.brandColorCount
  */
-function updateSubscriptionData(passThruContent){
-  let deferred = q.defer();
-  findSubscriptionId(passThruContent.id).then(function(subscription) {
-    const oldPlan = subscription.planId;
-    subscription.update({planId: passThruContent.planId, subscriptionPlanId: passThruContent.subscriptionPlanId, active: true, endDate: passThruContent.endDate }).then(function(updatedSub) {
+function updateSubscriptionData(passThruContent) {
 
-      let params = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(passThruContent.planId)]);
-      params.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
-
-      const currentAmountSessions = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.sessionCount;
-      // check if user already has infinite amount of resources
-      if (currentAmountSessions === -1) {
-        params.sessionCount = -1;
-      } else {
-        // check if user bought additional amount of resources
-        if (params.sessionCount !== -1) {
-          params.sessionCount = currentAmountSessions + (passThruContent.sessionCount || 0);
-        }
+  return Bluebird
+    .join(
+      findSubscriptionId(passThruContent.id),
+      models.SubscriptionPlan.findById(passThruContent.subscriptionPlanId)
+    )
+    .spread((subscription, newPlan) => {
+      const oldPlan = subscription.SubscriptionPlan;
+      const oldPlanId = subscription.planId;
+      const updates = {
+        active: true,
+        endDate: passThruContent.endDate
+      };
+      // more expensive plan contains more features and also has bigger priority
+      const isFreeTrial = /^free_/.test(oldPlanId);
+      console.log(isFreeTrial || newPlan.priority > oldPlan.priority);
+      if (isFreeTrial || newPlan.priority > oldPlan.priority) {
+        updates.planId = passThruContent.planId;
+        updates.subscriptionPlanId = passThruContent.subscriptionPlanId;
       }
 
-      const currentAmountBrandLogoAndCustomColors = /^free_/.test(oldPlan) ? 0 : subscription.SubscriptionPreference.data.brandLogoAndCustomColors;
-      if (subscription.SubscriptionPlan.brandLogoAndCustomColors === 0) {
-        passThruContent.brandColorCount = 0;
-      }
-      if (currentAmountBrandLogoAndCustomColors === -1) {
-        params.brandLogoAndCustomColors = -1;
-      } else {
-        if (params.brandLogoAndCustomColors !== -1) {
-          params.brandLogoAndCustomColors = currentAmountBrandLogoAndCustomColors + (passThruContent.brandColorCount || 0);
-        }
-      }
+      return subscription.update(updates)
+        .then(function (updatedSub) {
 
-      // recalc available sessions
-      params.availableSessions = calculateAvailableSessions(subscription, passThruContent);
-      params.availableBrandColors = calculateAvailableBrandColors(subscription, passThruContent);
+          let newPreferenceData = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(updatedSub.planId)]);
+          newPreferenceData.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-      updatedSub.SubscriptionPreference.update({ data: params })
-        .then(function (preference) {
-          return cleanupAfterUpdate(subscription.accountId, oldPlan, passThruContent.planId)
-        })
-        .then(() => {
-          return models.AccountUser.findOne({ where: { AccountId: updatedSub.accountId, owner: true }, include: [{ model: models.User }] });
-        })
-        .then(function(accountUser) {
-          let user = accountUser.User;
-          return markPaidAccountInInfusion(user, subscription);
-        })
-        .then(() => {
-          deferred.resolve({ subscription: updatedSub, redirect: false });
-        })
-        .catch(function (error) {
-          deferred.reject(error);
-        });
-    }, function(error) {
-      deferred.reject(error);
-    })
-  }, function(error) {
-    deferred.reject(error);
-  });
+          const currentAmountSessions = isFreeTrial ? 0 : subscription.SubscriptionPreference.data.sessionCount;
+          // check if user already has infinite amount of resources
+          if (currentAmountSessions === -1) {
+            newPreferenceData.sessionCount = -1;
+          } else {
+            // check if user bought additional amount of resources
+            if (newPreferenceData.sessionCount !== -1) {
+              newPreferenceData.sessionCount = currentAmountSessions + (passThruContent.sessionCount || 0);
+            }
+          }
 
-  return deferred.promise;
+          const currentAmountBrandLogoAndCustomColors = isFreeTrial ? 0 : subscription.SubscriptionPreference.data.brandLogoAndCustomColors;
+          if (newPlan.brandLogoAndCustomColors === 0) {
+            passThruContent.brandColorCount = 0;
+          }
+          if (currentAmountBrandLogoAndCustomColors === -1) {
+            newPreferenceData.brandLogoAndCustomColors = -1;
+          } else {
+            if (newPreferenceData.brandLogoAndCustomColors !== -1) {
+              newPreferenceData.brandLogoAndCustomColors = currentAmountBrandLogoAndCustomColors + (passThruContent.brandColorCount || 0);
+            }
+          }
+
+          // recalc available sessions
+          newPreferenceData.availableSessions = calculateAvailableSessions(subscription, passThruContent);
+          newPreferenceData.availableBrandColors = calculateAvailableBrandColors(subscription, passThruContent);
+
+          return updatedSub.SubscriptionPreference.update({ data: newPreferenceData })
+            .then((preference) => {
+              return cleanupAfterUpdate(subscription.accountId, oldPlanId, passThruContent.planId)
+            })
+            .then(() => {
+              return models.AccountUser.findOne({
+                where: { AccountId: updatedSub.accountId, owner: true },
+                include: [{ model: models.User }]
+              });
+            })
+            .then((accountUser) => {
+              let user = accountUser.User;
+              return markPaidAccountInInfusion(user, subscription);
+            })
+            .then(() => {
+              return { subscription: updatedSub, redirect: false };
+            });
+        })
+    });
+
 }
 
 function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
@@ -957,7 +971,6 @@ function chargebeeSubCreateViaCheckout(params, subParams, redirectUrl, provider)
     provider = chargebee.hosted_page.checkout_new;
   }
 
-  //TODO: plans
   const reqBody = {
     subscription: {
       plan_id: params.planId,

@@ -70,7 +70,7 @@ module.exports = {
     "pinboardDisplay": false,
 
 
-    "priority": 2, // This is only for front end.
+    "priority": 5, // This is only for front end.
     "sessionCount": -1,
     "recruiterContactListCount": 1,
     "whiteboardDisplay": false,
