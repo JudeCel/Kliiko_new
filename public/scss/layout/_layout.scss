@@ -56,7 +56,9 @@ textarea {
 }
 
 .dashboard-header {
-  position: relative;
+  top: 0px;
+  position: fixed;
+  width: 100%;
   z-index: 1060;
   height: 100px;
   background-color: white;
@@ -679,4 +681,8 @@ uib-accordion div span.text-muted {
     cursor: pointer;
     left: 50vw;
   }
+}
+
+.main-first-page {
+  margin-top: 150px;
 }
