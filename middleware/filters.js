@@ -90,8 +90,19 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
         res.redirect(myDashboardUrl);
       }
     } else {
+
+      let redirectURL;
+      const account = selectManager(result.accountManager, result.facilitator, accountUserId);
+      const subDomain = account.subdomain;
+
       req.session.landed = true;
-      res.redirect(myDashboardUrl);
+      if (forceBilling && account.selectedPlanOnRegistration) {
+        redirectURL = subdomains.url(req, subDomain, '/account-hub/');
+      } else {
+        redirectURL = myDashboardUrl;
+      }
+      res.redirect(redirectURL);
+
     }
   }, function(error) {
     res.send({ error: error });
