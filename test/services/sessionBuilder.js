@@ -56,9 +56,9 @@ describe('SERVICE - SessionBuilder', function() {
       endTime: getNextDate().toISOString(),
       timeZone: 'Europe/Riga',
       snapshot: data.sessionBuilder.snapshot,
-      isVisited: {    
-        setUp: false, 
-        facilitatiorAndTopics: false, 
+      isVisited: {
+        setUp: false,
+        facilitatiorAndTopics: false,
         manageSessionEmails: false,
         manageSessionParticipants: false,
         inviteSessionObservers: false
@@ -142,26 +142,6 @@ describe('SERVICE - SessionBuilder', function() {
         });
       });
 
-      it('should new expired session when other open session exists', function(done) {
-        models.SubscriptionPreference.update({'data.sessionCount': 1}, { where: { subscriptionId: subscriptionId } }).then(function(result) {
-          sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-            let params = sessionParams(result);
-            sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
-              sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-                done();
-              }, function(error) {
-                done(error);
-              });
-            }, function(error) {
-              done(error);
-            });
-          }, function(error) {
-            done(error);
-          });
-        }, function(error) {
-          done(error);
-        });
-      });
     });
 
     describe('sad path', function(done) {
@@ -191,14 +171,14 @@ describe('SERVICE - SessionBuilder', function() {
             let params = sessionParams(result);
             sessionBuilderServices.update(params.id, params.accountId, params).then(function(result) {
               sessionBuilderServices.initializeBuilder(accountParams()).then(function(result) {
-                let params2 = sessionParams(result);
-                sessionBuilderServices.update(params2.id, params2.accountId, params2).then(function(result) {
-                  done('Should not open second session!');
-                }, function(error) {
-                  done();
-                });
+                done('Should not get here!');
               }, function(error) {
-                done(error);
+                try {
+                  assert.deepEqual(error, 'You have reached limit for Sessions (max: 1)');
+                  done();
+                } catch (e) {
+                  done(e);
+                }
               });
             }, function(error) {
               done(error);
@@ -734,7 +714,7 @@ describe('SERVICE - SessionBuilder', function() {
                   where: { category: { $in: constants.sessionBuilderEmails } }
                 }]
               }).then(function(result) {
-                
+
                 let ids = _.map(result, 'id');
                 models.MailTemplate.update({ isCopy: true }, { where: { MailTemplateBaseId: { $in: ids } } }).then(function() {
                   models.MailTemplate.findAll({ where: { MailTemplateBaseId: { $in: ids } } }).then(function(result) {

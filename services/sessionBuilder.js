@@ -104,15 +104,17 @@ function defaultVideoParams(resource, topic) {
 }
 
 function addDefaultTopic(session, sessionMember) {
-  return models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
-    if (topic) {
-      let topicParams = defaultTopicParams(session, topic);
-      models.SessionTopics.create(topicParams).then(function(sessionTopic) {
-        let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
-        models.Shape.create(imageParams);
-      });
-    }
-  });
+  return models.Topic.find({ where: { accountId: session.accountId, default: true } })
+    .then(function (topic) {
+      if (topic) {
+        let topicParams = defaultTopicParams(session, topic);
+        return models.SessionTopics.create(topicParams)
+          .then(function (sessionTopic) {
+            let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
+            return models.Shape.create(imageParams);
+          });
+      }
+    });
 }
 
 function addDefaultTopicVideo(session) {
