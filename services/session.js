@@ -26,7 +26,6 @@ let Bluebird = require('bluebird');
 var MailTemplateService = require('./mailTemplate');
 
 var sessionMemberServices = require('./../services/sessionMember');
-var sessionBuilder = require('./../services/sessionBuilder');
 
 var validators = require('./../services/validators');
 var sessionValidators = require('./../services/validators/session');

@@ -54,14 +54,10 @@ describe('MIDDLEWARE - Filters', function() {
     describe('happy path', function() {
       it('should succeed on redirecting to my dashboard', function(done) {
         userFixture.createMultipleAccountUsers(['observer'], testData).then(function() {
-          filtersMiddleware.myDashboardPage(reqObject(), resObject('account-hub', done));
+          filtersMiddleware.myDashboardPage(reqObject(), resObject('my-dashboard', done));
         }, function(error) {
           done(error);
         });
-      });
-
-      it('should succeed on redirecting to only account', function(done) {
-        filtersMiddleware.myDashboardPage(reqObject(), resObject(testData.account.name.toLowerCase(), done));
       });
     });
   });
@@ -119,12 +115,6 @@ describe('MIDDLEWARE - Filters', function() {
     }
 
     describe('happy path', function() {
-      it('should succeed on redirecting to landing page', function(done) {
-        models.Subscription.destroy({where: {accountId: testData.account.id}}).then(function() {
-          filtersMiddleware.planSelectPage(reqObject(null, testData.account, testData.accountUser), resObject('account-hub/landing', done));
-        })
-      });
-
       it('should succeed on skipping this check because path matches', function(done) {
         filtersMiddleware.planSelectPage(reqObject('/account-hub/selectPlan', testData.account, testData.accountUser), resObject(), function() {
           done();
