@@ -818,7 +818,7 @@ function updateSubscriptionData(passThruContent) {
             newPreferenceData.sessionCount = -1;
           } else {
             // check if user bought additional amount of resources
-            if (newPreferenceData.sessionCount !== -1) {
+            if (newPreferenceData.sessionCount !== -1 && /_monthly_/.test(updatedSub.planId)) {
               newPreferenceData.sessionCount = currentAmountSessions + (passThruContent.sessionCount || 0);
             }
           }
@@ -830,7 +830,7 @@ function updateSubscriptionData(passThruContent) {
           if (currentAmountBrandLogoAndCustomColors === -1) {
             newPreferenceData.brandLogoAndCustomColors = -1;
           } else {
-            if (newPreferenceData.brandLogoAndCustomColors !== -1) {
+            if (newPreferenceData.brandLogoAndCustomColors !== -1 && /_annual_/.test(updatedSub.planId)) {
               newPreferenceData.brandLogoAndCustomColors = currentAmountBrandLogoAndCustomColors + (passThruContent.brandColorCount || 0);
             }
           }
