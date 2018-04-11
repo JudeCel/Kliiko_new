@@ -420,7 +420,7 @@ function createSubscription(accountId, userId, provider, plan) {
         let deferredTransactionPool = q.defer();
 
         transactionPool.once(tiket, () => {
-          models.sequelize.transaction(function (t) {
+          models.sequelize.transaction({ autocommit: false }, function (t) {
             return Subscription.create(subscriptionParams(accountId, chargebeeSub, plan.id), { transaction: t })
               .then(function (subscription) {
                 let preference = {
@@ -429,19 +429,24 @@ function createSubscription(accountId, userId, provider, plan) {
                 };
                 return SubscriptionPreference.create(preference, { transaction: t })
                   .then(function () {
-                    return models.User.findById(userId)
+                    return models.User.findById(userId, { transaction: t })
                   })
                   .then(function (user) {
                     return markPaidAccountInInfusion(user, subscription);
                   })
+                  .then(function() {
+                    return t.commit();
+                  })
                   .then(function () {
                     transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                    deferredTransactionPool.resolve(subscription);
+                    return deferredTransactionPool.resolve(subscription);
                   })
                   .catch(function (error) {
-                    transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
-                    // TODO Take a look!!!
-                    throw error;
+                    return t.rollback()
+                      .then(()=>{
+                        transactionPool.emit(transactionPool.CONSTANTS.endTransaction, tiket);
+                        throw error;
+                      })
                   });
               })
           }).catch(function(error) {
@@ -984,7 +989,7 @@ function chargebeeSubCreateViaCheckout(params, subParams, redirectUrl, provider)
     pass_thru_content: passThruContent,
     embed: 'false',
   };
-  return provider(reqBody).request()
+  return Bluebird.promisify(provider(reqBody).request, provider(reqBody))()
     .then(function (result) {
       return result.hosted_page;
     });
