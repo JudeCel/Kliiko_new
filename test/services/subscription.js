@@ -5,7 +5,7 @@ var Subscription = models.Subscription;
 var testDatabase = require("../database");
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
-var subscriptionFixture = require('./../fixtures/subscriptionPlans');
+var subscriptionPlanFixture = require('./../fixtures/subscriptionPlans');
 var surveyFixture = require('./../fixtures/survey');
 var constants = require('./../../util/constants');
 var InfusionSoft = require('./../../lib/infusionsoft');
@@ -23,7 +23,7 @@ describe('SERVICE - Subscription', function() {
     testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
-        return subscriptionFixture.createPlans();
+        return subscriptionPlanFixture.createPlans();
       }).then(function(results) {
         testData.subscriptionPlan = _.find(results, ['priority', 2]);
         testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
