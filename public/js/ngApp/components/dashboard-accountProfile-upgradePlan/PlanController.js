@@ -285,7 +285,7 @@
         vm.sessionCount = null;
         vm.brandColorCount = 1;
         vm.resourceToSell = 'brandColor';
-        vm.resourceToSellLbl = 'Brand Color';
+        vm.resourceToSellLbl = 'Brand/Logo';
       }
     }
 
