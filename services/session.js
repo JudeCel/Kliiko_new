@@ -18,6 +18,7 @@ var subscriptionService = require('./subscription');
 var sessionValidator = require('./validators/session');
 var topicsService = require('./topics');
 var urlHeplers = require('./urlHeplers');
+var planConstants = require('../util/planConstants');
 
 var q = require('q');
 var _ = require('lodash');
@@ -29,7 +30,6 @@ var sessionMemberServices = require('./../services/sessionMember');
 
 var validators = require('./../services/validators');
 var sessionValidators = require('./../services/validators/session');
-// var hasValidSubscription = require('./../services/validators/hasValidSubscription');
 
 var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
@@ -650,8 +650,8 @@ function modifySessions(sessions, accountId) {
     include: [{ model: Subscription, include: SubscriptionPreference }],
   }).then(function(account) {
     let endDate = account.admin ? null : account.Subscription.endDate;
-    let subscriptionPreference = account.admin ? null : account.Subscription.SubscriptionPreference;
-    changeSessionData(sessions, endDate, subscriptionPreference);
+    let subscription = account.admin ? null : account.Subscription;
+    changeSessionData(sessions, endDate, subscription);
     deferred.resolve(sessions);
   }).catch(function(error) {
     deferred.reject(filters.errors(error));
@@ -661,17 +661,33 @@ function modifySessions(sessions, accountId) {
 }
 
 /**
- * @param sessions
- * @param subscriptionEndDate
- * @param subscriptionPreference
+ * @param {array|object} sessions
+ * @param {date} subscriptionEndDate
+ * @param {object} subscription
+ * @param {object} subscription.SubscriptionPreference
  */
-function changeSessionData(sessions, subscriptionEndDate, subscriptionPreference) {
+function changeSessionData(sessions, subscriptionEndDate, subscription) {
+  let subscriptionPreference = subscription.SubscriptionPreference;
+  let isTrial = /trial/.test(subscription.planId);
+  // an annual subscription contains infinite amount of sessions
+  let isAnnual = /annual/.test(subscription.planId);
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
-    if (session.subscriptionId && subscriptionPreference) {
-      let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
-      if (availableSession) {
-        subscriptionEndDate = availableSession.endDate;
+    if (session.status === 'open') {
+      if (isAnnual || isTrial) {
+        session.dataValues.planId = subscription.planId;
+      } else {
+        if (session.subscriptionId && subscriptionPreference) {
+          let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
+          if (availableSession) {
+            subscriptionEndDate = availableSession.endDate;
+            session.dataValues.planId = availableSession.planId;
+          }
+        }
+        // plan should be defined, there can be no plan only if this session comes from trial
+        if (!session.dataValues.planId) {
+          session.dataValues.planId = planConstants.TRIAL_PLAN_NAME;
+        }
       }
     }
     sessionValidator.addShowStatus(session, subscriptionEndDate);

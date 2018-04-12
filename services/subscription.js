@@ -800,7 +800,7 @@ function updateSubscriptionData(passThruContent) {
       };
       // more expensive plan contains more features and also has bigger priority
       const isFreeTrial = /^free_/.test(oldPlanId);
-      console.log(isFreeTrial || newPlan.priority > oldPlan.priority);
+
       if (isFreeTrial || newPlan.priority > oldPlan.priority) {
         updates.planId = passThruContent.planId;
         updates.subscriptionPlanId = passThruContent.subscriptionPlanId;
@@ -835,7 +835,7 @@ function updateSubscriptionData(passThruContent) {
             }
           }
 
-          // recalc available sessions
+          // recalc available resources
           newPreferenceData.availableSessions = calculateAvailableSessions(subscription, passThruContent);
           newPreferenceData.availableBrandColors = calculateAvailableBrandColors(subscription, passThruContent);
 
@@ -989,10 +989,15 @@ function chargebeeSubCreateViaCheckout(params, subParams, redirectUrl, provider)
     pass_thru_content: passThruContent,
     embed: 'false',
   };
-  return Bluebird.promisify(provider(reqBody).request, provider(reqBody))()
-    .then(function (result) {
-      return result.hosted_page;
+  return new Bluebird((resolve, reject) => {
+    provider(reqBody).request(function (error, result) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.hosted_page);
+      }
     });
+  });
 }
 
 function chargebeeSubUpdate(params, provider) {
@@ -1231,7 +1236,6 @@ function validateIfNotCurrentPlan(accountId, newPlan) {
   }
 }
 
-//TODO: may be remove?
 function validateSessionCount(accountId, newPlan) {
   return function(cb) {
     models.Session.count({
