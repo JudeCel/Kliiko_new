@@ -1586,7 +1586,11 @@ function publish(sessionId, accountId) {
         return { id: session.id, publicUid: session.publicUid };
       }
 
-      return validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
+      return Bluebird
+        .join(
+          validators.subscription(accountId, 'session', 1, { sessionId: sessionId }),
+          validators.subscription(accountId, 'contactList', 1)
+        )
         .then(() => {
           // do not need to allocate a new session for admin
           if (session.Account.admin) {
