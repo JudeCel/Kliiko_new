@@ -798,10 +798,10 @@ function updateSubscriptionData(passThruContent) {
         active: true,
         endDate: passThruContent.endDate
       };
-      // more expensive plan contains more features and also has bigger priority
+      const isFreeAccount = /^free_account/.test(passThruContent.planId);
       const isFreeTrial = /^free_/.test(oldPlanId);
-
-      if (isFreeTrial || newPlan.priority > oldPlan.priority) {
+      // more expensive plan contains more features and also has bigger priority
+      if (isFreeAccount || isFreeTrial || newPlan.priority > oldPlan.priority) {
         updates.planId = passThruContent.planId;
         updates.subscriptionPlanId = passThruContent.subscriptionPlanId;
       }
@@ -866,35 +866,53 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   findPreferencesBySubscriptionId(subscriptionId).then(function(preference) {
     let subscription = preference.Subscription;
     let history = preference.data.availableSessions;
-    // check if there is at least one active subscription (endDate is in future)
-    let active = _.some(history, function (item) {
-      return moment().isBefore(item.endDate);
-    });
-    disableSubDependencies(subscription.accountId, subscriptionId).then(function() {
-      if (active) {
-        //TODO: plans
-        preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
-        preference.data.brandColorsCount = preference.data.brandColorsCount - chargebeeSub.plan_quantity;
-        preference.update({ data: preference.data })
-          .then(function() {
-            deferred.resolve();
-          }, function (error) {
-            deferred.reject(error);
-          })
-      } else {
+    disableSubDependencies(subscription.accountId, subscriptionId)
+      .then(() => {
+        let cancelledSubId = chargebeeSub.id;
+        if (/_monthly_/.test(chargebeeSub.plan_id)) {
+          _.forEach(preference.data.availableSessions, (as) => {
+            if (as.subscriptionId === cancelledSubId) {
+              as.endDate = new Date(chargebeeSub.current_term_end * 1000);
+            }
+          });
+          if (preference.data.sessionCount !== 0) {
+            preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
+          }
+        }
+        if (/_annual_/.test(chargebeeSub.plan_id)) {
+          _.forEach(preference.data.availableBrandColors, (ac) => {
+            if (ac.subscriptionId === cancelledSubId) {
+              ac.endDate = new Date(chargebeeSub.current_term_end * 1000);
+            }
+          });
+          if (preference.data.brandLogoAndCustomColors !== 0) {
+            preference.data.brandLogoAndCustomColors = preference.data.brandLogoAndCustomColors - chargebeeSub.plan_quantity;
+          }
+        }
+
+        return preference.update({ data: preference.data })
+      })
+      .then((updatedPreference) => {
+        // check if there is at least one active subscription (endDate is in future)
+        let active = _.some(updatedPreference.data.availableSessions, (as) => moment().isBefore(as.endDate))
+          || _.some(updatedPreference.data.availableBrandColors, (ac) => moment().isBefore(ac.endDate));
+        if (active) {
+          return;
+        }
         // there is no active subscription - switch account to "free_account" plan
         const plan = buildCurrencyPlan('free_account', subscription.Account.currency);
-        updateSubscription({ accountId: subscription.accountId, newPlanId: plan, skipCardCheck: true }, provider)
-          .then(function () {
-            deferred.resolve();
-          }, function (error) {
-            deferred.reject(error);
-          });
-      }
-
-    }, function(error) {
-      deferred.reject(filters.errors(error));
-    });
+        return updateSubscription({
+          accountId: subscription.accountId,
+          newPlanId: plan,
+          skipCardCheck: true,
+        }, provider);
+      })
+      .then(() => {
+        deferred.resolve();
+      })
+      .catch((error) => {
+        deferred.reject(filters.errors(error));
+      });
   }, function(error) {
     deferred.reject(error);
   });
