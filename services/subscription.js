@@ -1322,7 +1322,7 @@ function validateContactListCount(accountId, newPlan) {
  * @return {string}
  */
 function getInfusionTagForSub(subscription) {
-  let planName = PLAN_CONSTANTS.planName(subscription.planId);
+  let planName = _.lowerCase(PLAN_CONSTANTS.planName(subscription.planId));
 
   return InfusionSoft.TAGS.paidAccount[planName];
 }

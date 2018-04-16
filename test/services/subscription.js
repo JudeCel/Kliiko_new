@@ -669,12 +669,18 @@ describe('SERVICE - Subscription', function() {
       });
 
       it('should succeed on closing subscription and dependencies', function(done) {
+        let chargebeeSub = {
+          id: subId,
+          plan_id: testData.subscriptionPlan.planId,
+          plan_quantity: 1,
+          current_term_end: new Date(),
+        }
         surveyPromise().then(function(c) {
           assert.equal(c, 0);
           return sessionPromise();
         }).then(function(c) {
           assert.equal(c, 0);
-          return subscriptionServices.cancelSubscription(subId, 'someEventId', providers);
+          return subscriptionServices.cancelSubscription(subId, 'someEventId', providers, chargebeeSub);
         }).then(function(result) {
           return surveyPromise();
         }).then(function(c) {
