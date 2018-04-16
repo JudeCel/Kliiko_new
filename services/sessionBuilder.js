@@ -266,6 +266,9 @@ function update(sessionId, accountId, params) {
     findSession(sessionId, accountId).then(function(originalSession) {
       updateParams(originalSession, params);
       let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (originalSession.endTime.getTime() <= new Date().getTime()) {
+        return reject({dialog: MessagesUtil.validators.session.date.expired });
+      }
       if (validationRes.isValid) {
         doUpdate(originalSession, params).then(function(res) {
           resolve(res);
