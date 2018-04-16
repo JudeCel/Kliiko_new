@@ -1304,9 +1304,7 @@ function validateContactListCount(accountId, newPlan) {
  * @return {string}
  */
 function getInfusionTagForSub(subscription) {
-  let planPeriods = constants.supportedPlanPeriods.join('|').toLowerCase();
-  let supportedCurrencies = constants.supportedCurrencies.join('|').toLowerCase();
-  let planName = subscription.planId.replace(new RegExp(`_(${planPeriods})_(${supportedCurrencies})`, 'i'), '');
+  let planName = PLAN_CONSTANTS.planName(subscription.planId);
 
   return InfusionSoft.TAGS.paidAccount[planName];
 }

@@ -46,7 +46,7 @@
               </a>
             </th>
             <th>
-              <a class="white-sort-text" href="" ng-click="csc.changeOrder('plan')">
+              <a class="white-sort-text" href="" ng-click="csc.changeOrder('planName')">
                 Plan
               </a>
             </th>
@@ -74,8 +74,8 @@
             <td>{{ session.startTime | date:csc.dateFormat }}</td>
             <td>{{ session.endTime | date:csc.dateFormat }}</td>
             <td>{{ session.expireDate | date:csc.dateFormat }}</td>
-            <td>
-              {{ session.planId }}
+            <td class="text-capitalize">
+              {{ session.planName }}
             </td>
             <td ng-init="csc.initShouldShowStatusLabel(session)">
               <span ng-if="!session.showStatusLabel">

@@ -239,7 +239,7 @@ describe('SERVICE - BrandColour', function() {
           })
           .catch(function (error) {
             try {
-              assert.deepEqual(error, 'You have reached limit for Brand Logo And Custom Colors (max: 1)');
+              assert.deepEqual(error, 'You have reached your Brand Logo And Custom Colors limit (max: 1). Either upgrade or close another Brand Logo And Custom Colors.');
               done();
             } catch (e) {
               done(e);

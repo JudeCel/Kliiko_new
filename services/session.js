@@ -673,23 +673,25 @@ function changeSessionData(sessions, subscriptionEndDate, subscription) {
   let isAnnual = /annual/.test(subscription.planId);
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
+    // set "planId" into session in order to show it on frontend
+    let planId;
     if (session.status === 'open') {
       if (isAnnual || isTrial) {
-        session.dataValues.planId = subscription.planId;
+        planId = subscription.planId;
       } else {
         if (session.subscriptionId && subscriptionPreference) {
           let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
           if (availableSession) {
             subscriptionEndDate = availableSession.endDate;
-            session.dataValues.planId = availableSession.planId;
+            planId = availableSession.planId;
           }
         }
-        // plan should be defined, there can be no plan only if this session comes from trial
-        if (!session.dataValues.planId) {
-          session.dataValues.planId = planConstants.TRIAL_PLAN_NAME;
-        }
+      }
+      if (planId) {
+        session.dataValues.planName = planConstants.planName(planId);
       }
     }
+
     sessionValidator.addShowStatus(session, subscriptionEndDate);
 
     let facilitator = findFacilitator(session.SessionMembers);
