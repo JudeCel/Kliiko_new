@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents', 'errorMessenger'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents, errorMessenger) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -369,11 +369,15 @@
       }, function (err) {
         validateDate(vm.step1.startTime);
         validateDate(vm.step1.endTime);
-        if(err.startTime && vm.endDateEdited) {
-          messenger.error(err);
-        }
-        if(!err.startTime) {
-          messenger.error(err);
+        if (err.dialog) {
+          errorMessenger.showError(err);
+        } else {
+          if (err.startTime && vm.endDateEdited) {
+            messenger.error(err);
+          }
+          if (!err.startTime) {
+            messenger.error(err);
+          }
         }
 
         deferred.reject(err);

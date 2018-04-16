@@ -263,6 +263,11 @@ module.exports = {
       recruiterCountLimitStarter: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Starter Plan.',
       recruiterCountLimitPro: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Pro Plan.',
       sessionsTimeInputDisabledMessage: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
+    },
+    session: {
+      date: {
+        expired: 'Bugger, your Session has expired...but it\'s easy fixed by buying another Session under the Account Profile Tab. ☺',
+      }
     }
   },
   models: {
