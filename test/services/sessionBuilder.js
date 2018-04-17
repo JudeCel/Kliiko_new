@@ -174,7 +174,7 @@ describe('SERVICE - SessionBuilder', function() {
                 done('Should not get here!');
               }, function(error) {
                 try {
-                  assert.deepEqual(error, 'You have reached limit for Sessions (max: 1)');
+                  assert.deepEqual(error, 'You have reached your Session limit (max: 1). Either upgrade or close another Session.');
                   done();
                 } catch (e) {
                   done(e);
