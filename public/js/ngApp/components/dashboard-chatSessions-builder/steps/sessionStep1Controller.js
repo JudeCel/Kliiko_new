@@ -64,7 +64,7 @@
     }
 
     function initCanSelectFacilitator() {
-      vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
+      vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0 && vm.session.steps.step1.plan.selected.id
         && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
     }
 
@@ -243,10 +243,35 @@
       });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
+      initPlans();
       vm.anonymous = vm.session.steps.step1.anonymous.toString();
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
       vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
       initCanSelectFacilitator();
+    }
+
+    vm.updatePlan = function() {
+      updateStep({subscriptionId: vm.plan.id}).then(function(res) {
+        if (res.ignored) {
+          vm.plan = vm.session.steps.step1.plan.selected;
+        } else {
+          vm.session.steps.step1.plan.selected =  vm.plan;
+        }
+        initPlans();
+        initCanSelectFacilitator();
+      }, function(err) {
+        vm.plan = vm.session.steps.step1.plan.selected;
+        initPlans();
+      });
+    }
+
+    function initPlans() {
+      for (var i = 0, len = vm.session.steps.step1.plan.list.length; i < len ; i++) {
+        if (vm.session.steps.step1.plan.list[i].id == vm.session.steps.step1.plan.selected.id) {
+          vm.plan = vm.session.steps.step1.plan.list[i];
+          break;
+        }
+      }
     }
 
     function sessionId() {

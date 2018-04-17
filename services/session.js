@@ -781,7 +781,8 @@ function getAvailableSessionById(preferences, sessionId) {
  * @return {Session}
  */
 function allocateSession(accountId, session) {
-  if (session.Account.admin) {
+  //todo:
+  if (session.Account.admin /*|| !session.subscriptionId*/) {
     return Bluebird.resolve(session);
   }
   // get subscription preferences
@@ -805,7 +806,8 @@ function allocateSession(accountId, session) {
  * @return {Session}
  */
 function deallocateSession(accountId, session) {
-  if (session.Account.admin) {
+  //todo:
+  if (session.Account.admin /*|| !session.subscriptionId*/) {
     return Bluebird.resolve(session);
   }
   // get subscription preferences

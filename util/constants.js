@@ -126,7 +126,7 @@ module.exports = {
   },
   sessionBuilderValidateChanges: {
     session: {
-      changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details", "facilitatorId"],
+      changableFields: ["name", "startTime", "endTime", "timeZone", "resourceId", "brandProjectPreferenceId", "incentive_details", "facilitatorId", "subscriptionId"],
       notChangableFields: ["type", "anonymous", "participantListId" ]
     },
     topic: {

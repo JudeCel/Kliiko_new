@@ -17,6 +17,30 @@
       <input id="sessionBuilder-session-name" type="text" ng-model="step1Controller.name" ng-blur="step1Controller.updateName();">
     </uib-accordion-group>
 
+    <!-- Plan -->
+    <uib-accordion-group is-open="step1Controller.accordions.sessionPlan" class="green-input session-plan">
+      <uib-accordion-heading>
+        <div class="panel-label">
+          Choose Plan
+          <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': step1Controller.accordions.sessionPlan, 'glyphicon-chevron-right': !step1Controller.accordions.sessionPlan}"></i>
+          <span class="panel-value pull-right capitalize">
+            {{ sbc.session.steps.step1.plan.selected.text }}
+          </span>
+        </div>
+      </uib-accordion-heading>
+
+      <label for="sessionBuilder-session-plan">Choose Plan &nbsp; </label>
+      <select
+        id="sessionBuilder-session-plan"
+        class="border-radius-none green-input"
+        ng-model="step1Controller.plan"
+        ng-options="val.text for val in sbc.session.steps.step1.plan.list"
+        ng-disabled="!sbc.session.steps.step1.plan.canChange"
+        ng-change="step1Controller.updatePlan()"
+        >
+      </select>
+    </uib-accordion-group>
+
     <!-- Session Type -->
     <uib-accordion-group is-open="step1Controller.accordions.sessionType" class="green-input session-type">
       <uib-accordion-heading>
@@ -181,7 +205,7 @@
       </uib-accordion-heading>
 
       <div ng-if='!step1Controller.canSelectFacilitator'>
-        You need to enter Session Name, Type, Date And Time before you can Select Host
+        You need to enter Session Name, Plan, Type, Date And Time before you can Select Host
       </div>
 
       <div id='dashboard-contact-lists' ng-if='step1Controller.canSelectFacilitator'>

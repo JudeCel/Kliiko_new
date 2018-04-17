@@ -900,7 +900,8 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
     resourceId: stepData.resourceId,
     anonymous: stepData.anonymous,
     brandProjectPreferenceId: stepData.brandProjectPreferenceId,
-    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null
+    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null,
+    subscriptionId: stepData.plan.selected.id
   }
   return sessionBuilderSnapshotValidation.getSessionSnapshot(sessionData);
 }
@@ -1000,7 +1001,15 @@ function stepsDefinition(session, steps) {
     anonymous: session.anonymous,
     brandProjectPreferenceId: session.brandProjectPreferenceId,
     error: getStepError(steps, "step1"),
-    isVisited: session.isVisited["setUp"]
+    isVisited: session.isVisited["setUp"],
+    plan: {
+      selected: {
+        id: session.subscriptionId,
+        text: "", 
+      },
+      canChange: !session.isVisited["facilitatiorAndTopics"] && !session.isVisited["manageSessionEmails"],
+      list: []
+    }
   };
 
   object.step2 = {
@@ -1135,9 +1144,36 @@ function step1Queries(session, step) {
   return [
     function(cb) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
-        if(!_.isEmpty(members)) {
+        if (!_.isEmpty(members)) {
           step.facilitator = members[0];
-        }
+        };
+        return models.Subscription.findAll({
+          where: {
+            active: true,
+            accountId: session.accountId,
+          }
+        });
+      }).then(function(subscriptions) {
+        step.plan.list = [];
+        subscriptions.forEach(function(subscription) {
+          let id = subscription.dataValues.id;
+          let text = subscription.dataValues.planId;
+          text = text.toLowerCase().replace(new RegExp('_', 'g'), ' ');
+          constants.supportedCurrencies.forEach(function(c) {
+            text = text.replace(' ' + c.toLowerCase(), '');
+          });
+          constants.supportedPlanPeriods.forEach(function(c) {
+            text = text.replace(' ' + c.toLowerCase(), '');
+          });
+          text = text.replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
+          text += " - " + changeTimzone(subscription.dataValues.endDate, "UTC", step.timeZone).toISOString().slice(0,10);
+          step.plan.list.push({id: id, text: text});
+          if (id == step.plan.selected.id) {
+            step.plan.selected.text = text;
+          }
+        });
         cb();
       }).catch(function(error) {
         cb(filters.errors(error));
