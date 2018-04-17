@@ -87,24 +87,6 @@ describe('SERVICE - VALIDATORS - Subscription', function() {
         });
       });
 
-      it('should fail on validating contactList count', function(done) {
-        let params = {
-          accountId: testData.account.id,
-          name: 'some name'
-        };
-
-        models.ContactList.create(params).then(function() {
-          subscriptionValidators.validate(testData.account.id, 'contactList', 1).then(function() {
-            done('Should not get here!');
-          }).catch(function(error) {
-            assert.equal(error, subscriptionValidators.countMessage('contactList', 1));
-            done();
-          });
-        }, function(error) {
-          done(error)
-        });
-      });
-
       it('should fail on validating survey count', function(done) {
         let params = {
           accountId: testData.account.id,

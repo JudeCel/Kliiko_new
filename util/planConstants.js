@@ -60,17 +60,27 @@ function preferenceName(chargebeePlanId) {
   return chargebeePlanId.replace(new RegExp(`[_-](${currencies})`, 'i'), '');
 }
 
+/**
+ * @param {string} planId
+ * @return {string} name of plan
+ */
+function planName(planId) {
+  let planPeriods = constants.supportedPlanPeriods.join('|').toLowerCase();
+  let supportedCurrencies = constants.supportedCurrencies.join('|').toLowerCase();
+  let planName = planId.replace(new RegExp(`(_(${planPeriods})|_(${supportedCurrencies}))`, 'gi'), '');
+  return _.capitalize(_.lowerCase(planName));
+}
+
 module.exports = {
   // active plans
-  //TODO: TA2061 yearly plans
   free_trial:     plans.trial,
   free_account:   plans.account,
   starter_monthly:  plans.starter,
-  // starter_annual:
+  starter_annual: plans.starter_annual,
   essentials_monthly:  plans.essentials,
-  // essentials_annual:
+  essentials_annual: plans.essentials_annual,
   pro_monthly:  plans.pro,
-  // pro_annual:
+  pro_annual: plans.pro_annual,
 
   // inactive plans
   senior_monthly: plans.senior,
@@ -80,6 +90,7 @@ module.exports = {
   junior_monthly: plans.junior,
   junior_yearly:  plans.junior,
   preferenceName,
+  planName,
   TRIAL_PLAN_NAME: 'free_trial',
   DEFAULT_PLAN_NAME: 'essentials_monthly',
 };

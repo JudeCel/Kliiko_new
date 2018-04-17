@@ -40,7 +40,7 @@
         }]
       })
       .state('account-hub.accountProfile.upgradePlan', {
-        url: "/upgrade-plan?step&plan",
+        url: "/upgrade-plan?step&plan&currency",
         views: {
           'accountProfileContent': {templateUrl: prePath + "dashboard-accountProfile-upgradePlan/dashboard-content.html"}
         },

@@ -5,7 +5,7 @@ var Subscription = models.Subscription;
 var testDatabase = require("../database");
 var subscriptionServices = require('./../../services/subscription');
 var userFixture = require('./../fixtures/user');
-var subscriptionFixture = require('./../fixtures/subscriptionPlans');
+var subscriptionPlanFixture = require('./../fixtures/subscriptionPlans');
 var surveyFixture = require('./../fixtures/survey');
 var constants = require('./../../util/constants');
 var InfusionSoft = require('./../../lib/infusionsoft');
@@ -23,7 +23,7 @@ describe('SERVICE - Subscription', function() {
     testDatabase.prepareDatabaseForTests().then(function() {
       userFixture.createUserAndOwnerAccount().then(function(result) {
         testData = result;
-        return subscriptionFixture.createPlans();
+        return subscriptionPlanFixture.createPlans();
       }).then(function(results) {
         testData.subscriptionPlan = _.find(results, ['priority', 2]);
         testData.lowerPlan = _.find(results, ['priority', testData.subscriptionPlan.priority - 1]);
@@ -201,8 +201,7 @@ describe('SERVICE - Subscription', function() {
           creditCard: invalidCreditCardProvider(),
           viaCheckout: viaCheckoutProvider({ id: 'SomeUniqueID' })
         }
-
-        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(result) {
+        subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: testData.subscriptionPlan.chargebeePlanId}, providers).then(function(result) {
           try {
             assert.equal(result.redirect, true);
             assert.equal(result.hosted_page.object, "hosted_page");
@@ -236,7 +235,7 @@ describe('SERVICE - Subscription', function() {
           creditCard: validCreditCardProvider()
         }
 
-        subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: invalidPlanId}, providers).then(function() {
+        subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: invalidPlanId}, providers).then(function() {
           done('Should not get here!');
         }, function(error) {
           assert.deepEqual(error, 'No plan found');
@@ -251,7 +250,7 @@ describe('SERVICE - Subscription', function() {
           creditCard: validCreditCardProvider()
         }
 
-        subscriptionServices.updateSubscription({accountId: invalidAccountId, newPlanId: testData.subscriptionPlan.id}, providers).then(function(subscription) {
+        subscriptionServices.updateSubscription({accountId: invalidAccountId, userId: testData.user.id, newPlanId: testData.subscriptionPlan.id}, providers).then(function(subscription) {
           done('Should not get here!');
         }, function(error) {
           assert.equal(error, "No subscription found");
@@ -272,7 +271,7 @@ describe('SERVICE - Subscription', function() {
           },
           include: [models.SubscriptionPlan]
         }).then(function(subscription) {
-          subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: subscription.SubscriptionPlan.chargebeePlanId}, providers).then(function(subscription) {
+          subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: subscription.SubscriptionPlan.chargebeePlanId}, providers).then(function(subscription) {
             done('Should not get here!');
           }, function(error) {
             assert.equal(error.plan, "Can't switch to current plan");
@@ -281,14 +280,15 @@ describe('SERVICE - Subscription', function() {
         })
       });
 
-      describe("downgrade", function() {
+      // skip these tests below because "downgrade" is not something that we need to have with ability to buy resources from multiple plans
+      describe.skip("downgrade", function() {
         function getUltimateSub(testData) {
           let providers = {
             creditCard: validCreditCardProvider(),
             updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId })
            }
           return function(cb) {
-            subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.subscriptionPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(subscription) {
+            subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: testData.subscriptionPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(subscription) {
               cb();
             }, function(error) {
               cb(error);
@@ -311,7 +311,7 @@ describe('SERVICE - Subscription', function() {
                   updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId})
                  }
 
-                subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(result) {
+                subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: testData.lowerPlan.chargebeePlanId, skipCardCheck: true}, providers).then(function(result) {
                   assert.equal(result.subscription.planId, testData.lowerPlan.chargebeePlanId);
                   done();
                 }, function(error) {
@@ -397,7 +397,7 @@ describe('SERVICE - Subscription', function() {
                   updateProvider: updateProvider({ id: 'SomeUniqueID', plan_id: testData.subscriptionPlan.chargebeePlanId }),
                  }
 
-                subscriptionServices.updateSubscription({accountId: testData.account.id, newPlanId: testData.lowerPlan.chargebeePlanId}, providers).then(function(subscription) {
+                subscriptionServices.updateSubscription({accountId: testData.account.id, userId: testData.user.id, newPlanId: testData.lowerPlan.chargebeePlanId}, providers).then(function(subscription) {
                   done("should not get here");
                 }, function(error) {
                   //check if any necessary error appears at all
@@ -588,6 +588,7 @@ describe('SERVICE - Subscription', function() {
       subscriptionServices.createSubscription(testData.account.id, testData.user.id, successProvider({ id: subId })).then(function() {
         const params = {
           accountId: testData.account.id,
+          userId: testData.user.id,
           newPlanId: `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`,
           skipCardCheck: true,
           resources: { sessionCount: 1 },
@@ -629,11 +630,11 @@ describe('SERVICE - Subscription', function() {
         }
       }
 
-      function sessionHelper() {
+      function sessionHelper(name) {
         return function(cb) {
           let params = {
             accountId: testData.account.id,
-            name: 'some name',
+            name: name,
             startTime: new Date(),
             endTime: new Date(),
             timeZone: 'Europe/Riga',
@@ -657,7 +658,7 @@ describe('SERVICE - Subscription', function() {
             });
           },
           function(cb) {
-            let functionArray = [sessionHelper(), sessionHelper()];
+            let functionArray = [sessionHelper('some name 1'), sessionHelper('some name 2')];
             async.waterfall(functionArray, function(error, _result) {
               cb(error);
             });
@@ -668,12 +669,18 @@ describe('SERVICE - Subscription', function() {
       });
 
       it('should succeed on closing subscription and dependencies', function(done) {
+        let chargebeeSub = {
+          id: subId,
+          plan_id: testData.subscriptionPlan.planId,
+          plan_quantity: 1,
+          current_term_end: new Date(),
+        }
         surveyPromise().then(function(c) {
           assert.equal(c, 0);
           return sessionPromise();
         }).then(function(c) {
           assert.equal(c, 0);
-          return subscriptionServices.cancelSubscription(subId, 'someEventId', providers);
+          return subscriptionServices.cancelSubscription(subId, 'someEventId', providers, chargebeeSub);
         }).then(function(result) {
           return surveyPromise();
         }).then(function(c) {

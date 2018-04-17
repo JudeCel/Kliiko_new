@@ -104,15 +104,17 @@ function defaultVideoParams(resource, topic) {
 }
 
 function addDefaultTopic(session, sessionMember) {
-  return models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
-    if (topic) {
-      let topicParams = defaultTopicParams(session, topic);
-      models.SessionTopics.create(topicParams).then(function(sessionTopic) {
-        let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
-        models.Shape.create(imageParams);
-      });
-    }
-  });
+  return models.Topic.find({ where: { accountId: session.accountId, default: true } })
+    .then(function (topic) {
+      if (topic) {
+        let topicParams = defaultTopicParams(session, topic);
+        return models.SessionTopics.create(topicParams)
+          .then(function (sessionTopic) {
+            let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
+            return models.Shape.create(imageParams);
+          });
+      }
+    });
 }
 
 function addDefaultTopicVideo(session) {
@@ -264,6 +266,9 @@ function update(sessionId, accountId, params) {
     findSession(sessionId, accountId).then(function(originalSession) {
       updateParams(originalSession, params);
       let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (originalSession.endTime && originalSession.endTime.getTime() !== originalSession.startTime.getTime() && originalSession.endTime <= new Date()) {
+        return reject({dialog: MessagesUtil.validators.session.date.expired });
+      }
       if (validationRes.isValid) {
         doUpdate(originalSession, params).then(function(res) {
           resolve(res);

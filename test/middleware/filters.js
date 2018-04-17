@@ -59,6 +59,10 @@ describe('MIDDLEWARE - Filters', function() {
           done(error);
         });
       });
+
+      it('should succeed on redirecting to my dashboard when there is only one account', function(done) {
+        filtersMiddleware.myDashboardPage(reqObject(), resObject('my-dashboard', done));
+      });
     });
   });
 
@@ -83,9 +87,9 @@ describe('MIDDLEWARE - Filters', function() {
         user: {
           id: testData.user.id
         },
-        currentResources: { 
-          account: {name: account.name, id: account.id}, 
-          accountUser: {id: accountUser.id, role: accountUser.role}  
+        currentResources: {
+          account: {name: account.name, id: account.id},
+          accountUser: {id: accountUser.id, role: accountUser.role}
         },
         protocol: 'http',
         session: { landed: false }

@@ -9,7 +9,7 @@ module.exports = (Sequelize, DataTypes) => {
     contactListCount: { type: DataTypes.INTEGER, allowNull: false },
     recruiterContactListCount: { type: DataTypes.INTEGER, allowNull: false },
     importDatabase: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    brandLogoAndCustomColors: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    brandLogoAndCustomColors: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     contactListMemberCount: { type: DataTypes.INTEGER, allowNull: false },
     accountUserCount: { type: DataTypes.INTEGER, allowNull: false },
     exportContactListAndParticipantHistory: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

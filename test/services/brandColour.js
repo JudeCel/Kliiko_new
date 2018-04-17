@@ -6,22 +6,93 @@ var brandColourServices = require('./../../services/brandColour');
 var sessionFixture = require('./../fixtures/session');
 var brandProjectConstants = require('./../../util/brandProjectConstants');
 var subscriptionFixture = require('./../fixtures/subscription');
+var subscriptionPlanFixture = require('./../fixtures/subscriptionPlans');
 var assert = require('chai').assert;
 var _ = require('lodash');
 var testDatabase = require("../database");
+var constants = require('./../../util/constants');
+var subscriptionServices = require('./../../services/subscription');
 
 describe('SERVICE - BrandColour', function() {
   var testData = {};
 
-  beforeEach(function(done) {
+  function updateProvider(params) {
+    return function() {
+      return {
+        request: function(callback) {
+          callback(null, {
+            id: params.id,
+            plan_id: params.plan_id,
+            current_term_end: new Date()
+          });
+        }
+      }
+    }
+  }
+
+  function validCreditCardProvider() {
+    return function() {
+      return {
+        request: function(callback) {
+          callback(null, {
+            customer: {
+              card_status: "valid"
+            }
+          });
+        }
+      }
+    }
+  }
+
+  function viaCheckoutProvider(params) {
+    return function() {
+      return {
+        request: function(callback) {
+          callback(null, {
+            hosted_page: {
+              id: params.id,
+              type: "checkout_new",
+              url: "https://yourapp.chargebee.com/pages/v2/EmKrsbXtONZfPVXmoSHLVpfBJYlsIIut/checkout",
+              state: "created",
+              embed: true,
+              created_at: 1453977370,
+              expires_at: 1453980970,
+              object: "hosted_page"
+            }
+          });
+        }
+      }
+    }
+  }
+
+  beforeEach(function (done) {
     testDatabase.prepareDatabaseForTests().then(() => {
-      sessionFixture.createChat().then(function(result) {
+      sessionFixture.createChat().then(function (result) {
         testData.user = result.user;
         testData.account = result.account;
         testData.session = result.session;
         testData.preference = result.preference;
-        done();
-      }, function(error) {
+        testData.subId = result.subscription.subscriptionId;
+
+        const planId = `essentials_monthly_${constants.defaultCurrency.toLowerCase()}`;
+        const params = {
+          accountId: testData.account.id,
+          userId: testData.user.id,
+          newPlanId: planId,
+          skipCardCheck: true,
+          resources: { sessionCount: 1 },
+        };
+        var providers = {
+          creditCard: validCreditCardProvider(),
+          updateProvider: updateProvider({ id: testData.subId, plan_id: planId })
+        }
+        subscriptionServices.updateSubscription(params, providers).then(function (result) {
+          done();
+        }, function (error) {
+          done(error);
+        });
+
+      }, function (error) {
         done(error);
       });
     });
@@ -168,7 +239,7 @@ describe('SERVICE - BrandColour', function() {
           })
           .catch(function (error) {
             try {
-              assert.deepEqual(error, 'You have reached limit for Brand Logo And Custom Colors (max: 1)');
+              assert.deepEqual(error, 'You have reached your Brand Logo And Custom Colors limit (max: 1). Either upgrade or close another Brand Logo And Custom Colors.');
               done();
             } catch (e) {
               done(e);
@@ -312,9 +383,24 @@ describe('SERVICE - BrandColour', function() {
 
   describe('#copyScheme', function() {
     describe('happy path', function() {
-      // TODO: skip this test before we introduce a pricing plans that allows more than one Brand Logo / Color Schema
-      it.skip('should succeed on copieing scheme', function (done) {
-        BrandProjectPreference.count(countWhere())
+      it('should succeed on copieing scheme', function (done) {
+
+        const planId = `pro_annual_${constants.defaultCurrency.toLowerCase()}`;
+        const params = {
+          accountId: testData.account.id,
+          userId: testData.user.id,
+          newPlanId: planId,
+          skipCardCheck: true,
+          resources: { brandColorCount: 1 },
+        };
+        var providers = {
+          creditCard: validCreditCardProvider(),
+          updateProvider: updateProvider({ id: testData.subId, plan_id: planId }),
+        };
+        subscriptionServices.updateSubscription(params, providers)
+          .then(() => {
+            return BrandProjectPreference.count(countWhere());
+          })
           .then(function (c) {
             assert.equal(c, 2);
 

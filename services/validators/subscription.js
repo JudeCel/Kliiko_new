@@ -237,7 +237,7 @@ function canAddManager(allowedBySubscription, currentManagerCount) {
 
 function countMessage(type, maxCount) {
   let message = MessagesUtil.validators.subscription.countLimit;
-  message = message.replace('_name_', _.startCase(type));
+  message = message.replace(/_name_/g, _.startCase(type));
   message = message.replace('ss (', 's (');
   message = message.replace('_max_number_', maxCount);
   return message;
@@ -264,6 +264,10 @@ function countRecruiterMessage(type, maxCount, subscription) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitSenior;
   } else if (_.includes(subscriptionType, 'essentials_')) {
     message = MessagesUtil.validators.subscription.recruiterCountLimitEssentials;
+  } else if (_.includes(subscriptionType, 'starter_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitStarter;
+  } else if (_.includes(subscriptionType, 'pro_')) {
+    message = MessagesUtil.validators.subscription.recruiterCountLimitPro;
   }
 
   message = message.replace('_max_number_', maxCount);
