@@ -1630,7 +1630,7 @@ function notifySubscribersIfNotWrapTopic(session) {
 
   models.SessionTopics.find({where: where}).then((topic) => {
     if(isNotWrapTopic(topic)) {
-      zapierSubscriptionsNotifier.notify(constants.zapierHookEvents.socialForumCreated);
+      zapierSubscriptionsNotifier.notify(constants.zapierHookEvents.socialForumCreated, session.accountId);
     }
   });
 }
