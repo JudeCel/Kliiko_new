@@ -373,6 +373,7 @@ function findPreferencesBySubscriptionId(subscriptionId) {
       where: {
         $or: [
           { data: { $contains: { availableSessions: [{ subscriptionId: subscriptionId }] } } },
+          { data: { $contains: { availableBrandColors: [{ subscriptionId: subscriptionId }] } } },
           {
             $and: [
               { '$Subscription.subscriptionId$': subscriptionId },
