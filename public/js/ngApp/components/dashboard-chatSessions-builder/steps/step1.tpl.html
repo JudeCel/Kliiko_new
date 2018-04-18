@@ -34,7 +34,7 @@
         id="sessionBuilder-session-plan"
         class="border-radius-none green-input"
         ng-model="step1Controller.plan"
-        ng-options="val.text for val in sbc.session.steps.step1.plan.list"
+        ng-options="val.text for val in sbc.session.steps.step1.plan.list track by val.text"
         ng-disabled="!sbc.session.steps.step1.plan.canChange"
         ng-change="step1Controller.updatePlan()"
         >

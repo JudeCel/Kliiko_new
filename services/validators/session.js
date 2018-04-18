@@ -23,7 +23,7 @@ function addShowStatus(session, subscriptionEndDate) {
       var date = new Date();
       if (date < new Date(session.startTime) || session.isInactive) {
         settings.showStatus = 'Pending';
-      } else if((subscriptionEndDate && date > subscriptionEndDate) || date > new Date(session.endTime)) {
+      } else if((subscriptionEndDate && date > subscriptionEndDate) || date > new Date(session.endTime) || !session.subscriptionId) {
         settings.showStatus = 'Expired';
       } else {
         settings.showStatus = 'Open';

@@ -872,10 +872,12 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
         if (/_monthly_/.test(chargebeeSub.plan_id)) {
           _.forEach(preference.data.availableSessions, (as) => {
             if (as.subscriptionId === cancelledSubId) {
+              models.Session.update({ subscriptionId: null }, { where: { subscriptionId: as.subscriptionId } });
               as.endDate = new Date(chargebeeSub.current_term_end * 1000);
+              as.sessionId = null;
             }
           });
-          if (preference.data.sessionCount !== 0) {
+          if (preference.data.sessionCount !== 0 || preference.data.sessionCount !== -1) {
             preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
           }
         }
@@ -885,7 +887,7 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
               ac.endDate = new Date(chargebeeSub.current_term_end * 1000);
             }
           });
-          if (preference.data.brandLogoAndCustomColors !== 0) {
+          if (preference.data.brandLogoAndCustomColors !== 0 || preference.data.brandLogoAndCustomColors !== -1) {
             preference.data.brandLogoAndCustomColors = preference.data.brandLogoAndCustomColors - chargebeeSub.plan_quantity;
           }
         }

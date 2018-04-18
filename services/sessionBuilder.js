@@ -28,6 +28,7 @@ var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
 var contactList = require('./contactList');
 var zapierSubscriptionsNotifier = require('./zapierSubscriptionsNotifier');
+var planConstants = require('./../util/planConstants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -307,19 +308,20 @@ function doUpdate(originalSession, params) {
     validators.hasValidSubscription(originalSession.accountId).then(function() {
       let permissions = mapUpdateParametersToPermissions(params);
       return validators.planAllowsToDoIt(originalSession.accountId, permissions);
-    }).then(function() {
+    }).then(function () {
       let count = isSessionChangedToActive(params) ? 1 : 0;
-      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id })
-        .then(function () {
-          // do not need to allocate a new session for admin
-          if (originalSession.Account.admin) {
-            return null;
-          }
-          return count === 0
-            ? SessionService.deallocateSession(originalSession.accountId, originalSession)
-            : SessionService.allocateSession(originalSession.accountId, originalSession);
-        });
-    }).then(function() {
+      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
+    }).then(function () {
+      switch (true) {
+        case (params.hasOwnProperty('subscriptionId')):
+          return params.subscriptionId
+            ? SessionService.allocateSession(originalSession.accountId, originalSession)
+            : SessionService.deallocateSession(originalSession.accountId, originalSession);
+        case (originalSession.Account.admin): // do not need to allocate a new session for admin
+        default:
+          return;
+      }
+    }).then(function () {
       if (params["status"] && params["status"] != originalSession.status) {
         if (params["status"] == "open") {
           let step = constants.sessionBuilderSteps[0];
@@ -971,7 +973,8 @@ function sessionBuilderObject(session, steps) {
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
       snapshot: sessionBuilderObjectSnapshot(result, session.step),
       properties: session.type ? sessionTypesConstants[session.type] : null,
-      publicUid: session.publicUid
+      publicUid: session.publicUid,
+      subscriptionId: session.subscriptionId,
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
@@ -1005,7 +1008,7 @@ function stepsDefinition(session, steps) {
     plan: {
       selected: {
         id: session.subscriptionId,
-        text: "", 
+        text: "",
       },
       canChange: !session.isVisited["facilitatiorAndTopics"] && !session.isVisited["manageSessionEmails"],
       list: []
@@ -1147,33 +1150,26 @@ function step1Queries(session, step) {
         if (!_.isEmpty(members)) {
           step.facilitator = members[0];
         };
-        return models.Subscription.findAll({
+        return models.Subscription.findOne({
           where: {
             active: true,
             accountId: session.accountId,
-          }
+          },
+          include: [{ model: models.SubscriptionPreference }],
         });
-      }).then(function(subscriptions) {
-        step.plan.list = [];
-        subscriptions.forEach(function(subscription) {
-          let id = subscription.dataValues.id;
-          let text = subscription.dataValues.planId;
-          text = text.toLowerCase().replace(new RegExp('_', 'g'), ' ');
-          constants.supportedCurrencies.forEach(function(c) {
-            text = text.replace(' ' + c.toLowerCase(), '');
-          });
-          constants.supportedPlanPeriods.forEach(function(c) {
-            text = text.replace(' ' + c.toLowerCase(), '');
-          });
-          text = text.replace(/\w\S*/g, function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          });
-          text += " - " + changeTimzone(subscription.dataValues.endDate, "UTC", step.timeZone).toISOString().slice(0,10);
-          step.plan.list.push({id: id, text: text});
-          if (id == step.plan.selected.id) {
-            step.plan.selected.text = text;
+      }).then(function(subscription) {
+        // populate dropdown with available plans based on bought plans
+        let availablePlans = planConstants.availablePlans(subscription, session);
+        step.plan.list = _.map(availablePlans, (plan) => {
+          let { subscriptionId, planId } = plan;
+          let planEndDate = changeTimzone(plan.endDate, 'UTC', step.timeZone).toISOString().slice(0, 10);
+          let planName = `${planConstants.planName(planId)} - ${planEndDate}`;
+          if (step.plan.selected && subscriptionId === step.plan.selected.id) {
+            step.plan.selected.text = planName;
           }
+          return { id: subscriptionId, text: planName };
         });
+        step.plan.list.unshift({ id: '', text: 'None' });
         cb();
       }).catch(function(error) {
         cb(filters.errors(error));
@@ -1632,13 +1628,13 @@ function publish(sessionId, accountId) {
           validators.subscription(accountId, 'session', 1, { sessionId: sessionId }),
           validators.subscription(accountId, 'contactList', 1)
         )
-        .then(() => {
-          // do not need to allocate a new session for admin
-          if (session.Account.admin) {
-            return null;
-          }
-          return SessionService.allocateSession(accountId, session);
-        })
+        // .then(() => {
+        //   // do not need to allocate a new session for admin
+        //   if (session.Account.admin) {
+        //     return null;
+        //   }
+        //   return SessionService.allocateSession(accountId, session);
+        // })
         .then(() => {
           return generatePublicUid(session);
         })
