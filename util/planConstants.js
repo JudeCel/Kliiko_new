@@ -74,13 +74,12 @@ function planName(planId) {
 
 /**
  * @param {Subscription} subscription
- * @param {string} subscriptionId
+ * @param {Session} session
  * @return {{string:planId, date:endDate}|null}
  */
-function planNameBySubId(subscription, subscriptionId) {
-  let fromSessions = subscription.SubscriptionPreference.data.availableSessions.find((as) => as.subscriptionId === subscriptionId);
-  let fromBrandColors = subscription.SubscriptionPreference.data.availableBrandColors.find((ab) => ab.subscriptionId === subscriptionId);
-  let resource = (fromSessions || fromBrandColors);
+function planNameBySubId(subscription, session) {
+  let plans = availablePlans(subscription, session)
+  let resource = plans.find((p) => p.subscriptionId === session.subscriptionId);
   if (!resource) {
     return null;
   }
@@ -93,9 +92,16 @@ function planNameBySubId(subscription, subscriptionId) {
  * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
  */
 function availablePlans(subscription, currentSession) {
-  let fromSessions = subscription.SubscriptionPreference.data.availableSessions;
-  let fromBrandColors = subscription.SubscriptionPreference.data.availableBrandColors;
-  return _.filter([...fromSessions, ...fromBrandColors], (p) => (!p.sessionId || currentSession && p.sessionId === currentSession.id) && moment().isBefore(p.endDate));
+  let fromSessions = _.get(subscription.SubscriptionPreference, 'data.availableSessions', []);
+  return _.filter(_.clone(fromSessions), (p) => (!p.sessionId || currentSession && p.sessionId === currentSession.id) && moment().isBefore(p.endDate));
+}
+
+function sessionCount(subscription) {
+  let plans = availablePlans(subscription);
+  if (plans.find((p) => p.sessionCount === -1)) {
+    return -1;
+  }
+  return plans.length;
 }
 
 module.exports = {
@@ -120,6 +126,7 @@ module.exports = {
   planName,
   planNameBySubId,
   availablePlans,
+  sessionCount,
   TRIAL_PLAN_NAME: 'free_trial',
   DEFAULT_PLAN_NAME: 'essentials_monthly',
 };

@@ -315,7 +315,7 @@ function doUpdate(originalSession, params) {
       switch (true) {
         case (params.hasOwnProperty('subscriptionId')):
           return params.subscriptionId
-            ? SessionService.allocateSession(originalSession.accountId, originalSession)
+            ? SessionService.allocateSession(originalSession.accountId, originalSession, params.subscriptionId)
             : SessionService.deallocateSession(originalSession.accountId, originalSession);
         case (originalSession.Account.admin): // do not need to allocate a new session for admin
         default:

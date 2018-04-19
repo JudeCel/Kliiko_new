@@ -486,7 +486,9 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
     const selected = account.selectedPlanOnRegistration;
     let plan = ['free_trial', 'free_account'].includes(selected) ? selected : 'free_trial';
     plan = buildCurrencyPlan(plan, account.currency);
-    createSubscription(accountId, userId, null, plan).then(function(response) {
+    createSubscription(accountId, userId, null, plan).then(function(subcription) {
+      return addSessiontoTrialPlan(subcription);
+    }).then(function(response) {
       if(account.selectedPlanOnRegistration && !plan) {
         updateSubscription({
           accountId: account.id,
@@ -510,6 +512,27 @@ function createSubscriptionOnFirstLogin(accountId, userId, redirectUrl) {
   });
 
   return deferred.promise;
+}
+
+function addSessiontoTrialPlan(trialSubscription) {
+  let trialAvailableSession = {
+    'id': trialSubscription.id,
+    'planId': trialSubscription.planId,
+    'endDate': trialSubscription.endDate,
+    'sessionId': null,
+    'sessionCount': 1,
+    'subscriptionId': trialSubscription.subscriptionId,
+    'subscriptionPlanId': trialSubscription.subscriptionPlanId,
+  };
+  return models.SubscriptionPreference.find({ where: { subscriptionId: trialSubscription.id }})
+    .then((preferences) => {
+      if (!preferences.data.availableSessions) {
+        preferences.data.availableSessions = [];
+      }
+      preferences.data.availableSessions.push(trialAvailableSession)
+      return preferences.update({ data: preferences.data });
+    })
+    .then(() => trialSubscription);
 }
 
 function buildCurrencyPlan(plan, currency) {
@@ -752,6 +775,10 @@ function calculateAvailableSessions(subscription, passThruContent) {
   _.times(passThruContent.sessionCount, () => {
     availableSessions.push(availableSession);
   });
+  if (/_annual_/.test(passThruContent.planId)) {
+    availableSession.sessionCount = -1;
+    availableSessions.push(availableSession);
+  }
 
   return availableSessions;
 }
@@ -779,6 +806,7 @@ function calculateAvailableBrandColors(subscription, passThruContent) {
  * @param {object} passThruContent
  * @param {number} passThruContent.id
  * @param {string} passThruContent.planId
+ * @param {string} passThruContent.subscriptionId
  * @param {string} passThruContent.subscriptionPlanId
  * @param {date} passThruContent.endDate
  * @param {number} passThruContent.sessionCount
@@ -803,6 +831,7 @@ function updateSubscriptionData(passThruContent) {
       // more expensive plan contains more features and also has bigger priority
       if (isFreeAccount || isFreeTrial || newPlan.priority > oldPlan.priority) {
         updates.planId = passThruContent.planId;
+        updates.subscriptionId = passThruContent.subscriptionId;
         updates.subscriptionPlanId = passThruContent.subscriptionPlanId;
       }
 
@@ -812,7 +841,7 @@ function updateSubscriptionData(passThruContent) {
           let newPreferenceData = _.cloneDeep(PLAN_CONSTANTS[PLAN_CONSTANTS.preferenceName(updatedSub.planId)]);
           newPreferenceData.paidSmsCount = subscription.SubscriptionPreference.data.paidSmsCount;
 
-          const currentAmountSessions = isFreeTrial ? 0 : subscription.SubscriptionPreference.data.sessionCount;
+          const currentAmountSessions = /*isFreeTrial ? 0 :*/ subscription.SubscriptionPreference.data.sessionCount;
           // check if user already has infinite amount of resources
           if (currentAmountSessions === -1) {
             newPreferenceData.sessionCount = -1;
@@ -865,39 +894,34 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
   let deferred = q.defer();
   findPreferencesBySubscriptionId(subscriptionId).then(function(preference) {
     let subscription = preference.Subscription;
-    let history = preference.data.availableSessions;
     disableSubDependencies(subscription.accountId, subscriptionId)
       .then(() => {
         let cancelledSubId = chargebeeSub.id;
-        if (/_monthly_/.test(chargebeeSub.plan_id)) {
-          _.forEach(preference.data.availableSessions, (as) => {
-            if (as.subscriptionId === cancelledSubId) {
-              models.Session.update({ subscriptionId: null }, { where: { subscriptionId: as.subscriptionId } });
-              as.endDate = new Date(chargebeeSub.current_term_end * 1000);
-              as.sessionId = null;
-            }
-          });
-          if (preference.data.sessionCount !== 0 || preference.data.sessionCount !== -1) {
-            preference.data.sessionCount = preference.data.sessionCount - chargebeeSub.plan_quantity;
+
+        _.forEach(preference.data.availableSessions, (as) => {
+          if (as.subscriptionId === cancelledSubId) {
+            models.Session.update({ subscriptionId: null }, { where: { subscriptionId: as.subscriptionId } });
+            as.endDate = new Date(chargebeeSub.current_term_end * 1000);
+            as.sessionId = null;
           }
-        }
-        if (/_annual_/.test(chargebeeSub.plan_id)) {
-          _.forEach(preference.data.availableBrandColors, (ac) => {
-            if (ac.subscriptionId === cancelledSubId) {
-              ac.endDate = new Date(chargebeeSub.current_term_end * 1000);
-            }
-          });
-          if (preference.data.brandLogoAndCustomColors !== 0 || preference.data.brandLogoAndCustomColors !== -1) {
-            preference.data.brandLogoAndCustomColors = preference.data.brandLogoAndCustomColors - chargebeeSub.plan_quantity;
+        });
+        preference.data.sessionCount = PLAN_CONSTANTS.sessionCount(subscription);
+
+        _.forEach(preference.data.availableBrandColors, (ac) => {
+          if (ac.subscriptionId === cancelledSubId) {
+            ac.endDate = new Date(chargebeeSub.current_term_end * 1000);
           }
+        });
+        if (preference.data.brandLogoAndCustomColors !== 0 && preference.data.brandLogoAndCustomColors !== -1) {
+          preference.data.brandLogoAndCustomColors = preference.data.brandLogoAndCustomColors - chargebeeSub.plan_quantity;
         }
 
         return preference.update({ data: preference.data })
       })
       .then((updatedPreference) => {
         // check if there is at least one active subscription (endDate is in future)
-        let active = _.some(updatedPreference.data.availableSessions, (as) => moment().isBefore(as.endDate))
-          || _.some(updatedPreference.data.availableBrandColors, (ac) => moment().isBefore(ac.endDate));
+        subscription.SubscriptionPreference = updatedPreference;
+        let active = _.some(PLAN_CONSTANTS.availablePlans(subscription), (as) => moment().isBefore(as.endDate));
         if (active) {
           return;
         }
