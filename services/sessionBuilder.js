@@ -1628,13 +1628,6 @@ function publish(sessionId, accountId) {
           validators.subscription(accountId, 'session', 1, { sessionId: sessionId }),
           validators.subscription(accountId, 'contactList', 1)
         )
-        // .then(() => {
-        //   // do not need to allocate a new session for admin
-        //   if (session.Account.admin) {
-        //     return null;
-        //   }
-        //   return SessionService.allocateSession(accountId, session);
-        // })
         .then(() => {
           return generatePublicUid(session);
         })
