@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const plans = require('./plans');
 const constants = require('./constants');
+const moment = require('moment');
 
 const keys = Object.keys(plans);
 const mand_keys = [
@@ -71,6 +72,38 @@ function planName(planId) {
   return _.capitalize(_.lowerCase(planName));
 }
 
+/**
+ * @param {Subscription} subscription
+ * @param {Session} session
+ * @return {{string:planId, date:endDate}|null}
+ */
+function planNameBySubId(subscription, session) {
+  let plans = availablePlans(subscription, session)
+  let resource = plans.find((p) => p.subscriptionId === session.subscriptionId);
+  if (!resource) {
+    return null;
+  }
+  return { planId: resource.planId, endDate: resource.endDate };
+}
+
+/**
+ * @param {Subscription} subscription
+ * @param {Session} [currentSession]
+ * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
+ */
+function availablePlans(subscription, currentSession) {
+  let fromSessions = _.get(subscription.SubscriptionPreference, 'data.availableSessions', []);
+  return _.filter(_.clone(fromSessions), (p) => (!p.sessionId || currentSession && p.sessionId === currentSession.id) && moment().isBefore(p.endDate));
+}
+
+function sessionCount(subscription) {
+  let plans = availablePlans(subscription);
+  if (plans.find((p) => p.sessionCount === -1)) {
+    return -1;
+  }
+  return plans.length;
+}
+
 module.exports = {
   // active plans
   free_trial:     plans.trial,
@@ -91,6 +124,9 @@ module.exports = {
   junior_yearly:  plans.junior,
   preferenceName,
   planName,
+  planNameBySubId,
+  availablePlans,
+  sessionCount,
   TRIAL_PLAN_NAME: 'free_trial',
   DEFAULT_PLAN_NAME: 'essentials_monthly',
 };

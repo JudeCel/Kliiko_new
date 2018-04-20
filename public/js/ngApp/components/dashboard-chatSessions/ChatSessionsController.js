@@ -271,7 +271,7 @@
 
     function initShouldShowStatusLabel(session) {
       if (session.SessionType && session.SessionType.properties.features.closeSessionToggle.enabled &&
-          (!session.SessionType.properties.features.publish.enabled || session.publicUid)) {
+          (!session.SessionType.properties.features.publish.enabled || session.publicUid) && session.subscriptionId) {
         session.showStatusLabel = false;
         initIsOpen(session);
       } else {

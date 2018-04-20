@@ -128,10 +128,7 @@ function setOpen(sessionId, open, accountId) {
         let status = open ? "open" : "closed";
         // sessionValidators.canOpenSession(sessionId, accountId, status).then(function() {
         // do not validate subscription if we want to close a session
-        validators.subscription(accountId, 'session', open ? 1 : -1).then(function() {
-
-          let changeAvailableSessionStatus = open ? allocateSession : deallocateSession;
-          changeAvailableSessionStatus(accountId, session).then(function () {
+        validators.subscription(accountId, 'session', open ? 1 : -1).then(function () {
             session.update({ status: status }).then(function (updatedSession) {
               let surveyIds = _(session.Surveys).map('dataValues.id').value();
               Survey.update({ closed: !open }, { where: { id: surveyIds } }).then(function () {
@@ -140,9 +137,6 @@ function setOpen(sessionId, open, accountId) {
               }, function (error) {
                 reject(filters.errors(error));
               });
-            }, function (error) {
-              reject(filters.errors(error));
-            });
           }, function (error) {
             reject(filters.errors(error));
           });
@@ -221,6 +215,8 @@ function findSession(sessionId, accountId) {
       model: SessionMember,
       attributes: VALID_ATTRIBUTES.sessionMember,
       required: false
+    },{
+      model: Account
     }]
   }).then(function(session) {
     if(session) {
@@ -381,6 +377,8 @@ function removeSession(sessionId, accountId) {
     findSession(sessionId, accountId).then(function(result) {
       sessionMemberServices.findAllMembersIds(sessionId).then(function(ids) {
         sessionSurvey.removeSurveys(sessionId).then(function() {
+          return deallocateSession(accountId, result.data)
+        }).then(function() {
           return result.data.destroy();
         }).then(function() {
           return sessionMemberServices.refreshAccountUsersRole(ids);
@@ -667,29 +665,14 @@ function modifySessions(sessions, accountId) {
  * @param {object} subscription.SubscriptionPreference
  */
 function changeSessionData(sessions, subscriptionEndDate, subscription) {
-  let subscriptionPreference = subscription.SubscriptionPreference;
-  let isTrial = /trial/.test(subscription.planId);
-  // an annual subscription contains infinite amount of sessions
-  let isAnnual = /annual/.test(subscription.planId);
   let array = _.isArray(sessions) ? sessions : [sessions];
   _.map(array, function(session) {
-    // set "planId" into session in order to show it on frontend
-    let planId;
-    if (session.status === 'open') {
-      if (isAnnual || isTrial) {
-        planId = subscription.planId;
-      } else {
-        if (session.subscriptionId && subscriptionPreference) {
-          let availableSession = subscriptionPreference.data.availableSessions.find((s) => s.sessionId === session.id);
-          if (availableSession) {
-            subscriptionEndDate = availableSession.endDate;
-            planId = availableSession.planId;
-          }
-        }
-      }
-      if (planId) {
-        session.dataValues.planName = planConstants.planName(planId);
-      }
+    // set "planName" into session in order to show it on frontend
+    let availableResource = planConstants.planNameBySubId(subscription, session);
+    if (availableResource) {
+      subscriptionEndDate = availableResource.endDate;
+      let planId = availableResource.planId;
+      session.dataValues.planName = planConstants.planName(planId);
     }
 
     sessionValidator.addShowStatus(session, subscriptionEndDate);
@@ -736,34 +719,33 @@ function checkSessionByPublicUid(uid) {
   });
 }
 
-function getPreferences(accountId) {
+function getSubscriptionByAccountId(accountId) {
   return Subscription
     .find({
       where: { accountId: accountId },
       include: [{
         model: SubscriptionPreference,
       }]
-    })
-    .then(function (subscription) {
-      return subscription.SubscriptionPreference;
     });
 }
 
 /**
- * get list of available sessions that are not expired and not assigned to already created sessions
- * @param {object} preferences
+ * Get available session within given subscription, if not subscriptionId provided it will get oldest bought available session
+ * @param {Subscription} subscription
+ * @param {Session} session
+ * @param {string} [subscriptionId]
  * @return {object} - availableSession from the SubscriptionPreferences
  */
-function getAvailableSession(preferences) {
+function getAvailableSession(subscription, session, subscriptionId) {
   // get list of available sessions that are not expired and not assigned to already created sessions
-  let availableSessions = preferences.data.availableSessions;
+  let availableSessions = planConstants.availablePlans(subscription, session);
   let sessions = _.filter(availableSessions, (s) => !s.sessionId && moment().isBefore(s.endDate));
-  let availableSession = _.first(_.sortBy(sessions, [(endDate) => moment(endDate).valueOf()]));
+  let availableSession = _.find(availableSessions, (as) => as.subscriptionId === subscriptionId) || _.first(_.sortBy(sessions, [(endDate) => moment(endDate).valueOf()]));
   return availableSession;
 }
 
 /**
- * get list of available sessions that are not expired and not assigned to already created sessions
+ * Get available session that have been allocated previously to given session
  * @param {object} preferences
  * @param {number} sessionId
  * @return {object} - availableSession from the SubscriptionPreferences
@@ -778,21 +760,24 @@ function getAvailableSessionById(preferences, sessionId) {
  * Allocate session from SubscriptionPreferences
  * @param {number} accountId
  * @param {object} session
+ * @param {string} [subscriptionId]
  * @return {Session}
  */
-function allocateSession(accountId, session) {
+function allocateSession(accountId, session, subscriptionId) {
   if (session.Account.admin) {
     return Bluebird.resolve(session);
   }
   // get subscription preferences
-  return getPreferences(accountId)
-    .then(function (subscriptionPreferences) {
-      let availableSession = getAvailableSession(subscriptionPreferences);
+  return deallocateSession(accountId, session)
+    .then(() => getSubscriptionByAccountId(accountId))
+    .then(function (subscription) {
+      let subscriptionPreferences = subscription.SubscriptionPreference;
+      let availableSession = getAvailableSession(subscription, session, subscriptionId);
 
-      if (availableSession) {
+      if (availableSession && availableSession.sessionCount !== -1) { // -1 means infinite amount of sessions
         availableSession.sessionId = session.id;
-        session.subscriptionId = availableSession.subscriptionId;
       }
+      session.subscriptionId = availableSession.subscriptionId;
 
       return Bluebird.join(session.save(), subscriptionPreferences.update({ data: subscriptionPreferences.data}));
     });
@@ -809,8 +794,9 @@ function deallocateSession(accountId, session) {
     return Bluebird.resolve(session);
   }
   // get subscription preferences
-  return getPreferences(accountId)
-    .then(function (subscriptionPreferences) {
+  return getSubscriptionByAccountId(accountId)
+    .then(function (subscription) {
+      let subscriptionPreferences = subscription.SubscriptionPreference;
       let availableSession = getAvailableSessionById(subscriptionPreferences, session.id);
 
       if (availableSession) {
