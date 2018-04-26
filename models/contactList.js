@@ -7,7 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
   var ContactList = Sequelize.define('ContactList', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     accountId: { type: DataTypes.INTEGER, allowNull: false },
-    name: { type: DataTypes.STRING, allowNull: false, validate: { isUnique: validations.unique(Sequelize, 'ContactList', 'name', { accountContext: true }) } },
+    name: { type: DataTypes.STRING, allowNull: false, validate: { isUnique: validations.unique(Sequelize, 'ContactList', 'name', { accountContext: true, lower: true }) } },
     editable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     role: { type: DataTypes.ENUM, allowNull: false, values: constants.systemRoles, defaultValue: 'participant' },
