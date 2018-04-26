@@ -203,6 +203,17 @@ function updateContactList(contactList, survey, fields, t){
     });
   })
 }
+
+function updateCustomFieldsOfContactList(contactList, survey, fields, t) {
+  fillCustomFields(fields, contactList);
+  contactList.customFields = _.uniq(contactList.customFields);
+
+  return contactList.save({ transaction: t })
+    .catch(ContactList.sequelize.ValidationError, (error) => {
+      throw filters.errors(error);
+    });
+}
+
 function createContactList(survey, fields, t){
   return new Bluebird((resolve, reject) => {
     if (_.includes(surveyTypesWithoutValidation, survey.surveyType)) {
@@ -469,7 +480,7 @@ function copySurvey(params, account) {
 function addQuestionsToContactListFields(survey, fields) {
   for (let i = 0; i < survey.SurveyQuestions.length; i++) {
     let question = survey.SurveyQuestions[i];
-    
+
     if (!isContactDetailsQuestion(question)) {
       fields.push(_.camelCase(question.name));
     }
@@ -521,7 +532,7 @@ function answerSurvey(params) {
           let fields = getContactListFields(survey.SurveyQuestions);
 
           addQuestionsToContactListFields(survey, fields);
-          return updateContactList(contactList, survey, fields, t).then((contactList) => {
+          return updateCustomFieldsOfContactList(contactList, survey, fields, t).then((contactList) => {
               if(!_.isEmpty(fields)) {
                 let clParams = findContactListAnswers(contactList, validParams.answers);
                 if(clParams && clParams != null && clParams.customFields.age != SMALL_AGE) {
