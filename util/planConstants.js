@@ -87,6 +87,7 @@ function planNameBySubId(subscription, session) {
 }
 
 /**
+ * List of all the bought, not expired and not used sessions
  * @param {Subscription} subscription
  * @param {Session} [currentSession]
  * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
@@ -96,8 +97,18 @@ function availablePlans(subscription, currentSession) {
   return _.filter(_.clone(fromSessions), (p) => (!p.sessionId || currentSession && p.sessionId === currentSession.id) && moment().isBefore(p.endDate));
 }
 
+/**
+ * List of all the bought and not expired sessions (both used and not used)
+ * @param {Subscription} subscription
+ * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
+ */
+function boughtPlans(subscription) {
+  let fromSessions = _.get(subscription.SubscriptionPreference, 'data.availableSessions', []);
+  return _.filter(_.clone(fromSessions), (p) => moment().isBefore(p.endDate));
+}
+
 function sessionCount(subscription) {
-  let plans = availablePlans(subscription);
+  let plans = boughtPlans(subscription);
   if (plans.find((p) => p.sessionCount === -1)) {
     return -1;
   }
