@@ -100,6 +100,7 @@ function availablePlans(subscription, currentSession) {
 /**
  * List of all the bought and not expired sessions (both used and not used)
  * @param {Subscription} subscription
+ * @param {SubscriptionPreference} subscription.SubscriptionPreference
  * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
  */
 function boughtPlans(subscription) {
@@ -107,6 +108,11 @@ function boughtPlans(subscription) {
   return _.filter(_.clone(fromSessions), (p) => moment().isBefore(p.endDate));
 }
 
+/**
+ * @param {Subscription} subscription
+ * @param {SubscriptionPreference} subscription.SubscriptionPreference
+ * @return {number}
+ */
 function sessionCount(subscription) {
   let plans = boughtPlans(subscription);
   if (plans.find((p) => p.sessionCount === -1)) {

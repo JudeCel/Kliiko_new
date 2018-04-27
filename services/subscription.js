@@ -906,7 +906,7 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
             as.sessionId = null;
           }
         });
-        preference.data.sessionCount = PLAN_CONSTANTS.sessionCount(subscription);
+        preference.data.sessionCount = PLAN_CONSTANTS.sessionCount({ SubscriptionPreference: preference });
 
         _.forEach(preference.data.availableBrandColors, (ac) => {
           if (ac.subscriptionId === cancelledSubId) {
