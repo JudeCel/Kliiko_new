@@ -922,7 +922,8 @@ function cancelSubscription(subscriptionId, eventId, provider, chargebeeSub) {
       .then((updatedPreference) => {
         // check if there is at least one active subscription (endDate is in future)
         subscription.SubscriptionPreference = updatedPreference;
-        let active = PLAN_CONSTANTS.sessionCount(subscription) > 0;
+        let sessionCount = PLAN_CONSTANTS.sessionCount(subscription);
+        let active = sessionCount > 0 || sessionCount === -1;
         if (active) {
           return;
         }
