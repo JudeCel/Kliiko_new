@@ -69,9 +69,8 @@
           vm.dateFormat = res.dateFormat;
           vm.hasOwnAccount = res.hasOwnAccount;
           vm.hasRoles = res.hasRoles;
-          /*vm.canCreateNewAccount = res.canCreateNewAccount;
-          vm.showCreateNewAccountBanner = !vm.hasOwnAccount;*/
-          vm.canCreateNewAccount = false;
+          vm.canCreateNewAccount = res.canCreateNewAccount;
+          // vm.showCreateNewAccountBanner = !vm.hasOwnAccount;
           vm.showCreateNewAccountBanner = false;
           vm.theOnlySessionIsClosed = res.theOnlySessionIsClosed;
           vm.theOnlySessionIsPending = res.theOnlySessionIsPending;
