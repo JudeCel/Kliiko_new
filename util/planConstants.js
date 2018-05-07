@@ -93,7 +93,7 @@ function planNameBySubId(subscription, session) {
  * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
  */
 function availablePlans(subscription, currentSession) {
-  let fromSessions = _.get(subscription.SubscriptionPreference, 'data.availableSessions', []);
+  let fromSessions = _.get(subscription, 'SubscriptionPreference.data.availableSessions', []);
   return _.filter(_.clone(fromSessions), (p) => (!p.sessionId || currentSession && p.sessionId === currentSession.id) && moment().isBefore(p.endDate));
 }
 
@@ -104,7 +104,7 @@ function availablePlans(subscription, currentSession) {
  * @return {array<{string:planId,string:subscriptionId,date:endDate}>}
  */
 function boughtPlans(subscription) {
-  let fromSessions = _.get(subscription.SubscriptionPreference, 'data.availableSessions', []);
+  let fromSessions = _.get(subscription, 'SubscriptionPreference.data.availableSessions', []);
   return _.filter(_.clone(fromSessions), (p) => moment().isBefore(p.endDate));
 }
 

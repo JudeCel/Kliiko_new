@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents', 'errorMessenger'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents, errorMessenger) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents', 'errorMessenger', 'user'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents, errorMessenger, user) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -64,8 +64,11 @@
     }
 
     function initCanSelectFacilitator() {
-      vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0 && vm.session.steps.step1.plan.selected.id
-        && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
+      vm.canSelectFacilitator = vm.session.steps.step1.name
+        && vm.session.steps.step1.name.length > 0
+        && (vm.session.steps.step1.plan.selected.id || user.app.accountUser.role === 'admin')
+        && vm.type != null
+        && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
     }
 
     function inviteFacilitator(facilitator) {
