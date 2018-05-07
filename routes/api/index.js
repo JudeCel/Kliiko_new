@@ -42,7 +42,7 @@ router.put('/user', userRoutes.changePassword);
 router.patch('/user', userRoutes.reloadPermissions);
 router.get('/accountUser', accountUser.get);
 router.get('/account', account.get);
-router.post('/account', account.createNewAccount);
+router.post('/account', PERMISSIONS.admin, account.createNewAccount);
 router.get('/jwtTokenForMember', jwtRoutes.jwtTokenForMember);
 
 router.get('/accountManager', PERMISSIONS.managerAdmin, accountManager.get);
