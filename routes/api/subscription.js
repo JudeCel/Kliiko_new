@@ -49,6 +49,7 @@ function updatePlan(req, res, next) {
     newPlanId: req.body.planId,
     resources: {
       sessionCount: req.body.sessionCount,
+      brandColorCount: req.body.brandColorCount,
     },
     redirectUrl: redirectUrl,
     redirectUrlSessionPage: redirectUrlSessionPage,

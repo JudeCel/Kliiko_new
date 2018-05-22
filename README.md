@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-  * Node.js 6.9.x LTS
+  * Node.js 6.14.x LTS
   * Install yarn `yarn` [yarn](https://yarnpkg.com/en/docs/install)
   * Install JS dependencies `yarn install`
   * PostgreSQL 9.5.x

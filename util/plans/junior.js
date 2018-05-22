@@ -6,7 +6,7 @@ module.exports = {
     "contactListCount": 1,
     "recruiterContactListCount": 1,
     "importDatabase": true,
-    "brandLogoAndCustomColors": true,
+    "brandLogoAndCustomColors": -1,
     "contactListMemberCount": -1,
     "accountUserCount": 1,
     "exportContactListAndParticipantHistory": false,

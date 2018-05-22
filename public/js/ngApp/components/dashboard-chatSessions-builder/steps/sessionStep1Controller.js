@@ -3,8 +3,8 @@
 
   angular.module('KliikoApp').controller('SessionStep1Controller', SessionStep1Controller);
 
-  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents'];
-  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents) {
+  SessionStep1Controller.$inject = ['dbg', 'step1Service', 'sessionBuilderControllerServices', 'messenger', 'SessionModel','$state', '$stateParams', '$filter', 'domServices','$q', '$window', '$rootScope', '$scope', '$confirm', '$sce', 'propertyDisabler', 'appEvents', 'errorMessenger', 'user'];
+  function SessionStep1Controller(dbg, step1Service, builderServices, messenger, SessionModel, $state, $stateParams, $filter, domServices, $q, $window, $rootScope, $scope, $confirm, $sce, propertyDisabler, appEvents, errorMessenger, user) {
     dbg.log2('#SessionBuilderController 1 started');
 
     var vm = this;
@@ -64,8 +64,11 @@
     }
 
     function initCanSelectFacilitator() {
-      vm.canSelectFacilitator = vm.session.steps.step1.name && vm.session.steps.step1.name.length > 0
-        && vm.type != null && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
+      vm.canSelectFacilitator = vm.session.steps.step1.name
+        && vm.session.steps.step1.name.length > 0
+        && (vm.session.steps.step1.plan.selected.id || user.app.accountUser.role === 'admin')
+        && vm.type != null
+        && (!vm.session.properties.features.dateAndTime.enabled || new Date(vm.step1.endTime) > new Date(vm.step1.startTime));
     }
 
     function inviteFacilitator(facilitator) {
@@ -184,7 +187,7 @@
       if (vm.session.steps.step1.type && !vm.session.properties.features.dateAndTime.enabled) {
         $confirm({ text: vm.session.properties.features.dateAndTime.message, htmlText: $sce.trustAsHtml(vm.session.properties.features.dateAndTime.message), title: null, closeOnly: true, showAsError: false });
       } else if (vm.session.steps.step1.canEditTime == false) {
-        $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true, showAsError: true });
+        $confirm({ text: vm.session.steps.step1.canEditTimeMessage, title: 'Sorry', closeOnly: true });
       }
     }
 
@@ -243,10 +246,35 @@
       });
       vm.name = vm.session.steps.step1.name;
       vm.type = vm.session.steps.step1.type;
+      initPlans();
       vm.anonymous = vm.session.steps.step1.anonymous.toString();
       vm.selectedFacilitator = vm.session.steps.step1.facilitator;
       vm.selectedFacilitatorEmail = vm.selectedFacilitator ? vm.selectedFacilitator.email : null;
       initCanSelectFacilitator();
+    }
+
+    vm.updatePlan = function() {
+      updateStep({subscriptionId: vm.plan.id}).then(function(res) {
+        if (res.ignored) {
+          vm.plan = vm.session.steps.step1.plan.selected;
+        } else {
+          vm.session.steps.step1.plan.selected =  vm.plan;
+        }
+        initPlans();
+        initCanSelectFacilitator();
+      }, function(err) {
+        vm.plan = vm.session.steps.step1.plan.selected;
+        initPlans();
+      });
+    }
+
+    function initPlans() {
+      for (var i = 0, len = vm.session.steps.step1.plan.list.length; i < len ; i++) {
+        if (vm.session.steps.step1.plan.list[i].id == vm.session.steps.step1.plan.selected.id) {
+          vm.plan = vm.session.steps.step1.plan.list[i];
+          break;
+        }
+      }
     }
 
     function sessionId() {
@@ -369,11 +397,15 @@
       }, function (err) {
         validateDate(vm.step1.startTime);
         validateDate(vm.step1.endTime);
-        if(err.startTime && vm.endDateEdited) {
-          messenger.error(err);
-        }
-        if(!err.startTime) {
-          messenger.error(err);
+        if (err.dialog) {
+          errorMessenger.showError(err);
+        } else {
+          if (err.startTime && vm.endDateEdited) {
+            messenger.error(err);
+          }
+          if (!err.startTime) {
+            messenger.error(err);
+          }
         }
 
         deferred.reject(err);

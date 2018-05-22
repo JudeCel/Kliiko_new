@@ -255,12 +255,19 @@ module.exports = {
       notFound: 'No subscription found',
       notValidDependency: 'Not valid dependency',
       inactiveSubscription: 'Your subscription is expired, please update your subscription plan.',
-      countLimit: 'You have reached limit for _name_s (max: _max_number_)',
+      countLimit: 'You have reached your _name_ limit (max: _max_number_). Either upgrade or close another _name_.',
       recruiterCountLimitJunior_Trial: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter on the ',
       recruiterCountLimitCore: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiter OR a combination of one each on the Core Plan.',
       recruiterCountLimitSenior: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Senior Plan.',
       recruiterCountLimitEssentials: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Essentials Plan.',
+      recruiterCountLimitStarter: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Starter Plan.',
+      recruiterCountLimitPro: 'Please upgrade your Plan. You can only have _max_number_ Open Social OR Survey Recruiters OR a combination on the Pro Plan.',
       sessionsTimeInputDisabledMessage: "Sorry, but you cannot yet Enter Date & Time to Open this Session. You Already have the maximum Open Sessions for your Plan. You can continue to Build this Session, and come back to Date & Time, when you have Closed a Session, or Upgraded your Plan."
+    },
+    session: {
+      date: {
+        expired: 'Bugger, your Session has expired...but it\'s easy fixed by buying another Session under the Account Profile Tab. ☺',
+      }
     }
   },
   models: {

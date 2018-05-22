@@ -8,6 +8,9 @@ module.exports = {
   trial:   require('./trial').plan,
 
   starter: require('./starter').plan,
+  starter_annual: require('./starter').plan_annual,
   essentials: require('./essentials').plan,
+  essentials_annual: require('./essentials').plan_annual,
   pro: require('./pro').plan,
+  pro_annual: require('./pro').plan_annual,
 };

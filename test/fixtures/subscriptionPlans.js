@@ -45,7 +45,7 @@ function create(plan) {
     models.SubscriptionPlan.findOne({ where: { chargebeePlanId: plan.id } })
       .then(function (subPlan) {
         if (subPlan) {
-          return subPlan;
+          return subPlan.update({ priority: params.priority });
         }
 
         params.preferenceName = preferenceName;

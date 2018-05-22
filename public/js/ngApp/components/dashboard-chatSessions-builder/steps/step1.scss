@@ -64,7 +64,17 @@
       padding: 5px;
       border: 2px solid $green;
     }
+  }
 
+  select.green-input{
+    margin: 0 5px;
+    padding: 5px;
+    border: 2px solid $green;
+    width: 260px;
+  }
+
+  select[disabled] {
+    border: 1px solid silver;
   }
 
   code {

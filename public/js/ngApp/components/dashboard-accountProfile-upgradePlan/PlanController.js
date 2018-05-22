@@ -15,7 +15,9 @@
     vm.planInModal = null;
     vm.selectedPlan = null;
     vm.sessionCount = null;
+    vm.brandColorCount = null;
     vm.possibleNumOfSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    vm.possibleNumOfBrandColors = [1, 2, 3];
     vm.currentStep = 1;
     vm.currentPlan = null;
     vm.purchaseWasSuccessfull = true;
@@ -68,6 +70,8 @@
       }
     ]
 
+    vm.resourceToSell = null;
+
     var modalTplPath = '/js/ngApp/components/dashboard-accountProfile-upgradePlan/tpls/';
 
     vm.isCurrentStep = isCurrentStep;
@@ -98,6 +102,7 @@
       if ($stateParams.step && $stateParams.plan) {
         vm.shouldShowPlan = $stateParams.plan;
         vm.currentStep = parseInt($stateParams.step);
+        vm.stateCurrency = $stateParams.currency;
       }
     };
 
@@ -135,7 +140,7 @@
           messenger.error(result.error);
         }else {
           vm.currencyData = result.currencyData;
-          vm.currentCurrency = vm.currencyData.client;
+          vm.currentCurrency = (vm.stateCurrency || vm.currencyData.client).toUpperCase();
           vm.currencyList = Object.keys(vm.currencyData.rates);
           vm.currencyList.unshift(vm.currencyData.base);
           vm.annualOrMonthly = 'month';
@@ -160,8 +165,7 @@
       }
       array.forEach(function(item) {
         if(item.plan.preference === vm.shouldShowPlan) {
-          vm.selectedPlan = item;
-          vm.sessionCount = 1;
+          switchPlan(item)
         }
       });
     }
@@ -187,7 +191,7 @@
       if(!tosConfirmed){
         domServices.shakeClass('shake-this');
       }else{
-        planService.updatePlan(vm.selectedPlan.plan.id, vm.sessionCount).then(function(response) {
+        planService.updatePlan(vm.selectedPlan.plan.id, vm.sessionCount, vm.brandColorCount).then(function(response) {
           if(response.error){
             messenger.error(response.error);
           }else {
@@ -202,16 +206,14 @@
     }
 
     function wantThisPlan(selectedSubPlan) {
-      vm.selectedPlan = selectedSubPlan;
-      vm.sessionCount = 1;
+      switchPlan(selectedSubPlan);
       $(".planHint").hide();
       nextStep();
     }
 
     vm.dropdownSelectedPlan = function(planItem) {
       if (!vm.isCurrentPlan(planItem)) {
-        vm.selectedPlan = planItem;
-        vm.sessionCount = 1;
+        switchPlan(planItem);
       }
     };
 
@@ -228,6 +230,7 @@
     function previouseStep() {
       vm.selectedPlan = null;
       vm.sessionCount = null;
+      vm.brandColorCount = null;
       return --vm.currentStep;
     }
 
@@ -269,7 +272,21 @@
 
     function switchPlan(switchPlan) {
       vm.selectedPlan = switchPlan;
-      vm.sessionCount = 1;
+      if (vm.selectedPlan.plan.preference.indexOf('_monthly') !== -1) {
+        vm.sessionCount = 1;
+        vm.brandColorCount = null;
+        vm.resourceToSell = 'session';
+        vm.resourceToSellLbl = 'Session';
+        vm.resourceToSellDisabled = false;
+      }
+      if (vm.selectedPlan.plan.preference.indexOf('_annual') !== -1) {
+        var isStarterAnnualPlan = vm.selectedPlan.plan.preference.indexOf('starter_annual') !== -1;
+        vm.resourceToSellDisabled = !vm.getFeatureValue('brandLogoAndCustomColors', vm.selectedPlan.plan);
+        vm.sessionCount = null;
+        vm.brandColorCount = 1;
+        vm.resourceToSell = 'brandColor';
+        vm.resourceToSellLbl = 'Brand/Logo';
+      }
     }
 
     function openGetQuoteModal(user) {

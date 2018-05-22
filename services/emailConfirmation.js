@@ -1,7 +1,6 @@
 'use strict';
 
 var MessagesUtil = require('./../util/messages');
-var usersService = require('./users');
 var async = require('async');
 var models = require('./../models');
 var User = require('./../models').User;
@@ -57,7 +56,7 @@ function isConfirmed(email, callback) {
         },
         attributes: ['id', 'confirmedAt', 'email', 'confirmationToken']
       }).then((user) => {
-        if(user != null && user.confirmedAt != null) { 
+        if(user != null && user.confirmedAt != null) {
           AccountUser.find({
             where: {
               UserId: user.id
@@ -65,7 +64,7 @@ function isConfirmed(email, callback) {
             attributes: ['UserId', 'AccountId']
           }).then((userAccount)=> {
             resolve({
-              isConfirmed: true, 
+              isConfirmed: true,
               token: user.confirmationToken,
               accountId: userAccount.AccountId
             })

@@ -3,6 +3,7 @@
 var moment = require('moment-timezone');
 var constants = require('../../util/constants');
 var myDashboardServices = require('./../../services/myDashboard');
+let policy = require('./../../middleware/policy.js');
 
 module.exports = {
   getAllData: getAllData
@@ -66,13 +67,14 @@ function getResponses(req, res) {
           }
         }
       }
-
+      let role = req.currentResources.accountUser.role;
       res.send({
         data: result,
         dateFormat: constants.dateFormat,
         hasOwnAccount: ownAccounts > 0,
         hasRoles: Object.keys(result).length > 0,
-        canCreateNewAccount: false, //ownAccounts < constants.maxAccountsAmount,
+        //canCreateNewAccount: false, //ownAccounts < constants.maxAccountsAmount,
+        canCreateNewAccount: policy.hasAccess(req.currentResources.accountUser.role, ['admin']),
         theOnlySessionIsPending: theOnlySessionIsPending,
         theOnlySessionIsClosed: theOnlySessionIsClosed,
         theOnlyPendingSessionTime: theOnlyPendingSessionTime

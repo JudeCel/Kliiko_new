@@ -28,6 +28,7 @@ var sessionTypesConstants = require('./../util/sessionTypesConstants');
 var sessionSurvey = require('./sessionSurvey');
 var contactList = require('./contactList');
 var zapierSubscriptionsNotifier = require('./zapierSubscriptionsNotifier');
+var planConstants = require('./../util/planConstants');
 
 var async = require('async');
 var _ = require('lodash');
@@ -104,15 +105,17 @@ function defaultVideoParams(resource, topic) {
 }
 
 function addDefaultTopic(session, sessionMember) {
-  return models.Topic.find({ where: { accountId: session.accountId, default: true } }).then(function(topic) {
-    if (topic) {
-      let topicParams = defaultTopicParams(session, topic);
-      models.SessionTopics.create(topicParams).then(function(sessionTopic) {
-        let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
-        models.Shape.create(imageParams);
-      });
-    }
-  });
+  return models.Topic.find({ where: { accountId: session.accountId, default: true } })
+    .then(function (topic) {
+      if (topic) {
+        let topicParams = defaultTopicParams(session, topic);
+        return models.SessionTopics.create(topicParams)
+          .then(function (sessionTopic) {
+            let imageParams = whiteboardService.defaultTopicImageParams(sessionTopic, sessionMember);
+            return models.Shape.create(imageParams);
+          });
+      }
+    });
 }
 
 function addDefaultTopicVideo(session) {
@@ -264,6 +267,9 @@ function update(sessionId, accountId, params) {
     findSession(sessionId, accountId).then(function(originalSession) {
       updateParams(originalSession, params);
       let validationRes = sessionBuilderSnapshotValidation.isDataValid(snapshot, params, originalSession);
+      if (originalSession.endTime && originalSession.endTime.getTime() !== originalSession.startTime.getTime() && originalSession.endTime <= new Date()) {
+        return reject({dialog: MessagesUtil.validators.session.date.expired });
+      }
       if (validationRes.isValid) {
         doUpdate(originalSession, params).then(function(res) {
           resolve(res);
@@ -302,19 +308,20 @@ function doUpdate(originalSession, params) {
     validators.hasValidSubscription(originalSession.accountId).then(function() {
       let permissions = mapUpdateParametersToPermissions(params);
       return validators.planAllowsToDoIt(originalSession.accountId, permissions);
-    }).then(function() {
+    }).then(function () {
       let count = isSessionChangedToActive(params) ? 1 : 0;
-      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id })
-        .then(function () {
-          // do not need to allocate a new session for admin
-          if (originalSession.Account.admin) {
-            return null;
-          }
-          return count === 0
-            ? SessionService.deallocateSession(originalSession.accountId, originalSession)
-            : SessionService.allocateSession(originalSession.accountId, originalSession);
-        });
-    }).then(function() {
+      return validators.subscription(originalSession.accountId, 'session', count, { sessionId: originalSession.id });
+    }).then(function () {
+      switch (true) {
+        case (params.hasOwnProperty('subscriptionId')):
+          return params.subscriptionId
+            ? SessionService.allocateSession(originalSession.accountId, originalSession, params.subscriptionId)
+            : SessionService.deallocateSession(originalSession.accountId, originalSession);
+        case (originalSession.Account.admin): // do not need to allocate a new session for admin
+        default:
+          return;
+      }
+    }).then(function () {
       if (params["status"] && params["status"] != originalSession.status) {
         if (params["status"] == "open") {
           let step = constants.sessionBuilderSteps[0];
@@ -895,7 +902,8 @@ function sessionBuilderObjectSnapshotForStep1(stepData) {
     resourceId: stepData.resourceId,
     anonymous: stepData.anonymous,
     brandProjectPreferenceId: stepData.brandProjectPreferenceId,
-    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null
+    facilitatorId: stepData.facilitator ? stepData.facilitator.id : null,
+    subscriptionId: stepData.plan.selected.id
   }
   return sessionBuilderSnapshotValidation.getSessionSnapshot(sessionData);
 }
@@ -965,7 +973,8 @@ function sessionBuilderObject(session, steps) {
       endTime: changeTimzone(session.endTime, session.timeZone, "UTC"),
       snapshot: sessionBuilderObjectSnapshot(result, session.step),
       properties: session.type ? sessionTypesConstants[session.type] : null,
-      publicUid: session.publicUid
+      publicUid: session.publicUid,
+      subscriptionId: session.subscriptionId,
     };
 
     sessionValidator.addShowStatus(sessionBuilder);
@@ -995,7 +1004,15 @@ function stepsDefinition(session, steps) {
     anonymous: session.anonymous,
     brandProjectPreferenceId: session.brandProjectPreferenceId,
     error: getStepError(steps, "step1"),
-    isVisited: session.isVisited["setUp"]
+    isVisited: session.isVisited["setUp"],
+    plan: {
+      selected: {
+        id: session.subscriptionId,
+        text: "",
+      },
+      canChange: !session.isVisited["facilitatiorAndTopics"] && !session.isVisited["manageSessionEmails"],
+      list: []
+    }
   };
 
   object.step2 = {
@@ -1130,9 +1147,29 @@ function step1Queries(session, step) {
   return [
     function(cb) {
       searchSessionMembers(session.id, 'facilitator').then(function(members) {
-        if(!_.isEmpty(members)) {
+        if (!_.isEmpty(members)) {
           step.facilitator = members[0];
-        }
+        };
+        return models.Subscription.findOne({
+          where: {
+            active: true,
+            accountId: session.accountId,
+          },
+          include: [{ model: models.SubscriptionPreference }],
+        });
+      }).then(function(subscription) {
+        // populate dropdown with available plans based on bought plans
+        let availablePlans = planConstants.availablePlans(subscription, session);
+        step.plan.list = _.map(availablePlans, (plan) => {
+          let { subscriptionId, planId } = plan;
+          let planEndDate = changeTimzone(plan.endDate, 'UTC', step.timeZone).toISOString().slice(0, 10);
+          let planName = `${planConstants.planName(planId)} - ${planEndDate}`;
+          if (step.plan.selected && subscriptionId === step.plan.selected.id) {
+            step.plan.selected.text = planName;
+          }
+          return { id: subscriptionId, text: planName };
+        });
+        step.plan.list.unshift({ id: '', text: 'None' });
         cb();
       }).catch(function(error) {
         cb(filters.errors(error));
@@ -1586,14 +1623,11 @@ function publish(sessionId, accountId) {
         return { id: session.id, publicUid: session.publicUid };
       }
 
-      return validators.subscription(accountId, 'session', 1, { sessionId: sessionId })
-        .then(() => {
-          // do not need to allocate a new session for admin
-          if (session.Account.admin) {
-            return null;
-          }
-          return SessionService.allocateSession(accountId, session);
-        })
+      return Bluebird
+        .join(
+          validators.subscription(accountId, 'session', 1, { sessionId: sessionId }),
+          validators.subscription(accountId, 'contactList', 1)
+        )
         .then(() => {
           return generatePublicUid(session);
         })
