@@ -5,8 +5,8 @@ let _ = require('lodash');
 const HEADERS = { 'content-type': 'application/json' }
 const UNSUBSCRIBE_STATUS_CODE = 410;
 
-function notify(event) {
-  zapierSubscriptionService.findAllByEvent(event).then((subscriptions) => { 
+function notify(event, accountId) {
+  zapierSubscriptionService.findAllByEvent(event, accountId).then((subscriptions) => {
     notifyEachSubscriber(subscriptions);
   });
 }

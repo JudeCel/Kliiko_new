@@ -1,0 +1,26 @@
+<div id='deleteModal' class='modal fade' role='dialog'>
+  <div class='modal-dialog deleteModal'>
+    <div class='modal-content border-green border-radius-none'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+        <h2 class='modal-title text-center'>Confirm delete with your password</h2>
+      </div>
+
+      <div class='modal-body'>
+        <div class='form-group'>
+          <center>Enter your password </center>
+          <center>
+            <form name="addAdminForm">
+              <input type="password" ng-model='modalObject.deleteForm.password'>
+            <form>
+          </center>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn-standart btn-red pull-left' data-dismiss='modal'>Cancel</button>
+        <button type='button' class='btn-standart btn-green pull-right' ng-click="submitDeleteForm()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+

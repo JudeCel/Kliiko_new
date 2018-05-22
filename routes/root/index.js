@@ -29,7 +29,7 @@ var ipCurrency = require('../../lib/ipCurrency');
 const facebookUrl = '/auth/facebook';
 const googleUrl = '/auth/google';
 var planConstants = require('./../../util/planConstants');
-
+var InfusionSoft = require('./../../lib/infusionsoft');
 
 router.route('/ics').get(ics.render);
 
@@ -161,6 +161,8 @@ function prepareUrlParams(parameters, query) {
   if (typeof(parameters.showOptionalFields) != "boolean") {
     parameters.showOptionalFields = (parameters.showOptionalFields == "true");
   }
+
+  prepareViewFormParams(parameters);
 }
 
 function prepareViewFormParams(params) {
@@ -172,7 +174,6 @@ router.get('/registration', function (req, res, next) {
   params.phoneCountryData = replaceToString(params.phoneCountryData);
   params.landlineNumberCountryData = replaceToString(params.landlineNumberCountryData);
   prepareUrlParams(params, req.query);
-  prepareViewFormParams(params);
   params.currency = params.currency || "";
   res.render('registration', params);
 });
@@ -249,6 +250,24 @@ function loadWelcomePage(req, res, isConfirmed, error) {
 
   res.render('welcome', tplData);
 }
+
+/**
+ * Only contacts with paid Infusion tags can access TUTORIAL_PAGE_URL
+ */
+router.get('/tutorials', function (req, res, next) {
+  let email = req.user.email;
+  return InfusionSoft.contact.find({ Email: email })
+    .then((contact) => {
+      let redirectURL = process.env.TUTORIAL_PAGE_URL;
+      let contactId = contact ? contact.Id : '';
+      redirectURL = redirectURL.replace("{ContactId}", contactId).replace("{ContactEmail}", email)
+
+      return res.redirect(redirectURL);
+    })
+    .catch((err) => {
+      return res.redirect('/');
+    });
+});
 
 router.post('/resendEmail', function(req, res, next) {
   emailConfirmation.sendEmailConfirmationToken(req.session.email, function (err) {
@@ -477,13 +496,7 @@ router.route('/VerifyEmail/:token/:accountUserId?')
     emailConfirmation.checkTokenExpired(req.params.token, function (err, user) {
       if (err || !user) {
         tplData.user = false;
-        tplData.errors.password = '';
-        tplData.message = '';
-        tplData.email = '';
-        tplData.error = tplData.errors.password;
-        tplData.googleUrl = googleUrl;
-        tplData.facebookUrl = facebookUrl;
-        res.render('login', tplData);
+        res.render('validationError', tplData);
       } else {
         let accountUserId = tplData.accountUserId ? parseInt(new Buffer(tplData.accountUserId, 'base64').toString('ascii')) : null;
         emailConfirmation.getEmailConfirmationByToken(user, accountUserId, function (err, user) {

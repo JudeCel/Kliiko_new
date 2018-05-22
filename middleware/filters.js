@@ -23,7 +23,7 @@ function createPlanSelectRedirectUrl(req, plan) {
 }
 
 function planSelectPage(req, res, next) {
-  let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub/landing');
+  let redirectUrl = subdomains.url(req, req.currentResources.account.subdomain, '/account-hub');
   if(req.currentResources.accountUser.role ==  'accountManager') {
     Subscription.find({ where: { accountId: req.currentResources.account.id } }).then(function(subscription) {
       if(subscription) {
@@ -85,17 +85,19 @@ function myDashboardPage(req, res, next, accountUserId, forceBilling) {
         res.redirect(myDashboardUrl);
       }
     } else {
+
       let redirectURL;
       const account = selectManager(result.accountManager, result.facilitator, accountUserId);
       const subDomain = account.subdomain;
 
-      if (isBillingRequired(req, forceBilling)) {
-        req.session.landed = true;
-        redirectURL = subdomains.url(req, subDomain, '/account-hub/landing');
+      req.session.landed = true;
+      if (forceBilling && account.selectedPlanOnRegistration) {
+        redirectURL = subdomains.url(req, subDomain, '/account-hub/');
       } else {
         redirectURL = myDashboardUrl;
       }
       res.redirect(redirectURL);
+
     }
   }, function(error) {
     res.send({ error: error });

@@ -13,7 +13,7 @@ function subscribe(event, targetUrl, accountId) {
       if(error.name == 'SequelizeValidationError') {
         reject(filters.errors(error));
       }
-      
+
       reject();
     });
   });
@@ -38,28 +38,17 @@ function findById(id) {
   let where = {
     id: id
   };
-  
-  return new Bluebird((resolve, reject) => {
-    ZapierSubscription.find({ where: where }).then((subscription) => {
-      resolve(subscription);
-    }, (error) => {
-      reject(error);
-    });
-  });
+
+  return ZapierSubscription.find({ where: where });
 }
 
-function findAllByEvent(event) {
+function findAllByEvent(event, accountId) {
   let where = {
-    event: event
+    event: event,
+    accountId: accountId,
   };
-  
-  return new Bluebird((resolve, reject) => {
-    ZapierSubscription.findAll({ where: where }).then((subscriptions) => {
-      resolve(subscriptions);
-    }, (error) => {
-      reject(error);
-    });
-  });
+
+  return ZapierSubscription.findAll({ where: where });
 }
 
 module.exports = {

@@ -33,7 +33,7 @@ function comment(req, res, next) {
   );
 }
 
-function get(req, res, next) {  
+function get(req, res, next) {
   sessionServices.findAllSessions(req.currentResources.user.id, req.currentResources.accountUser, req.currentResources.account).then(
     getResponses(res).onSuccess,
     getResponses(res).onError
@@ -41,8 +41,8 @@ function get(req, res, next) {
 }
 
 function getLatestSocialForumSession(req, res, next) {
-  var accountId = req.currentResources.accountUser.AccountId;
-  sessionServices.findLatestSocialForumSession(accountId).then((result) => {
+  let userId = req.currentResources.user.id;
+  sessionServices.findLatestSocialForumSession(userId).then((result) => {
     res.send(result);
   }, (error) => {
     res.status(500).send();
@@ -50,8 +50,8 @@ function getLatestSocialForumSession(req, res, next) {
 }
 
 function getSocialForumSessions(req, res, next) {
-  var accountId = req.currentResources.accountUser.AccountId;
-  sessionServices.findAllSoccialForumSessions(accountId).then((result) => {
+  let userId = req.currentResources.user.id;
+  sessionServices.findAllSoccialForumSessions(userId).then((result) => {
     res.send(result);
   }, (error) => {
     res.status(500).send();
