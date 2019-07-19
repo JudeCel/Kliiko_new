@@ -31,7 +31,7 @@ spec:
       imagePullSecrets:
         - name: docker-hub-secret-2
       containers:
-      - image: "index.docker.io/klzii/kliiko:stable"
+      - image: "index.docker.io/cliizii/cliiziiadmin:stable"
         command: ['/bin/sh', './start_server.sh']
         imagePullPolicy: Always
         name: admin
